@@ -1,0 +1,43 @@
+import 'dart:async';
+
+import 'package:matrix/matrix.dart';
+import 'package:safe_change_notifier/safe_change_notifier.dart';
+
+import 'remote_image_service.dart';
+
+class RemoteImageModel extends SafeChangeNotifier {
+  RemoteImageModel({
+    required RemoteImageService service,
+  }) : _onlineArtService = service;
+
+  final RemoteImageService _onlineArtService;
+  Map<String, String> get httpHeaders => _onlineArtService.httpHeaders;
+  StreamSubscription<bool>? _propertiesChangedSub;
+  Uri? getAvatarUri(Uri? key) => _onlineArtService.get(key);
+  Map<Uri, Uri?> get store => _onlineArtService.store;
+  Future<Uri?> fetchAvatarUri({
+    required Uri uri,
+    num? width,
+    num? height,
+    ThumbnailMethod? method,
+    bool? animated = false,
+  }) async =>
+      _onlineArtService.fetchAvatarUri(
+        uri: uri,
+        animated: animated,
+        height: height,
+        width: width,
+        method: method,
+      );
+
+  void init() {
+    _propertiesChangedSub ??=
+        _onlineArtService.propertiesChanged.listen((_) => notifyListeners());
+  }
+
+  @override
+  Future<void> dispose() async {
+    await _propertiesChangedSub?.cancel();
+    super.dispose();
+  }
+}
