@@ -1,0 +1,18 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    avoid_print: true
+    cancel_subscriptions: true
+    prefer_single_quotes: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    require_trailing_commas: true
+    use_super_parameters: true
+    close_sinks: true
+    prefer_relative_imports: true
+    sort_pub_dependencies: true
+    unnecessary_parenthesis: true
+    unnecessary_await_in_return: true
+    unnecessary_late: true
+    unnecessary_breaks: true
