@@ -17,12 +17,14 @@ class ChatEventStatusIcon extends StatelessWidget {
     this.padding,
     this.foregroundColor,
     this.textStyle,
+    required this.timeline,
   });
 
   final Event event;
   final EdgeInsetsGeometry? padding;
   final Color? foregroundColor;
   final TextStyle? textStyle;
+  final Timeline timeline;
 
   static const iconSize = 15.0;
 
@@ -76,6 +78,11 @@ class ChatEventStatusIcon extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: kSmallPadding,
           children: [
+            if (event.hasAggregatedEvents(timeline, RelationshipTypes.edit))
+              const Icon(
+                YaruIcons.pen,
+                size: iconSize,
+              ),
             if (!userEvent && event.isImage)
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 100),

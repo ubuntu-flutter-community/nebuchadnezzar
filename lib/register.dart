@@ -23,6 +23,7 @@ import 'chat/local_image_service.dart';
 import 'chat/remote_image_model.dart';
 import 'chat/remote_image_service.dart';
 import 'chat/search_model.dart';
+import 'chat/settings/settings_model.dart';
 
 void registerDependencies() => di
   ..registerSingletonAsync<Client>(
@@ -51,6 +52,11 @@ void registerDependencies() => di
   )
   ..registerSingletonWithDependencies<ChatModel>(
     () => ChatModel(client: di<Client>()),
+    dispose: (s) => s.dispose(),
+    dependsOn: [Client],
+  )
+  ..registerSingletonWithDependencies<SettingsModel>(
+    () => SettingsModel(client: di<Client>()),
     dispose: (s) => s.dispose(),
     dependsOn: [Client],
   )
@@ -143,7 +149,9 @@ extension _ClientX on Client {
     );
     // This reads potential credentials that might exist from previous sessions.
     await client.init(waitForFirstSync: client.isLogged());
-    // await client.firstSyncReceived;
+    await client.firstSyncReceived;
+    await client.roomsLoading;
+
     return client;
   }
 }

@@ -27,7 +27,7 @@ const kBubbleRadius = Radius.circular(4.0);
 const kBigBubbleRadius = Radius.circular(8.0);
 
 const windowOptions = WindowOptions(
-  size: Size(1280, 1000),
+  size: Size(1024, 800),
   minimumSize: Size(400, 600),
   center: true,
 );

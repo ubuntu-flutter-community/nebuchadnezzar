@@ -75,9 +75,9 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
                     textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 automaticallyImplyLeading: false,
                 actions: [
-                  if (!room.isArchived && room.canEdit)
+                  if (!room.isArchived && room.canEditAtleastSomething)
                     Flexible(
-                      key: ValueKey(room.canEdit),
+                      key: ValueKey(room.canEditAtleastSomething),
                       child: Padding(
                         padding: const EdgeInsets.only(right: kSmallPadding),
                         child: IconButton(

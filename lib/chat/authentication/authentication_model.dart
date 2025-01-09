@@ -1,6 +1,8 @@
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
+import '../../common/logging.dart';
+
 class AuthenticationModel extends SafeChangeNotifier {
   AuthenticationModel({required Client client}) : _client = client;
 
@@ -39,11 +41,11 @@ class AuthenticationModel extends SafeChangeNotifier {
       );
       await _client.firstSyncReceived;
       await _client.roomsLoading;
-
       await _loadMediaConfig();
       await onSuccess();
-    } on Exception catch (e) {
+    } on Exception catch (e, s) {
       await onFail(e.toString());
+      printMessageInDebugMode(e, s);
     } finally {
       _setProcessingAccess(false);
     }

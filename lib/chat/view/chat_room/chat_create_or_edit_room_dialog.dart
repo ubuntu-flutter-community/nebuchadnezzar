@@ -329,8 +329,8 @@ class _ChatCreateOrEditRoomDialogState
       ),
       actionsAlignment: MainAxisAlignment.start,
       actionsOverflowAlignment: OverflowBarAlignment.center,
-      actionsPadding: const EdgeInsets.all(kBigPadding + kMediumPadding),
-      contentPadding: const EdgeInsets.all(kBigPadding),
+      actionsPadding: const EdgeInsets.all(kMediumPadding),
+      contentPadding: const EdgeInsets.all(kMediumPadding),
       content: SizedBox(
         height: 2 * _maxWidth,
         child: Row(
@@ -343,7 +343,7 @@ class _ChatCreateOrEditRoomDialogState
             ),
             if (twoPaneMode)
               const Padding(
-                padding: EdgeInsets.all(kBigPadding),
+                padding: EdgeInsets.all(kMediumPadding),
                 child: VerticalDivider(
                   width: 0.1,
                   thickness: 0.5,
@@ -378,7 +378,7 @@ class _ChatCreateOrEditRoomDialogState
           ],
         ),
       ),
-      scrollable: false,
+      scrollable: true,
       actions: _existingGroup
           ? null
           : [

@@ -9,9 +9,9 @@ import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../data/emojis.dart';
 import '../../draft_model.dart';
-import '../../room_x.dart';
+import '../../event_x.dart';
 
-class ChatMessageMenu extends StatelessWidget {
+class ChatMessageMenu extends StatefulWidget {
   const ChatMessageMenu({
     super.key,
     required this.event,
@@ -22,75 +22,79 @@ class ChatMessageMenu extends StatelessWidget {
   final Widget child;
 
   @override
+  State<ChatMessageMenu> createState() => _ChatMessageMenuState();
+}
+
+class _ChatMessageMenuState extends State<ChatMessageMenu> {
+  final _controller = MenuController();
+
+  @override
   Widget build(BuildContext context) {
     final style = context.textTheme.bodyMedium;
-    return MenuAnchor(
-      consumeOutsideTap: true,
-      alignmentOffset: const Offset(kMediumPadding, -kMediumPadding),
-      builder:
-          (BuildContext context, MenuController controller, Widget? child) {
-        return GestureDetector(
-          onTap: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
-          },
-          child: child,
-        );
-      },
-      menuChildren: [
-        if (event.canRedact)
+    return GestureDetector(
+      onSecondaryTap: () => _controller.open(),
+      behavior: HitTestBehavior.opaque,
+      child: MenuAnchor(
+        controller: _controller,
+        consumeOutsideTap: true,
+        alignmentOffset:
+            Offset(widget.event.isImage ? 0 : kMediumPadding, -kSmallPadding),
+        menuChildren: [
+          if (widget.event.canRedact)
+            MenuItemButton(
+              trailingIcon: const Icon(YaruIcons.trash),
+              onPressed: () =>
+                  widget.event.room.redactEvent(widget.event.eventId),
+              child: Text(
+                context.l10n.deleteMessage,
+                style: style,
+              ),
+            ),
           MenuItemButton(
-            trailingIcon: const Icon(YaruIcons.trash),
-            onPressed: () => event.room.redactEvent(event.eventId),
+            trailingIcon: const Icon(YaruIcons.reply),
+            onPressed: () => di<DraftModel>().setReplyEvent(widget.event),
             child: Text(
-              context.l10n.deleteMessage,
+              context.l10n.reply,
               style: style,
             ),
           ),
-        MenuItemButton(
-          trailingIcon: const Icon(YaruIcons.reply),
-          onPressed: () => di<DraftModel>().setReplyEvent(event),
-          child: Text(
-            context.l10n.reply,
-            style: style,
-          ),
-        ),
-        if (event.room.canEdit == true)
+          if (widget.event.room.canSendDefaultMessages)
+            MenuItemButton(
+              trailingIcon: const Icon(YaruIcons.pen),
+              onPressed: () {
+                di<DraftModel>()
+                  ..setEditEvent(
+                    roomId: widget.event.room.id,
+                    event: widget.event,
+                  )
+                  ..setDraft(
+                    roomId: widget.event.room.id,
+                    draft: widget.event.plaintextBody,
+                    notify: true,
+                  );
+              },
+              child: Text(
+                context.l10n.edit,
+                style: style,
+              ),
+            ),
           MenuItemButton(
-            trailingIcon: const Icon(YaruIcons.pen),
-            onPressed: () {
-              di<DraftModel>()
-                ..setEditEvent(roomId: event.room.id, event: event)
-                ..setDraft(
-                  roomId: event.room.id,
-                  draft: event.plaintextBody,
-                  notify: true,
-                );
-            },
+            trailingIcon: const Icon(YaruIcons.copy),
             child: Text(
-              context.l10n.edit,
+              context.l10n.copyToClipboard,
               style: style,
             ),
-          ),
-        MenuItemButton(
-          trailingIcon: const Icon(YaruIcons.copy),
-          child: Text(
-            context.l10n.copyToClipboard,
-            style: style,
-          ),
-          onPressed: () => showSnackBar(
-            context,
-            content: CopyClipboardContent(
-              text: event.body,
+            onPressed: () => showSnackBar(
+              context,
+              content: CopyClipboardContent(
+                text: widget.event.body,
+              ),
             ),
           ),
-        ),
-        ChatMessageReactionPicker(event: event),
-      ],
-      child: child,
+          ChatMessageReactionPicker(event: widget.event),
+        ],
+        child: widget.child,
+      ),
     );
   }
 }

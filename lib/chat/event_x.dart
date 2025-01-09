@@ -3,7 +3,9 @@ import 'package:matrix/matrix.dart';
 extension EventX on Event {
   bool get isImage => messageType == MessageTypes.Image;
 
-  bool get showAsBadge => {
+  bool get showAsBadge =>
+      messageType == MessageTypes.Emote ||
+      {
         EventTypes.RoomAvatar,
         EventTypes.RoomAliases,
         EventTypes.RoomTopic,

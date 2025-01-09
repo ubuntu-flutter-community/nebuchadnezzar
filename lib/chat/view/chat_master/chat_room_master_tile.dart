@@ -7,6 +7,7 @@ import '../../../common/view/build_context_x.dart';
 import '../../../common/view/scaffold_state_x.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
+import '../../../l10n/l10n.dart';
 import '../../chat_model.dart';
 import '../../draft_model.dart';
 import '../chat_avatar.dart';
@@ -41,7 +42,6 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
         child: YaruMasterTile(
           selected: selectedRoom?.id != null && selectedRoom?.id == room.id,
           leading: ChatAvatar(
-            key: ValueKey(room.avatar ?? room.id),
             avatarUri: room.avatar,
             fallBackIcon: room.membership != Membership.invite
                 ? room.isDirectChat
@@ -49,7 +49,11 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                     : YaruIcons.users
                 : YaruIcons.mail_unread,
           ),
-          title: Text(room.getLocalizedDisplayname()),
+          title: Text(
+            room.membership == Membership.invite
+                ? context.l10n.invite
+                : room.getLocalizedDisplayname(),
+          ),
           trailing: room.isArchived
               ? null
               : Column(
@@ -71,7 +75,9 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                       ),
                   ],
                 ),
-          subtitle: ChatRoomMasterTileSubTitle(room: room),
+          subtitle: room.membership == Membership.invite
+              ? Text(room.getLocalizedDisplayname())
+              : ChatRoomMasterTileSubTitle(room: room),
           onTap: processingJoinOrLeave || loadingArchive
               ? null
               : () async {

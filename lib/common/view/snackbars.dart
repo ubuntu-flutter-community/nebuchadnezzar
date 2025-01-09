@@ -12,6 +12,15 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? showSnackBar(
   return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: content));
 }
 
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? showErrorSnackBar(
+  BuildContext context,
+  String error,
+) {
+  if (!context.mounted) return null;
+  return ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text(error)));
+}
+
 class CopyClipboardContent extends StatefulWidget {
   const CopyClipboardContent({
     super.key,

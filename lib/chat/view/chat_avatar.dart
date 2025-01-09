@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
+import '../../common/view/avatar_vignette.dart';
 import '../../common/view/safe_network_image.dart';
-import '../../common/view/theme.dart';
 import '../remote_image_model.dart';
 
 class ChatAvatar extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -42,7 +40,7 @@ class _ChatAvatarState extends State<ChatAvatar> {
     super.initState();
     final uri = widget.avatarUri;
 
-    if (di<RemoteImageModel>().getAvatarUri(uri) == null && uri != null) {
+    if (uri != null && di<RemoteImageModel>().getAvatarUri(uri) == null) {
       _futureUri = di<RemoteImageModel>().fetchAvatarUri(
         uri: uri,
         width: widget.dimension,
@@ -59,52 +57,32 @@ class _ChatAvatarState extends State<ChatAvatar> {
       (RemoteImageModel m) => m.getAvatarUri(widget.avatarUri),
     );
 
-    final sizedBox = SizedBox.square(
+    final sizedBox = AvatarVignette(
+      fallBackColor: widget.fallBackColor,
       dimension: widget.dimension,
-      child: ClipRRect(
-        borderRadius: borderRadius,
-        child: ColoredBox(
-          color: widget.fallBackColor ??
-              getMonochromeBg(
-                theme: context.theme,
-                factor: 6,
-                darkFactor: 20,
+      borderRadius: borderRadius,
+      child: uri != null || _futureUri == null
+          ? SafeNetworkImage(
+              httpHeaders: di<RemoteImageModel>().httpHeaders,
+              url: uri.toString(),
+              fit: widget.fit,
+              fallBackIcon: Icon(
+                widget.fallBackIcon ?? YaruIcons.user,
+                size: widget.fallBackIconSize,
               ),
-          child: uri != null || _futureUri == null
-              ? SafeNetworkImage(
-                  httpHeaders: di<RemoteImageModel>().httpHeaders,
-                  url: uri.toString(),
-                  fit: widget.fit,
-                  fallBackIcon: Icon(
-                    widget.fallBackIcon ?? YaruIcons.user,
-                    size: widget.fallBackIconSize,
-                  ),
-                )
-              : FutureBuilder(
-                  future: _futureUri,
-                  builder: (context, snapshot) {
-                    if (kIsWeb) {
-                      return (snapshot.data == null
-                          ? Icon(
-                              widget.fallBackIcon ?? YaruIcons.user,
-                              size: widget.fallBackIconSize,
-                            )
-                          : Image.network(snapshot.data!.toString()));
-                    } else {
-                      return SafeNetworkImage(
-                        fit: widget.fit,
-                        httpHeaders: di<RemoteImageModel>().httpHeaders,
-                        url: snapshot.data?.toString(),
-                        fallBackIcon: Icon(
-                          widget.fallBackIcon ?? YaruIcons.user,
-                          size: widget.fallBackIconSize,
-                        ),
-                      );
-                    }
-                  },
+            )
+          : FutureBuilder(
+              future: _futureUri,
+              builder: (context, snapshot) => SafeNetworkImage(
+                fit: widget.fit,
+                httpHeaders: di<RemoteImageModel>().httpHeaders,
+                url: snapshot.data?.toString(),
+                fallBackIcon: Icon(
+                  widget.fallBackIcon ?? YaruIcons.user,
+                  size: widget.fallBackIconSize,
                 ),
-        ),
-      ),
+              ),
+            ),
     );
 
     if (widget.onTap == null) {
