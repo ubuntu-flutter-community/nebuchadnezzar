@@ -470,27 +470,27 @@
     "commandHint_invite": "Bjud in den angivna användaren till det här rummet",
     "@commandHint_invite": {
       "type": "text",
-      "description": ""Användningstips för kommandot /invite"
+      "description": "Användningstips för kommandot /invite"
     },
     "commandHint_join": "Gå med i det angivna rummet",
     "@commandHint_join": {
       "type": "text",
-      "description": ""Användningstips för kommandot /join"
+      "description": "Användningstips för kommandot /join"
     },
     "commandHint_kick": "Ta bort den angivna användaren från det här rummet",
     "@commandHint_kick": {
       "type": "text",
-      "description": ""Användningstips för kommandot /kick"
+      "description": "Användningstips för kommandot /kick"
     },
     "commandHint_leave": "Lämna det här rummet",
     "@commandHint_leave": {
       "type": "text",
-      "description": ""Användningstips för kommandot /leave"
+      "description": "Användningstips för kommandot /leave"
     },
     "commandHint_me": "Beskriv dig själv",
     "@commandHint_me": {
       "type": "text",
-      "description": ""Användningstips för kommandot /me"
+      "description": "Användningstips för kommandot /me"
     },
     "commandHint_myroomavatar": "Ställ in din bild för det här rummet (med mxc-uri)",
     "@commandHint_myroomavatar": {
