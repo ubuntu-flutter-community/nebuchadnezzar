@@ -2418,7 +2418,7 @@
     "@reopenChat": {},
     "noBackupWarning": "Varning! Utan att aktivera chattsäkerhetskopiering förlorar du åtkomst till dina krypterade meddelanden. Det rekommenderas starkt att aktivera chattbackupen först innan du loggar ut.",
     "@noBackupWarning": {},
-    "noOtherDevicesFound": "Inga andra enheter hittades,
+    "noOtherDevicesFound": "Inga andra enheter hittades",
     "@noOtherDevicesFound": {},
     "fileIsTooBigForServer": "Kan inte skicka! Servern stöder endast bilagor upp till {max}.",
     "@fileIsTooBigForServer": {
