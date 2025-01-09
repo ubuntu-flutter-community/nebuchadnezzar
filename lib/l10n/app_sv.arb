@@ -45,7 +45,7 @@
       "type": "text",
       "placeholders": {}
     },
-    "activatedEndToEndEncryption": "🔐 {username} aktiverade end-to-end-kryptering,
+    "activatedEndToEndEncryption": "🔐 {username} aktiverade end-to-end-kryptering",
     "@activatedEndToEndEncryption": {
       "type": "text",
       "placeholders": {
