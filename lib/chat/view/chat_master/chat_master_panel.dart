@@ -4,17 +4,15 @@ import 'package:yaru/yaru.dart';
 
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
-import '../../../common/view/confirm.dart';
 import '../../../common/view/sliver_sticky_panel.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../authentication/authentication_model.dart';
-import '../../authentication/chat_login_page.dart';
 import '../../chat_model.dart';
 import '../../rooms_filter.dart';
 import '../../search_model.dart';
+import '../../settings/settings_dialog.dart';
 import '../chat_avatar.dart';
 import '../chat_room/chat_create_or_edit_room_dialog.dart';
 import '../search_auto_complete.dart';
@@ -134,30 +132,14 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
             const Expanded(
               child: _RoomList(),
             ),
-          YaruMasterTile(
-            title: const Text('Logout'),
-            leading: const Icon(YaruIcons.log_out),
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: Text(l10n.logout),
-                content: Text(l10n.areYouSureYouWantToLogout),
-                onConfirm: () {
-                  chatModel.setSelectedRoom(null);
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => const ChatLoginPage(),
-                    ),
-                    (route) => false,
-                  );
-                  di<AuthenticationModel>().logout(
-                    onFail: (e) => ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                      ),
-                    ),
-                  );
-                },
+          Padding(
+            padding: const EdgeInsets.only(top: kMediumPadding),
+            child: YaruMasterTile(
+              leading: const Icon(YaruIcons.settings),
+              title: Text(l10n.settings),
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => const SettingsDialog(),
               ),
             ),
           ),

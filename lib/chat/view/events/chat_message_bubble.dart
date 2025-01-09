@@ -90,7 +90,10 @@ class ChatMessageBubble extends StatelessWidget with WatchItMixin {
               Positioned(
                 bottom: kSmallPadding,
                 right: kSmallPadding,
-                child: ChatEventStatusIcon(event: event),
+                child: ChatEventStatusIcon(
+                  event: event,
+                  timeline: timeline,
+                ),
               ),
               Positioned(
                 top: kBigPadding,
@@ -140,11 +143,10 @@ class _ChatMessageBubbleContent extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(kSmallPadding),
-          child: event.messageType != MessageTypes.Text
-              ? ChatMessageMediaAvatar(event: event)
-              : hideAvatar
-                  ? const SizedBox.shrink()
-                  : ChatAvatar(
+          child: hideAvatar || event.messageType == MessageTypes.BadEncrypted
+              ? const SizedBox.shrink()
+              : event.messageType == MessageTypes.Text
+                  ? ChatAvatar(
                       avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
                       onTap: () => showDialog(
                         context: context,
@@ -156,7 +158,8 @@ class _ChatMessageBubbleContent extends StatelessWidget {
                         factor: 10,
                         darkFactor: yaru ? 1 : null,
                       ),
-                    ),
+                    )
+                  : ChatMessageMediaAvatar(event: event),
         ),
         Flexible(
           child: Column(

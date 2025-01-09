@@ -117,6 +117,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
                       color: Colors.black.withValues(alpha: 0.5),
                     ),
                     child: ChatEventStatusIcon(
+                      timeline: timeline,
                       padding: const EdgeInsets.all(kTinyPadding),
                       event: event,
                       foregroundColor: Colors.white,
@@ -136,6 +137,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
                       color: Colors.black.withValues(alpha: 0.5),
                     ),
                     child: ChatEventStatusIcon(
+                      timeline: timeline,
                       padding: const EdgeInsets.all(kTinyPadding),
                       event: event,
                       foregroundColor: Colors.white,

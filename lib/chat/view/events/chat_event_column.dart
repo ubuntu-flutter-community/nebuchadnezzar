@@ -61,10 +61,17 @@ class ChatEventColumn extends StatelessWidget {
     );
   }
 
-  bool hideEventInTimeline({required Event event}) => {
-        EventTypes.Redaction,
-        EventTypes.Reaction,
-      }.contains(event.type);
+  bool hideEventInTimeline({required Event event}) {
+    if ({RelationshipTypes.edit, RelationshipTypes.reaction}
+        .contains(event.relationshipType)) {
+      return true;
+    }
+
+    return {
+      EventTypes.Redaction,
+      EventTypes.Reaction,
+    }.contains(event.type);
+  }
 
   bool _partOfMessageCohort(Event event, Event? maybePreviousEvent) {
     return maybePreviousEvent != null &&

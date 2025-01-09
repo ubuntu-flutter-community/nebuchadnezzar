@@ -28,6 +28,8 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
         ? _LastEvent(
             key: ObjectKey(lastEvent),
             lastEvent: lastEvent ?? room.lastEvent,
+            fallbackText:
+                room.membership == Membership.invite ? room.name : null,
           )
         : Text(
             typingUsers.length > 1
@@ -45,9 +47,11 @@ class _LastEvent extends StatefulWidget with WatchItStatefulWidgetMixin {
   const _LastEvent({
     required this.lastEvent,
     super.key,
+    this.fallbackText,
   });
 
   final Event? lastEvent;
+  final String? fallbackText;
 
   @override
   State<_LastEvent> createState() => _LastEventState();
@@ -70,7 +74,7 @@ class _LastEventState extends State<_LastEvent> {
       future: _future,
       builder: (context, snapshot) {
         return Text(
-          snapshot.hasData ? snapshot.data! : ' ',
+          snapshot.hasData ? snapshot.data! : (widget.fallbackText ?? ' '),
           maxLines: 1,
         );
       },

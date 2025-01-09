@@ -38,7 +38,8 @@ class ChatMessageMediaAvatar extends StatelessWidget {
           child: switch (event.messageType) {
             MessageTypes.Audio => const Icon(YaruIcons.media_play),
             MessageTypes.Video => const Icon(YaruIcons.video_filled),
-            _ => const Icon(YaruIcons.document_filled),
+            MessageTypes.File => const Icon(YaruIcons.document_filled),
+            _ => const SizedBox.shrink()
           },
         ),
       ),

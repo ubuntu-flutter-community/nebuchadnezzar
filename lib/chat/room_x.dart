@@ -20,7 +20,7 @@ extension RoomX on Room {
     return lastReceipts.toList();
   }
 
-  bool get canEdit =>
+  bool get canEditAtleastSomething =>
       ownPowerLevel == 100 ||
       canKick ||
       canBan ||
