@@ -455,7 +455,7 @@
     "commandHint_discardsession": "Discard session",
     "@commandHint_discardsession": {
       "type": "text",
-      "description": ""Användningstips för kommandot /discardsession"
+      "description": "Användningstips för kommandot /discardsession"
     },
     "commandHint_dm": "Starta en direkt chatt\nAnvänd --no-encryption för att inaktivera kryptering",
     "@commandHint_dm": {
