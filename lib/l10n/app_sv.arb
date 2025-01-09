@@ -495,37 +495,37 @@
     "commandHint_myroomavatar": "Ställ in din bild för det här rummet (med mxc-uri)",
     "@commandHint_myroomavatar": {
       "type": "text",
-      "description": ""Användningstips för kommandot /myroomavatar"
+      "description": "Användningstips för kommandot /myroomavatar"
     },
     "commandHint_myroomnick": "Ange ditt visningsnamn för det här rummet",
     "@commandHint_myroomnick": {
       "type": "text",
-      "description": ""Användningstips för kommandot /myroomnick"
+      "description": "Användningstips för kommandot /myroomnick"
     },
     "commandHint_op": "Ställ in den givna användarens effektnivå (standard: 50)",
     "@commandHint_op": {
       "type": "text",
-      "description": ""Användningstips för kommandot /op"
+      "description": "Användningstips för kommandot /op"
     },
     "commandHint_plain": "Skicka oformaterad text",
     "@commandHint_plain": {
       "type": "text",
-      "description": ""Användningstips för kommandot /plain"
+      "description": "Användningstips för kommandot /plain"
     },
     "commandHint_react": "Skicka svar som en reaktion",
     "@commandHint_react": {
       "type": "text",
-      "description": ""Användningstips för kommandot /react"
+      "description": "Användningstips för kommandot /react"
     },
     "commandHint_send": "Skicka text",
     "@commandHint_send": {
       "type": "text",
-      "description": ""Användningstips för kommandot /send"
+      "description": "Användningstips för kommandot /send"
     },
     "commandHint_unban": "Avblockera den givna användaren från det här rummet",
     "@commandHint_unban": {
       "type": "text",
-      "description": ""Användningstips för kommandot /unban"
+      "description": "Användningstips för kommandot /unban"
     },
     "commandInvalid": "Kommandot är ogiltigt",
     "@commandInvalid": {
