@@ -2762,7 +2762,7 @@
     "discoverHomeservers": "Upptäck hemmaservrar",
     "whatIsAHomeserver": "Vad är en hemmaserver?",
     "homeserverDescription": "All din data lagras på hemmaservern, precis som en e-postleverantör. Du kan välja vilken hemmaserver du vill använda, samtidigt som du fortfarande kan kommunicera med alla. Läs mer på https://matrix.org.",
-    "doesNotSeemToBeAValidHomeserver": "Verkar inte vara en kompatibel hemmaserver. Fel URL?,
+    "doesNotSeemToBeAValidHomeserver": "Verkar inte vara en kompatibel hemmaserver. Fel URL?",
     "calculatingFileSize": "Beräknar filstorlek...",
     "prepareSendingAttachment": "Förbereder att skicka bilaga...",
     "sendingAttachment": "Skickar bilaga...",
