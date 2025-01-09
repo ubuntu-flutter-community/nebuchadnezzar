@@ -2092,7 +2092,7 @@
       "type": "text",
       "placeholders": {}
     },
-    "weSentYouAnEmail": Vi har skickat ett e-postmeddelande till dig",
+    "weSentYouAnEmail": "Vi har skickat ett e-postmeddelande till dig",
     "@weSentYouAnEmail": {
       "type": "text",
       "placeholders": {}
