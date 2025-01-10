@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Nebuchadnezzar
+Comment=Matrix Client
+Exec=nebuchadnezzar %U
+Icon=${SNAP}/meta/gui/nebuchadnezzar.png
+Terminal=false
+Categories=Network;InstantMessaging;Chat;
+StartupWMClass=nebuchadnezzar
