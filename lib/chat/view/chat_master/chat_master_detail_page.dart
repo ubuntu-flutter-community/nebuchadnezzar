@@ -8,6 +8,7 @@ import '../../../common/view/common_widgets.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../bootstrap/bootstrap_model.dart';
 import '../../bootstrap/view/bootstrap_page.dart';
+import '../../bootstrap/view/key_verification_dialog.dart';
 import '../../chat_model.dart';
 import '../chat_room/chat_room_page.dart';
 import '../no_selected_room_page.dart';
@@ -49,6 +50,19 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    registerStreamHandler(
+      select: (ChatModel m) => m.onKeyVerificationRequest,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasData) {
+          showDialog(
+            context: context,
+            builder: (context) =>
+                KeyVerificationDialog(request: newValue.data!),
+          );
+        }
+      },
+    );
+
     final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
     final isArchivedRoom =
         watchPropertyValue((ChatModel m) => m.selectedRoom?.isArchived == true);

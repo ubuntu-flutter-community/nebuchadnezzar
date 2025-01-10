@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../../common/view/build_context_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../view/chat_avatar.dart';
 
@@ -21,10 +21,14 @@ class KeyVerificationDialog extends StatefulWidget {
       );
 
   final KeyVerification request;
+  final Function()? onCancel;
+  final Function()? onDone;
 
   const KeyVerificationDialog({
     super.key,
     required this.request,
+    this.onCancel,
+    this.onDone,
   });
 
   @override
@@ -95,7 +99,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final l10n = context.l10n;
 
     User? user;
@@ -321,7 +325,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
               l10n.close,
             ),
             onPressed: () {
-              Navigator.of(context, rootNavigator: false).pop();
+              widget.onDone?.call();
               if (context.mounted) {
                 Navigator.of(
                   context,
