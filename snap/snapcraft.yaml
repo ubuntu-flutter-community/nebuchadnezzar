@@ -1,0 +1,42 @@
+name: nebuchadnezzar
+base: core24
+version: git
+summary: Matrix Client
+description: |
+  Matrix Client
+grade: stable
+confinement: strict
+contact: https://github.com/ubuntu-flutter-community/nebuchadnezzar/issues
+issues: https://github.com/ubuntu-flutter-community/nebuchadnezzar/issues
+website: https://github.com/ubuntu-flutter-community/nebuchadnezzar
+license: GPL-3.0+
+icon: assets/nebuchadnezzar.png
+
+platforms:
+  amd64:
+  arm64:
+
+apps:
+  nebuchadnezzar:
+    command: nebuchadnezzar
+    extensions: [gnome]
+    plugs:
+      - home
+      - network
+
+parts:
+  nebuchadnezzar:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart
+    build-packages:
+      - git
+
+  deps:
+    plugin: nil
+    stage-packages:
+      - libsecret-1-0
+      - libjsoncpp25
+      - libolm3
+    prime:
+      - usr/lib/*/*.so*
