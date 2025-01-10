@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yaru/yaru.dart';
@@ -12,10 +14,12 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
   } else {
     await YaruWindowTitleBar.ensureInitialized();
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
+    if (Platform.isMacOS) {
+      windowManager.waitUntilReadyToShow(windowOptions, () async {
+        await windowManager.show();
+        await windowManager.focus();
+      });
+    }
   }
 
   registerDependencies();

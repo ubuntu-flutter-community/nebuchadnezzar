@@ -18,7 +18,10 @@ class BootstrapModel extends SafeChangeNotifier {
   final Client _client;
   final FlutterSecureStorage _secureStorage;
 
-  Future<bool> isBootrapNeeded() async {
+  Future<bool> isBootrapNeeded() async =>
+      _client.isUnknownSession && _client.encryption!.crossSigning.enabled;
+
+  Future<bool> isBootrapNeededFull() async {
     if (!_client.encryptionEnabled) return true;
     await _client.accountDataLoading;
     await _client.userDeviceKeysLoading;
