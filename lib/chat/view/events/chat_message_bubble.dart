@@ -136,91 +136,99 @@ class _ChatMessageBubbleContent extends StatelessWidget {
     final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      spacing: kSmallPadding,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(kSmallPadding),
-          child: hideAvatar || event.messageType == MessageTypes.BadEncrypted
-              ? const SizedBox.shrink()
-              : event.messageType == MessageTypes.Text
-                  ? ChatAvatar(
-                      avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
-                      onTap: () => showDialog(
-                        context: context,
-                        builder: (context) =>
-                            ChatProfileDialog(userId: event.senderId),
-                      ),
-                      fallBackColor: getMonochromeBg(
-                        theme: context.theme,
-                        factor: 10,
-                        darkFactor: yaru ? 1 : null,
-                      ),
-                    )
-                  : ChatMessageMediaAvatar(event: event),
-        ),
-        Flexible(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                height: kSmallPadding,
+    final hide = hideAvatar && event.messageType == MessageTypes.Text;
+
+    final Widget chatBubbleAvatar;
+    if (hide) {
+      chatBubbleAvatar = const SizedBox.shrink();
+    } else {
+      chatBubbleAvatar = event.messageType == MessageTypes.Text
+          ? ChatAvatar(
+              avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => ChatProfileDialog(userId: event.senderId),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      event.senderFromMemoryOrFallback.calcDisplayname(),
-                      style: textTheme.labelSmall,
-                    ),
-                  ),
-                  if (!event.redacted)
-                    Flexible(
-                      child: ChatMessageReplyHeader(
-                        event: event,
-                        timeline: timeline,
-                        onReplyOriginClick: onReplyOriginClick,
-                      ),
-                    ),
-                ],
+              fallBackColor: getMonochromeBg(
+                theme: context.theme,
+                factor: 10,
+                darkFactor: yaru ? 1 : null,
               ),
-              Opacity(
-                opacity: event.redacted ? 0.5 : 1,
-                child: event.redacted
-                    ? LocalizedDisplayEventText(
-                        displayEvent: displayEvent,
-                        style: messageStyle?.copyWith(
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                      )
-                    : event.isRichMessage
-                        ? HtmlMessage(
-                            html: html,
-                            room: timeline.room,
-                            defaultTextColor: context.colorScheme.onSurface,
-                          )
-                        : SelectableText.rich(
-                            TextSpan(
-                              style: messageStyle,
-                              text: displayEvent.body,
-                            ),
-                            style: messageStyle,
-                          ),
-              ),
-              const SizedBox(
-                height: kBigPadding,
-              ),
-            ],
+            )
+          : ChatMessageMediaAvatar(event: event);
+    }
+    return Material(
+      color: Colors.transparent,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        spacing: kSmallPadding,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(kSmallPadding),
+            child: chatBubbleAvatar,
           ),
-        ),
-        const SizedBox(
-          height: kSmallPadding,
-        ),
-      ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  height: kSmallPadding,
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        event.senderFromMemoryOrFallback.calcDisplayname(),
+                        style: textTheme.labelSmall,
+                      ),
+                    ),
+                    if (!event.redacted)
+                      Flexible(
+                        child: ChatMessageReplyHeader(
+                          event: event,
+                          timeline: timeline,
+                          onReplyOriginClick: onReplyOriginClick,
+                        ),
+                      ),
+                  ],
+                ),
+                Opacity(
+                  opacity: event.redacted ? 0.5 : 1,
+                  child: event.redacted
+                      ? LocalizedDisplayEventText(
+                          displayEvent: displayEvent,
+                          style: messageStyle?.copyWith(
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                        )
+                      : event.isRichMessage
+                          ? HtmlMessage(
+                              html: html,
+                              room: timeline.room,
+                              defaultTextColor: context.colorScheme.onSurface,
+                            )
+                          : SelectableText.rich(
+                              TextSpan(
+                                style: messageStyle,
+                                text: displayEvent.body,
+                              ),
+                              style: messageStyle,
+                            ),
+                ),
+                const SizedBox(
+                  height: kBigPadding,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: kSmallPadding,
+          ),
+        ],
+      ),
     );
   }
 }

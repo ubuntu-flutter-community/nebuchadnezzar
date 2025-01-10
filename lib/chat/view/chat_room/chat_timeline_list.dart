@@ -110,8 +110,8 @@ class _ChatTimelineListState extends State<ChatTimelineList> {
                       index: i,
                       controller: _controller,
                       key: ValueKey('${event.eventId}tag'),
-                      child: FadeTransition(
-                        opacity: animation,
+                      child: SizeTransition(
+                        sizeFactor: animation,
                         child: ChatEventColumn(
                           key: ValueKey('${event.eventId}column'),
                           event: event,
