@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
@@ -17,6 +18,8 @@ class ChatModel extends SafeChangeNotifier {
   bool isUserEvent(Event event) => myUserId == event.senderId;
   bool get isLogged => _client.isLogged();
   bool get encryptionEnabled => _client.encryptionEnabled;
+  Stream<KeyVerification> get onKeyVerificationRequest =>
+      _client.onKeyVerificationRequest.stream;
 
   // Room management
   /// The list of all rooms the user is participating or invited.

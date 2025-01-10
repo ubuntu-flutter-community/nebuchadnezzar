@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:matrix/matrix.dart';
 
+import '../common/logging.dart';
+
 class RemoteImageService {
   RemoteImageService({required Client client}) : _client = client;
   final Client _client;
@@ -19,16 +21,21 @@ class RemoteImageService {
     ThumbnailMethod? method = ThumbnailMethod.scale,
     bool? animated = false,
   }) async {
-    final albumArtUrl = put(
-      key: uri,
-      url: await uri.getThumbnailUri(
-        _client,
-        animated: animated,
-        height: height,
-        width: width,
-        method: method,
-      ),
-    );
+    Uri? albumArtUrl;
+    try {
+      albumArtUrl = put(
+        key: uri,
+        url: await uri.getThumbnailUri(
+          _client,
+          animated: animated,
+          height: height,
+          width: width,
+          method: method,
+        ),
+      );
+    } on Exception catch (_) {
+      printMessageInDebugMode('Could not find profile (anymore)');
+    }
     _propertiesChangedController.add(true);
 
     return albumArtUrl;
