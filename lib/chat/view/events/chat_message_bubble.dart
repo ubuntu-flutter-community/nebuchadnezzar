@@ -136,27 +136,6 @@ class _ChatMessageBubbleContent extends StatelessWidget {
     final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
 
-    final hide = hideAvatar && event.messageType == MessageTypes.Text;
-
-    final Widget chatBubbleAvatar;
-    if (hide) {
-      chatBubbleAvatar = const SizedBox.shrink();
-    } else {
-      chatBubbleAvatar = event.messageType == MessageTypes.Text
-          ? ChatAvatar(
-              avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
-              onTap: () => showDialog(
-                context: context,
-                builder: (context) => ChatProfileDialog(userId: event.senderId),
-              ),
-              fallBackColor: getMonochromeBg(
-                theme: context.theme,
-                factor: 10,
-                darkFactor: yaru ? 1 : null,
-              ),
-            )
-          : ChatMessageMediaAvatar(event: event);
-    }
     return Material(
       color: Colors.transparent,
       child: Row(
@@ -166,7 +145,11 @@ class _ChatMessageBubbleContent extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(kSmallPadding),
-            child: chatBubbleAvatar,
+            child: hideAvatar && event.messageType == MessageTypes.Text
+                ? const SizedBox.shrink()
+                : ChatMessageBubbleLeading(
+                    event: event,
+                  ),
           ),
           Flexible(
             child: Column(
@@ -228,6 +211,34 @@ class _ChatMessageBubbleContent extends StatelessWidget {
             height: kSmallPadding,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ChatMessageBubbleLeading extends StatelessWidget {
+  const ChatMessageBubbleLeading({super.key, required this.event});
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    if (event.messageType == MessageTypes.BadEncrypted) {
+      return const SizedBox.shrink();
+    } else if (event.messageType != MessageTypes.Text) {
+      return ChatMessageMediaAvatar(event: event);
+    }
+
+    return ChatAvatar(
+      avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => ChatProfileDialog(userId: event.senderId),
+      ),
+      fallBackColor: getMonochromeBg(
+        theme: context.theme,
+        factor: 10,
+        darkFactor: yaru ? 1 : null,
       ),
     );
   }
