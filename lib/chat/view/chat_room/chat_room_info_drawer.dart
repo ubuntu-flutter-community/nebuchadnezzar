@@ -42,56 +42,58 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
           children: [
             if (!room.isDirectChat)
               AppBar(
-                title: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: kMediumPadding,
-                  children: [
-                    ChatAvatar(
-                      avatarUri: room.avatar,
-                      fallBackIcon: YaruIcons.users,
-                    ),
-                    Flexible(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(room.getLocalizedDisplayname()),
-                          if (room.canonicalAlias.isNotEmpty)
-                            Text(
-                              room.canonicalAlias,
-                              style: textTheme.labelSmall,
-                            ),
-                          Text(
-                            room.isArchived
-                                ? l10n.archive
-                                : '(${room.summary.mJoinedMemberCount ?? 0} ${l10n.users})',
-                            style: textTheme.labelSmall,
-                          ),
-                        ],
+                leadingWidth: 80,
+                leading: Center(
+                  child: ChatAvatar(
+                    avatarUri: room.avatar,
+                    fallBackIcon: YaruIcons.users,
+                  ),
+                ),
+                title: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(room.getLocalizedDisplayname()),
+                      if (room.canonicalAlias.isNotEmpty)
+                        Text(
+                          room.canonicalAlias,
+                          style: textTheme.labelSmall,
+                          textAlign: TextAlign.center,
+                        ),
+                      Text(
+                        room.isArchived
+                            ? l10n.archive
+                            : '(${room.summary.mJoinedMemberCount ?? 0} ${l10n.users})',
+                        style: textTheme.labelSmall,
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 titleTextStyle:
                     textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
                 automaticallyImplyLeading: false,
                 actions: [
-                  if (!room.isArchived && room.canEditAtleastSomething)
-                    Flexible(
-                      key: ValueKey(room.canEditAtleastSomething),
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: kSmallPadding),
-                        child: IconButton(
-                          onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) =>
-                                ChatCreateOrEditRoomDialog(room: room),
-                          ),
-                          icon: const Icon(YaruIcons.pen),
-                        ),
+                  Flexible(
+                    key: ValueKey(room.canEditAtleastSomething),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        right: kBigPadding,
+                        left: kMediumPadding,
                       ),
-                    )
-                  else
-                    Container(),
+                      child: IconButton(
+                        onPressed: !room.isArchived &&
+                                room.canEditAtleastSomething
+                            ? () => showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      ChatCreateOrEditRoomDialog(room: room),
+                                )
+                            : null,
+                        icon: const Icon(YaruIcons.pen),
+                      ),
+                    ),
+                  ),
                 ],
                 toolbarHeight: 90,
                 elevation: 0,
@@ -136,7 +138,8 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
                           ),
                         ]
                       : [
-                          ChatRoomInfoDrawerTopic(room: room),
+                          if (room.topic.isNotEmpty)
+                            ChatRoomInfoDrawerTopic(room: room),
                           ChatRoomUsersList(room: room),
                         ],
                 ),

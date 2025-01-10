@@ -130,27 +130,28 @@ class _ChatTimelineListState extends State<ChatTimelineList> {
             ChatTypingIndicator(room: widget.room),
           ],
         ),
-        Positioned(
-          right: kBigPadding,
-          bottom: kBigPadding,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: EdgeInsets.only(
-              bottom: _showScrollButton ? 3 * kBigPadding : 0,
-            ),
-            child: FloatingActionButton.small(
-              backgroundColor: getMonochromeBg(theme: theme, darkFactor: 5),
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => ChatRoomSearchDialog(room: widget.room),
+        if (_showScrollButton)
+          Positioned(
+            right: kBigPadding,
+            bottom: kBigPadding,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: EdgeInsets.only(
+                bottom: _showScrollButton ? 3 * kBigPadding : 0,
               ),
-              child: Icon(
-                YaruIcons.search,
-                color: theme.colorScheme.onSurface,
+              child: FloatingActionButton.small(
+                backgroundColor: getMonochromeBg(theme: theme, darkFactor: 5),
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => ChatRoomSearchDialog(room: widget.room),
+                ),
+                child: Icon(
+                  YaruIcons.search,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
             ),
           ),
-        ),
         if (_showScrollButton)
           Positioned(
             right: kBigPadding,

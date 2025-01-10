@@ -28,8 +28,6 @@ class ChatRoomTitleBar extends StatelessWidget
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    final updating = watchPropertyValue((ChatModel m) => m.updatingTimeline);
-
     return YaruWindowTitleBar(
       heroTag: '<Right hero tag>',
       border: BorderSide.none,
@@ -52,16 +50,6 @@ class ChatRoomTitleBar extends StatelessWidget
       actions: space(
         widthGap: kSmallPadding,
         children: [
-          if (updating)
-            const Padding(
-              padding: EdgeInsets.only(right: kSmallPadding),
-              child: SizedBox.square(
-                dimension: 15,
-                child: Progress(
-                  strokeWidth: 2,
-                ),
-              ),
-            ),
           if (!room.isArchived) ChatRoomPinButton(room: room),
           IconButton(
             onPressed: () => chatRoomScaffoldKey.currentState?.openEndDrawer(),

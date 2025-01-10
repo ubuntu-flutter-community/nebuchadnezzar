@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
+import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
@@ -48,6 +50,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
     final loadingArchive =
         watchPropertyValue((ChatModel m) => m.loadingArchive);
+    final updating = watchPropertyValue((ChatModel m) => m.updatingTimeline);
 
     registerStreamHandler(
       select: (ChatModel m) => m.getLeftRoomStream(widget.room.id),
@@ -74,6 +77,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     );
 
     return Stack(
+      alignment: Alignment.center,
       children: [
         const ChatRoomDefaultBackground(),
         Scaffold(
@@ -108,6 +112,22 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             },
           ),
         ),
+        if (updating)
+          Positioned(
+            top: 3 * kBigPadding,
+            child: FloatingActionButton.small(
+              backgroundColor: context.colorScheme.isLight
+                  ? Colors.white
+                  : Colors.black.scale(lightness: 0.09),
+              onPressed: () {},
+              child: const SizedBox.square(
+                dimension: 20,
+                child: Progress(
+                  strokeWidth: 2,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
