@@ -11,7 +11,6 @@ import '../../chat_model.dart';
 import '../chat_avatar.dart';
 import '../chat_profile_dialog.dart';
 import 'chat_event_status_icon.dart';
-import 'chat_html_message.dart';
 import 'chat_message_attachment_indicator.dart';
 import 'chat_message_bubble_shape.dart';
 import 'chat_message_media_avatar.dart';
@@ -197,19 +196,13 @@ class _ChatMessageBubbleContent extends StatelessWidget {
                           decoration: TextDecoration.lineThrough,
                         ),
                       )
-                    : event.isRichMessage
-                        ? HtmlMessage(
-                            html: html,
-                            room: timeline.room,
-                            defaultTextColor: context.colorScheme.onSurface,
-                          )
-                        : SelectableText.rich(
-                            TextSpan(
-                              style: messageStyle,
-                              text: displayEvent.body,
-                            ),
-                            style: messageStyle,
-                          ),
+                    : SelectableText.rich(
+                        TextSpan(
+                          style: messageStyle,
+                          text: displayEvent.body,
+                        ),
+                        style: messageStyle,
+                      ),
               ),
               const SizedBox(
                 height: kBigPadding,

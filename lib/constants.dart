@@ -1,4 +1,4 @@
 const kAppName = 'nebuchadnezzar';
 const kOrgName = 'org.feichtmeier';
 const kAppId = '$kAppName.$kOrgName';
-const kAppTitle = 'Chat';
+const kAppTitle = 'Nebuchadnezzar';
