@@ -30,6 +30,20 @@ class SettingsModel extends SafeChangeNotifier {
     return _myProfile;
   }
 
+  String? get myDeviceId => _client.deviceID;
+  List<Device> _devices = [];
+  List<Device> get devices => _devices;
+  Future<void> getDevices() async {
+    _devices = await _client.getDevices() ?? [];
+    notifyListeners();
+  }
+
+  // TODO: authenticate for some devices
+  Future<void> deleteDevice(String id) async {
+    await _client.deleteDevice(id);
+    await getDevices();
+  }
+
   bool _attachingAvatar = false;
   bool get attachingAvatar => _attachingAvatar;
   void setAttachingAvatar(bool value) {

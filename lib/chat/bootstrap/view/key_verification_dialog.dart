@@ -24,10 +24,12 @@ class KeyVerificationDialog extends StatefulWidget {
       );
 
   final KeyVerification request;
+  final bool verifyOther;
 
   const KeyVerificationDialog({
     super.key,
     required this.request,
+    this.verifyOther = false,
   });
 
   @override
@@ -329,12 +331,16 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
                   context,
                   rootNavigator: false,
                 ).pop();
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => const ChatMasterDetailPage(),
-                  ),
-                  (route) => false,
-                );
+                if (!widget.verifyOther) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (_) => const ChatMasterDetailPage(
+                        checkBootstrap: false,
+                      ),
+                    ),
+                    (route) => false,
+                  );
+                }
               }
             },
           ),

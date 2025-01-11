@@ -79,7 +79,7 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
                   minLines: 2,
                   maxLines: 4,
                   readOnly: true,
-                  style: const TextStyle(fontFamily: 'RobotoMono'),
+                  style: const TextStyle(fontFamily: 'UbuntuMono'),
                   controller: TextEditingController(text: key),
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(16),
@@ -292,7 +292,7 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
                   readOnly: recoveryKeyInputLoading,
                   autofillHints:
                       recoveryKeyInputLoading ? null : [AutofillHints.password],
-                  style: const TextStyle(fontFamily: 'RobotoMono'),
+                  style: const TextStyle(fontFamily: 'UbuntuMono'),
                   decoration: InputDecoration(
                     prefixIcon: const Icon(YaruIcons.key),
                     labelText: l10n.recoveryKey,

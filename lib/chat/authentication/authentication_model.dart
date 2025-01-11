@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
+import '../../constants.dart';
 
 class AuthenticationModel extends SafeChangeNotifier {
   AuthenticationModel({required Client client}) : _client = client;
@@ -38,6 +41,7 @@ class AuthenticationModel extends SafeChangeNotifier {
         LoginType.mLoginPassword,
         password: password,
         identifier: AuthenticationUserIdentifier(user: username),
+        initialDeviceDisplayName: '$kAppTitle ${Platform.operatingSystem}',
       );
       await _client.firstSyncReceived;
       await _client.roomsLoading;

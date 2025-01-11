@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/date_time_x.dart';
+import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -26,10 +28,12 @@ class _SettingsDialogState extends State<SettingsDialog> {
     super.initState();
     _displayNameController = TextEditingController();
     _idController = TextEditingController(text: di<ChatModel>().myUserId);
-    di<SettingsModel>().getMyProfile().then((v) {
-      _displayNameController.text = v?.displayName ?? '';
-      _idController.text = v?.userId ?? '';
-    });
+    di<SettingsModel>()
+      ..getMyProfile().then((v) {
+        _displayNameController.text = v?.displayName ?? '';
+        _idController.text = v?.userId ?? '';
+      })
+      ..getDevices();
   }
 
   @override
@@ -42,6 +46,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final settingsModel = di<SettingsModel>();
     watchFuture(
       (SettingsModel m) => m.getMyProfile(),
       initialValue: di<SettingsModel>().myProfile,
@@ -52,6 +57,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
       initialValue: di<SettingsModel>().myProfile,
       preserveState: false,
     ).data;
+
+    final devices = watchPropertyValue((SettingsModel m) => m.devices);
 
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
@@ -113,6 +120,33 @@ class _SettingsDialogState extends State<SettingsDialog> {
                     trailing: const LogoutButton(),
                   ),
                 ],
+              ),
+            ),
+            YaruSection(
+              headline: Text(l10n.devices),
+              child: Column(
+                children: devices
+                    .map(
+                      (d) => YaruTile(
+                        trailing: d.deviceId != settingsModel.myDeviceId
+                            ? IconButton(
+                                onPressed: () =>
+                                    settingsModel.deleteDevice(d.deviceId),
+                                icon: Icon(
+                                  YaruIcons.trash,
+                                  color: context.colorScheme.error,
+                                ),
+                              )
+                            : null,
+                        subtitle: Text(
+                          DateTime.fromMillisecondsSinceEpoch(
+                            d.lastSeenTs ?? 0,
+                          ).formatAndLocalize(l10n, simple: true),
+                        ),
+                        title: SelectableText(d.displayName ?? d.deviceId),
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],

@@ -877,8 +877,8 @@
       "type": "text",
       "placeholders": {}
     },
-    "fluffychat": "FluffyChat",
-    "@fluffychat": {
+    "nebuchadnezzar": "Nebuchadnezzar",
+    "@nebuchadnezzar": {
       "type": "text",
       "placeholders": {}
     },
@@ -1052,7 +1052,7 @@
       "type": "text",
       "placeholders": {}
     },
-    "inviteText": "{username} bjöd in dig till FluffyChat.\n1. Besök fluffychat.im och installera appen\n2. Registrera dig eller logga in \n3. Öppna inbjudningslänken: \n {link}",
+    "inviteText": "{username} bjöd in dig till Nebuchadnezzar.\n1. Besök https://snapcraft.io/nebuchadnezzar och installera appen\n2. Registrera dig eller logga in \n3. Öppna inbjudningslänken: \n {link}",
     "@inviteText": {
       "type": "text",
       "placeholders": {
@@ -1220,8 +1220,8 @@
       "type": "text",
       "placeholders": {}
     },
-    "newMessageInFluffyChat": "💬 Nytt meddelande i FluffyChat",
-    "@newMessageInFluffyChat": {
+    "newMessageInNebuchadnezzar": "💬 Nytt meddelande i Nebuchadnezzar",
+    "@newMessageInNebuchadnezzar": {
       "type": "text",
       "placeholders": {}
     },
@@ -1884,7 +1884,7 @@
       "type": "text",
       "placeholders": {}
     },
-    "title": "FluffyChat",
+    "title": "Nebuchadnezzar",
     "@title": {
       "description": "Titel för applikation",
       "type": "text",
@@ -2217,7 +2217,7 @@
     "@emailOrUsername": {},
     "indexedDbErrorTitle": "Problem med privat läge",
     "@indexedDbErrorTitle": {},
-    "indexedDbErrorLong": "Meddelandelagringen är tyvärr inte aktiverad i privat läge som standard.\nPVänligen besök\n - about:config\n - ställ in dom.indexedDB.privateBrowsing.enabled till sant\nAnnars går det inte att köra FluffyChat.",
+    "indexedDbErrorLong": "Meddelandelagringen är tyvärr inte aktiverad i privat läge som standard.\nPVänligen besök\n - about:config\n - ställ in dom.indexedDB.privateBrowsing.enabled till sant\nAnnars går det inte att köra Nebuchadnezzar.",
     "@indexedDbErrorLong": {},
     "switchToAccount": "Ändra till konto {number}",
     "@switchToAccount": {
@@ -2356,19 +2356,19 @@
     "@foregroundServiceRunning": {},
     "screenSharingTitle": "Skärmdelning",
     "@screenSharingTitle": {},
-    "screenSharingDetail": "Du delar din skärm i FluffyChat",
+    "screenSharingDetail": "Du delar din skärm i Nebuchadnezzar",
     "@screenSharingDetail": {},
     "callingPermissions": "Ringbehörigheter",
     "@callingPermissions": {},
     "callingAccount": "Ringer konto",
     "@callingAccount": {},
-    "callingAccountDetails": "Tillåter FluffyChat att använda den ursprungliga uppringningsappen för Android.",
+    "callingAccountDetails": "Tillåter Nebuchadnezzar att använda den ursprungliga uppringningsappen för Android.",
     "@callingAccountDetails": {},
     "appearOnTop": "Visas överst",
     "@appearOnTop": {},
     "appearOnTopDetails": "Tillåter att appen visas överst (behövs inte om du redan har konfigurerat Fluffychat som ett samtalskonto)",
     "@appearOnTopDetails": {},
-    "otherCallingPermissions": "Mikrofon, kamera och andra FluffyChat-behörigheter",
+    "otherCallingPermissions": "Mikrofon, kamera och andra Nebuchadnezzar-behörigheter",
     "@otherCallingPermissions": {},
     "whyIsThisMessageEncrypted": "Varför är detta meddelande oläsbart?",
     "@whyIsThisMessageEncrypted": {},

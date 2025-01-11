@@ -26,10 +26,10 @@ class TimelineModel extends SafeChangeNotifier {
       return;
     }
     await timeline.requestHistory(filter: filter, historyCount: historyCount);
-    await timeline.setReadMarker();
     if (notify) {
       setUpdatingTimeline(false);
     }
+    await timeline.setReadMarker();
   }
 
   bool _timelineSearchActive = false;

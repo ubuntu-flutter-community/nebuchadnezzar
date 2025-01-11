@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 import '../l10n/l10n.dart';
 
 extension DateTimeX on DateTime {
-  String formatAndLocalize(AppLocalizations l10n) {
+  String formatAndLocalize(AppLocalizations l10n, {bool simple = false}) {
     final now = DateTime.now();
     final locale = WidgetsBinding.instance.platformDispatcher.locale;
 
-    if (year == now.year && month == now.month) {
+    if (!simple && year == now.year && month == now.month) {
       if (day == now.day - 1) {
         return '${l10n.yesterday}, ${DateFormat.Hm(
           locale.countryCode,

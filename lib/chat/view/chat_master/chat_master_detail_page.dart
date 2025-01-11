@@ -18,7 +18,12 @@ final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
 class ChatMasterDetailPage extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const ChatMasterDetailPage({super.key});
+  const ChatMasterDetailPage({
+    super.key,
+    this.checkBootstrap = true,
+  });
+
+  final bool checkBootstrap;
 
   @override
   State<ChatMasterDetailPage> createState() => _ChatMasterDetailPageState();
@@ -28,25 +33,27 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final bootstrapModel = di<BootstrapModel>();
-      bootstrapModel.checkBootstrap().then((isNeeded) {
-        if (isNeeded) {
-          bootstrapModel.startBootstrap(wipe: false).then(
-            (_) {
-              if (mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => const BootstrapPage(),
-                  ),
-                  (route) => false,
-                );
-              }
-            },
-          );
-        }
+    if (widget.checkBootstrap) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final bootstrapModel = di<BootstrapModel>();
+        bootstrapModel.checkBootstrap().then((isNeeded) {
+          if (isNeeded) {
+            bootstrapModel.startBootstrap(wipe: false).then(
+              (_) {
+                if (mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (_) => const BootstrapPage(),
+                    ),
+                    (route) => false,
+                  );
+                }
+              },
+            );
+          }
+        });
       });
-    });
+    }
   }
 
   @override
@@ -55,11 +62,10 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
       select: (ChatModel m) => m.onKeyVerificationRequest,
       handler: (context, newValue, cancel) {
         if (newValue.hasData) {
-          showDialog(
-            context: context,
-            builder: (context) =>
-                KeyVerificationDialog(request: newValue.data!),
-          );
+          KeyVerificationDialog(
+            request: newValue.data!,
+            verifyOther: true,
+          ).show(context);
         }
       },
     );
