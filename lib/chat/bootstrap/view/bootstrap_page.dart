@@ -233,12 +233,7 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
 
 class OpenExistingSSSSPage extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const OpenExistingSSSSPage({
-    super.key,
-    this.dialog = false,
-  });
-
-  final bool dialog;
+  const OpenExistingSSSSPage({super.key});
 
   @override
   State<OpenExistingSSSSPage> createState() => _OpenExistingSSSSPageState();
