@@ -6,8 +6,8 @@ import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:video_compress/video_compress.dart';
+import 'package:yaru/yaru.dart';
 
-import '../app_config.dart';
 import '../common/logging.dart';
 import 'local_image_service.dart';
 
@@ -79,11 +79,12 @@ class DraftModel extends SafeChangeNotifier {
       }
     }
 
-    final draft = '${getDraft(room.id)}';
-    removeDraft(room.id);
-    if (draft.isNotEmpty) {
+    if (getDraft(room.id)?.isNotEmpty == true) {
+      final draft = '${getDraft(room.id)}';
+      removeDraft(room.id);
+      String? eventId;
       try {
-        await room.sendTextEvent(
+        eventId = await room.sendTextEvent(
           draft.trim(),
           inReplyTo: replyEvent,
           editEventId: _editEvents[room.id]?.eventId,
@@ -91,6 +92,9 @@ class DraftModel extends SafeChangeNotifier {
       } on Exception catch (e, s) {
         onFail(e.toString());
         printMessageInDebugMode(e, s);
+      }
+      if (eventId == null) {
+        setDraft(roomId: room.id, draft: draft, notify: true);
       }
     }
 
@@ -237,7 +241,7 @@ class DraftModel extends SafeChangeNotifier {
   Future<MatrixVideoFile> resizeVideo(XFile xFile) async {
     MediaInfo? mediaInfo;
     try {
-      if (isMobilePlatform) {
+      if (isMobile) {
         // will throw an error e.g. on Android SDK < 18
         mediaInfo = await VideoCompress.compressVideo(xFile.path);
       }
@@ -258,7 +262,7 @@ class DraftModel extends SafeChangeNotifier {
   // final Map<MatrixVideoFile, XFile> _fileMap = {};
 
   Future<MatrixImageFile?> getVideoThumbnail(XFile xFile) async {
-    if (!isMobilePlatform) return null;
+    if (!isMobile) return null;
 
     try {
       final bytes = await VideoCompress.getByteThumbnail(xFile.path);

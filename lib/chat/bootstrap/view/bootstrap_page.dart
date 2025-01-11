@@ -13,13 +13,27 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../view/chat_master/chat_master_detail_page.dart';
 import '../bootstrap_model.dart';
 import 'key_verification_dialog.dart';
 
-class BootstrapPage extends StatelessWidget with WatchItMixin {
-  const BootstrapPage({
-    super.key,
-  });
+class BootstrapPage extends StatefulWidget with WatchItStatefulWidgetMixin {
+  const BootstrapPage({super.key, this.dialog = false});
+
+  final bool dialog;
+
+  @override
+  State<BootstrapPage> createState() => _BootstrapPageState();
+}
+
+class _BootstrapPageState extends State<BootstrapPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) => di<BootstrapModel>().startBootstrap(wipe: false),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +60,9 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
 
     if (key != null && recoveryKeyStored == false) {
       return Scaffold(
-        appBar: AppBar(
+        appBar: YaruWindowTitleBar(
+          border: BorderSide.none,
+          backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(YaruIcons.window_close),
@@ -87,15 +103,14 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (model.supportsSecureStorage)
-                  YaruCheckboxListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    value: storeInSecureStorage,
-                    onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
-                    title:
-                        Text(model.getSecureStorageLocalizedName(context.l10n)),
-                    subtitle: Text(l10n.storeInSecureStorageDescription),
-                  ),
+                YaruCheckboxListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  value: storeInSecureStorage,
+                  onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
+                  title:
+                      Text(model.getSecureStorageLocalizedName(context.l10n)),
+                  subtitle: Text(l10n.storeInSecureStorageDescription),
+                ),
                 const SizedBox(height: 16),
                 YaruCheckboxListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -213,8 +228,10 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
     }
 
     return Scaffold(
-      appBar: YaruDialogTitleBar(
+      appBar: YaruWindowTitleBar(
         title: Text(titleText),
+        border: BorderSide.none,
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: Column(
@@ -230,37 +247,14 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
   }
 }
 
-Future<T?> showAdaptiveBottomSheet<T>({
-  required BuildContext context,
-  required Widget Function(BuildContext) builder,
-  bool isDismissible = true,
-  bool isScrollControlled = true,
-  double maxHeight = 512,
-  bool useRootNavigator = true,
-}) =>
-    showModalBottomSheet(
-      context: context,
-      builder: builder,
-      // this sadly is ugly on desktops but otherwise breaks `.of(context)` calls
-      useRootNavigator: useRootNavigator,
-      isDismissible: isDismissible,
-      isScrollControlled: isScrollControlled,
-      constraints: BoxConstraints(
-        maxHeight: maxHeight,
-        maxWidth: 400,
-      ),
-      clipBehavior: Clip.hardEdge,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
-      ),
-    );
-
 class OpenExistingSSSSPage extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const OpenExistingSSSSPage({super.key});
+  const OpenExistingSSSSPage({
+    super.key,
+    this.dialog = false,
+  });
+
+  final bool dialog;
 
   @override
   State<OpenExistingSSSSPage> createState() => _OpenExistingSSSSPageState();
@@ -289,6 +283,10 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
         watchPropertyValue((BootstrapModel m) => m.recoveryKeyInputError);
 
     return Scaffold(
+      appBar: const YaruWindowTitleBar(
+        border: BorderSide.none,
+        backgroundColor: Colors.transparent,
+      ),
       body: Center(
         child: SizedBox(
           width: 400,
@@ -417,6 +415,16 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
                               await KeyVerificationDialog(
                                 request: req.result!,
                               ).show(context);
+                              if (bootstrap?.state == BootstrapState.done &&
+                                  context.mounted) {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const ChatMasterDetailPage(),
+                                  ),
+                                  (route) => false,
+                                );
+                              }
                             }
                           }
                         },

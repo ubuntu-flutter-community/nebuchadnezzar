@@ -86,11 +86,16 @@ void registerDependencies() => di
     dispose: (s) => s.dispose(),
     dependsOn: [ChatDownloadService],
   )
-  ..registerSingletonWithDependencies<BootstrapModel>(
-    () => BootstrapModel(
-      client: di<Client>(),
-      secureStorage: di<FlutterSecureStorage>(),
-    ),
+  ..registerSingletonAsync<BootstrapModel>(
+    () async {
+      final bootstrapModel = BootstrapModel(
+        client: di<Client>(),
+        secureStorage: di<FlutterSecureStorage>(),
+      );
+      await bootstrapModel.checkBootstrap();
+
+      return bootstrapModel;
+    },
     dispose: (s) => s.dispose(),
     dependsOn: [Client],
   )
@@ -131,32 +136,24 @@ extension _ClientX on Client {
     }
     final client = Client(
       kAppId,
-      nativeImplementations: kIsWeb
-          ? const NativeImplementationsDummy()
-          : NativeImplementationsIsolate(compute),
+      nativeImplementations: NativeImplementationsIsolate(compute),
       verificationMethods: {
         KeyVerificationMethod.numbers,
-        if (kIsWeb || Platform.isAndroid || Platform.isIOS || Platform.isLinux)
-          KeyVerificationMethod.emoji,
+        if (Platform.isAndroid || Platform.isLinux) KeyVerificationMethod.emoji,
       },
-      databaseBuilder: kIsWeb
-          ? null
-          : (_) async {
-              final dir = await getApplicationSupportDirectory();
-              final db = MatrixSdkDatabase(
-                kAppId,
-                database: await sqlite
-                    .openDatabase(p.join(dir.path, 'database.sqlite')),
-              );
-              await db.open();
-              return db;
-            },
+      databaseBuilder: (_) async {
+        final dir = await getApplicationSupportDirectory();
+        final db = MatrixSdkDatabase(
+          kAppId,
+          database:
+              await sqlite.openDatabase(p.join(dir.path, 'database.sqlite')),
+        );
+        await db.open();
+        return db;
+      },
     );
     // This reads potential credentials that might exist from previous sessions.
-    await client.init(waitForFirstSync: client.isLogged());
-    await client.firstSyncReceived;
-    await client.roomsLoading;
-
+    await client.init();
     return client;
   }
 }
