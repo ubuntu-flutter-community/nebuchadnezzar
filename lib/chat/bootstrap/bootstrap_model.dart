@@ -106,8 +106,6 @@ class BootstrapModel extends SafeChangeNotifier {
   bool _wipe = false;
   bool get wipe => _wipe;
   Future<void> startBootstrap({required bool wipe}) async {
-    _bootstrap = null;
-    notifyListeners();
     _wipe = wipe;
     _recoveryKeyStored = false;
     _bootstrap =
