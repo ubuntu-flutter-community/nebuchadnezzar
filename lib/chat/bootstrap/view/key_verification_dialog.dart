@@ -12,6 +12,7 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../view/chat_avatar.dart';
+import '../../view/chat_master/chat_master_detail_page.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan
@@ -328,6 +329,12 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
                   context,
                   rootNavigator: false,
                 ).pop();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const ChatMasterDetailPage(),
+                  ),
+                  (route) => false,
+                );
               }
             },
           ),

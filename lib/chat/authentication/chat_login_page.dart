@@ -50,7 +50,7 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
               homeServer: _homeServerController.text.trim(),
               username: _usernameController.text,
               password: _passwordController.text,
-              onSuccess: () async => Navigator.of(context).pushAndRemoveUntil(
+              onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (_) => const ChatMasterDetailPage(),
                 ),

@@ -17,29 +17,25 @@ class BootstrapModel extends SafeChangeNotifier {
   final Client _client;
   final FlutterSecureStorage _secureStorage;
 
-  bool _isBootstrapNeeded = true;
-  bool get isBootstrapNeeded => _isBootstrapNeeded;
-  Future<void> checkBootstrap() async {
+  Future<bool> checkBootstrap() async {
     if (!_client.encryptionEnabled) {
-      _isBootstrapNeeded = true;
-    } else {
-      await _client.accountDataLoading;
-      await _client.userDeviceKeysLoading;
-      if (_client.prevBatch == null) {
-        await _client.onSync.stream.first;
-      }
-      final crossSigning =
-          await _client.encryption?.crossSigning.isCached() ?? false;
-      final needsBootstrap =
-          await _client.encryption?.keyManager.isCached() == false ||
-              _client.encryption?.crossSigning.enabled == false ||
-              crossSigning == false;
-      final isUnknownSession = _client.isUnknownSession;
-
-      _isBootstrapNeeded = needsBootstrap || isUnknownSession;
+      return true;
     }
 
-    notifyListeners();
+    await _client.accountDataLoading;
+    await _client.userDeviceKeysLoading;
+    if (_client.prevBatch == null) {
+      await _client.onSync.stream.first;
+    }
+    final crossSigning =
+        await _client.encryption?.crossSigning.isCached() ?? false;
+    final needsBootstrap =
+        await _client.encryption?.keyManager.isCached() == false ||
+            _client.encryption?.crossSigning.enabled == false ||
+            crossSigning == false;
+    final isUnknownSession = _client.isUnknownSession;
+
+    return needsBootstrap || isUnknownSession;
   }
 
   String get secureStorageKey => 'ssss_recovery_key_${_client.userID}';
@@ -104,7 +100,6 @@ class BootstrapModel extends SafeChangeNotifier {
   void _setBootsTrap(Bootstrap bootstrap) {
     _bootstrap = bootstrap;
     _key = bootstrap.newSsssKey?.recoveryKey;
-    _isBootstrapNeeded = bootstrap.state != BootstrapState.done;
     notifyListeners();
   }
 

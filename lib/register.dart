@@ -86,16 +86,11 @@ void registerDependencies() => di
     dispose: (s) => s.dispose(),
     dependsOn: [ChatDownloadService],
   )
-  ..registerSingletonAsync<BootstrapModel>(
-    () async {
-      final bootstrapModel = BootstrapModel(
-        client: di<Client>(),
-        secureStorage: di<FlutterSecureStorage>(),
-      );
-      await bootstrapModel.checkBootstrap();
-
-      return bootstrapModel;
-    },
+  ..registerSingletonWithDependencies<BootstrapModel>(
+    () => BootstrapModel(
+      client: di<Client>(),
+      secureStorage: di<FlutterSecureStorage>(),
+    ),
     dispose: (s) => s.dispose(),
     dependsOn: [Client],
   )

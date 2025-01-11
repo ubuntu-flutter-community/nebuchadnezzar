@@ -16,22 +16,45 @@ import 'chat_master_panel.dart';
 
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
-class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
+class ChatMasterDetailPage extends StatefulWidget
+    with WatchItStatefulWidgetMixin {
   const ChatMasterDetailPage({super.key});
 
   @override
+  State<ChatMasterDetailPage> createState() => _ChatMasterDetailPageState();
+}
+
+class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bootstrapModel = di<BootstrapModel>();
+      bootstrapModel.checkBootstrap().then((isNeeded) {
+        if (isNeeded) {
+          bootstrapModel.startBootstrap(wipe: false).then(
+            (_) {
+              if (mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const BootstrapPage(),
+                  ),
+                  (route) => false,
+                );
+              }
+            },
+          );
+        }
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isBootstrapNeeded =
-        watchPropertyValue((BootstrapModel m) => m.isBootstrapNeeded);
-
-    if (isBootstrapNeeded) {
-      return const BootstrapPage();
-    }
-
     registerStreamHandler(
       select: (ChatModel m) => m.onKeyVerificationRequest,
       handler: (context, newValue, cancel) {
-        if (!isBootstrapNeeded && newValue.hasData) {
+        if (newValue.hasData) {
           showDialog(
             context: context,
             builder: (context) =>

@@ -13,27 +13,11 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../view/chat_master/chat_master_detail_page.dart';
 import '../bootstrap_model.dart';
 import 'key_verification_dialog.dart';
 
-class BootstrapPage extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const BootstrapPage({super.key, this.dialog = false});
-
-  final bool dialog;
-
-  @override
-  State<BootstrapPage> createState() => _BootstrapPageState();
-}
-
-class _BootstrapPageState extends State<BootstrapPage> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) => di<BootstrapModel>().startBootstrap(wipe: false),
-    );
-  }
+class BootstrapPage extends StatelessWidget with WatchItMixin {
+  const BootstrapPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -415,16 +399,6 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
                               await KeyVerificationDialog(
                                 request: req.result!,
                               ).show(context);
-                              if (bootstrap?.state == BootstrapState.done &&
-                                  context.mounted) {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        const ChatMasterDetailPage(),
-                                  ),
-                                  (route) => false,
-                                );
-                              }
                             }
                           }
                         },
