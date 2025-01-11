@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
@@ -18,11 +17,11 @@ class BootstrapModel extends SafeChangeNotifier {
   final Client _client;
   final FlutterSecureStorage _secureStorage;
 
-  Future<bool> isBootrapNeeded() async =>
-      _client.isUnknownSession && _client.encryption!.crossSigning.enabled;
+  Future<bool> checkBootstrap() async {
+    if (!_client.encryptionEnabled) {
+      return true;
+    }
 
-  Future<bool> isBootrapNeededFull() async {
-    if (!_client.encryptionEnabled) return true;
     await _client.accountDataLoading;
     await _client.userDeviceKeysLoading;
     if (_client.prevBatch == null) {
@@ -112,12 +111,10 @@ class BootstrapModel extends SafeChangeNotifier {
     _bootstrap =
         _client.encryption?.bootstrap(onUpdate: (v) => _setBootsTrap(v));
     final theKey = await _loadKeyFromSecureStorage();
-    if (key == null) {
-      notifyListeners();
-      return;
+    if (key != null) {
+      _key = theKey;
     }
 
-    _key = theKey;
     notifyListeners();
   }
 
@@ -130,8 +127,6 @@ class BootstrapModel extends SafeChangeNotifier {
       return Future<KeyVerification>.error('Unknown userID');
     }
   }
-
-  bool get supportsSecureStorage => !kIsWeb;
 
   String getSecureStorageLocalizedName(AppLocalizations l10n) {
     if (Platform.isAndroid) {

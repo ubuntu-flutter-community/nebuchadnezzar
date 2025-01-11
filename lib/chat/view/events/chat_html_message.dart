@@ -15,8 +15,7 @@ import '../../../common/view/confirm.dart';
 import '../../../l10n/l10n.dart';
 import '../mxc_image.dart';
 
-// Credit: this code has been copied and from https://github.com/krille-chan/fluffychat
-// and then modified
+// Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan
 class HtmlMessage extends StatelessWidget {
   final String html;

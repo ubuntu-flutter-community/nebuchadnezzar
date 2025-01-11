@@ -17,9 +17,7 @@ import '../bootstrap_model.dart';
 import 'key_verification_dialog.dart';
 
 class BootstrapPage extends StatelessWidget with WatchItMixin {
-  const BootstrapPage({
-    super.key,
-  });
+  const BootstrapPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +44,9 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
 
     if (key != null && recoveryKeyStored == false) {
       return Scaffold(
-        appBar: AppBar(
+        appBar: YaruWindowTitleBar(
+          border: BorderSide.none,
+          backgroundColor: Colors.transparent,
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(YaruIcons.window_close),
@@ -87,15 +87,14 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
                   ),
                 ),
                 const SizedBox(height: 16),
-                if (model.supportsSecureStorage)
-                  YaruCheckboxListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    value: storeInSecureStorage,
-                    onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
-                    title:
-                        Text(model.getSecureStorageLocalizedName(context.l10n)),
-                    subtitle: Text(l10n.storeInSecureStorageDescription),
-                  ),
+                YaruCheckboxListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  value: storeInSecureStorage,
+                  onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
+                  title:
+                      Text(model.getSecureStorageLocalizedName(context.l10n)),
+                  subtitle: Text(l10n.storeInSecureStorageDescription),
+                ),
                 const SizedBox(height: 16),
                 YaruCheckboxListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -213,8 +212,10 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
     }
 
     return Scaffold(
-      appBar: YaruDialogTitleBar(
+      appBar: YaruWindowTitleBar(
         title: Text(titleText),
+        border: BorderSide.none,
+        backgroundColor: Colors.transparent,
       ),
       body: Center(
         child: Column(
@@ -229,34 +230,6 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
     );
   }
 }
-
-Future<T?> showAdaptiveBottomSheet<T>({
-  required BuildContext context,
-  required Widget Function(BuildContext) builder,
-  bool isDismissible = true,
-  bool isScrollControlled = true,
-  double maxHeight = 512,
-  bool useRootNavigator = true,
-}) =>
-    showModalBottomSheet(
-      context: context,
-      builder: builder,
-      // this sadly is ugly on desktops but otherwise breaks `.of(context)` calls
-      useRootNavigator: useRootNavigator,
-      isDismissible: isDismissible,
-      isScrollControlled: isScrollControlled,
-      constraints: BoxConstraints(
-        maxHeight: maxHeight,
-        maxWidth: 400,
-      ),
-      clipBehavior: Clip.hardEdge,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
-      ),
-    );
 
 class OpenExistingSSSSPage extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -289,6 +262,10 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
         watchPropertyValue((BootstrapModel m) => m.recoveryKeyInputError);
 
     return Scaffold(
+      appBar: const YaruWindowTitleBar(
+        border: BorderSide.none,
+        backgroundColor: Colors.transparent,
+      ),
       body: Center(
         child: SizedBox(
           width: 400,

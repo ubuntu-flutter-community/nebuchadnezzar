@@ -16,6 +16,8 @@ import '../../chat_model.dart';
 import '../chat_avatar.dart';
 import '../mxc_image.dart';
 
+// Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
+// Thank you @krille-chan
 class ChatMessageReactions extends StatelessWidget {
   final Event event;
   final Timeline timeline;

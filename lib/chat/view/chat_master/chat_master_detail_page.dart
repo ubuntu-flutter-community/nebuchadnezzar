@@ -28,24 +28,25 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
   @override
   void initState() {
     super.initState();
-    di<BootstrapModel>().isBootrapNeeded().then(
-      (isNeeded) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bootstrapModel = di<BootstrapModel>();
+      bootstrapModel.checkBootstrap().then((isNeeded) {
         if (isNeeded) {
-          di<BootstrapModel>().startBootstrap(wipe: false).then((value) {
-            if (mounted) {
-              showDialog(
-                context: context,
-                builder: (context) => const SizedBox(
-                  height: 500,
-                  width: 400,
-                  child: BootstrapPage(),
-                ),
-              );
-            }
-          });
+          bootstrapModel.startBootstrap(wipe: false).then(
+            (_) {
+              if (mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const BootstrapPage(),
+                  ),
+                  (route) => false,
+                );
+              }
+            },
+          );
         }
-      },
-    );
+      });
+    });
   }
 
   @override

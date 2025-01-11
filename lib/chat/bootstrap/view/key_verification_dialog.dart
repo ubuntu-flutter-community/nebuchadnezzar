@@ -7,12 +7,15 @@ import 'package:flutter/services.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../../common/view/build_context_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../view/chat_avatar.dart';
+import '../../view/chat_master/chat_master_detail_page.dart';
 
-// TODO: code by fluffy-chat, replace
+// Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
+// Thank you @krille-chan
 class KeyVerificationDialog extends StatefulWidget {
   Future<void> show(BuildContext context) => showAdaptiveDialog(
         context: context,
@@ -21,14 +24,10 @@ class KeyVerificationDialog extends StatefulWidget {
       );
 
   final KeyVerification request;
-  final Function()? onCancel;
-  final Function()? onDone;
 
   const KeyVerificationDialog({
     super.key,
     required this.request,
-    this.onCancel,
-    this.onDone,
   });
 
   @override
@@ -188,7 +187,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         );
         buttons.add(
           TextButton.icon(
-            icon: const Icon(Icons.close),
+            icon: const Icon(YaruIcons.window_close),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             label: Text(l10n.reject),
             onPressed: () => widget.request.rejectVerification().then((_) {
@@ -200,7 +199,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         );
         buttons.add(
           TextButton.icon(
-            icon: const Icon(Icons.check),
+            icon: const Icon(YaruIcons.checkmark),
             label: Text(l10n.accept),
             onPressed: () => widget.request.acceptVerification(),
           ),
@@ -233,7 +232,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         );
         buttons.add(
           TextButton.icon(
-            icon: const Icon(Icons.close),
+            icon: const Icon(YaruIcons.window_close),
             label: Text(l10n.cancel),
             onPressed: () => widget.request.cancel(),
           ),
@@ -273,7 +272,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         );
         buttons.add(
           TextButton.icon(
-            icon: const Icon(Icons.close),
+            icon: const Icon(YaruIcons.window_close),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
@@ -283,7 +282,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         );
         buttons.add(
           TextButton.icon(
-            icon: const Icon(Icons.check_outlined),
+            icon: const Icon(YaruIcons.checkmark),
             label: Text(l10n.theyMatch),
             onPressed: () => widget.request.acceptSas(),
           ),
@@ -308,7 +307,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Icon(
-              Icons.check_circle_outlined,
+              YaruIcons.ok,
               color: Colors.green,
               size: 128.0,
             ),
@@ -325,12 +324,17 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
               l10n.close,
             ),
             onPressed: () {
-              widget.onDone?.call();
               if (context.mounted) {
                 Navigator.of(
                   context,
                   rootNavigator: false,
                 ).pop();
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const ChatMasterDetailPage(),
+                  ),
+                  (route) => false,
+                );
               }
             },
           ),
@@ -340,7 +344,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         body = Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Icon(Icons.cancel, color: Colors.red, size: 128.0),
+            const Icon(YaruIcons.edit_clear, color: Colors.red, size: 128.0),
             const SizedBox(height: 16),
             Text(
               'Error ${widget.request.canceledCode}: ${widget.request.canceledReason}',
