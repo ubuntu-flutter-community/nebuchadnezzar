@@ -1,0 +1,43 @@
+import 'package:matrix/matrix.dart';
+import 'package:safe_change_notifier/safe_change_notifier.dart';
+
+class TimelineModel extends SafeChangeNotifier {
+  // TIMELINES
+
+  bool _updatingTimeline = false;
+  bool get updatingTimeline => _updatingTimeline;
+  void setUpdatingTimeline(bool value) {
+    if (value == _updatingTimeline) return;
+    _updatingTimeline = value;
+    notifyListeners();
+  }
+
+  Future<void> requestHistory(
+    Timeline timeline, {
+    int historyCount = 350,
+    StateFilter? filter,
+    bool notify = true,
+  }) async {
+    if (notify) {
+      setUpdatingTimeline(true);
+    }
+    if (timeline.isRequestingHistory) {
+      setUpdatingTimeline(false);
+      return;
+    }
+    await timeline.requestHistory(filter: filter, historyCount: historyCount);
+    await timeline.setReadMarker();
+    if (notify) {
+      setUpdatingTimeline(false);
+    }
+  }
+
+  bool _timelineSearchActive = false;
+  bool get timelineSearchActive => _timelineSearchActive;
+  void toggleTimelineSearch({bool? value}) {
+    bool theValue = value ?? !_timelineSearchActive;
+    if (theValue == _timelineSearchActive) return;
+    _timelineSearchActive = theValue;
+    notifyListeners();
+  }
+}

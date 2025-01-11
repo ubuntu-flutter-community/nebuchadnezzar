@@ -15,6 +15,9 @@ import '../../../common/view/confirm.dart';
 import '../../../l10n/l10n.dart';
 import '../mxc_image.dart';
 
+// Credit: this code has been copied and from https://github.com/krille-chan/fluffychat
+// and then modified
+// Thank you @krille-chan
 class HtmlMessage extends StatelessWidget {
   final String html;
   final Room room;
@@ -36,7 +39,10 @@ class HtmlMessage extends StatelessWidget {
 
     return Html.fromElement(
       documentElement: element as dom.Element,
-      style: {},
+      style: {
+        'code': Style(padding: HtmlPaddings.zero, margin: Margins.zero),
+        'pre': Style(padding: HtmlPaddings.zero, margin: Margins.zero),
+      },
       extensions: [
         CodeExtension(fontSize: fontSize, isLight: theme.colorScheme.isLight),
         SpoilerExtension(textColor: defaultTextColor),
@@ -245,7 +251,7 @@ class CodeExtension extends HtmlExtension {
             language: context.element?.className
                     .split(' ')
                     .singleWhereOrNull(
-                      (className) => className.startsWith('language-'),
+                      (c) => c.startsWith('language-'),
                     )
                     ?.split('language-')
                     .last ??
@@ -253,7 +259,7 @@ class CodeExtension extends HtmlExtension {
             theme: isLight ? vsTheme : draculaTheme,
             textStyle: TextStyle(
               fontSize: fontSize,
-              // fontFamily: 'UbuntuMono',
+              fontFamily: 'UbuntuMono',
             ),
           ),
         ),
@@ -322,6 +328,5 @@ const Set<String> _allowedHtmlTags = {
   'ruby',
   'rp',
   'rt',
-  // Workaround for https://github.com/krille-chan/fluffychat/issues/507
   ..._fallbackTextTags,
 };

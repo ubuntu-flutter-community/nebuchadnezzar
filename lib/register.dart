@@ -24,6 +24,7 @@ import 'chat/remote_image_model.dart';
 import 'chat/remote_image_service.dart';
 import 'chat/search_model.dart';
 import 'chat/settings/settings_model.dart';
+import 'chat/timeline_model.dart';
 
 void registerDependencies() => di
   ..registerSingletonAsync<Client>(
@@ -116,6 +117,10 @@ void registerDependencies() => di
     () => SearchModel(client: di<Client>()),
     dispose: (s) => s.dispose(),
     dependsOn: [Client],
+  )
+  ..registerLazySingleton<TimelineModel>(
+    () => TimelineModel(),
+    dispose: (s) => s.dispose(),
   );
 
 extension _ClientX on Client {

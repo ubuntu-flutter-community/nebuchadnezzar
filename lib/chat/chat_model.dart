@@ -163,9 +163,6 @@ class ChatModel extends SafeChangeNotifier {
   Room? get selectedRoom => _selectedRoom;
   Future<void> setSelectedRoom(Room? value) async {
     _selectedRoom = value;
-    if (value == null) {
-      _roomSearchActive = false;
-    }
     notifyListeners();
   }
 
@@ -369,43 +366,5 @@ class ChatModel extends SafeChangeNotifier {
       setSelectedRoom(null);
       _setProcessingJoinOrLeave(false);
     }
-  }
-
-  // TIMELINES
-
-  bool _updatingTimeline = false;
-  bool get updatingTimeline => _updatingTimeline;
-  void setUpdatingTimeline(bool value) {
-    if (value == _updatingTimeline) return;
-    _updatingTimeline = value;
-    notifyListeners();
-  }
-
-  Future<void> requestHistory(
-    Timeline timeline, {
-    int historyCount = Room.defaultHistoryCount,
-    StateFilter? filter,
-    bool notify = true,
-  }) async {
-    if (notify) {
-      setUpdatingTimeline(true);
-    }
-    if (timeline.isRequestingHistory) {
-      setUpdatingTimeline(false);
-      return;
-    }
-    await timeline.requestHistory(filter: filter, historyCount: historyCount);
-    if (notify) {
-      setUpdatingTimeline(false);
-    }
-  }
-
-  bool _roomSearchActive = false;
-  bool get roomSearchActive => _roomSearchActive;
-  void toggleRoomSearch({bool? value}) {
-    bool theValue = value ?? !_roomSearchActive;
-    if (theValue == _roomSearchActive) return;
-    _roomSearchActive = theValue;
-    notifyListeners();
   }
 }

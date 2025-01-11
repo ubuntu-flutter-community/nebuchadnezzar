@@ -79,11 +79,12 @@ class DraftModel extends SafeChangeNotifier {
       }
     }
 
-    final draft = getDraft(room.id);
-    if (draft?.isNotEmpty ?? false) {
+    final draft = '${getDraft(room.id)}';
+    removeDraft(room.id);
+    if (draft.isNotEmpty) {
       try {
         await room.sendTextEvent(
-          draft!.trim(),
+          draft.trim(),
           inReplyTo: replyEvent,
           editEventId: _editEvents[room.id]?.eventId,
         );
@@ -96,7 +97,6 @@ class DraftModel extends SafeChangeNotifier {
     _sending = false;
     _replyEvent = null;
     _editEvents[room.id] = null;
-    removeDraft(room.id);
 
     notifyListeners();
   }

@@ -24,22 +24,22 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
       initialValue: room.lastEvent,
     ).data;
 
-    return typingUsers.isEmpty
-        ? _LastEvent(
-            key: ObjectKey(lastEvent),
-            lastEvent: lastEvent ?? room.lastEvent,
-            fallbackText:
-                room.membership == Membership.invite ? room.name : null,
-          )
-        : Text(
-            typingUsers.length > 1
-                ? context.l10n.numUsersTyping(typingUsers.length)
-                : context.l10n
-                    .userIsTyping(typingUsers.first.displayName ?? ''),
-            style: context.textTheme.bodyMedium
-                ?.copyWith(color: context.colorScheme.primary),
-            maxLines: 1,
-          );
+    if (typingUsers.isEmpty) {
+      return _LastEvent(
+        key: ValueKey('${lastEvent?.eventId}lastevent'),
+        lastEvent: room.lastEvent,
+        fallbackText: room.membership == Membership.invite ? room.name : null,
+      );
+    }
+
+    return Text(
+      typingUsers.length > 1
+          ? context.l10n.numUsersTyping(typingUsers.length)
+          : context.l10n.userIsTyping(typingUsers.first.displayName ?? ''),
+      style: context.textTheme.bodyMedium
+          ?.copyWith(color: context.colorScheme.primary),
+      maxLines: 1,
+    );
   }
 }
 
@@ -60,21 +60,42 @@ class _LastEvent extends StatefulWidget with WatchItStatefulWidgetMixin {
 class _LastEventState extends State<_LastEvent> {
   late final Future<String> _future;
 
+  static final Map<String, String> _cache = {};
+
   @override
   void initState() {
     super.initState();
-    _future = widget.lastEvent
-            ?.calcLocalizedBody(const MatrixDefaultLocalizations()) ??
-        Future.value(widget.lastEvent?.body ?? '');
+    _future = widget.lastEvent != null &&
+            _cache.containsKey(widget.lastEvent!.eventId)
+        ? Future.value(_cache[widget.lastEvent!.eventId]!)
+        : widget.lastEvent
+                ?.calcLocalizedBody(const MatrixDefaultLocalizations()) ??
+            Future.value(widget.lastEvent?.body ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.lastEvent != null &&
+        _cache.containsKey(widget.lastEvent!.eventId)) {
+      return Text(
+        _cache[widget.lastEvent!.eventId]!,
+        maxLines: 1,
+      );
+    }
+
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
+        if (snapshot.hasData && widget.lastEvent != null) {
+          _cache[widget.lastEvent!.eventId] = snapshot.data!;
+          return Text(
+            snapshot.data!,
+            maxLines: 1,
+          );
+        }
+
         return Text(
-          snapshot.hasData ? snapshot.data! : (widget.fallbackText ?? ' '),
+          widget.fallbackText ?? ' ',
           maxLines: 1,
         );
       },

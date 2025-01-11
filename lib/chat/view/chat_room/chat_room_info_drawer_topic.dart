@@ -4,7 +4,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../common/view/ui_constants.dart';
-import '../../chat_model.dart';
+import '../../timeline_model.dart';
 
 class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
   const ChatRoomInfoDrawerTopic({
@@ -17,7 +17,7 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final updatingTimeline =
-        watchPropertyValue((ChatModel m) => m.updatingTimeline);
+        watchPropertyValue((TimelineModel m) => m.updatingTimeline);
 
     return SliverToBoxAdapter(
       child: Center(

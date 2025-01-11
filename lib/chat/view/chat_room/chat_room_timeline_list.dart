@@ -7,13 +7,14 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../chat_model.dart';
+import '../../timeline_model.dart';
 import '../events/chat_event_column.dart';
 import 'chat_typing_indicator.dart';
 import 'titlebar/chat_room_title_bar.dart';
 
-class ChatTimelineList extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const ChatTimelineList({
+class ChatRoomTimelineList extends StatefulWidget
+    with WatchItStatefulWidgetMixin {
+  const ChatRoomTimelineList({
     super.key,
     required this.timeline,
     required this.listKey,
@@ -25,11 +26,11 @@ class ChatTimelineList extends StatefulWidget with WatchItStatefulWidgetMixin {
   final GlobalKey<AnimatedListState> listKey;
 
   @override
-  State<ChatTimelineList> createState() => _ChatTimelineListState();
+  State<ChatRoomTimelineList> createState() => _ChatRoomTimelineListState();
 }
 
-class _ChatTimelineListState extends State<ChatTimelineList> {
-  late AutoScrollController _controller;
+class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
+  final AutoScrollController _controller = AutoScrollController();
   bool _showScrollButton = false;
   int retryCount = 15;
 
@@ -37,22 +38,8 @@ class _ChatTimelineListState extends State<ChatTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        di<ChatModel>()
-            .requestHistory(
-          widget.timeline,
-          historyCount: 350,
-        )
-            .then(
-          (value) {
-            if (widget.room.membership == Membership.join) {
-              widget.timeline.setReadMarker();
-            }
-          },
-        );
-      },
+      (_) => di<TimelineModel>().requestHistory(widget.timeline),
     );
-    _controller = AutoScrollController();
   }
 
   @override
@@ -71,23 +58,7 @@ class _ChatTimelineListState extends State<ChatTimelineList> {
           children: [
             Expanded(
               child: NotificationListener<ScrollEndNotification>(
-                onNotification: (scrollEnd) {
-                  final metrics = scrollEnd.metrics;
-                  if (metrics.atEdge) {
-                    final isAtBottom = metrics.pixels != 0;
-                    if (isAtBottom) {
-                      di<ChatModel>().requestHistory(
-                        widget.timeline,
-                        historyCount: 150,
-                      );
-                    } else {
-                      setState(() => _showScrollButton = false);
-                    }
-                  } else {
-                    setState(() => _showScrollButton = true);
-                  }
-                  return true;
-                },
+                onNotification: onScroll,
                 child: AnimatedList(
                   controller: _controller,
                   padding: const EdgeInsets.symmetric(
@@ -110,8 +81,8 @@ class _ChatTimelineListState extends State<ChatTimelineList> {
                       index: i,
                       controller: _controller,
                       key: ValueKey('${event.eventId}tag'),
-                      child: SizeTransition(
-                        sizeFactor: animation,
+                      child: FadeTransition(
+                        opacity: animation,
                         child: ChatEventColumn(
                           key: ValueKey('${event.eventId}column'),
                           event: event,
@@ -177,10 +148,28 @@ class _ChatTimelineListState extends State<ChatTimelineList> {
     );
   }
 
+  bool onScroll(scrollEnd) {
+    final metrics = scrollEnd.metrics;
+    if (metrics.atEdge) {
+      final isAtBottom = metrics.pixels != 0;
+      if (isAtBottom) {
+        di<TimelineModel>().requestHistory(
+          widget.timeline,
+          historyCount: 150,
+        );
+      } else {
+        setState(() => _showScrollButton = false);
+      }
+    } else {
+      setState(() => _showScrollButton = true);
+    }
+    return true;
+  }
+
   Future<void> _jump(Event event) async {
     int index = widget.timeline.events.indexOf(event);
     while (index == -1 && retryCount >= 0) {
-      await di<ChatModel>().requestHistory(
+      await di<TimelineModel>().requestHistory(
         widget.timeline,
         historyCount: 5,
       );

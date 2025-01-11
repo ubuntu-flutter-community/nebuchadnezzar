@@ -34,17 +34,21 @@ class _ChatInputState extends State<ChatInput> {
     _sendController =
         TextEditingController(text: di<DraftModel>().getDraft(widget.room.id));
     _sendNode = FocusNode(
-      onKeyEvent: (node, KeyEvent evt) {
-        if (HardwareKeyboard.instance.isShiftPressed &&
-            evt.logicalKey.keyLabel == 'Enter') {
-          if (evt is KeyDownEvent) {
-            _sendController.clear();
-            _sendNode.requestFocus();
-            di<DraftModel>().send(
-              room: widget.room,
-              onFail: (error) => showSnackBar(context, content: Text(error)),
+      onKeyEvent: (node, event) {
+        final enterPressedWithoutShift = event is KeyDownEvent &&
+            event.physicalKey == PhysicalKeyboardKey.enter &&
+            !HardwareKeyboard.instance.physicalKeysPressed.any(
+              (key) => <PhysicalKeyboardKey>{
+                PhysicalKeyboardKey.shiftLeft,
+                PhysicalKeyboardKey.shiftRight,
+              }.contains(key),
             );
-          }
+
+        if (enterPressedWithoutShift) {
+          send();
+          return KeyEventResult.handled;
+        } else if (event is KeyRepeatEvent) {
+          // Disable holding enter
           return KeyEventResult.handled;
         } else {
           return KeyEventResult.ignored;
@@ -60,13 +64,25 @@ class _ChatInputState extends State<ChatInput> {
     super.dispose();
   }
 
+  Future<void> send() async {
+    final model = di<DraftModel>();
+    if (model.sending) {
+      return;
+    }
+    _sendController.clear();
+    _sendNode.requestFocus();
+    await model.send(
+      room: widget.room,
+      onFail: (error) => showSnackBar(context, content: Text(error)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final draftModel = di<DraftModel>();
     final draftFiles =
         watchPropertyValue((DraftModel m) => m.getFilesDraft(widget.room.id));
     final attaching = watchPropertyValue((DraftModel m) => m.attaching);
-    final sending = watchPropertyValue((DraftModel m) => m.sending);
 
     final replyEvent = watchPropertyValue((DraftModel m) => m.replyEvent);
     final editEvent =
@@ -77,16 +93,6 @@ class _ChatInputState extends State<ChatInput> {
     _sendController.text = draft ?? '';
     _sendNode.requestFocus();
 
-    var onPressed = sending
-        ? null
-        : () async {
-            _sendController.clear();
-            _sendNode.requestFocus();
-            await draftModel.send(
-              room: widget.room,
-              onFail: (error) => showSnackBar(context, content: Text(error)),
-            );
-          };
     var transform = Transform.rotate(
       angle: pi / 4,
       child: const Padding(
@@ -155,7 +161,7 @@ class _ChatInputState extends State<ChatInput> {
                 );
                 widget.room.setTyping(v.isNotEmpty, timeout: 500);
               },
-              onSubmitted: (_) => onPressed?.call(),
+              // onSubmitted: (_) => send.call(),
               decoration: InputDecoration(
                 hintText: context.l10n.sendAMessage,
                 prefixIcon: Padding(
@@ -202,7 +208,7 @@ class _ChatInputState extends State<ChatInput> {
                     IconButton(
                       padding: EdgeInsets.zero,
                       icon: transform,
-                      onPressed: onPressed,
+                      onPressed: send,
                     ),
                   ],
                 ),

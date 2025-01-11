@@ -10,9 +10,10 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../chat_model.dart';
+import '../../timeline_model.dart';
 import 'chat_room_default_background.dart';
 import 'chat_room_info_drawer.dart';
-import 'chat_timeline_list.dart';
+import 'chat_room_timeline_list.dart';
 import 'input/chat_input.dart';
 import 'titlebar/chat_room_title_bar.dart';
 
@@ -50,7 +51,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
     final loadingArchive =
         watchPropertyValue((ChatModel m) => m.loadingArchive);
-    final updating = watchPropertyValue((ChatModel m) => m.updatingTimeline);
+    final updating =
+        watchPropertyValue((TimelineModel m) => m.updatingTimeline);
 
     registerStreamHandler(
       select: (ChatModel m) => m.getLeftRoomStream(widget.room.id),
@@ -103,7 +105,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: kMediumPadding),
-                child: ChatTimelineList(
+                child: ChatRoomTimelineList(
                   timeline: snapshot.data!,
                   room: widget.room,
                   listKey: _roomListKey,
@@ -112,22 +114,27 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             },
           ),
         ),
-        if (updating)
-          Positioned(
-            top: 3 * kBigPadding,
-            child: FloatingActionButton.small(
-              backgroundColor: context.colorScheme.isLight
-                  ? Colors.white
-                  : Colors.black.scale(lightness: 0.09),
-              onPressed: () {},
-              child: const SizedBox.square(
-                dimension: 20,
-                child: Progress(
-                  strokeWidth: 2,
+        Positioned(
+          top: 3 * kBigPadding,
+          child: IgnorePointer(
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: updating ? 1 : 0,
+              child: FloatingActionButton.small(
+                backgroundColor: context.colorScheme.isLight
+                    ? Colors.white
+                    : Colors.black.scale(lightness: 0.09),
+                onPressed: () {},
+                child: const SizedBox.square(
+                  dimension: 20,
+                  child: Progress(
+                    strokeWidth: 2,
+                  ),
                 ),
               ),
             ),
           ),
+        ),
       ],
     );
   }
