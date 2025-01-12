@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mesh/mesh.dart';
-import 'package:yaru/yaru.dart';
 
-import '../../../app_config.dart';
 import '../../../common/view/build_context_x.dart';
-import '../../../common/view/theme.dart';
 
 class ChatRoomDefaultBackground extends StatelessWidget {
   const ChatRoomDefaultBackground({super.key});
@@ -14,12 +11,6 @@ class ChatRoomDefaultBackground extends StatelessWidget {
     final colorScheme = context.colorScheme;
     final bg = colorScheme.surface;
     final accent = colorScheme.primary;
-    final remix = yaru
-        ? remixColor(
-            accent,
-            palette: YaruVariant.accents.map((e) => e.color).toList(),
-          )
-        : colorScheme.primaryContainer;
     return Opacity(
       opacity: 0.3,
       child: OMeshGradient(
@@ -33,8 +24,8 @@ class ChatRoomDefaultBackground extends StatelessWidget {
             accent.withValues(alpha: 0.11),
             accent.withValues(alpha: 0.31),
             accent.withValues(alpha: 0.11),
-            remix.withValues(alpha: 0.02),
-            remix.withValues(alpha: 0.41),
+            accent.withValues(alpha: 0.02),
+            accent.withValues(alpha: 0.41),
             bg.withValues(alpha: 0.71),
             bg.withValues(alpha: 0.91),
             bg.withValues(alpha: 0.80),

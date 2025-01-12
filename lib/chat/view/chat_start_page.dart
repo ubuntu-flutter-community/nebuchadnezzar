@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/view/common_widgets.dart';
 import '../authentication/chat_login_page.dart';
@@ -29,8 +30,12 @@ class _ChatStartPageState extends State<ChatStartPage> {
             ? (!di<ChatModel>().isLogged)
                 ? const ChatLoginPage()
                 : const ChatMasterDetailPage()
-            : const Material(
-                child: Center(
+            : const Scaffold(
+                appBar: YaruWindowTitleBar(
+                  border: BorderSide.none,
+                  backgroundColor: Colors.transparent,
+                ),
+                body: Center(
                   child: Progress(),
                 ),
               ),
