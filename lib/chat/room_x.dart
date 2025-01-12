@@ -1,25 +1,6 @@
 import 'package:matrix/matrix.dart';
 
 extension RoomX on Room {
-  List<User> getSeenByUsers(List<Event> events, {String? eventId}) {
-    if (events.isEmpty) return [];
-    eventId ??= events.first.eventId;
-
-    final lastReceipts = <User>{};
-    for (final e in events) {
-      lastReceipts.addAll(
-        e.receipts.map((r) => r.user).where(
-              (u) => u.id != client.userID && u.id != events.first.senderId,
-            ),
-      );
-      if (e.eventId == eventId) {
-        break;
-      }
-    }
-
-    return lastReceipts.toList();
-  }
-
   bool get canEditAtleastSomething =>
       ownPowerLevel == 100 ||
       canKick ||

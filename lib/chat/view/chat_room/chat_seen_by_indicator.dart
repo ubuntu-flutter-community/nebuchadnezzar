@@ -5,49 +5,42 @@ import 'package:watch_it/watch_it.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../chat_model.dart';
-import '../../room_x.dart';
 import '../../search_model.dart';
 import '../chat_avatar.dart';
 import '../chat_profile_dialog.dart';
 
-class ChatSeenByIndicator extends StatefulWidget
-    with WatchItStatefulWidgetMixin {
-  const ChatSeenByIndicator({
+class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
+  const ChatEventSeenByIndicator({
     super.key,
-    required this.room,
-    required this.timeline,
+    required this.event,
   });
 
-  final Room room;
-  final Timeline timeline;
+  final Event event;
 
   static const maxAvatars = 7;
 
   @override
-  State<ChatSeenByIndicator> createState() => _ChatSeenByIndicatorState();
-}
-
-class _ChatSeenByIndicatorState extends State<ChatSeenByIndicator> {
-  @override
-  void initState() {
-    super.initState();
-    widget.room.requestParticipants();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final events = watchStream(
-      (ChatModel m) => m.getReadEventsFromSync(widget.room),
-      initialValue: widget.timeline.events,
-    ).data;
-    final list = <Event>{...widget.timeline.events, ...?events}.toList();
-    final seenByUsers = widget.room.getSeenByUsers(list);
+    watchFuture(
+      (ChatModel m) => m.requestParticipants(event.room),
+      initialValue: event.room.getParticipants(),
+    );
+
+    final seenByUsers = watchStream(
+          (ChatModel m) => m.getRoomsReceipts(event),
+          initialValue: event.receipts,
+        )
+            .data
+            ?.map((e) => e.user)
+            .where((e) => e.id != di<ChatModel>().myUserId)
+            .toList() ??
+        [];
 
     return Container(
       width: double.infinity,
-      alignment: widget.room.isDirectChat ||
-              di<ChatModel>().isUserEvent(list.first) &&
-                  list.first.type != EventTypes.Reaction
+      alignment: event.room.isDirectChat ||
+              di<ChatModel>().isUserEvent(event) &&
+                  event.type != EventTypes.Reaction
           ? Alignment.centerRight
           : Alignment.centerLeft,
       child: AnimatedContainer(
@@ -60,35 +53,19 @@ class _ChatSeenByIndicatorState extends State<ChatSeenByIndicator> {
         child: Wrap(
           spacing: kSmallPadding,
           children: [
-            ...(seenByUsers.length > ChatSeenByIndicator.maxAvatars
-                    ? seenByUsers.sublist(0, ChatSeenByIndicator.maxAvatars)
+            ...(seenByUsers.length > maxAvatars
+                    ? seenByUsers.sublist(
+                        0,
+                        maxAvatars,
+                      )
                     : seenByUsers)
                 .map(
-              (user) => Tooltip(
+              (user) => ChatEventSeenByAvatar(
                 key: ValueKey(user.id + user.avatarUrl.toString()),
-                message: user.displayName ?? user.id,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(15),
-                  onTap: () async {
-                    final profile =
-                        await di<SearchModel>().lookupProfile(user.id);
-                    if (context.mounted) {
-                      showDialog(
-                        context: context,
-                        builder: (context) =>
-                            ChatProfileDialog(userId: profile.userId),
-                      );
-                    }
-                  },
-                  child: ChatAvatar(
-                    avatarUri: user.avatarUrl,
-                    fallBackIconSize: 10,
-                    dimension: 15,
-                  ),
-                ),
+                user: user,
               ),
             ),
-            if (seenByUsers.length > ChatSeenByIndicator.maxAvatars)
+            if (seenByUsers.length > maxAvatars)
               SizedBox(
                 width: 15,
                 height: 15,
@@ -97,13 +74,46 @@ class _ChatSeenByIndicatorState extends State<ChatSeenByIndicator> {
                   borderRadius: BorderRadius.circular(30),
                   child: Center(
                     child: Text(
-                      '+${seenByUsers.length - ChatSeenByIndicator.maxAvatars}',
+                      '+${seenByUsers.length - maxAvatars}',
                       style: const TextStyle(fontSize: 9),
                     ),
                   ),
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ChatEventSeenByAvatar extends StatelessWidget {
+  const ChatEventSeenByAvatar({
+    super.key,
+    required this.user,
+  });
+
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: user.displayName ?? user.id,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15),
+        onTap: () async {
+          final profile = await di<SearchModel>().lookupProfile(user.id);
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (context) => ChatProfileDialog(userId: profile.userId),
+            );
+          }
+        },
+        child: ChatAvatar(
+          avatarUri: user.avatarUrl,
+          fallBackIconSize: 10,
+          dimension: 15,
         ),
       ),
     );

@@ -14,7 +14,7 @@ class TimelineModel extends SafeChangeNotifier {
 
   Future<void> requestHistory(
     Timeline timeline, {
-    int historyCount = 350,
+    int historyCount = 50,
     StateFilter? filter,
     bool notify = true,
   }) async {

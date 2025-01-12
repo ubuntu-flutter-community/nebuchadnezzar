@@ -9,6 +9,7 @@ import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../timeline_model.dart';
 import '../events/chat_event_column.dart';
+import 'chat_seen_by_indicator.dart';
 import 'chat_typing_indicator.dart';
 import 'titlebar/chat_room_title_bar.dart';
 
@@ -83,14 +84,26 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                       key: ValueKey('${event.eventId}tag'),
                       child: FadeTransition(
                         opacity: animation,
-                        child: ChatEventColumn(
-                          key: ValueKey('${event.eventId}column'),
-                          event: event,
-                          maybePreviousEvent: maybePreviousEvent,
-                          jump: _jump,
-                          showSeenByIndicator: i == 0,
-                          timeline: widget.timeline,
-                          room: widget.room,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ChatEventColumn(
+                              key: ValueKey('${event.eventId}column'),
+                              event: event,
+                              maybePreviousEvent: maybePreviousEvent,
+                              jump: _jump,
+                              showSeenByIndicator: i == 0,
+                              timeline: widget.timeline,
+                              room: widget.room,
+                            ),
+                            if (i == 0)
+                              ChatEventSeenByIndicator(
+                                key: ValueKey(
+                                  '${event.eventId}${widget.timeline.events.length}',
+                                ),
+                                event: event,
+                              ),
+                          ],
                         ),
                       ),
                     );

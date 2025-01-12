@@ -5,7 +5,6 @@ import '../../../common/date_time_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../event_x.dart';
-import '../chat_room/chat_seen_by_indicator.dart';
 import 'chat_event_tile.dart';
 
 class ChatEventColumn extends StatelessWidget {
@@ -51,11 +50,6 @@ class ChatEventColumn extends StatelessWidget {
               event,
               maybePreviousEvent,
             ),
-          ),
-        if (showSeenByIndicator)
-          ChatSeenByIndicator(
-            room: room,
-            timeline: timeline,
           ),
       ],
     );

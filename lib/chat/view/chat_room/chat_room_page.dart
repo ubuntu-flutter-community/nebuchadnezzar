@@ -36,7 +36,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   void initState() {
     super.initState();
     _timelineFuture = widget.room.getTimeline(
-      onUpdate: () => _roomListKey.currentState?.setState(() {}),
       onNewEvent: () => _roomListKey.currentState?.setState(() {}),
       onChange: (i) => _roomListKey.currentState?.setState(() {}),
       onInsert: (i) => _roomListKey.currentState?.insertItem(i),
