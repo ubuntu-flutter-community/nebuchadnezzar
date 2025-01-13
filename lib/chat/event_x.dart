@@ -2,6 +2,7 @@ import 'package:matrix/matrix.dart';
 
 extension EventX on Event {
   bool get isImage => messageType == MessageTypes.Image;
+  bool get isSvgImage => attachmentMimetype == 'image/svg+xml';
 
   bool get showAsBadge =>
       messageType == MessageTypes.Emote ||

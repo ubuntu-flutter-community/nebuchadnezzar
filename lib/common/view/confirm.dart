@@ -15,6 +15,8 @@ class ConfirmationDialog extends StatelessWidget {
     this.content,
     this.showCancel = true,
     this.showCloseIcon = true,
+    this.scrollable = false,
+    this.confirmLabel,
   });
 
   final dynamic Function()? onConfirm;
@@ -24,6 +26,8 @@ class ConfirmationDialog extends StatelessWidget {
   final Widget? content;
   final bool showCancel;
   final bool showCloseIcon;
+  final bool scrollable;
+  final String? confirmLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +39,7 @@ class ConfirmationDialog extends StatelessWidget {
         border: BorderSide.none,
         isClosable: showCloseIcon,
       ),
+      scrollable: scrollable,
       titlePadding: EdgeInsets.zero,
       content: content,
       actionsAlignment: MainAxisAlignment.start,
@@ -66,7 +71,7 @@ class ConfirmationDialog extends StatelessWidget {
                   }
                 },
                 child: Text(
-                  l10n.ok,
+                  confirmLabel ?? l10n.ok,
                 ),
               ),
             ],

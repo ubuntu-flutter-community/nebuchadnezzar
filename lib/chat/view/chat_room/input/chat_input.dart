@@ -173,7 +173,11 @@ class _ChatInputState extends State<ChatInput> {
                         padding: EdgeInsets.zero,
                         onPressed: attaching
                             ? null
-                            : () => draftModel.addAttachment(widget.room.id),
+                            : () => draftModel.addAttachment(
+                                  widget.room.id,
+                                  onFail: (error) =>
+                                      showErrorSnackBar(context, error),
+                                ),
                         icon: attaching
                             ? const Center(
                                 child: SizedBox.square(

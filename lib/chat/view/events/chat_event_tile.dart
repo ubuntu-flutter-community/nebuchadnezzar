@@ -47,15 +47,22 @@ class ChatEventTile extends StatelessWidget {
       return ChatMessageBadge(displayEvent: event.getDisplayEvent(timeline));
     }
     return switch (event.messageType) {
-      MessageTypes.Image => ChatImage(
-          timeline: timeline,
-          event: event,
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) =>
-                ChatMessageImageFullScreenDialog(event: event),
-          ),
-        ),
+      MessageTypes.Image => event.isSvgImage
+          ? ChatMessageBubble(
+              event: event,
+              timeline: timeline,
+              onReplyOriginClick: onReplyOriginClick,
+            )
+          : ChatImage(
+              timeline: timeline,
+              event: event,
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) =>
+                    ChatMessageImageFullScreenDialog(event: event),
+              ),
+            ),
+      MessageTypes.Location ||
       MessageTypes.File ||
       MessageTypes.Video ||
       MessageTypes.Audio ||

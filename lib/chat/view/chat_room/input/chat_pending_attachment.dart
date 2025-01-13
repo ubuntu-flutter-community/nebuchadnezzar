@@ -26,7 +26,7 @@ class ChatPendingAttachment extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.all(kBigBubbleRadius),
-            child: file.isImage
+            child: file.isRegularImage
                 ? Image.memory(
                     file.bytes,
                     height: dimension,

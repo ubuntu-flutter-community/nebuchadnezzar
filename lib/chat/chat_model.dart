@@ -15,6 +15,7 @@ class ChatModel extends SafeChangeNotifier {
   // The matrix dart SDK client
   final Client _client;
   String? get myUserId => _client.userID;
+  String? get homeServerId => _client.homeserver?.host;
   bool isUserEvent(Event event) => myUserId == event.senderId;
   bool get isLogged => _client.isLogged();
   bool get encryptionEnabled => _client.encryptionEnabled;
@@ -129,11 +130,10 @@ class ChatModel extends SafeChangeNotifier {
     return timeline.events.where((e) => !e.showAsBadge).toList();
   }
 
-  Stream<List<Room>> get spacesStream => joinedUpdateStream
-      .map((e) => rooms.where((e) => !e.isArchived && e.isSpace).toList());
+  Stream<List<Room>> get spacesStream =>
+      syncStream.map((e) => rooms.where((e) => e.isSpace).toList());
 
-  List<Room> get notArchivedSpaces =>
-      rooms.where((e) => !e.isArchived && e.isSpace).toList();
+  List<Room> get spaces => rooms.where((e) => e.isSpace).toList();
 
   RoomsFilter? _roomsFilter;
   RoomsFilter? get roomsFilter => _roomsFilter;
@@ -275,6 +275,47 @@ class ChatModel extends SafeChangeNotifier {
         onSuccess();
       }
     }
+  }
+
+  Future<String?> createSpace({
+    required String name,
+    Visibility visibility = Visibility.public,
+    List<String>? invite,
+    List<Invite3pid>? invite3pid,
+    String? roomVersion,
+    String? topic,
+    bool waitForSync = true,
+    String? spaceAliasName,
+    required Function(String error) onFail,
+    required Function() onSuccess,
+  }) async {
+    _setProcessingJoinOrLeave(true);
+    String? spaceRoomId;
+    try {
+      printMessageInDebugMode('Creating space...');
+      spaceRoomId = await _client.createSpace(
+        name: name,
+        visibility: visibility,
+        invite: invite,
+        invite3pid: invite3pid,
+        roomVersion: roomVersion,
+        topic: topic,
+        waitForSync: waitForSync,
+        spaceAliasName: spaceAliasName,
+      );
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      onFail(e.toString());
+    }
+    if (spaceRoomId != null) {
+      final space = _client.getRoomById(spaceRoomId);
+      if (space != null) {
+        onSuccess();
+        setSelectedRoom(space);
+      }
+    }
+    _setProcessingJoinOrLeave(false);
+    return spaceRoomId;
   }
 
   Future<void> joinDirectChat(

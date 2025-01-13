@@ -50,8 +50,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
     final loadingArchive =
         watchPropertyValue((ChatModel m) => m.loadingArchive);
-    final updating =
-        watchPropertyValue((TimelineModel m) => m.updatingTimeline);
+    final updating = watchPropertyValue(
+      (TimelineModel m) => m.getUpdatingTimeline(widget.room.id),
+    );
 
     registerStreamHandler(
       select: (ChatModel m) => m.getLeftRoomStream(widget.room.id),

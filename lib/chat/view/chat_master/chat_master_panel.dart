@@ -14,6 +14,7 @@ import '../../rooms_filter.dart';
 import '../../search_model.dart';
 import '../../settings/settings_dialog.dart';
 import '../chat_avatar.dart';
+import '../chat_new_direct_chat_dialog.dart';
 import '../chat_room/chat_create_or_edit_room_dialog.dart';
 import '../search_auto_complete.dart';
 import 'chat_master_list_filter_bar.dart';
@@ -38,14 +39,7 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
 
     final suffix = IconButton(
       padding: EdgeInsets.zero,
-      style: IconButton.styleFrom(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(6),
-            bottomRight: Radius.circular(6),
-          ),
-        ),
-      ),
+      style: textFieldSuffixStyle,
       onPressed: () => searchModel.setSearchType(
         switch (searchType) {
           SearchType.profiles => SearchType.rooms,
@@ -73,17 +67,66 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
             backgroundColor:
                 getMonochromeBg(theme: context.theme, darkFactor: 3),
             actions: [
-              Flexible(
-                child: IconButton(
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => const ChatCreateOrEditRoomDialog(),
-                  ),
-                  icon: const Icon(
-                    YaruIcons.plus,
+              if (!archiveActive)
+                Flexible(
+                  child: PopupMenuButton(
+                    tooltip: l10n.newChat,
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(YaruIcons.plus),
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) =>
+                                const ChatNewDirectChatDialog(),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(l10n.directChat),
+                              const Icon(
+                                YaruIcons.user,
+                              ),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) =>
+                                const ChatCreateOrEditRoomDialog(),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(l10n.newGroup),
+                              const Icon(
+                                YaruIcons.users,
+                              ),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) =>
+                                const ChatCreateOrEditRoomDialog(
+                              space: true,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(l10n.newSpace),
+                              const Icon(YaruIcons.globe),
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
                   ),
                 ),
-              ),
               if (!archiveActive)
                 Flexible(
                   child: Padding(
@@ -116,7 +159,7 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
                 bottom: kMediumPadding,
               ),
               child: switch (searchType) {
-                SearchType.profiles => SearchAutoComplete(
+                SearchType.profiles => ChatUserSearchAutoComplete(
                     suffix: suffix,
                   ),
                 _ => RoomsAutoComplete(
@@ -189,6 +232,23 @@ class _RoomList extends StatelessWidget with WatchItMixin {
                   child: Row(
                     spacing: kMediumPadding,
                     children: [
+                      SizedBox.square(
+                        dimension: 38,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                          ),
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => ChatCreateOrEditRoomDialog(
+                              room: activeSpace,
+                            ),
+                          ),
+                          child: const Icon(
+                            YaruIcons.pen,
+                          ),
+                        ),
+                      ),
                       Expanded(
                         child: ElevatedButton(
                           onPressed: spaceSearch == null

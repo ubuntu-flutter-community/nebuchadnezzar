@@ -60,7 +60,7 @@ class ChatMessageImageFullScreenDialog extends StatelessWidget {
             height: context.mediaQuerySize.height - 150,
             fit: BoxFit.fitWidth,
             event: event,
-            fromCache: false,
+            getThumbnail: false,
           ),
         ),
       );

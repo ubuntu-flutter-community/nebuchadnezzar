@@ -2,13 +2,14 @@ import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 class TimelineModel extends SafeChangeNotifier {
-  // TIMELINES
-
-  bool _updatingTimeline = false;
-  bool get updatingTimeline => _updatingTimeline;
-  void setUpdatingTimeline(bool value) {
-    if (value == _updatingTimeline) return;
-    _updatingTimeline = value;
+  final Map<String, bool> _updatingTimeline = {};
+  bool getUpdatingTimeline(String roomId) => _updatingTimeline[roomId] == true;
+  void setUpdatingTimeline({
+    required String roomId,
+    required bool value,
+  }) {
+    if (_updatingTimeline[roomId] == value) return;
+    _updatingTimeline[roomId] = value;
     notifyListeners();
   }
 
@@ -19,17 +20,19 @@ class TimelineModel extends SafeChangeNotifier {
     bool notify = true,
   }) async {
     if (notify) {
-      setUpdatingTimeline(true);
+      setUpdatingTimeline(roomId: timeline.room.id, value: true);
     }
     if (timeline.isRequestingHistory) {
-      setUpdatingTimeline(false);
+      setUpdatingTimeline(roomId: timeline.room.id, value: false);
       return;
     }
     await timeline.requestHistory(filter: filter, historyCount: historyCount);
     if (notify) {
-      setUpdatingTimeline(false);
+      setUpdatingTimeline(roomId: timeline.room.id, value: false);
     }
-    await timeline.setReadMarker();
+    if (!timeline.room.isArchived) {
+      await timeline.setReadMarker();
+    }
   }
 
   bool _timelineSearchActive = false;

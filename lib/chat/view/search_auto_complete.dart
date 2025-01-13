@@ -11,17 +11,19 @@ import '../chat_model.dart';
 import '../search_model.dart';
 import 'chat_avatar.dart';
 
-class SearchAutoComplete extends StatelessWidget with WatchItMixin {
-  const SearchAutoComplete({
+class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
+  const ChatUserSearchAutoComplete({
     super.key,
     required this.suffix,
     this.onProfileSelected,
     this.width,
+    this.labelText,
   });
 
   final Widget suffix;
   final void Function(Profile)? onProfileSelected;
   final double? width;
+  final String? labelText;
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +39,9 @@ class SearchAutoComplete extends StatelessWidget with WatchItMixin {
               TextField(
         enabled: !processingJoinOrLeave,
         decoration: InputDecoration(
-          hintText: '${context.l10n.search} ${context.l10n.users}',
-          label: Text('${context.l10n.search} ${context.l10n.users}'),
+          hintText: labelText ?? '${context.l10n.search} ${context.l10n.users}',
+          label:
+              Text(labelText ?? '${context.l10n.search} ${context.l10n.users}'),
           suffixIcon: suffix,
         ),
         controller: textEditingController,

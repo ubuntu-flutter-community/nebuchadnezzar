@@ -4,6 +4,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/date_time_x.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -124,30 +125,38 @@ class _SettingsDialogState extends State<SettingsDialog> {
             ),
             YaruSection(
               headline: Text(l10n.devices),
-              child: Column(
-                children: devices
-                    .map(
-                      (d) => YaruTile(
-                        trailing: d.deviceId != settingsModel.myDeviceId
-                            ? IconButton(
-                                onPressed: () =>
-                                    settingsModel.deleteDevice(d.deviceId),
-                                icon: Icon(
-                                  YaruIcons.trash,
-                                  color: context.colorScheme.error,
-                                ),
-                              )
-                            : null,
-                        subtitle: Text(
-                          DateTime.fromMillisecondsSinceEpoch(
-                            d.lastSeenTs ?? 0,
-                          ).formatAndLocalize(l10n, simple: true),
-                        ),
-                        title: SelectableText(d.displayName ?? d.deviceId),
+              child: devices == null
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(kBigPadding),
+                        child: Progress(),
                       ),
                     )
-                    .toList(),
-              ),
+                  : Column(
+                      children: devices
+                          .map(
+                            (d) => YaruTile(
+                              trailing: d.deviceId != settingsModel.myDeviceId
+                                  ? IconButton(
+                                      onPressed: () => settingsModel
+                                          .deleteDevice(d.deviceId),
+                                      icon: Icon(
+                                        YaruIcons.trash,
+                                        color: context.colorScheme.error,
+                                      ),
+                                    )
+                                  : null,
+                              subtitle: Text(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                  d.lastSeenTs ?? 0,
+                                ).formatAndLocalize(l10n, simple: true),
+                              ),
+                              title:
+                                  SelectableText(d.displayName ?? d.deviceId),
+                            ),
+                          )
+                          .toList(),
+                    ),
             ),
           ],
         ),

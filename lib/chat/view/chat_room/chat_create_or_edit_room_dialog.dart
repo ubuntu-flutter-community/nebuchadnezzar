@@ -33,9 +33,11 @@ class ChatCreateOrEditRoomDialog extends StatefulWidget
     this.powerLevelContentOverride,
     this.federated,
     this.encrypted,
+    this.space = false,
   });
 
   final Room? room;
+  final bool space;
   final String? groupName;
   final List<User>? joinedUsers;
   final List<StateEvent>? initialState;
@@ -55,6 +57,7 @@ class _ChatCreateOrEditRoomDialogState
     extends State<ChatCreateOrEditRoomDialog> {
   late Visibility _visibility;
   Set<Profile> _profiles = {};
+  late final bool _isSpace;
   String? _groupName;
   String? _topic;
   late bool _enableEncryption;
@@ -70,6 +73,7 @@ class _ChatCreateOrEditRoomDialogState
   void initState() {
     super.initState();
     _groupName = widget.room?.name ?? widget.groupName;
+    _isSpace = widget.room?.isSpace ?? widget.space;
     _topic = widget.room?.topic;
     _existingGroup = widget.room != null;
 
@@ -155,7 +159,7 @@ class _ChatCreateOrEditRoomDialogState
       padding: const EdgeInsets.symmetric(
         horizontal: kMediumPadding,
       ),
-      child: SearchAutoComplete(
+      child: ChatUserSearchAutoComplete(
         width: usedWidth - 2 * kMediumPadding,
         suffix: const Icon(YaruIcons.user),
         onProfileSelected: (p) {
@@ -172,10 +176,11 @@ class _ChatCreateOrEditRoomDialogState
       mainAxisSize: MainAxisSize.min,
       spacing: kBigPadding,
       children: [
-        ChatRoomCreateOrEditAvatar(
-          avatarDraftBytes: avatarDraftFile?.bytes,
-          room: widget.room,
-        ),
+        if (!_isSpace)
+          ChatRoomCreateOrEditAvatar(
+            avatarDraftBytes: avatarDraftFile?.bytes,
+            room: widget.room,
+          ),
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: kMediumPadding,
@@ -190,7 +195,7 @@ class _ChatCreateOrEditRoomDialogState
             }),
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.all(12),
-              label: Text(l10n.groupName),
+              label: Text(_isSpace ? l10n.spaceName : l10n.groupName),
               suffixIcon: (_existingGroup &&
                       widget.room!.canChangeStateEvent(EventTypes.RoomName))
                   ? IconButton(
@@ -247,34 +252,35 @@ class _ChatCreateOrEditRoomDialogState
             ),
           ),
         ),
-        YaruTile(
-          leading: _enableEncryption
-              ? const Icon(YaruIcons.shield_filled)
-              : const Icon(YaruIcons.shield),
-          padding: const EdgeInsets.symmetric(
-            horizontal: kMediumPadding,
-          ),
-          trailing: CommonSwitch(
-            value: _enableEncryption,
-            onChanged: _enableEncryption ||
-                    widget.encrypted == true ||
-                    widget.room?.encrypted == true ||
-                    widget.room?.canChangeStateEvent(EventTypes.Encryption) ==
-                        false
-                ? null
-                : (v) {
-                    if (widget.room != null) {
-                      widget.room!.enableEncryption();
-                    }
+        if (!_isSpace)
+          YaruTile(
+            leading: _enableEncryption
+                ? const Icon(YaruIcons.shield_filled)
+                : const Icon(YaruIcons.shield),
+            padding: const EdgeInsets.symmetric(
+              horizontal: kMediumPadding,
+            ),
+            trailing: CommonSwitch(
+              value: _enableEncryption,
+              onChanged: _enableEncryption ||
+                      widget.encrypted == true ||
+                      widget.room?.encrypted == true ||
+                      widget.room?.canChangeStateEvent(EventTypes.Encryption) ==
+                          false
+                  ? null
+                  : (v) {
+                      if (widget.room != null) {
+                        widget.room!.enableEncryption();
+                      }
 
-                    setState(() => _enableEncryption = v);
-                  },
+                      setState(() => _enableEncryption = v);
+                    },
+            ),
+            title: Text(l10n.encrypted),
+            subtitle: widget.encrypted == true || widget.room?.encrypted == true
+                ? null
+                : (Text(l10n.enableEncryptionWarning)),
           ),
-          title: Text(l10n.encrypted),
-          subtitle: widget.encrypted == true || widget.room?.encrypted == true
-              ? null
-              : (Text(l10n.enableEncryptionWarning)),
-        ),
         YaruTile(
           leading: _visibility == Visibility.private
               ? const Icon(YaruIcons.private_mask_filled)
@@ -308,11 +314,13 @@ class _ChatCreateOrEditRoomDialogState
         if (!twoPaneMode)
           Expanded(
             child: _existingGroup
-                ? ChatRoomUsersList(
-                    room: widget.room!,
-                    sliver: false,
-                    showChatIcon: false,
-                  )
+                ? widget.room?.canInvite == true
+                    ? ChatRoomUsersList(
+                        room: widget.room!,
+                        sliver: false,
+                        showChatIcon: false,
+                      )
+                    : const SizedBox.shrink()
                 : profileListView,
           ),
       ],
@@ -324,7 +332,11 @@ class _ChatCreateOrEditRoomDialogState
         border: BorderSide.none,
         backgroundColor: Colors.transparent,
         title: Text(
-          _existingGroup ? '${l10n.edit} ${l10n.group}' : l10n.createGroup,
+          _existingGroup
+              ? '${l10n.edit} ${_isSpace ? l10n.space : l10n.group}'
+              : _isSpace
+                  ? l10n.createNewSpace
+                  : l10n.createGroup,
         ),
       ),
       actionsAlignment: MainAxisAlignment.start,
@@ -365,11 +377,13 @@ class _ChatCreateOrEditRoomDialogState
                               ),
                             )
                           : _existingGroup
-                              ? ChatRoomUsersList(
-                                  room: widget.room!,
-                                  sliver: false,
-                                  showChatIcon: false,
-                                )
+                              ? widget.room?.canInvite == true
+                                  ? ChatRoomUsersList(
+                                      room: widget.room!,
+                                      sliver: false,
+                                      showChatIcon: false,
+                                    )
+                                  : const SizedBox.shrink()
                               : profileListView,
                     ),
                   ],
@@ -392,33 +406,53 @@ class _ChatCreateOrEditRoomDialogState
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(l10n.cancel),
                     ),
-                    ElevatedButton(
+                    ImportantButton(
                       onPressed: _groupName == null ||
                               _groupName!.trim().isEmpty
                           ? null
                           : () {
-                              di<ChatModel>().createRoom(
-                                avatarFile: avatarDraftFile,
-                                enableEncryption: _enableEncryption,
-                                preset: CreateRoomPreset.publicChat,
-                                invite: _profiles.map((p) => p.userId).toList(),
-                                groupName: _groupName,
-                                visibility: _visibility,
-                                onFail: (error) =>
-                                    showSnackBar(context, content: Text(error)),
-                                onSuccess: () {
-                                  di<DraftModel>().resetAvatar();
-                                  if (context.mounted &&
-                                      Navigator.of(context).canPop()) {
-                                    Navigator.of(context).pop();
-                                  }
-                                },
-                                groupCall: _groupCall,
-                                federated: _federated,
-                              );
+                              if (context.mounted &&
+                                  Navigator.of(context).canPop()) {
+                                Navigator.of(context).pop();
+                              }
+                              if (_isSpace) {
+                                di<ChatModel>().createSpace(
+                                  name: _groupName!,
+                                  topic: _groupTopicController.text,
+                                  invite:
+                                      _profiles.map((p) => p.userId).toList(),
+                                  visibility: _visibility,
+                                  onFail: (error) => showSnackBar(
+                                    context,
+                                    content: Text(error),
+                                  ),
+                                  onSuccess: () {
+                                    di<DraftModel>().resetAvatar();
+                                  },
+                                );
+                              } else {
+                                di<ChatModel>().createRoom(
+                                  avatarFile: avatarDraftFile,
+                                  enableEncryption: _enableEncryption,
+                                  preset: CreateRoomPreset.publicChat,
+                                  invite:
+                                      _profiles.map((p) => p.userId).toList(),
+                                  groupName: _groupName,
+                                  visibility: _visibility,
+                                  onFail: (error) => showSnackBar(
+                                    context,
+                                    content: Text(error),
+                                  ),
+                                  onSuccess: () {
+                                    di<DraftModel>().resetAvatar();
+                                  },
+                                  groupCall: _groupCall,
+                                  federated: _federated,
+                                );
+                              }
                             },
                       child: Text(
-                        l10n.ok,
+                        _isSpace ? l10n.createNewSpace : l10n.createGroup,
                       ),
                     ),
                   ],

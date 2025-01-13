@@ -1,9 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/common_widgets.dart';
 import '../../common/view/image_shimmer.dart';
 import '../../common/view/ui_constants.dart';
 import '../chat_download_model.dart';
@@ -174,28 +175,27 @@ class ChatImageFuture extends StatefulWidget {
     this.height,
     required this.width,
     this.fit,
-    this.fromCache = true,
+    this.getThumbnail = true,
   });
 
   final Event event;
   final double? height;
   final double width;
   final BoxFit? fit;
-  final bool fromCache;
+  final bool getThumbnail;
 
   @override
   State<ChatImageFuture> createState() => _ChatImageFutureState();
 }
 
 class _ChatImageFutureState extends State<ChatImageFuture> {
-  late final Future<dynamic> _future;
+  late final Future<Uint8List?> _future;
 
   @override
   void initState() {
     super.initState();
-    _future = widget.fromCache
-        ? di<LocalImageModel>().downloadImage(event: widget.event)
-        : widget.event.downloadAndDecryptAttachment(getThumbnail: true);
+    _future = di<LocalImageModel>()
+        .downloadImage(event: widget.event, getThumbnail: widget.getThumbnail);
   }
 
   @override
@@ -203,9 +203,7 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final data = widget.fromCache
-                ? snapshot.data
-                : (snapshot.data as MatrixFile).bytes;
+            final data = snapshot.data;
             return Image.memory(
               data!,
               fit: widget.fit,
@@ -214,11 +212,7 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
             );
           }
 
-          return widget.fromCache
-              ? const ImageShimmer()
-              : const Center(
-                  child: Progress(),
-                );
+          return const ImageShimmer();
         },
       );
 }

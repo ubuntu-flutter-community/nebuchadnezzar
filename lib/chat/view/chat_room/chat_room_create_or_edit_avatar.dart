@@ -39,6 +39,7 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
         watchPropertyValue((DraftModel m) => m.attachingAvatar);
 
     return Stack(
+      key: ValueKey(ava?.toString()),
       children: [
         Padding(
           padding: const EdgeInsets.all(kSmallPadding),

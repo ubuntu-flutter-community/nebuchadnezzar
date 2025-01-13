@@ -172,10 +172,14 @@ class DraftModel extends SafeChangeNotifier {
   }
 
   final Map<MatrixFile, XFile> _matrixFilesToXFile = {};
-  Future<void> addAttachment(String roomId) async {
+  Future<void> addAttachment(
+    String roomId, {
+    required Function(String error) onFail,
+  }) async {
     setAttaching(true);
 
     List<XFile>? xFiles;
+
     if (Platform.isLinux) {
       xFiles = await openFiles();
     } else {
@@ -198,7 +202,8 @@ class DraftModel extends SafeChangeNotifier {
       return;
     }
 
-    for (var xFile in xFiles!) {
+    // TODO(Feichtmeier): add svg send support
+    for (var xFile in xFiles!.where((e) => !e.path.contains('.svg'))) {
       final mime = xFile.mimeType;
       final bytes = await xFile.readAsBytes();
       MatrixFile matrixFile;
@@ -207,7 +212,7 @@ class DraftModel extends SafeChangeNotifier {
           bytes: bytes,
           name: xFile.name,
           mimeType: mime,
-          maxDimension: 1000,
+          maxDimension: 2500,
           nativeImplementations: _client.nativeImplementations,
         );
       } else if (mime?.startsWith('video') == true) {
@@ -307,7 +312,7 @@ class DraftModel extends SafeChangeNotifier {
       } else {
         final result = await FilePicker.platform.pickFiles(
           allowMultiple: false,
-          type: FileType.any,
+          type: FileType.image,
         );
         xFile = result?.files
             .map(
@@ -328,7 +333,7 @@ class DraftModel extends SafeChangeNotifier {
       final mime = xFile.mimeType;
       final bytes = await xFile.readAsBytes();
 
-      if (mime?.startsWith('image') == true) {
+      if (mime?.startsWith('image') == true && mime?.endsWith('svg') != true) {
         _avatarDraftFile = await MatrixImageFile.shrink(
           bytes: bytes,
           name: xFile.name,

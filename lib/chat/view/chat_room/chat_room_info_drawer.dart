@@ -28,13 +28,13 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
     final theme = context.theme;
     final textTheme = theme.textTheme;
 
-    final avatar = watchStream(
+    final ava = watchStream(
       (ChatModel m) => m.getJoinedRoomAvatarStream(room),
       initialValue: room.avatar,
-      preserveState: false,
     ).data;
 
     return Drawer(
+      key: ValueKey(ava.toString()),
       child: SizedBox(
         width: kSideBarWith,
         child: Column(
@@ -106,17 +106,42 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
                   spacing: kBigPadding,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ChatAvatar(
-                      avatarUri: avatar,
-                      dimension: 150,
-                      fallBackIconSize: 80,
-                    ),
+                    _Ava(room: room),
                     SizedBox(
-                      width: 200,
-                      child: Text(
-                        room.getLocalizedDisplayname(),
-                        textAlign: TextAlign.center,
-                        style: textTheme.bodyLarge,
+                      width: 300,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            room.getLocalizedDisplayname(),
+                            textAlign: TextAlign.center,
+                            style: textTheme.bodyLarge,
+                          ),
+                          Row(
+                            spacing: kSmallPadding,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  room.directChatMatrixID ?? '',
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.bodyMedium,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => showSnackBar(
+                                  context,
+                                  content: CopyClipboardContent(
+                                    text: room.directChatMatrixID ?? '',
+                                  ),
+                                ),
+                                icon: const Icon(
+                                  YaruIcons.copy,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -190,6 +215,28 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _Ava extends StatelessWidget with WatchItMixin {
+  const _Ava({
+    required this.room,
+  });
+
+  final Room room;
+
+  @override
+  Widget build(BuildContext context) {
+    final avatar = watchStream(
+      (ChatModel m) => m.getJoinedRoomAvatarStream(room),
+      initialValue: room.avatar,
+      preserveState: false,
+    ).data;
+    return ChatAvatar(
+      avatarUri: avatar,
+      dimension: 150,
+      fallBackIconSize: 80,
     );
   }
 }

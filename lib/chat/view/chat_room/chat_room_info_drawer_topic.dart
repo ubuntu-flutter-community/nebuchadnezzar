@@ -17,7 +17,7 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final updatingTimeline =
-        watchPropertyValue((TimelineModel m) => m.updatingTimeline);
+        watchPropertyValue((TimelineModel m) => m.getUpdatingTimeline(room.id));
 
     return SliverToBoxAdapter(
       child: Center(

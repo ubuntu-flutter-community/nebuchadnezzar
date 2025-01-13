@@ -31,8 +31,8 @@ class SettingsModel extends SafeChangeNotifier {
   }
 
   String? get myDeviceId => _client.deviceID;
-  List<Device> _devices = [];
-  List<Device> get devices => _devices;
+  List<Device>? _devices;
+  List<Device>? get devices => _devices;
   Future<void> getDevices() async {
     _devices = await _client.getDevices() ?? [];
     notifyListeners();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -18,9 +19,9 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
 
     final spaces = watchStream(
           (ChatModel m) => m.spacesStream,
-          initialValue: chatModel.notArchivedSpaces,
+          initialValue: chatModel.spaces,
         ).data ??
-        [];
+        <Room>[];
 
     return SliverStickyPanel(
       toolbarHeight: 56,
