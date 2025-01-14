@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:system_theme/system_theme.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yaru/yaru.dart';
 
 import 'app/view/app.dart';
-import 'app_config.dart';
 import 'common/view/ui_constants.dart';
 import 'register.dart';
 
 void main() async {
-  if (isMobilePlatform) {
+  if (isMobile) {
     WidgetsFlutterBinding.ensureInitialized();
   } else {
     await YaruWindowTitleBar.ensureInitialized();
@@ -22,7 +22,11 @@ void main() async {
     }
   }
 
+  if (!Platform.isLinux) {
+    await SystemTheme.accentColor.load();
+  }
+
   registerDependencies();
 
-  runApp(const NebuchadnezzarApp());
+  runApp(NebuchadnezzarApp(yaruApp: Platform.isLinux));
 }

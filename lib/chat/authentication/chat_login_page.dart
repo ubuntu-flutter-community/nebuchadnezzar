@@ -9,7 +9,7 @@ import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../constants.dart';
 import '../../l10n/l10n.dart';
-import '../view/chat_master/chat_master_detail_page.dart';
+import '../chat_master/view/chat_master_detail_page.dart';
 import 'authentication_model.dart';
 
 class ChatLoginPage extends StatefulWidget with WatchItStatefulWidgetMixin {

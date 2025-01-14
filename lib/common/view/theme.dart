@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../app_config.dart';
 import 'ui_constants.dart';
+
+bool yaru = !kIsWeb && (Platform.isLinux || Platform.isMacOS);
 
 Color remixColor(
   Color targetColor, {

@@ -8,8 +8,8 @@ import '../../common/view/common_widgets.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../chat_model.dart';
-import '../view/chat_master/chat_my_user_avatar.dart';
+import '../common/chat_model.dart';
+import '../chat_master/view/chat_my_user_avatar.dart';
 import 'logout_button.dart';
 import 'settings_model.dart';
 
@@ -70,8 +70,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       ),
       scrollable: true,
       content: SizedBox(
-        height: 800,
-        width: 500,
+        width: 450,
         child: Column(
           spacing: 2 * kBigPadding,
           children: [
@@ -82,6 +81,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
               iconSize: 70,
             ),
             YaruSection(
+              headline: Text(l10n.account),
               child: Column(
                 children: [
                   YaruTile(
@@ -123,6 +123,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 ],
               ),
             ),
+            const ChatEventSettings(),
             YaruSection(
               headline: Text(l10n.devices),
               child: devices == null
@@ -160,6 +161,45 @@ class _SettingsDialogState extends State<SettingsDialog> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ChatEventSettings extends StatelessWidget with WatchItMixin {
+  const ChatEventSettings({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final settingsModel = di<SettingsModel>();
+
+    return YaruSection(
+      // TODO: localize
+      headline: const Text('Show these events in the chat'),
+      child: Column(
+        children: [
+          YaruTile(
+            title: Text(l10n.changedTheChatAvatar('"UserABC"')),
+            trailing: CommonSwitch(
+              value: watchPropertyValue(
+                (SettingsModel m) => m.showChatAvatarChanges,
+              ),
+              onChanged: settingsModel.setShowAvatarChanges,
+            ),
+          ),
+          YaruTile(
+            title: Text(l10n.changedTheDisplaynameTo('"UserABC"', '"UserXYZ"')),
+            trailing: CommonSwitch(
+              value: watchPropertyValue(
+                (SettingsModel m) => m.showChatDisplaynameChanges,
+              ),
+              onChanged: settingsModel.setShowChatDisplaynameChanges,
+            ),
+          ),
+        ],
       ),
     );
   }

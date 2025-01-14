@@ -1,34 +1,27 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart' as sqlite;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../constants.dart';
 import 'chat/authentication/authentication_model.dart';
 import 'chat/bootstrap/bootstrap_model.dart';
-import 'chat/chat_download_model.dart';
-import 'chat/chat_download_service.dart';
-import 'chat/chat_model.dart';
-import 'chat/draft_model.dart';
-import 'chat/local_image_model.dart';
-import 'chat/local_image_service.dart';
-import 'chat/remote_image_model.dart';
-import 'chat/remote_image_service.dart';
-import 'chat/search_model.dart';
+import 'chat/chat_room/common/timeline_model.dart';
+import 'chat/chat_room/input/draft_model.dart';
+import 'chat/common/chat_model.dart';
+import 'chat/common/client_x.dart';
+import 'chat/common/local_image_model.dart';
+import 'chat/common/local_image_service.dart';
+import 'chat/common/remote_image_model.dart';
+import 'chat/common/remote_image_service.dart';
+import 'chat/common/search_model.dart';
+import 'chat/events/chat_download_model.dart';
+import 'chat/events/chat_download_service.dart';
 import 'chat/settings/settings_model.dart';
-import 'chat/timeline_model.dart';
+import 'chat/settings/settings_service.dart';
 
 void registerDependencies() => di
   ..registerSingletonAsync<Client>(
-    _ClientX.registerAsync,
+    ClientX.registerAsync,
     dispose: (s) => s.dispose(),
   )
   ..registerSingletonWithDependencies<AuthenticationModel>(
@@ -46,6 +39,13 @@ void registerDependencies() => di
   ..registerSingletonAsync<SharedPreferences>(
     () async => SharedPreferences.getInstance(),
   )
+  ..registerSingletonWithDependencies<SettingsService>(
+    () => SettingsService(
+      sharedPreferences: di<SharedPreferences>(),
+    ),
+    dispose: (s) => s.dispose(),
+    dependsOn: [SharedPreferences],
+  )
   ..registerSingletonWithDependencies<LocalImageService>(
     () => LocalImageService(client: di<Client>()),
     dependsOn: [Client],
@@ -57,9 +57,12 @@ void registerDependencies() => di
     dependsOn: [Client],
   )
   ..registerSingletonWithDependencies<SettingsModel>(
-    () => SettingsModel(client: di<Client>()),
+    () => SettingsModel(
+      client: di<Client>(),
+      settingsService: di<SettingsService>(),
+    )..init(),
     dispose: (s) => s.dispose(),
-    dependsOn: [Client],
+    dependsOn: [Client, SettingsService],
   )
   ..registerSingletonWithDependencies<DraftModel>(
     () => DraftModel(
@@ -122,33 +125,3 @@ void registerDependencies() => di
     () => TimelineModel(),
     dispose: (s) => s.dispose(),
   );
-
-extension _ClientX on Client {
-  static Future<Client> registerAsync() async {
-    if (Platform.isLinux) {
-      sqlite.Sqflite();
-      sqlite.databaseFactoryOrNull = databaseFactoryFfi;
-    }
-    final client = Client(
-      kAppId,
-      nativeImplementations: NativeImplementationsIsolate(compute),
-      verificationMethods: {
-        KeyVerificationMethod.numbers,
-        if (Platform.isAndroid || Platform.isLinux) KeyVerificationMethod.emoji,
-      },
-      databaseBuilder: (_) async {
-        final dir = await getApplicationSupportDirectory();
-        final db = MatrixSdkDatabase(
-          kAppId,
-          database:
-              await sqlite.openDatabase(p.join(dir.path, 'database.sqlite')),
-        );
-        await db.open();
-        return db;
-      },
-    );
-    // This reads potential credentials that might exist from previous sessions.
-    await client.init();
-    return client;
-  }
-}

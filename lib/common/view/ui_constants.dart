@@ -9,6 +9,8 @@ const kSmallPadding = 5.0;
 
 const kMediumPadding = 10.0;
 
+const kMediumPlusPadding = 15.0;
+
 const kBigPadding = 20.0;
 
 const kCardPadding = 15.0;

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -7,10 +8,36 @@ import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
+import 'settings_service.dart';
 
 class SettingsModel extends SafeChangeNotifier {
-  SettingsModel({required Client client}) : _client = client;
+  SettingsModel({
+    required Client client,
+    required SettingsService settingsService,
+  })  : _client = client,
+        _settingsService = settingsService;
+
   final Client _client;
+  final SettingsService _settingsService;
+  StreamSubscription<bool>? _propertiesChangedSub;
+
+  void init() => _propertiesChangedSub =
+      _settingsService.propertiesChanged.listen((_) => notifyListeners());
+
+  @override
+  Future<void> dispose() async {
+    super.dispose();
+    return _propertiesChangedSub?.cancel();
+  }
+
+  bool get showChatAvatarChanges => _settingsService.showAvatarChanges;
+  void setShowAvatarChanges(bool value) =>
+      _settingsService.setShowAvatarChanges(value);
+
+  bool get showChatDisplaynameChanges =>
+      _settingsService.showChatDisplaynameChanges;
+  void setShowChatDisplaynameChanges(bool value) =>
+      _settingsService.setShowChatDisplaynameChanges(value);
 
   Profile? _myProfile;
   Profile? get myProfile => _myProfile;

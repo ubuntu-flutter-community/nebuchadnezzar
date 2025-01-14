@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../app_config.dart';
 import 'build_context_x.dart';
+import 'theme.dart';
 
 class CommonSwitch extends StatelessWidget {
   const CommonSwitch({super.key, required this.value, this.onChanged});

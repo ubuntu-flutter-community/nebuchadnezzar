@@ -13,6 +13,7 @@
 #include <gtk/gtk_plugin.h>
 #include <handy_window/handy_window_plugin.h>
 #include <screen_retriever_linux/screen_retriever_linux_plugin.h>
+#include <system_theme/system_theme_plugin.h>
 #include <url_launcher_linux/url_launcher_plugin.h>
 #include <window_manager/window_manager_plugin.h>
 #include <xdg_icons/xdg_icons_plugin.h>
@@ -40,6 +41,9 @@ void fl_register_plugins(FlPluginRegistry* registry) {
   g_autoptr(FlPluginRegistrar) screen_retriever_linux_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "ScreenRetrieverLinuxPlugin");
   screen_retriever_linux_plugin_register_with_registrar(screen_retriever_linux_registrar);
+  g_autoptr(FlPluginRegistrar) system_theme_registrar =
+      fl_plugin_registry_get_registrar_for_plugin(registry, "SystemThemePlugin");
+  system_theme_plugin_register_with_registrar(system_theme_registrar);
   g_autoptr(FlPluginRegistrar) url_launcher_linux_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "UrlLauncherPlugin");
   url_launcher_plugin_register_with_registrar(url_launcher_linux_registrar);

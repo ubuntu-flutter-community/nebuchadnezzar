@@ -6,15 +6,29 @@ List<Widget> space({
   double? heightGap,
   int skip = 1,
   final bool expand = false,
+  final bool flex = false,
+  final bool spaceEnd = false,
 }) =>
     children
         .expand(
           (item) sync* {
-            yield SizedBox(
-              width: widthGap,
-              height: heightGap,
-            );
-            yield expand ? Expanded(child: item) : item;
+            if (!spaceEnd) {
+              yield SizedBox(
+                width: widthGap,
+                height: heightGap,
+              );
+            }
+            yield expand
+                ? Expanded(child: item)
+                : flex
+                    ? Flexible(child: item)
+                    : item;
+            if (spaceEnd) {
+              yield SizedBox(
+                width: widthGap,
+                height: heightGap,
+              );
+            }
           },
         )
         .skip(skip)

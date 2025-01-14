@@ -1,18 +1,20 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:system_theme/system_theme_builder.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat/view/chat_start_page.dart';
+import '../../chat/chat_start_page.dart';
 import '../../constants.dart';
 import '../../l10n/l10n.dart';
 
 class NebuchadnezzarApp extends StatelessWidget {
-  const NebuchadnezzarApp({super.key});
+  const NebuchadnezzarApp({super.key, required this.yaruApp});
+
+  final bool yaruApp;
 
   @override
-  Widget build(BuildContext context) => Platform.isLinux
+  Widget build(BuildContext context) => yaruApp
       ? YaruTheme(
           builder: (context, yaru, child) => App(
             lightTheme: yaru.theme,
@@ -21,9 +23,11 @@ class NebuchadnezzarApp extends StatelessWidget {
             highContrastDarkTheme: yaruHighContrastDark,
           ),
         )
-      : App(
-          lightTheme: yaruLight,
-          darkTheme: yaruDark,
+      : SystemThemeBuilder(
+          builder: (context, systemColor) => App(
+            lightTheme: createYaruLightTheme(primaryColor: systemColor.accent),
+            darkTheme: createYaruDarkTheme(primaryColor: systemColor.accent),
+          ),
         );
 }
 
