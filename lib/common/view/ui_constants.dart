@@ -23,7 +23,8 @@ const kLoginFormWidth = 350.0;
 
 const Duration kAvatarAnimationDuration = Duration(milliseconds: 250);
 const Curve kAvatarAnimationCurve = Curves.easeInOut;
-const kTypingAvatarSize = 24.0;
+const kTypingAvatarSize = 15.0;
+const kAvatarDefaultSize = 38.0;
 
 const kBubbleRadius = Radius.circular(4.0);
 const kBigBubbleRadius = Radius.circular(8.0);

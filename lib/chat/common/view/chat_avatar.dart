@@ -4,12 +4,13 @@ import 'package:yaru/yaru.dart';
 
 import '../../../common/view/avatar_vignette.dart';
 import '../../../common/view/safe_network_image.dart';
+import '../../../common/view/ui_constants.dart';
 import '../remote_image_model.dart';
 
 class ChatAvatar extends StatefulWidget with WatchItStatefulWidgetMixin {
   const ChatAvatar({
     super.key,
-    this.dimension = 38,
+    this.dimension = kAvatarDefaultSize,
     this.fallBackIcon,
     this.fallBackIconSize,
     this.avatarUri,

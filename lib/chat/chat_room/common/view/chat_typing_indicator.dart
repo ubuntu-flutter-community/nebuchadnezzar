@@ -26,7 +26,7 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
         [];
 
     return AnimatedContainer(
-      height: typingUsers.isEmpty ? 0 : kTypingAvatarSize + kMediumPadding,
+      height: typingUsers.isEmpty ? 0 : kTypingAvatarSize,
       duration: kAvatarAnimationDuration,
       curve: kAvatarAnimationCurve,
       alignment: Alignment.centerLeft,
@@ -34,7 +34,6 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
       decoration: const BoxDecoration(),
       padding: const EdgeInsets.symmetric(
         horizontal: kBigPadding,
-        vertical: kSmallPadding,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -55,7 +54,7 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: kMediumPadding,
+                horizontal: kSmallPadding,
               ),
               child: typingUsers.isEmpty ? null : const _TypingDots(),
             ),
@@ -105,27 +104,27 @@ class __TypingDotsState extends State<_TypingDots> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    const size = 8.0;
+    const size = kTypingAvatarSize / 3;
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 1; i <= 3; i++)
-          AnimatedContainer(
-            duration: animationDuration * 1.5,
-            curve: Curves.bounceIn,
-            width: size,
-            height: _tick == i ? size * 2 : size,
-            margin: EdgeInsets.symmetric(
-              horizontal: 2,
-              vertical: _tick == i ? 4 : 8,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 1; i <= 3; i++)
+            AnimatedContainer(
+              duration: animationDuration * 1.5,
+              curve: Curves.bounceIn,
+              width: size,
+              height: _tick == i ? size * 3 : size,
+              margin: const EdgeInsets.symmetric(horizontal: size / 2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(size * 2),
+                color: theme.colorScheme.primary,
+              ),
             ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(size * 2),
-              color: theme.colorScheme.secondary,
-            ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -4,7 +4,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../../common/view/build_context_x.dart';
 import '../../../common/view/confirm.dart';
+import '../../../common/view/theme.dart';
+import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../chat_download_model.dart';
 
@@ -55,13 +58,14 @@ class ChatMessageMediaAvatar extends StatelessWidget {
                   ),
                 ),
         child: CircleAvatar(
-          radius: 38 / 2,
+          backgroundColor: avatarFallbackColor(context.colorScheme),
+          radius: kAvatarDefaultSize / 2,
           child: switch (event.messageType) {
             MessageTypes.Audio => const Icon(YaruIcons.media_play),
             MessageTypes.Video => const Icon(YaruIcons.video_filled),
             MessageTypes.Location => const Icon(YaruIcons.location),
             MessageTypes.File => const Icon(YaruIcons.document_filled),
-            _ => const Icon(YaruIcons.question),
+            _ => const Icon(YaruIcons.document_filled),
           },
         ),
       ),

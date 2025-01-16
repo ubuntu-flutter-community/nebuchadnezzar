@@ -37,4 +37,12 @@ extension DateTimeX on DateTime {
       locale.countryCode,
     ).format(this);
   }
+
+  String formatAndLocalizeTime(AppLocalizations l10n) {
+    final locale = WidgetsBinding.instance.platformDispatcher.locale;
+
+    return DateFormat.Hm(
+      locale.countryCode,
+    ).format(this);
+  }
 }

@@ -43,7 +43,7 @@ Color getTileColor(
             saturation: theme.colorScheme.isLight ? (yaru ? -0.3 : -0.6) : -0.6,
             lightness: theme.colorScheme.isLight ? 0.65 : (yaru ? -0.5 : -0.7),
           )
-        : getMonochromeBg(theme: theme, factor: 6, darkFactor: yaru ? 12 : 15);
+        : getMonochromeBg(theme: theme, factor: 6, darkFactor: 15);
 
 Color getPanelBg(ThemeData theme) =>
     getMonochromeBg(theme: theme, darkFactor: 3);
@@ -67,18 +67,10 @@ Color getEventBadgeColor(ThemeData theme) =>
 Color getEventBadgeTextColor(ThemeData theme) => theme.colorScheme.onSurface;
 
 EdgeInsets tilePadding(bool partOfMessageCohort) {
-  return partOfMessageCohort
-      ? const EdgeInsets.only(
-          left: kMediumPadding,
-          right: kMediumPadding,
-          bottom: kSmallPadding,
-        )
-      : const EdgeInsets.only(
-          left: kMediumPadding,
-          right: kMediumPadding,
-          top: kMediumPadding,
-          bottom: kSmallPadding,
-        );
+  return const EdgeInsets.symmetric(
+    horizontal: kSmallPadding,
+    vertical: kTinyPadding,
+  );
 }
 
 ButtonStyle get textFieldSuffixStyle => IconButton.styleFrom(
@@ -89,3 +81,6 @@ ButtonStyle get textFieldSuffixStyle => IconButton.styleFrom(
         ),
       ),
     );
+
+Color avatarFallbackColor(ColorScheme colorScheme) =>
+    colorScheme.primary.withValues(alpha: 0.3);

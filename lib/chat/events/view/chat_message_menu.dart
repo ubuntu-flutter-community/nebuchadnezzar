@@ -8,7 +8,6 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../chat_room/input/draft_model.dart';
-import '../../common/event_x.dart';
 import '../../data/emojis.dart';
 
 class ChatMessageMenu extends StatefulWidget {
@@ -37,8 +36,7 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
       child: MenuAnchor(
         controller: _controller,
         consumeOutsideTap: true,
-        alignmentOffset:
-            Offset(widget.event.isImage ? 0 : kMediumPadding, -kSmallPadding),
+        alignmentOffset: const Offset(0, -kSmallPadding),
         menuChildren: [
           if (widget.event.canRedact)
             MenuItemButton(

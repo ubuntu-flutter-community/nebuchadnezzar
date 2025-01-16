@@ -27,7 +27,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
         spacing: kMediumPadding,
         children: [
           SizedBox.square(
-            dimension: 38,
+            dimension: kAvatarDefaultSize,
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,
@@ -55,7 +55,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
             ),
           ),
           SizedBox.square(
-            dimension: 38,
+            dimension: kAvatarDefaultSize,
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,

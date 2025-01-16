@@ -20,4 +20,37 @@ extension EventX on Event {
         EventTypes.GuestAccess,
         EventTypes.Encryption,
       }.contains(type);
+
+  bool hideEventInTimeline({
+    required bool showAvatarChanges,
+    required bool showDisplayNameChanges,
+  }) {
+    if (type == EventTypes.RoomMember &&
+        roomMemberChangeType == RoomMemberChangeType.avatar &&
+        !showAvatarChanges) {
+      return true;
+    }
+    if (type == EventTypes.RoomMember &&
+        roomMemberChangeType == RoomMemberChangeType.displayname &&
+        !showDisplayNameChanges) {
+      return true;
+    }
+
+    if ({RelationshipTypes.edit, RelationshipTypes.reaction}
+        .contains(relationshipType)) {
+      return true;
+    }
+
+    return {
+      EventTypes.Redaction,
+      EventTypes.Reaction,
+    }.contains(type);
+  }
+
+  bool partOfMessageCohort(Event? maybePreviousEvent) {
+    return maybePreviousEvent != null &&
+        !maybePreviousEvent.showAsBadge &&
+        !maybePreviousEvent.isImage &&
+        maybePreviousEvent.senderId == senderId;
+  }
 }

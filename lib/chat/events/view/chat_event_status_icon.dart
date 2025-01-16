@@ -71,7 +71,7 @@ class ChatEventStatusIcon extends StatelessWidget {
         );
 
     return Padding(
-      padding: padding ?? const EdgeInsets.all(kMediumPadding),
+      padding: padding ?? const EdgeInsets.all(kSmallPadding),
       child: SizedBox(
         height: iconSize,
         child: Row(
@@ -94,7 +94,9 @@ class ChatEventStatusIcon extends StatelessWidget {
                 ),
               ),
             Text(
-              event.originServerTs.toLocal().formatAndLocalize(context.l10n),
+              event.originServerTs
+                  .toLocal()
+                  .formatAndLocalizeTime(context.l10n),
               textAlign: TextAlign.start,
               style: style,
               overflow: TextOverflow.ellipsis,

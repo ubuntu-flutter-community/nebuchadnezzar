@@ -107,7 +107,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 padding: const EdgeInsets.only(bottom: kMediumPadding),
                 child: ChatRoomTimelineList(
                   timeline: snapshot.data!,
-                  room: widget.room,
                   listKey: _roomListKey,
                 ),
               );

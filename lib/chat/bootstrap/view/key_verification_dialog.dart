@@ -10,6 +10,7 @@ import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../../common/view/build_context_x.dart';
+import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
@@ -218,8 +219,8 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
                     avatarUri: user?.avatarUrl,
                   ),
                   const SizedBox(
-                    width: 38,
-                    height: 38,
+                    width: kAvatarDefaultSize,
+                    height: kAvatarDefaultSize,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ],

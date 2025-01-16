@@ -50,9 +50,12 @@ class ChatImage extends StatelessWidget with WatchItMixin {
         watchPropertyValue((LocalImageModel m) => m.get(event.eventId));
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: kBigPadding,
-        horizontal: kMediumPadding,
+      padding: EdgeInsets.only(
+        top: kBigPadding,
+        bottom: kBigPadding,
+        right: kMediumPadding,
+        left: kMediumPadding +
+            (isUserMessage ? 0 : kAvatarDefaultSize + kBigPadding),
       ),
       child: Align(
         alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
@@ -80,15 +83,16 @@ class ChatImage extends StatelessWidget with WatchItMixin {
                         ),
                 ),
               ),
-              Positioned(
-                left: kSmallPadding,
-                bottom: kSmallPadding,
-                child: ChatMessageReactions(
-                  key: ValueKey('${event.eventId}reactions'),
-                  event: event,
-                  timeline: timeline,
+              if (!event.redacted)
+                Positioned(
+                  left: kSmallPadding,
+                  bottom: kSmallPadding,
+                  child: ChatMessageReactions(
+                    key: ValueKey('${event.eventId}reactions'),
+                    event: event,
+                    timeline: timeline,
+                  ),
                 ),
-              ),
               Positioned(
                 top: kSmallPadding,
                 right: 10 * kSmallPadding,

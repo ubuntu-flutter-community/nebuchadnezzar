@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
@@ -39,75 +40,45 @@ class ChatMessageBubble extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.theme;
     final isUserMessage = di<ChatModel>().isUserEvent(event);
 
-    return Stack(
-      children: [
-        Align(
-          alignment:
-              isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
-          child: Stack(
-            children: [
-              ChatMessageMenu(
-                event: event,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: ChatMessageBubble.width,
-                    minWidth: 205,
-                  ),
-                  child: Container(
-                    margin: tilePadding(partOfMessageCohort),
-                    padding: const EdgeInsets.all(kSmallPadding),
-                    decoration: BoxDecoration(
-                      color: getTileColor(
-                        di<ChatModel>().isUserEvent(event),
-                        theme,
-                      ),
-                      borderRadius: messageBubbleShape
-                          .getBorderRadius(partOfMessageCohort),
-                    ),
-                    child: _ChatMessageBubbleContent(
-                      event: event,
-                      timeline: timeline,
-                      onReplyOriginClick: onReplyOriginClick,
-                      hideAvatar: partOfMessageCohort,
-                    ),
-                  ),
-                ),
-              ),
-              if (!event.redacted)
-                Positioned(
-                  key: ValueKey('${event.eventId}reactions'),
-                  left: kSmallPadding,
-                  bottom: kSmallPadding,
-                  child: ChatMessageReactions(
-                    event: event,
-                    timeline: timeline,
-                  ),
-                ),
-              Positioned(
+    return Align(
+      alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,
+      child: Stack(
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: ChatMessageBubble.width,
+              minWidth: 205,
+            ),
+            child: Container(
+              margin: tilePadding(partOfMessageCohort),
+              padding: const EdgeInsets.only(
+                top: kSmallPadding,
                 bottom: kSmallPadding,
-                right: kSmallPadding,
-                child: ChatEventStatusIcon(
-                  event: event,
-                  timeline: timeline,
-                ),
               ),
-              Positioned(
-                top: kBigPadding,
-                right: kBigPadding,
-                child: event.attachmentMxcUrl == null
-                    ? const SizedBox.shrink()
-                    : InkWell(
-                        onTap: () => di<ChatDownloadModel>().safeFile(event),
-                        child: ChatMessageAttachmentIndicator(event: event),
-                      ),
+              child: _ChatMessageBubbleContent(
+                partOfMessageCohort: partOfMessageCohort,
+                messageBubbleShape: messageBubbleShape,
+                event: event,
+                timeline: timeline,
+                onReplyOriginClick: onReplyOriginClick,
+                hideAvatar: partOfMessageCohort,
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+          if (!event.redacted)
+            Positioned(
+              key: ValueKey('${event.eventId}reactions'),
+              left: kMediumPlusPadding + 38,
+              bottom: kTinyPadding,
+              child: ChatMessageReactions(
+                event: event,
+                timeline: timeline,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -118,12 +89,16 @@ class _ChatMessageBubbleContent extends StatelessWidget {
     required this.timeline,
     required this.onReplyOriginClick,
     required this.hideAvatar,
+    required this.messageBubbleShape,
+    required this.partOfMessageCohort,
   });
 
   final Event event;
   final Timeline timeline;
   final Future<void> Function(Event event) onReplyOriginClick;
   final bool hideAvatar;
+  final ChatMessageBubbleShape messageBubbleShape;
+  final bool partOfMessageCohort;
 
   @override
   Widget build(BuildContext context) {
@@ -135,82 +110,117 @@ class _ChatMessageBubbleContent extends StatelessWidget {
     final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
 
-    return Material(
-      color: Colors.transparent,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        spacing: kSmallPadding,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(kSmallPadding),
-            child: hideAvatar && event.messageType == MessageTypes.Text
-                ? const SizedBox.shrink()
-                : ChatMessageBubbleLeading(
-                    event: event,
-                  ),
-          ),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: kSmallPadding,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
+          child: hideAvatar && event.messageType == MessageTypes.Text
+              ? const SizedBox.square(
+                  dimension: kAvatarDefaultSize,
+                )
+              : ChatMessageBubbleLeading(
+                  event: event,
+                ),
+        ),
+        Flexible(
+          child: ChatMessageMenu(
+            event: event,
+            child: Stack(
               children: [
-                const SizedBox(
-                  height: kSmallPadding,
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        event.senderFromMemoryOrFallback.calcDisplayname(),
-                        style: textTheme.labelSmall,
-                      ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: kMediumPadding),
+                  decoration: BoxDecoration(
+                    color: getTileColor(
+                      di<ChatModel>().isUserEvent(event),
+                      context.theme,
                     ),
-                    if (!event.redacted)
-                      Flexible(
-                        child: ChatMessageReplyHeader(
-                          event: event,
-                          timeline: timeline,
-                          onReplyOriginClick: onReplyOriginClick,
-                        ),
+                    borderRadius:
+                        messageBubbleShape.getBorderRadius(partOfMessageCohort),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        height: kSmallPadding,
                       ),
-                  ],
-                ),
-                Opacity(
-                  opacity: event.redacted ? 0.5 : 1,
-                  child: event.redacted
-                      ? LocalizedDisplayEventText(
-                          displayEvent: displayEvent,
-                          style: messageStyle?.copyWith(
-                            decoration: TextDecoration.lineThrough,
-                          ),
-                        )
-                      : event.isRichMessage
-                          ? HtmlMessage(
-                              html: html,
-                              room: timeline.room,
-                              defaultTextColor: context.colorScheme.onSurface,
-                            )
-                          : SelectableText.rich(
-                              TextSpan(
-                                style: messageStyle,
-                                text: displayEvent.body,
-                              ),
-                              style: messageStyle,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              event.senderFromMemoryOrFallback
+                                  .calcDisplayname(),
+                              style: textTheme.labelSmall,
                             ),
+                          ),
+                          if (!event.redacted)
+                            Flexible(
+                              child: ChatMessageReplyHeader(
+                                event: event,
+                                timeline: timeline,
+                                onReplyOriginClick: onReplyOriginClick,
+                              ),
+                            ),
+                        ],
+                      ),
+                      Opacity(
+                        opacity: event.redacted ? 0.5 : 1,
+                        child: event.redacted
+                            ? LocalizedDisplayEventText(
+                                displayEvent: displayEvent,
+                                style: messageStyle?.copyWith(
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              )
+                            : event.isRichMessage
+                                ? HtmlMessage(
+                                    html: html,
+                                    room: timeline.room,
+                                    defaultTextColor:
+                                        context.colorScheme.onSurface,
+                                  )
+                                : SelectableText.rich(
+                                    TextSpan(
+                                      style: messageStyle,
+                                      text: displayEvent.body,
+                                    ),
+                                    style: messageStyle,
+                                  ),
+                      ),
+                      const SizedBox(
+                        height: kBigPadding,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(
-                  height: kBigPadding,
+                Positioned(
+                  top: kSmallPadding,
+                  right: kSmallPadding,
+                  child: event.attachmentMxcUrl == null
+                      ? const SizedBox.shrink()
+                      : InkWell(
+                          onTap: () => di<ChatDownloadModel>().safeFile(event),
+                          child: ChatMessageAttachmentIndicator(event: event),
+                        ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: ChatEventStatusIcon(
+                    event: event,
+                    timeline: timeline,
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(
-            height: kSmallPadding,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -223,7 +233,7 @@ class ChatMessageBubbleLeading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (event.messageType == MessageTypes.BadEncrypted) {
-      return const SizedBox.shrink();
+      return const SizedBox.square(dimension: kAvatarDefaultSize);
     } else if (event.messageType != MessageTypes.Text &&
         event.messageType != MessageTypes.Notice) {
       return ChatMessageMediaAvatar(event: event);
@@ -235,11 +245,8 @@ class ChatMessageBubbleLeading extends StatelessWidget {
         context: context,
         builder: (context) => ChatProfileDialog(userId: event.senderId),
       ),
-      fallBackColor: getMonochromeBg(
-        theme: context.theme,
-        factor: 10,
-        darkFactor: yaru ? 1 : null,
-      ),
+      fallBackColor:
+          avatarFallbackColor(context.colorScheme).scale(saturation: -1),
     );
   }
 }

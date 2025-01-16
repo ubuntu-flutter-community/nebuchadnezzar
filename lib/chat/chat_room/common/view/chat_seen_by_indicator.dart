@@ -38,11 +38,7 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
 
     return Container(
       width: double.infinity,
-      alignment: event.room.isDirectChat ||
-              di<ChatModel>().isUserEvent(event) &&
-                  event.type != EventTypes.Reaction
-          ? Alignment.centerRight
-          : Alignment.centerLeft,
+      alignment: Alignment.center,
       child: AnimatedContainer(
         padding: const EdgeInsets.symmetric(
           vertical: kSmallPadding,
