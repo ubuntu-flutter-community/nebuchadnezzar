@@ -14,6 +14,7 @@ import '../../../events/view/chat_event_tile.dart';
 import '../../../settings/settings_model.dart';
 import '../../titlebar/chat_room_title_bar.dart';
 import '../timeline_model.dart';
+import 'chat_seen_by_indicator.dart';
 
 class ChatRoomTimelineList extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -115,6 +116,13 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         onReplyOriginClick: (event) => _jump(event),
                         timeline: widget.timeline,
                       ),
+                      if (i == 0)
+                        ChatEventSeenByIndicator(
+                          key: ValueKey(
+                            '${event.eventId}${widget.timeline.events.length}',
+                          ),
+                          event: event,
+                        ),
                     ],
                   ),
                 ),
