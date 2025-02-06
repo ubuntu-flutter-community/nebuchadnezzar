@@ -364,7 +364,17 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
             child: Text(
               l10n.close,
             ),
-            onPressed: () => Navigator.of(context, rootNavigator: false).pop(),
+            onPressed: () {
+              Navigator.of(context, rootNavigator: false).pop();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) => const ChatMasterDetailPage(
+                    checkBootstrap: false,
+                  ),
+                ),
+                (route) => false,
+              );
+            },
           ),
         );
     }

@@ -87,23 +87,23 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/window_manager/macos
 
 SPEC CHECKSUMS:
-  appkit_ui_element_colors: 39bb2d80be3f19b152ccf4c70d5bbe6cba43d74a
-  dynamic_color: 2eaa27267de1ca20d879fbd6e01259773fb1670f
-  emoji_picker_flutter: 846d4afb3368bc864a3884f02654961198bd72da
-  file_selector_macos: cc3858c981fe6889f364731200d6232dac1d812d
-  flutter_secure_storage_macos: c2754d3483d20bb207bb9e5a14f1b8e771abcdb9
+  appkit_ui_element_colors: 711e7a2aa027790964e6fd90c78a666efe631432
+  dynamic_color: b820c000cc68df65e7ba7ff177cb98404ce56651
+  emoji_picker_flutter: 51ca408e289d84d1e460016b2a28721ec754fcf7
+  file_selector_macos: 6280b52b459ae6c590af5d78fc35c7267a3c4b31
+  flutter_secure_storage_macos: 7f45e30f838cf2659862a4e4e3ee1c347c2b3b54
   FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
-  macos_ui: 6229a8922cd97bafb7d9636c8eb8dfb0744183ca
-  macos_window_utils: 933f91f64805e2eb91a5bd057cf97cd097276663
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  screen_retriever_macos: 776e0fa5d42c6163d2bf772d22478df4b302b161
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
-  system_theme: c7b9f6659a5caa26c9bc2284da096781e9a6fcbc
-  url_launcher_macos: c82c93949963e55b228a30115bd219499a6fe404
-  video_compress: c896234f100791b5fef7f049afa38f6d2ef7b42f
-  window_manager: 3a1844359a6295ab1e47659b1a777e36773cd6e8
+  macos_ui: 2047a8e6536a80491ef10684c53ca500e04f1bcf
+  macos_window_utils: 3bca8603c2a1cf2257351dfe6bbccc9accf739fd
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  screen_retriever_macos: 452e51764a9e1cdb74b3c541238795849f21557f
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
+  system_theme: ed74293ad07d3a05e3e2d0059ff342360346f1a0
+  url_launcher_macos: 0fba8ddabfc33ce0a9afe7c5fef5aab3d8d2d673
+  video_compress: 752b161da855df2492dd1a8fa899743cc8fe9534
+  window_manager: 1d01fa7ac65a6e6f83b965471b1a7fdd3f06166c
 
 PODFILE CHECKSUM: ca2cf31979f9f90700f5893415c4c6d79c3ecb58
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

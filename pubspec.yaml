@@ -7,7 +7,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=3.4.4 <4.0.0"
-  flutter: ">=3.27.1"
+  flutter: ">=3.27.3"
 
 dependencies:
   adaptive_dialog: ^2.3.0
@@ -40,7 +40,7 @@ dependencies:
   intl: ^0.19.0
   linkify: ^5.0.0
   liquid_progress_indicator_v2: ^0.5.0
-  matrix: ^0.36.0
+  matrix: ^0.37.0
   mesh: ^0.4.2
   mime: ^2.0.0
   path: ^1.9.0

@@ -44,6 +44,7 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
             (e) => ChatAvatar(
               key: ValueKey(e.id),
               dimension: kTypingAvatarSize,
+              fallBackIconSize: kTypingAvatarSize / 2,
               avatarUri: e.avatarUrl,
             ),
           ),

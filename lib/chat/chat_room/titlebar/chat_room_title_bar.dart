@@ -17,51 +17,46 @@ import '../common/view/chat_room_page.dart';
 import 'chat_room_encryption_status_button.dart';
 import 'chat_room_pin_button.dart';
 
-class ChatRoomTitleBar extends StatelessWidget
-    with WatchItMixin
-    implements PreferredSizeWidget {
+class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
   const ChatRoomTitleBar({super.key, required this.room});
 
   final Room room;
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return YaruWindowTitleBar(
-      heroTag: '<Right hero tag>',
-      border: BorderSide.none,
-      backgroundColor: Colors.transparent,
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: kSmallPadding,
-        children: [
-          ChatRoomEncryptionStatusButton(room: room),
-          Flexible(
-            child: Text(
-              '${room.isArchived ? '(${l10n.archive}) ' : ''}${room.getLocalizedDisplayname()}',
+  Widget build(BuildContext context) => YaruWindowTitleBar(
+        heroTag: '<Right hero tag>',
+        border: BorderSide.none,
+        backgroundColor: Colors.transparent,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: kSmallPadding,
+          children: [
+            ChatRoomEncryptionStatusButton(room: room),
+            Flexible(
+              child: Text(
+                '${room.isArchived ? '(${context.l10n.archive}) ' : ''}${room.getLocalizedDisplayname()}',
+              ),
             ),
-          ),
-        ],
-      ),
-      leading: !Platform.isMacOS && !context.showSideBar
-          ? const SideBarButton()
-          : null,
-      actions: space(
-        widthGap: kSmallPadding,
-        children: [
-          if (!room.isArchived) ChatRoomPinButton(room: room),
-          IconButton(
-            onPressed: () => chatRoomScaffoldKey.currentState?.openEndDrawer(),
-            icon: const Icon(YaruIcons.information),
-          ),
-          if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
-            const SideBarButton(),
-          const SizedBox(width: kSmallPadding),
-        ].map((e) => Flexible(child: e)).toList(),
-      ),
-    );
-  }
+          ],
+        ),
+        leading: !Platform.isMacOS && !context.showSideBar
+            ? const SideBarButton()
+            : null,
+        actions: space(
+          widthGap: kSmallPadding,
+          children: [
+            if (!room.isArchived) ChatRoomPinButton(room: room),
+            IconButton(
+              onPressed: () =>
+                  chatRoomScaffoldKey.currentState?.openEndDrawer(),
+              icon: const Icon(YaruIcons.information),
+            ),
+            if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
+              const SideBarButton(),
+            const SizedBox(width: kSmallPadding),
+          ].map((e) => Flexible(child: e)).toList(),
+        ),
+      );
 
   @override
   Size get preferredSize => const Size(0, kYaruTitleBarHeight);

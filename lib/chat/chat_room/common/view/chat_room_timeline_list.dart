@@ -108,13 +108,15 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                           textAlign: TextAlign.center,
                           style: theme.textTheme.labelSmall,
                         ),
-                      ChatEventTile(
-                        key: ValueKey('${event.eventId}column'),
-                        event: event,
-                        partOfMessageCohort:
-                            event.partOfMessageCohort(previous),
-                        onReplyOriginClick: (event) => _jump(event),
-                        timeline: widget.timeline,
+                      RepaintBoundary(
+                        child: ChatEventTile(
+                          key: ValueKey('${event.eventId}column'),
+                          event: event,
+                          partOfMessageCohort:
+                              event.partOfMessageCohort(previous),
+                          onReplyOriginClick: (event) => _jump(event),
+                          timeline: widget.timeline,
+                        ),
                       ),
                       if (i == 0)
                         ChatEventSeenByIndicator(

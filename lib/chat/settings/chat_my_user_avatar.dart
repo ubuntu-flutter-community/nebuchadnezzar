@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/view/build_context_x.dart';
-import '../../../common/view/common_widgets.dart';
-import '../../../common/view/snackbars.dart';
-import '../../../l10n/l10n.dart';
-import '../../settings/settings_model.dart';
-import '../../common/view/chat_avatar.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
+import '../../common/view/snackbars.dart';
+import '../../l10n/l10n.dart';
+import '../common/view/chat_avatar.dart';
+import 'settings_model.dart';
 
 class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
   const ChatMyUserAvatar({
@@ -23,7 +23,8 @@ class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    const foreGroundColor = Colors.white;
+    final foreGroundColor =
+        context.colorScheme.isLight ? Colors.black : Colors.white;
     final l10n = context.l10n;
     final attachingAvatar =
         watchPropertyValue((SettingsModel m) => m.attachingAvatar);
@@ -53,7 +54,7 @@ class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
                       ),
                     ),
             icon: attachingAvatar
-                ? const SizedBox.square(
+                ? SizedBox.square(
                     dimension: 15,
                     child: Progress(
                       strokeWidth: 2,
@@ -62,7 +63,7 @@ class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
                   )
                 : const Icon(
                     YaruIcons.pen,
-                    color: foreGroundColor,
+                    color: Colors.white,
                   ),
           ),
         ),

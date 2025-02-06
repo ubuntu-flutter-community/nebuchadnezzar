@@ -17,7 +17,7 @@ import 'chat_room_info_drawer_topic.dart';
 import 'chat_room_users_list.dart';
 import '../../titlebar/chat_room_join_or_leave_button.dart';
 
-class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
+class ChatRoomInfoDrawer extends StatelessWidget {
   const ChatRoomInfoDrawer({super.key, required this.room});
 
   final Room room;
@@ -28,13 +28,7 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
     final theme = context.theme;
     final textTheme = theme.textTheme;
 
-    final ava = watchStream(
-      (ChatModel m) => m.getJoinedRoomAvatarStream(room),
-      initialValue: room.avatar,
-    ).data;
-
     return Drawer(
-      key: ValueKey(ava.toString()),
       child: SizedBox(
         width: kSideBarWith,
         child: Column(
@@ -44,9 +38,11 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
               AppBar(
                 leadingWidth: 80,
                 leading: Center(
-                  child: ChatAvatar(
-                    avatarUri: room.avatar,
-                    fallBackIcon: YaruIcons.users,
+                  child: ChatRoomInfoDrawerAvatar(
+                    key: ValueKey(
+                      '${room.id}${room.avatar}${room.isDirectChat},',
+                    ),
+                    room: room,
                   ),
                 ),
                 title: Center(
@@ -106,7 +102,12 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
                   spacing: kBigPadding,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _Ava(room: room),
+                    ChatRoomInfoDrawerAvatar(
+                      key: ValueKey('${room.id}${room.avatar}'),
+                      dimension: 150.0,
+                      fallBackIconSize: 80,
+                      room: room,
+                    ),
                     SizedBox(
                       width: 300,
                       child: Column(
@@ -219,24 +220,29 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
   }
 }
 
-class _Ava extends StatelessWidget with WatchItMixin {
-  const _Ava({
+class ChatRoomInfoDrawerAvatar extends StatelessWidget with WatchItMixin {
+  const ChatRoomInfoDrawerAvatar({
+    super.key,
     required this.room,
+    this.dimension,
+    this.fallBackIconSize,
   });
 
   final Room room;
+  final double? dimension;
+  final double? fallBackIconSize;
 
   @override
   Widget build(BuildContext context) {
     final avatar = watchStream(
       (ChatModel m) => m.getJoinedRoomAvatarStream(room),
       initialValue: room.avatar,
-      preserveState: false,
     ).data;
     return ChatAvatar(
       avatarUri: avatar,
-      dimension: 150,
-      fallBackIconSize: 80,
+      fallBackIcon: YaruIcons.users,
+      dimension: dimension ?? kAvatarDefaultSize,
+      fallBackIconSize: fallBackIconSize,
     );
   }
 }

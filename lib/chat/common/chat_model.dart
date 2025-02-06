@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:matrix/encryption.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
@@ -94,9 +95,6 @@ class ChatModel extends SafeChangeNotifier {
           )
           .map((e) => room?.avatar);
 
-  Stream<InvitedRoomUpdate?> getInvitedRoomUpdate(String roomId) =>
-      inviteUpdateStream.map((e) => e.rooms?.invite?[roomId]);
-
   Stream<List<User>> getTypingUsersStream(Room room) =>
       getJoinedRoomUpdate(room.id)
           .where(
@@ -109,21 +107,6 @@ class ChatModel extends SafeChangeNotifier {
 
   Stream<Event?> getLastEventStream(Room room) =>
       getJoinedRoomUpdate(room.id).map((update) => room.lastEvent);
-
-  Stream<List<Event>?> getReadEventsFromSync(Room room) =>
-      getJoinedRoomUpdate(room.id).map(
-        (update) => update?.timeline?.events
-            ?.map((e) => Event.fromMatrixEvent(e, room))
-            .where((e) => e.receipts.isNotEmpty)
-            .toList(),
-      );
-
-  Stream<List<Event>?> getEventStream(Room room) =>
-      getJoinedRoomUpdate(room.id).map(
-        (update) => update?.timeline?.events
-            ?.map((e) => Event.fromMatrixEvent(e, room))
-            .toList(),
-      );
 
   Future<List<Event>> getEvents(Room room) async {
     final timeline = await room.getTimeline();

@@ -9,7 +9,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../common/chat_model.dart';
-import '../chat_master/view/chat_my_user_avatar.dart';
+import 'chat_my_user_avatar.dart';
 import 'logout_button.dart';
 import 'settings_model.dart';
 

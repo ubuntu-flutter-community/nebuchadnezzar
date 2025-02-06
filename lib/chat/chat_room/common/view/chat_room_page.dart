@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
-import 'package:yaru/yaru.dart';
 
 import '../../../../common/view/build_context_x.dart';
 import '../../../../common/view/common_widgets.dart';
@@ -10,12 +9,11 @@ import '../../../../common/view/snackbars.dart';
 import '../../../../common/view/ui_constants.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../common/chat_model.dart';
-import '../timeline_model.dart';
-import 'chat_room_default_background.dart';
-import 'chat_room_info_drawer.dart';
-import 'chat_room_timeline_list.dart';
 import '../../input/view/chat_input.dart';
 import '../../titlebar/chat_room_title_bar.dart';
+import '../timeline_model.dart';
+import 'chat_room_info_drawer.dart';
+import 'chat_room_timeline_list.dart';
 
 final GlobalKey<ScaffoldState> chatRoomScaffoldKey = GlobalKey();
 
@@ -47,9 +45,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
-    final loadingArchive =
-        watchPropertyValue((ChatModel m) => m.loadingArchive);
+    final colorScheme = context.colorScheme;
+
     final updating = watchPropertyValue(
       (TimelineModel m) => m.getUpdatingTimeline(widget.room.id),
     );
@@ -57,7 +54,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     registerStreamHandler(
       select: (ChatModel m) => m.getLeftRoomStream(widget.room.id),
       handler: (context, leftRoomUpdate, cancel) {
-        if (!archiveActive && !loadingArchive && leftRoomUpdate.hasData) {
+        if (!di<ChatModel>().archiveActive &&
+            !di<ChatModel>().loadingArchive &&
+            leftRoomUpdate.hasData) {
           di<ChatModel>().leaveSelectedRoom(
             onFail: (error) => showSnackBar(
               context,
@@ -81,11 +80,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     return Stack(
       alignment: Alignment.center,
       children: [
-        const ChatRoomDefaultBackground(),
         Scaffold(
           key: chatRoomScaffoldKey,
           endDrawer: ChatRoomInfoDrawer(room: widget.room),
-          backgroundColor: Colors.transparent,
           appBar: ChatRoomTitleBar(room: widget.room),
           bottomNavigationBar: widget.room.isArchived
               ? null
@@ -96,44 +93,36 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           body: FutureBuilder<Timeline>(
             key: ValueKey(widget.room.id),
             future: _timelineFuture,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(
-                  child: Progress(),
-                );
-              }
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: kMediumPadding),
-                child: ChatRoomTimelineList(
-                  timeline: snapshot.data!,
-                  listKey: _roomListKey,
-                ),
-              );
-            },
+            builder: (context, snapshot) => snapshot.hasData
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: kMediumPadding),
+                    child: ChatRoomTimelineList(
+                      timeline: snapshot.data!,
+                      listKey: _roomListKey,
+                    ),
+                  )
+                : const Center(
+                    child: Progress(),
+                  ),
           ),
         ),
-        Positioned(
-          top: 3 * kBigPadding,
-          child: IgnorePointer(
-            child: AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
-              opacity: updating ? 1 : 0,
-              child: FloatingActionButton.small(
-                backgroundColor: context.colorScheme.isLight
-                    ? Colors.white
-                    : Colors.black.scale(lightness: 0.09),
-                onPressed: () {},
-                child: const SizedBox.square(
-                  dimension: 20,
+        if (updating)
+          Positioned(
+            top: 3 * kBigPadding,
+            child: RepaintBoundary(
+              child: CircleAvatar(
+                backgroundColor: colorScheme.surface,
+                maxRadius: 15,
+                child: SizedBox.square(
+                  dimension: 18,
                   child: Progress(
                     strokeWidth: 2,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

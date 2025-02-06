@@ -221,7 +221,7 @@ class ReactionsModal extends StatelessWidget {
             for (final reactor in reactionEntry!.reactors!)
               Chip(
                 avatar: ChatAvatar(avatarUri: reactor.avatarUrl),
-                label: Text(reactor.displayName!),
+                label: Text(reactor.displayName ?? ''),
               ),
           ],
         ),

@@ -32,8 +32,8 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
       (ChatModel m) => m.getJoinedRoomAvatarStream(room),
       initialValue: room?.avatar,
     ).data;
-    final foreGroundColor = yaru ? Colors.white : null;
-
+    final foreGroundColor =
+        context.colorScheme.isLight ? Colors.black : Colors.white;
     final attachingAvatar =
         watchPropertyValue((DraftModel m) => m.attachingAvatar);
 
@@ -101,9 +101,9 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                       color: foreGroundColor,
                     ),
                   )
-                : Icon(
+                : const Icon(
                     YaruIcons.pen,
-                    color: foreGroundColor,
+                    color: Colors.white,
                   ),
           ),
         ),
