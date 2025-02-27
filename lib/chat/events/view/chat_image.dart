@@ -53,9 +53,8 @@ class ChatImage extends StatelessWidget with WatchItMixin {
       padding: EdgeInsets.only(
         top: kBigPadding,
         bottom: kBigPadding,
-        right: kMediumPadding,
-        left: kMediumPadding +
-            (isUserMessage ? 0 : kAvatarDefaultSize + kBigPadding),
+        right: kSmallPadding,
+        left: (isUserMessage ? 0 : kAvatarDefaultSize + kBigPadding),
       ),
       child: Align(
         alignment: isUserMessage ? Alignment.centerRight : Alignment.centerLeft,

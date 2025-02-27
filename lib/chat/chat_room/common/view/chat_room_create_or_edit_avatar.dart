@@ -76,6 +76,8 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
           right: 0,
           child: IconButton.filled(
             style: IconButton.styleFrom(
+              backgroundColor: context.colorScheme.primary,
+              foregroundColor: Colors.white,
               shape: const CircleBorder(),
               disabledBackgroundColor: context.colorScheme.surface,
               disabledForegroundColor: foreGroundColor,
@@ -101,9 +103,9 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                       color: foreGroundColor,
                     ),
                   )
-                : const Icon(
+                : Icon(
                     YaruIcons.pen,
-                    color: Colors.white,
+                    color: contrastColor(context.colorScheme.primary),
                   ),
           ),
         ),
