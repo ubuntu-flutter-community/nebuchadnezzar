@@ -20,7 +20,7 @@ import 'chat_message_reactions.dart';
 import 'chat_message_reply_header.dart';
 import 'localized_display_event_text.dart';
 
-class ChatMessageBubble extends StatelessWidget with WatchItMixin {
+class ChatMessageBubble extends StatelessWidget {
   const ChatMessageBubble({
     super.key,
     required this.event,
@@ -100,6 +100,16 @@ class _ChatMessageBubbleContent extends StatelessWidget {
   final ChatMessageBubbleShape messageBubbleShape;
   final bool partOfMessageCohort;
 
+  String replaceColoredEmojiWithMonochrome(String text) {
+    final RegExp emojiRegex =
+        RegExp(r'(\p{Extended_Pictographic})\ufe0f', unicode: true);
+
+    return text.replaceAllMapped(emojiRegex, (match) {
+      final String emoji = match.group(1)!;
+      return '$emoji\ufe0e';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var html = event.formattedText;
@@ -107,7 +117,8 @@ class _ChatMessageBubbleContent extends StatelessWidget {
       html = '* $html';
     }
     final textTheme = context.textTheme;
-    final messageStyle = textTheme.bodyMedium;
+    final messageStyle =
+        textTheme.bodyMedium?.copyWith(fontFamilyFallback: ['NotoEmoji']);
     final displayEvent = event.getDisplayEvent(timeline);
 
     return Row(
@@ -179,7 +190,9 @@ class _ChatMessageBubbleContent extends StatelessWidget {
                               )
                             : event.isRichMessage
                                 ? HtmlMessage(
-                                    html: html,
+                                    html: replaceColoredEmojiWithMonochrome(
+                                      html,
+                                    ),
                                     room: timeline.room,
                                     defaultTextColor:
                                         context.colorScheme.onSurface,
@@ -187,7 +200,9 @@ class _ChatMessageBubbleContent extends StatelessWidget {
                                 : SelectableText.rich(
                                     TextSpan(
                                       style: messageStyle,
-                                      text: displayEvent.body,
+                                      text: replaceColoredEmojiWithMonochrome(
+                                        displayEvent.body,
+                                      ),
                                     ),
                                     style: messageStyle,
                                   ),
