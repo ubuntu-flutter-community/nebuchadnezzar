@@ -100,16 +100,6 @@ class _ChatMessageBubbleContent extends StatelessWidget {
   final ChatMessageBubbleShape messageBubbleShape;
   final bool partOfMessageCohort;
 
-  String replaceColoredEmojiWithMonochrome(String text) {
-    final RegExp emojiRegex =
-        RegExp(r'(\p{Extended_Pictographic})\ufe0f', unicode: true);
-
-    return text.replaceAllMapped(emojiRegex, (match) {
-      final String emoji = match.group(1)!;
-      return '$emoji\ufe0e';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     var html = event.formattedText;
@@ -190,9 +180,7 @@ class _ChatMessageBubbleContent extends StatelessWidget {
                               )
                             : event.isRichMessage
                                 ? HtmlMessage(
-                                    html: replaceColoredEmojiWithMonochrome(
-                                      html,
-                                    ),
+                                    html: html,
                                     room: timeline.room,
                                     defaultTextColor:
                                         context.colorScheme.onSurface,
@@ -200,9 +188,7 @@ class _ChatMessageBubbleContent extends StatelessWidget {
                                 : SelectableText.rich(
                                     TextSpan(
                                       style: messageStyle,
-                                      text: replaceColoredEmojiWithMonochrome(
-                                        displayEvent.body,
-                                      ),
+                                      text: displayEvent.body,
                                     ),
                                     style: messageStyle,
                                   ),

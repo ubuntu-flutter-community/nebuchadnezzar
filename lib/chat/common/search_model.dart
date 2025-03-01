@@ -77,16 +77,13 @@ class SearchModel extends SafeChangeNotifier {
     required Function() onFail,
   }) async {
     SearchUserDirectoryResponse? searchUserDirectoryResponse;
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(seconds: 1), () async {
-      try {
-        searchUserDirectoryResponse =
-            await _client.searchUserDirectory(searchQuery);
-      } on Exception catch (e, s) {
-        onFail();
-        printMessageInDebugMode(e, s);
-      }
-    });
+    try {
+      searchUserDirectoryResponse =
+          await _client.searchUserDirectory(searchQuery);
+    } on Exception catch (e, s) {
+      onFail();
+      printMessageInDebugMode(e, s);
+    }
 
     return searchUserDirectoryResponse?.results;
   }
