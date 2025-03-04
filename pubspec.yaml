@@ -92,8 +92,3 @@ flutter_launcher_icons:
 
 assets:
   - "assets/nebuchadnezzar.png"
-
-fonts:
-  - family: NotoEmoji
-    fonts:
-      - asset: assets/NotoColorEmoji.ttf

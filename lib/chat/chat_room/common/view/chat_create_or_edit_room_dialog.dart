@@ -24,29 +24,11 @@ class ChatCreateOrEditRoomDialog extends StatefulWidget
   const ChatCreateOrEditRoomDialog({
     super.key,
     this.room,
-    this.groupName,
-    this.joinedUsers,
-    this.initialState,
-    this.visibility,
-    this.historyVisibility,
-    this.groupCall,
-    this.powerLevelContentOverride,
-    this.federated,
-    this.encrypted,
     this.space = false,
   });
 
   final Room? room;
   final bool space;
-  final String? groupName;
-  final List<User>? joinedUsers;
-  final List<StateEvent>? initialState;
-  final Visibility? visibility;
-  final HistoryVisibility? historyVisibility;
-  final bool? groupCall;
-  final Map<String, dynamic>? powerLevelContentOverride;
-  final bool? federated;
-  final bool? encrypted;
 
   @override
   State<ChatCreateOrEditRoomDialog> createState() =>
@@ -72,21 +54,22 @@ class _ChatCreateOrEditRoomDialogState
   @override
   void initState() {
     super.initState();
-    _groupName = widget.room?.name ?? widget.groupName;
+    _groupName = widget.room?.name;
     _isSpace = widget.room?.isSpace ?? widget.space;
     _topic = widget.room?.topic;
     _existingGroup = widget.room != null;
 
-    _enableEncryption = widget.room?.encrypted ?? widget.encrypted ?? false;
-    _federated = widget.room?.isFederated ?? widget.federated ?? true;
-    _groupCall = widget.room?.hasActiveGroupCall ?? widget.groupCall ?? false;
+    _enableEncryption = widget.room?.encrypted ?? false;
+    _federated = widget.room?.isFederated ?? true;
+    _groupCall = widget.room?.hasActiveGroupCall ?? false;
     _groupNameController = TextEditingController(text: _groupName);
     _groupTopicController = TextEditingController(text: _topic);
     _visibility = (widget.room?.joinRules == JoinRules.public
         ? Visibility.public
         : Visibility.private);
-    _profiles = (widget.room?.getParticipants() ?? widget.joinedUsers)
-            ?.where(
+    _profiles = widget.room
+            ?.getParticipants()
+            .where(
               (e) {
                 final id = e.id.split(':').firstOrNull?.replaceAll('@', '');
 
@@ -262,9 +245,7 @@ class _ChatCreateOrEditRoomDialogState
             ),
             trailing: CommonSwitch(
               value: _enableEncryption,
-              onChanged: _enableEncryption ||
-                      widget.encrypted == true ||
-                      widget.room?.encrypted == true ||
+              onChanged: widget.room?.encrypted == true ||
                       widget.room?.canChangeStateEvent(EventTypes.Encryption) ==
                           false
                   ? null
@@ -277,7 +258,7 @@ class _ChatCreateOrEditRoomDialogState
                     },
             ),
             title: Text(l10n.encrypted),
-            subtitle: widget.encrypted == true || widget.room?.encrypted == true
+            subtitle: widget.room?.encrypted == true
                 ? null
                 : (Text(l10n.enableEncryptionWarning)),
           ),

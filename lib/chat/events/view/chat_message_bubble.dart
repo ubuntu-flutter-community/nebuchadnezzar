@@ -107,8 +107,7 @@ class _ChatMessageBubbleContent extends StatelessWidget {
       html = '* $html';
     }
     final textTheme = context.textTheme;
-    final messageStyle =
-        textTheme.bodyMedium?.copyWith(fontFamilyFallback: ['NotoEmoji']);
+    final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
 
     return Row(
