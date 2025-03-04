@@ -250,11 +250,12 @@ class _ChatCreateOrEditRoomDialogState
                           false
                   ? null
                   : (v) {
-                      if (widget.room != null) {
-                        widget.room!.enableEncryption();
-                      }
-
                       setState(() => _enableEncryption = v);
+
+                      if (_enableEncryption &&
+                          widget.room?.encrypted == false) {
+                        widget.room?.enableEncryption();
+                      }
                     },
             ),
             title: Text(l10n.encrypted),

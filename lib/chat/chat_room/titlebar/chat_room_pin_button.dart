@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../../common/view/build_context_x.dart';
+import '../../common/chat_model.dart';
 
-class ChatRoomPinButton extends StatelessWidget {
+class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
   const ChatRoomPinButton({
     super.key,
     required this.room,
@@ -14,12 +16,18 @@ class ChatRoomPinButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isFavourite = watchStream(
+          (ChatModel m) =>
+              m.getJoinedRoomUpdate(room.id).map((e) => room.isFavourite),
+          initialValue: room.isFavourite,
+        ).data ??
+        false;
+
     return IconButton(
-      key: ValueKey('${room.id}fav'),
       onPressed: () => room.setFavourite(!room.isFavourite),
       icon: Icon(
         YaruIcons.pin,
-        color: room.isFavourite ? context.colorScheme.primary : null,
+        color: isFavourite ? context.colorScheme.primary : null,
       ),
     );
   }
