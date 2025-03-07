@@ -21,13 +21,8 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    watchFuture(
-      (ChatModel m) => m.requestParticipants(event.room),
-      initialValue: event.room.getParticipants(),
-    );
-
     final seenByUsers = watchStream(
-          (ChatModel m) => m.getRoomsReceipts(event),
+          (ChatModel m) => m.getRoomsReceiptsStream(event),
           initialValue: event.receipts,
         )
             .data

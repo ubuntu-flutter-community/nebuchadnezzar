@@ -7,7 +7,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=3.4.4 <4.0.0"
-  flutter: ">=3.29.0"
+  flutter: ">=3.29.1"
 
 dependencies:
   adaptive_dialog: ^2.3.0

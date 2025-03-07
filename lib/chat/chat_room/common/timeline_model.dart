@@ -28,6 +28,7 @@ class TimelineModel extends SafeChangeNotifier {
     }
 
     await timeline.requestHistory(filter: filter, historyCount: historyCount);
+    await timeline.room.requestParticipants();
     if (notify) {
       setUpdatingTimeline(roomId: timeline.room.id, value: false);
     }

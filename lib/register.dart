@@ -42,6 +42,7 @@ void registerDependencies() => di
   ..registerSingletonWithDependencies<SettingsService>(
     () => SettingsService(
       sharedPreferences: di<SharedPreferences>(),
+      secureStorage: di<FlutterSecureStorage>(),
     ),
     dispose: (s) => s.dispose(),
     dependsOn: [SharedPreferences],

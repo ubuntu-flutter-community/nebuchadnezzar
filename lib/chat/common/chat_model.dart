@@ -56,11 +56,8 @@ class ChatModel extends SafeChangeNotifier {
   /// The unfiltered onSync stream of the [Client]
   Stream<SyncUpdate> get syncStream => _client.onSync.stream;
 
-  Stream<List<Receipt>> getRoomsReceipts(Event event) =>
+  Stream<List<Receipt>> getRoomsReceiptsStream(Event event) =>
       getJoinedRoomUpdate(event.room.id).map((_) => event.receipts);
-
-  Future<List<User>> requestParticipants(Room room) async =>
-      room.requestParticipants();
 
   Stream<List<User>> getUsersStreamOfJoinedRoom(
     Room room, {
