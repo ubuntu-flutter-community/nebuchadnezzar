@@ -53,4 +53,12 @@ extension EventX on Event {
         !maybePreviousEvent.isImage &&
         maybePreviousEvent.senderId == senderId;
   }
+
+  Uri? get geoUri {
+    final maybe = content.tryGet<String>('geo_uri');
+    if (maybe == null) {
+      return null;
+    }
+    return Uri.tryParse(maybe);
+  }
 }
