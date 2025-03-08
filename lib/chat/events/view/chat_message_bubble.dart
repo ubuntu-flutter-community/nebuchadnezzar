@@ -12,6 +12,7 @@ import '../../common/view/chat_profile_dialog.dart';
 import '../chat_download_model.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_html_message.dart';
+import 'chat_map.dart';
 import 'chat_message_attachment_indicator.dart';
 import 'chat_message_bubble_shape.dart';
 import 'chat_message_media_avatar.dart';
@@ -177,20 +178,27 @@ class _ChatMessageBubbleContent extends StatelessWidget {
                                   decoration: TextDecoration.lineThrough,
                                 ),
                               )
-                            : event.isRichMessage
-                                ? HtmlMessage(
-                                    html: html,
-                                    room: timeline.room,
-                                    defaultTextColor:
-                                        context.colorScheme.onSurface,
+                            : event.messageType == MessageTypes.Location
+                                ? ChatMap(
+                                    event: event,
+                                    partOfMessageCohort: partOfMessageCohort,
+                                    timeline: timeline,
+                                    onReplyOriginClick: onReplyOriginClick,
                                   )
-                                : SelectableText.rich(
-                                    TextSpan(
-                                      style: messageStyle,
-                                      text: displayEvent.body,
-                                    ),
-                                    style: messageStyle,
-                                  ),
+                                : event.isRichMessage
+                                    ? HtmlMessage(
+                                        html: html,
+                                        room: timeline.room,
+                                        defaultTextColor:
+                                            context.colorScheme.onSurface,
+                                      )
+                                    : SelectableText.rich(
+                                        TextSpan(
+                                          style: messageStyle,
+                                          text: displayEvent.body,
+                                        ),
+                                        style: messageStyle,
+                                      ),
                       ),
                       const SizedBox(
                         height: kBigPadding,
@@ -235,7 +243,8 @@ class ChatMessageBubbleLeading extends StatelessWidget {
     if (event.messageType == MessageTypes.BadEncrypted) {
       return const SizedBox.square(dimension: kAvatarDefaultSize);
     } else if (event.messageType != MessageTypes.Text &&
-        event.messageType != MessageTypes.Notice) {
+        event.messageType != MessageTypes.Notice &&
+        event.messageType != MessageTypes.Location) {
       return ChatMessageMediaAvatar(event: event);
     }
 
