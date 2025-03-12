@@ -30,7 +30,10 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
   @override
   Widget build(BuildContext context) {
     final style = context.textTheme.bodyMedium;
+    final pinned =
+        widget.event.room.pinnedEventIds.contains(widget.event.eventId);
     return GestureDetector(
+      key: ValueKey('${widget.event.eventId}_$pinned'),
       onSecondaryTap: () => _controller.open(),
       behavior: HitTestBehavior.opaque,
       child: MenuAnchor(
@@ -89,6 +92,26 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
               ),
             ),
           ),
+          if (widget.event.room.canSendEvent(EventTypes.RoomPinnedEvents))
+            MenuItemButton(
+              trailingIcon: const Icon(YaruIcons.pin),
+              child: Text(
+                pinned ? context.l10n.unpin : context.l10n.pinMessage,
+                style: style,
+              ),
+              onPressed: () {
+                if (pinned) {
+                  final newPinned =
+                      List<String>.from(widget.event.room.pinnedEventIds);
+                  newPinned.remove(widget.event.eventId);
+                  widget.event.room.setPinnedEvents(newPinned);
+                } else {
+                  widget.event.room.setPinnedEvents(
+                    [...widget.event.room.pinnedEventIds, widget.event.eventId],
+                  );
+                }
+              },
+            ),
           ChatMessageReactionPicker(event: widget.event),
         ],
         child: widget.child,

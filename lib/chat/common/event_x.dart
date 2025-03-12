@@ -25,6 +25,9 @@ extension EventX on Event {
     required bool showAvatarChanges,
     required bool showDisplayNameChanges,
   }) {
+    if (type == EventTypes.RoomPinnedEvents) {
+      return true;
+    }
     if (type == EventTypes.RoomMember &&
         roomMemberChangeType == RoomMemberChangeType.avatar &&
         !showAvatarChanges) {

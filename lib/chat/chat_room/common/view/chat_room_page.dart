@@ -18,8 +18,9 @@ import 'chat_room_timeline_list.dart';
 final GlobalKey<ScaffoldState> chatRoomScaffoldKey = GlobalKey();
 
 class ChatRoomPage extends StatefulWidget with WatchItStatefulWidgetMixin {
-  final Room room;
   const ChatRoomPage({required this.room, super.key});
+
+  final Room room;
 
   @override
   State<ChatRoomPage> createState() => _ChatRoomPageState();
@@ -108,7 +109,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         ),
         if (updating)
           Positioned(
-            top: 3 * kBigPadding,
+            top: 4 * kBigPadding,
             child: RepaintBoundary(
               child: CircleAvatar(
                 backgroundColor: colorScheme.surface,

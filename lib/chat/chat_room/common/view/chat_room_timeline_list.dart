@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -9,11 +10,13 @@ import '../../../../common/view/build_context_x.dart';
 import '../../../../common/view/theme.dart';
 import '../../../../common/view/ui_constants.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../common/chat_model.dart';
 import '../../../common/event_x.dart';
 import '../../../events/view/chat_event_tile.dart';
 import '../../../settings/settings_model.dart';
 import '../../titlebar/chat_room_title_bar.dart';
 import '../timeline_model.dart';
+import 'chat_room_pinned_events_dialog.dart';
 import 'chat_seen_by_indicator.dart';
 
 class ChatRoomTimelineList extends StatefulWidget
@@ -35,6 +38,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   final AutoScrollController _controller = AutoScrollController();
   bool _showScrollButton = false;
   int retryCount = 15;
+  String? scrolledToId;
 
   @override
   void initState() {
@@ -57,6 +61,13 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
         watchPropertyValue((SettingsModel m) => m.showChatAvatarChanges);
     final showDisplayNameChanges =
         watchPropertyValue((SettingsModel m) => m.showChatDisplaynameChanges);
+    final pinnedEvents = watchStream(
+          (ChatModel m) => m
+              .getJoinedRoomUpdate(widget.timeline.room.id)
+              .map((_) => widget.timeline.room.pinnedEventIds),
+          initialValue: widget.timeline.room.pinnedEventIds,
+        ).data ??
+        [];
 
     return Stack(
       children: [
@@ -132,6 +143,26 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             },
           ),
         ),
+        if (pinnedEvents.isNotEmpty)
+          Positioned(
+            right: kBigPadding,
+            top: kBigPadding,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              child: FloatingActionButton.small(
+                backgroundColor: getMonochromeBg(theme: theme, darkFactor: 5),
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) =>
+                      ChatRoomPinnedEventsDialog(timeline: widget.timeline),
+                ),
+                child: Icon(
+                  YaruIcons.pin,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+            ),
+          ),
         if (_showScrollButton)
           Positioned(
             right: kBigPadding,
