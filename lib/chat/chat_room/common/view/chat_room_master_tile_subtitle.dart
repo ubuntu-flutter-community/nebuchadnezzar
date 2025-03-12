@@ -26,7 +26,9 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
 
     if (typingUsers.isEmpty) {
       return _LastEvent(
-        key: ValueKey('${lastEvent?.eventId}lastevent'),
+        key: ValueKey(
+          '${lastEvent?.eventId}_${lastEvent?.type}_${lastEvent?.redacted}',
+        ),
         lastEvent: room.lastEvent,
         fallbackText: room.membership == Membership.invite ? room.name : null,
       );
@@ -58,7 +60,7 @@ class _LastEvent extends StatefulWidget with WatchItStatefulWidgetMixin {
 }
 
 class _LastEventState extends State<_LastEvent> {
-  late final Future<String> _future;
+  late Future<String> _future;
 
   static final Map<String, String> _cache = {};
 
@@ -66,17 +68,23 @@ class _LastEventState extends State<_LastEvent> {
   void initState() {
     super.initState();
     _future = widget.lastEvent != null &&
+            !widget.lastEvent!.redacted &&
             _cache.containsKey(widget.lastEvent!.eventId)
         ? Future.value(_cache[widget.lastEvent!.eventId]!)
-        : widget.lastEvent
-                ?.calcLocalizedBody(const MatrixDefaultLocalizations()) ??
+        : widget.lastEvent?.calcLocalizedBody(
+              const MatrixDefaultLocalizations(),
+              hideReply: true,
+              hideEdit: false,
+              plaintextBody: true,
+            ) ??
             Future.value(widget.lastEvent?.body ?? '');
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.lastEvent != null &&
-        _cache.containsKey(widget.lastEvent!.eventId)) {
+        _cache.containsKey(widget.lastEvent!.eventId) &&
+        widget.lastEvent!.redacted == false) {
       return Text(
         _cache[widget.lastEvent!.eventId]!,
         maxLines: 1,

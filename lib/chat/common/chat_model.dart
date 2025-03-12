@@ -137,6 +137,21 @@ class ChatModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
+  final Map<String, String> _roomIdsToEventContextIds = {};
+  String? getEventContextId(String? roomId) =>
+      roomId == null ? null : _roomIdsToEventContextIds[roomId];
+  void setContextEventId({
+    required String roomId,
+    required String contextEventId,
+  }) {
+    _roomIdsToEventContextIds.update(
+      roomId,
+      (value) => contextEventId,
+      ifAbsent: () => contextEventId,
+    );
+    notifyListeners();
+  }
+
   bool _processingJoinOrLeave = false;
   bool get processingJoinOrLeave => _processingJoinOrLeave;
   void _setProcessingJoinOrLeave(bool value) {
