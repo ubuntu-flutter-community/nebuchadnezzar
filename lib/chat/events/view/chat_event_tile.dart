@@ -5,10 +5,8 @@ import '../../../common/view/ui_constants.dart';
 import '../../common/event_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
-import 'chat_image.dart';
 import 'chat_message_badge.dart';
 import 'chat_message_bubble.dart';
-import 'chat_message_image_full_screen_dialog.dart';
 
 class ChatEventTile extends StatelessWidget {
   const ChatEventTile({
@@ -26,57 +24,32 @@ class ChatEventTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (event.type == EventTypes.RoomMember) {
+    if (event.showAsBadge) {
       return ChatMessageBadge(
         displayEvent: event.getDisplayEvent(timeline),
-        leading: Padding(
-          padding: const EdgeInsets.only(right: kSmallPadding),
-          child: ChatAvatar(
-            fallBackIconSize: 10,
-            dimension: 15,
-            avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => ChatProfileDialog(userId: event.senderId),
-            ),
-          ),
-        ),
+        leading: event.type == EventTypes.RoomMember
+            ? Padding(
+                padding: const EdgeInsets.only(right: kSmallPadding),
+                child: ChatAvatar(
+                  fallBackIconSize: 10,
+                  dimension: 15,
+                  avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) =>
+                        ChatProfileDialog(userId: event.senderId),
+                  ),
+                ),
+              )
+            : null,
       );
     }
-    if (event.showAsBadge) {
-      return ChatMessageBadge(displayEvent: event.getDisplayEvent(timeline));
-    }
-    return switch (event.messageType) {
-      MessageTypes.Image => event.isSvgImage
-          ? ChatMessageBubble(
-              event: event,
-              timeline: timeline,
-              onReplyOriginClick: onReplyOriginClick,
-            )
-          : ChatImage(
-              timeline: timeline,
-              event: event,
-              onTap: () => showDialog(
-                context: context,
-                builder: (context) =>
-                    ChatMessageImageFullScreenDialog(event: event),
-              ),
-            ),
-      MessageTypes.Location ||
-      MessageTypes.File ||
-      MessageTypes.Video ||
-      MessageTypes.Audio ||
-      MessageTypes.Text ||
-      MessageTypes.Notice ||
-      MessageTypes.Emote ||
-      MessageTypes.BadEncrypted =>
-        ChatMessageBubble(
-          event: event,
-          timeline: timeline,
-          onReplyOriginClick: onReplyOriginClick,
-          partOfMessageCohort: partOfMessageCohort,
-        ),
-      _ => ChatMessageBadge(displayEvent: event.getDisplayEvent(timeline))
-    };
+
+    return ChatMessageBubble(
+      event: event,
+      timeline: timeline,
+      onReplyOriginClick: onReplyOriginClick,
+      partOfMessageCohort: partOfMessageCohort,
+    );
   }
 }

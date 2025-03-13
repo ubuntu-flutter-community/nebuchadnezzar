@@ -229,7 +229,7 @@ class _ChatInputState extends State<ChatInput> {
           ),
         ),
         Positioned(
-          top: -kTypingAvatarSize + kSmallPadding,
+          top: -kTypingAvatarSize - kSmallPadding,
           child: ChatTypingIndicator(room: widget.room),
         ),
       ],

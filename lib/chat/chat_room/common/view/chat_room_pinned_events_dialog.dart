@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
+import '../../../../common/view/ui_constants.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../common/chat_model.dart';
 import '../../../events/view/chat_event_tile.dart';
 
@@ -23,10 +26,18 @@ class ChatRoomPinnedEventsDialog extends StatelessWidget with WatchItMixin {
         ).data ??
         [];
     return AlertDialog(
+      titlePadding: EdgeInsets.zero,
+      title: YaruDialogTitleBar(
+        title: Text(context.l10n.pin),
+        backgroundColor: Colors.transparent,
+        border: BorderSide.none,
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: kBigPadding),
       content: SizedBox(
         height: 400,
         width: 400,
         child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
           itemCount: pinnedEvents.length,
           itemBuilder: (context, index) => ChatRoomPinnedEventTile(
             eventId: pinnedEvents.elementAt(index),
