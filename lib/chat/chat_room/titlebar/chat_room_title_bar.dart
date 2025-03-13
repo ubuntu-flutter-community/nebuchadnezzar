@@ -45,7 +45,11 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
         actions: space(
           widthGap: kSmallPadding,
           children: [
-            if (!room.isArchived) ChatRoomPinButton(room: room),
+            if (!room.isArchived)
+              ChatRoomPinButton(
+                key: ValueKey('${room.id}_${room.roomAccountData.length}'),
+                room: room,
+              ),
             IconButton(
               onPressed: () =>
                   chatRoomScaffoldKey.currentState?.openEndDrawer(),
