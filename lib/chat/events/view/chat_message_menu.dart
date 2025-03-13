@@ -40,80 +40,85 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
         controller: _controller,
         consumeOutsideTap: true,
         alignmentOffset: const Offset(0, -kSmallPadding),
-        menuChildren: [
-          if (widget.event.canRedact)
-            MenuItemButton(
-              trailingIcon: const Icon(YaruIcons.trash),
-              onPressed: () =>
-                  widget.event.room.redactEvent(widget.event.eventId),
-              child: Text(
-                context.l10n.deleteMessage,
-                style: style,
-              ),
-            ),
-          MenuItemButton(
-            trailingIcon: const Icon(YaruIcons.reply),
-            onPressed: () => di<DraftModel>().setReplyEvent(widget.event),
-            child: Text(
-              context.l10n.reply,
-              style: style,
-            ),
-          ),
-          if (widget.event.room.canSendDefaultMessages)
-            MenuItemButton(
-              trailingIcon: const Icon(YaruIcons.pen),
-              onPressed: () {
-                di<DraftModel>()
-                  ..setEditEvent(
-                    roomId: widget.event.room.id,
-                    event: widget.event,
-                  )
-                  ..setDraft(
-                    roomId: widget.event.room.id,
-                    draft: widget.event.plaintextBody,
-                    notify: true,
-                  );
-              },
-              child: Text(
-                context.l10n.edit,
-                style: style,
-              ),
-            ),
-          MenuItemButton(
-            trailingIcon: const Icon(YaruIcons.copy),
-            child: Text(
-              context.l10n.copyToClipboard,
-              style: style,
-            ),
-            onPressed: () => showSnackBar(
-              context,
-              content: CopyClipboardContent(
-                text: widget.event.body,
-              ),
-            ),
-          ),
-          if (widget.event.room.canSendEvent(EventTypes.RoomPinnedEvents))
-            MenuItemButton(
-              trailingIcon: const Icon(YaruIcons.pin),
-              child: Text(
-                pinned ? context.l10n.unpin : context.l10n.pinMessage,
-                style: style,
-              ),
-              onPressed: () {
-                if (pinned) {
-                  final newPinned =
-                      List<String>.from(widget.event.room.pinnedEventIds);
-                  newPinned.remove(widget.event.eventId);
-                  widget.event.room.setPinnedEvents(newPinned);
-                } else {
-                  widget.event.room.setPinnedEvents(
-                    [...widget.event.room.pinnedEventIds, widget.event.eventId],
-                  );
-                }
-              },
-            ),
-          ChatMessageReactionPicker(event: widget.event),
-        ],
+        menuChildren: widget.event.redacted
+            ? []
+            : [
+                if (widget.event.canRedact)
+                  MenuItemButton(
+                    trailingIcon: const Icon(YaruIcons.trash),
+                    onPressed: () =>
+                        widget.event.room.redactEvent(widget.event.eventId),
+                    child: Text(
+                      context.l10n.deleteMessage,
+                      style: style,
+                    ),
+                  ),
+                MenuItemButton(
+                  trailingIcon: const Icon(YaruIcons.reply),
+                  onPressed: () => di<DraftModel>().setReplyEvent(widget.event),
+                  child: Text(
+                    context.l10n.reply,
+                    style: style,
+                  ),
+                ),
+                if (widget.event.room.canSendDefaultMessages)
+                  MenuItemButton(
+                    trailingIcon: const Icon(YaruIcons.pen),
+                    onPressed: () {
+                      di<DraftModel>()
+                        ..setEditEvent(
+                          roomId: widget.event.room.id,
+                          event: widget.event,
+                        )
+                        ..setDraft(
+                          roomId: widget.event.room.id,
+                          draft: widget.event.plaintextBody,
+                          notify: true,
+                        );
+                    },
+                    child: Text(
+                      context.l10n.edit,
+                      style: style,
+                    ),
+                  ),
+                MenuItemButton(
+                  trailingIcon: const Icon(YaruIcons.copy),
+                  child: Text(
+                    context.l10n.copyToClipboard,
+                    style: style,
+                  ),
+                  onPressed: () => showSnackBar(
+                    context,
+                    content: CopyClipboardContent(
+                      text: widget.event.body,
+                    ),
+                  ),
+                ),
+                if (widget.event.room.canSendEvent(EventTypes.RoomPinnedEvents))
+                  MenuItemButton(
+                    trailingIcon: const Icon(YaruIcons.pin),
+                    child: Text(
+                      pinned ? context.l10n.unpin : context.l10n.pinMessage,
+                      style: style,
+                    ),
+                    onPressed: () {
+                      if (pinned) {
+                        final newPinned =
+                            List<String>.from(widget.event.room.pinnedEventIds);
+                        newPinned.remove(widget.event.eventId);
+                        widget.event.room.setPinnedEvents(newPinned);
+                      } else {
+                        widget.event.room.setPinnedEvents(
+                          [
+                            ...widget.event.room.pinnedEventIds,
+                            widget.event.eventId,
+                          ],
+                        );
+                      }
+                    },
+                  ),
+                ChatMessageReactionPicker(event: widget.event),
+              ],
         child: widget.child,
       ),
     );

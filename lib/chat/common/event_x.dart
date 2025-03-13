@@ -25,6 +25,9 @@ extension EventX on Event {
     required bool showAvatarChanges,
     required bool showDisplayNameChanges,
   }) {
+    if (type == 'm.room.server_acl') {
+      return true;
+    }
     if (type == EventTypes.RoomPinnedEvents) {
       return true;
     }

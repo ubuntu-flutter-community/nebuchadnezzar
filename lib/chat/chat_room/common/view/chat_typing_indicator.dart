@@ -49,10 +49,11 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
             ),
           ),
           Material(
-            color: getMonochromeBg(theme: theme, factor: 3, darkFactor: 10),
+            color: getMonochromeBg(theme: theme, factor: 6, darkFactor: 15),
             borderRadius: const BorderRadius.all(
               Radius.circular(30),
             ),
+            elevation: 0.1,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: kSmallPadding,
@@ -107,8 +108,7 @@ class __TypingDotsState extends State<_TypingDots> {
     final theme = context.theme;
     const size = kTypingAvatarSize / 3;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
+    return Center(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
