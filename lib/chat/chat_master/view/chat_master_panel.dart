@@ -11,7 +11,7 @@ import '../../common/chat_model.dart';
 import '../../common/rooms_filter.dart';
 import '../../common/search_model.dart';
 import '../../common/view/search_auto_complete.dart';
-import '../../settings/settings_dialog.dart';
+import '../../settings/view/settings_dialog.dart';
 import 'chat_master_list_filter_bar.dart';
 import 'chat_master_title_bar.dart';
 import 'chat_rooms_list.dart';

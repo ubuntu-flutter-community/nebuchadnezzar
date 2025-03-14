@@ -1,71 +1,61 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../bootstrap/bootstrap_model.dart';
-import '../../bootstrap/view/bootstrap_page.dart';
+import '../../authentication/authentication_model.dart';
+import '../../authentication/chat_login_page.dart';
+import '../../authentication/uia_request_handler.dart';
 import '../../bootstrap/view/key_verification_dialog.dart';
-import '../../common/chat_model.dart';
-import '../../chat_room/common/view/chat_room_page.dart';
 import '../../chat_room/common/view/chat_no_selected_room_page.dart';
+import '../../chat_room/common/view/chat_room_page.dart';
+import '../../common/chat_model.dart';
 import 'chat_master_panel.dart';
 
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
-class ChatMasterDetailPage extends StatefulWidget
-    with WatchItStatefulWidgetMixin {
+class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
   const ChatMasterDetailPage({
     super.key,
-    this.checkBootstrap = true,
   });
-
-  final bool checkBootstrap;
-
-  @override
-  State<ChatMasterDetailPage> createState() => _ChatMasterDetailPageState();
-}
-
-class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
-  @override
-  void initState() {
-    super.initState();
-    if (widget.checkBootstrap) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final bootstrapModel = di<BootstrapModel>();
-        bootstrapModel.checkBootstrap().then((isNeeded) {
-          if (isNeeded) {
-            bootstrapModel.startBootstrap(wipe: false).then(
-              (_) {
-                if (mounted) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => const BootstrapPage(),
-                    ),
-                    (route) => false,
-                  );
-                }
-              },
-            );
-          }
-        });
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     registerStreamHandler(
-      select: (ChatModel m) => m.onKeyVerificationRequest,
+      select: (AuthenticationModel m) => m.onKeyVerificationRequest,
       handler: (context, newValue, cancel) {
         if (newValue.hasData) {
           KeyVerificationDialog(
             request: newValue.data!,
             verifyOther: true,
           ).show(context);
+        }
+      },
+    );
+
+    registerStreamHandler(
+      select: (AuthenticationModel m) => m.onUiaRequestStream,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasData) {
+          uiaRequestHandler(uiaRequest: newValue.data!, context: context);
+        }
+      },
+    );
+
+    registerStreamHandler(
+      select: (AuthenticationModel m) => m.loginStateStream,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasData && newValue.data != LoginState.loggedIn) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (_) => const ChatLoginPage(),
+            ),
+            (route) => false,
+          );
         }
       },
     );

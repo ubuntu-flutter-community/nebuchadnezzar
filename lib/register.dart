@@ -57,11 +57,15 @@ void registerDependencies() => di
     dispose: (s) => s.dispose(),
     dependsOn: [Client],
   )
-  ..registerSingletonWithDependencies<SettingsModel>(
-    () => SettingsModel(
-      client: di<Client>(),
-      settingsService: di<SettingsService>(),
-    )..init(),
+  ..registerSingletonAsync<SettingsModel>(
+    () async {
+      final settingsModel = SettingsModel(
+        client: di<Client>(),
+        settingsService: di<SettingsService>(),
+      );
+      await settingsModel.init();
+      return settingsModel;
+    },
     dispose: (s) => s.dispose(),
     dependsOn: [Client, SettingsService],
   )

@@ -17,7 +17,7 @@ class BootstrapModel extends SafeChangeNotifier {
   final Client _client;
   final FlutterSecureStorage _secureStorage;
 
-  Future<bool> checkBootstrap() async {
+  Future<bool> checkBootstrap({bool startBootstrappingIfNeeded = false}) async {
     if (!_client.encryptionEnabled) {
       return true;
     }
@@ -35,7 +35,13 @@ class BootstrapModel extends SafeChangeNotifier {
             crossSigning == false;
     final isUnknownSession = _client.isUnknownSession;
 
-    return needsBootstrap || isUnknownSession;
+    final requireBootstrap = needsBootstrap || isUnknownSession;
+
+    if (requireBootstrap && startBootstrappingIfNeeded) {
+      startBootstrap(wipe: false);
+    }
+
+    return requireBootstrap;
   }
 
   String get secureStorageKey => 'ssss_recovery_key_${_client.userID}';
@@ -82,7 +88,7 @@ class BootstrapModel extends SafeChangeNotifier {
 
   void storeRecoveryKey() {
     if (storeInSecureStorage) {
-      const FlutterSecureStorage().write(
+      _secureStorage.write(
         key: secureStorageKey,
         value: key,
       );

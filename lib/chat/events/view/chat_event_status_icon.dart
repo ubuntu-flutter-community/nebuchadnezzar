@@ -83,11 +83,6 @@ class ChatEventStatusIcon extends StatelessWidget {
                 YaruIcons.pen,
                 size: iconSize,
               ),
-            if (event.room.pinnedEventIds.contains(event.eventId))
-              const Icon(
-                YaruIcons.pin,
-                size: iconSize,
-              ),
             if (!userEvent && event.isImage)
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 100),

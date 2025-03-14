@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
@@ -10,6 +11,15 @@ class AuthenticationModel extends SafeChangeNotifier {
   AuthenticationModel({required Client client}) : _client = client;
 
   final Client _client;
+  RequestTokenResponse? currentThreepidCreds;
+  String currentClientSecret = '';
+
+  Stream<LoginState> get loginStateStream => _client.onLoginStateChanged.stream;
+  bool get isLogged => _client.isLogged();
+  Stream<KeyVerification> get onKeyVerificationRequest =>
+      _client.onKeyVerificationRequest.stream;
+  Stream<UiaRequest<dynamic>> get onUiaRequestStream =>
+      _client.onUiaRequest.stream;
 
   bool _processingAccess = false;
   bool get processingAccess => _processingAccess;

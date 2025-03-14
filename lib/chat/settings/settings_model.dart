@@ -3,11 +3,14 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
+import '../bootstrap/view/key_verification_dialog.dart';
 import 'settings_service.dart';
 
 class SettingsModel extends SafeChangeNotifier {
@@ -21,8 +24,15 @@ class SettingsModel extends SafeChangeNotifier {
   final SettingsService _settingsService;
   StreamSubscription<bool>? _propertiesChangedSub;
 
-  void init() => _propertiesChangedSub =
-      _settingsService.propertiesChanged.listen((_) => notifyListeners());
+  Future<void> init() async {
+    if (_client.isLogged()) {
+      await getDevices();
+      await getMyProfile();
+    }
+
+    _propertiesChangedSub ??=
+        _settingsService.propertiesChanged.listen((_) => notifyListeners());
+  }
 
   @override
   Future<void> dispose() async {
@@ -41,6 +51,7 @@ class SettingsModel extends SafeChangeNotifier {
 
   Profile? _myProfile;
   Profile? get myProfile => _myProfile;
+
   Future<Profile?> getMyProfile({
     Function(String error)? onFail,
   }) async {
@@ -57,6 +68,11 @@ class SettingsModel extends SafeChangeNotifier {
     return _myProfile;
   }
 
+  Map<String, DeviceKeysList> get userDeviceKeys => _client.userDeviceKeys;
+  DeviceKeys? getDeviceKeys(Device device) =>
+      userDeviceKeys[_client.userID]?.deviceKeys[device.deviceId];
+  Stream<List<Device>?> get deviceStream =>
+      _client.onSync.stream.asyncMap((e) async => _client.getDevices());
   String? get myDeviceId => _client.deviceID;
   List<Device>? _devices;
   List<Device>? get devices => _devices;
@@ -65,10 +81,33 @@ class SettingsModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  // TODO: authenticate for some devices
   Future<void> deleteDevice(String id) async {
-    await _client.deleteDevice(id);
+    await _client.uiaRequestBackground(
+      (auth) async {
+        await _client.deleteDevice(
+          id,
+          auth: auth,
+        );
+      },
+    );
     await getDevices();
+  }
+
+  Future<void> verifyDeviceAction(
+    Device device,
+    BuildContext context,
+  ) async {
+    final keyVerification = await _client
+        .userDeviceKeys[_client.userID!]!.deviceKeys[device.deviceId]!
+        .startVerification();
+    keyVerification.onUpdate = () async {
+      if ({KeyVerificationState.error, KeyVerificationState.done}
+          .contains(keyVerification.state)) {
+        await getDevices();
+      }
+    };
+    if (!context.mounted) return;
+    await KeyVerificationDialog(request: keyVerification).show(context);
   }
 
   bool _attachingAvatar = false;

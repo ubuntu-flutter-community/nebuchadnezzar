@@ -46,6 +46,16 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     final maybeImage =
         watchPropertyValue((LocalImageModel m) => m.get(event.eventId));
 
+    if (event.status == EventStatus.error) {
+      return const Padding(
+        padding: EdgeInsets.all(kSmallPadding),
+        child: Icon(
+          YaruIcons.image_missing,
+          size: 30,
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
       child: ClipRRect(
@@ -150,14 +160,9 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final data = snapshot.data;
-
-            if (widget.event.isSvgImage ||
-                widget.event.thumbnailMimetype == 'image/svg+xml' ||
-                widget.event.attachmentMimetype.contains('svg') ||
-                widget.event.thumbnailMimetype.contains('svg')) {
+            if (widget.event.isSvgImage) {
               SvgPicture.memory(
-                data!,
+                snapshot.data!,
                 fit: widget.fit ?? BoxFit.contain,
                 height: widget.height,
                 width: widget.width,
@@ -165,7 +170,7 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
             }
 
             return Image.memory(
-              data!,
+              snapshot.data!,
               fit: widget.fit,
               height: widget.height,
               width: widget.width,

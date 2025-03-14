@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
-import '../../common/view/common_widgets.dart';
-import '../../common/view/snackbars.dart';
-import '../../l10n/l10n.dart';
-import '../common/view/chat_avatar.dart';
-import 'settings_model.dart';
+import '../../../common/view/build_context_x.dart';
+import '../../../common/view/common_widgets.dart';
+import '../../../common/view/snackbars.dart';
+import '../../../l10n/l10n.dart';
+import '../../common/view/chat_avatar.dart';
+import '../settings_model.dart';
 
 class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
   const ChatMyUserAvatar({

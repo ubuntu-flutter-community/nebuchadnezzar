@@ -19,6 +19,10 @@ class TimelineModel extends SafeChangeNotifier {
     StateFilter? filter,
     bool notify = true,
   }) async {
+    if (!timeline.room.isArchived) {
+      await timeline.setReadMarker();
+    }
+
     if (timeline.isRequestingHistory || !timeline.canRequestHistory) {
       return;
     }
@@ -31,9 +35,6 @@ class TimelineModel extends SafeChangeNotifier {
     await timeline.room.requestParticipants();
     if (notify) {
       setUpdatingTimeline(roomId: timeline.room.id, value: false);
-    }
-    if (!timeline.room.isArchived) {
-      await timeline.setReadMarker();
     }
   }
 }

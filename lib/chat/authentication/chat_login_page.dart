@@ -9,7 +9,7 @@ import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../constants.dart';
 import '../../l10n/l10n.dart';
-import '../chat_master/view/chat_master_detail_page.dart';
+import '../bootstrap/view/bootstrap_page.dart';
 import 'authentication_model.dart';
 
 class ChatLoginPage extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -52,7 +52,7 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
               password: _passwordController.text,
               onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => const ChatMasterDetailPage(),
+                  builder: (_) => const CheckBootstrapPage(),
                 ),
                 (route) => false,
               ),

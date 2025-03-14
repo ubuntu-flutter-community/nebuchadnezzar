@@ -148,6 +148,18 @@ class ChatMessageBubbleContent extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (event.pinned)
+                  Positioned(
+                    top: kSmallPadding,
+                    right: kSmallPadding,
+                    child: GestureDetector(
+                      onTap: () => event.togglePinned(),
+                      child: const Icon(
+                        YaruIcons.pin,
+                        size: 15,
+                      ),
+                    ),
+                  ),
                 Positioned(
                   bottom: 0,
                   right: 0,

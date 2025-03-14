@@ -3,9 +3,9 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../common/view/common_widgets.dart';
+import 'authentication/authentication_model.dart';
 import 'authentication/chat_login_page.dart';
-import 'chat_master/view/chat_master_detail_page.dart';
-import 'common/chat_model.dart';
+import 'bootstrap/view/bootstrap_page.dart';
 
 class ChatStartPage extends StatefulWidget {
   const ChatStartPage({super.key});
@@ -27,9 +27,9 @@ class _ChatStartPageState extends State<ChatStartPage> {
   Widget build(BuildContext context) => FutureBuilder(
         future: _registrationReady,
         builder: (context, snapshot) => snapshot.hasData
-            ? (!di<ChatModel>().isLogged)
+            ? (!di<AuthenticationModel>().isLogged)
                 ? const ChatLoginPage()
-                : const ChatMasterDetailPage()
+                : const CheckBootstrapPage()
             : const Scaffold(
                 appBar: YaruWindowTitleBar(
                   border: BorderSide.none,

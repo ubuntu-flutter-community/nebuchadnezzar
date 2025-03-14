@@ -12,8 +12,9 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../common/view/chat_avatar.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
+import '../../common/view/chat_avatar.dart';
+import 'bootstrap_page.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan
@@ -335,9 +336,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
                 if (!widget.verifyOther) {
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (_) => const ChatMasterDetailPage(
-                        checkBootstrap: false,
-                      ),
+                      builder: (_) => const ChatMasterDetailPage(),
                     ),
                     (route) => false,
                   );
@@ -368,9 +367,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
               Navigator.of(context, rootNavigator: false).pop();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => const ChatMasterDetailPage(
-                    checkBootstrap: false,
-                  ),
+                  builder: (_) => const CheckBootstrapPage(),
                 ),
                 (route) => false,
               );
