@@ -13,8 +13,37 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../authentication/authentication_model.dart';
+import '../../authentication/uia_request_handler.dart';
+import '../../chat_master/view/chat_master_detail_page.dart';
 import '../bootstrap_model.dart';
 import 'key_verification_dialog.dart';
+
+class CheckBootstrapPage extends StatefulWidget {
+  const CheckBootstrapPage({super.key});
+
+  @override
+  State<CheckBootstrapPage> createState() => _CheckBootstrapPageState();
+}
+
+class _CheckBootstrapPageState extends State<CheckBootstrapPage> {
+  late Future<bool> _requireBootstrapInitial;
+
+  @override
+  void initState() {
+    super.initState();
+    _requireBootstrapInitial =
+        di<BootstrapModel>().checkBootstrap(startBootstrappingIfNeeded: true);
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder(
+        future: _requireBootstrapInitial,
+        builder: (context, snapshot) => snapshot.data != false
+            ? const BootstrapPage()
+            : const ChatMasterDetailPage(),
+      );
+}
 
 class BootstrapPage extends StatelessWidget with WatchItMixin {
   const BootstrapPage({super.key});
@@ -24,6 +53,15 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
     final theme = context.theme;
     final l10n = context.l10n;
     final model = di<BootstrapModel>();
+
+    registerStreamHandler(
+      select: (AuthenticationModel m) => m.onUiaRequestStream,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasData) {
+          uiaRequestHandler(uiaRequest: newValue.data!, context: context);
+        }
+      },
+    );
 
     final bootstrap = watchPropertyValue((BootstrapModel m) => m.bootstrap);
     final bootstrapState =
@@ -375,15 +413,6 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
                   onPressed: recoveryKeyInputLoading
                       ? null
                       : () async {
-                          final consent = await showOkCancelAlertDialog(
-                            context: context,
-                            title: l10n.verifyOtherDevice,
-                            message: l10n.verifyOtherDeviceDescription,
-                            okLabel: l10n.ok,
-                            cancelLabel: l10n.cancel,
-                            fullyCapitalizedForMaterial: false,
-                          );
-                          if (consent != OkCancelResult.ok) return;
                           if (context.mounted) {
                             final req = await showFutureLoadingDialog(
                               context: context,

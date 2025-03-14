@@ -67,4 +67,21 @@ extension EventX on Event {
     }
     return Uri.tryParse(maybe);
   }
+
+  bool get pinned => room.pinnedEventIds.contains(eventId);
+
+  Future<void> togglePinned() async {
+    if (pinned) {
+      final newPinned = List<String>.from(room.pinnedEventIds);
+      newPinned.remove(eventId);
+      room.setPinnedEvents(newPinned);
+    } else {
+      room.setPinnedEvents(
+        [
+          ...room.pinnedEventIds,
+          eventId,
+        ],
+      );
+    }
+  }
 }

@@ -17,6 +17,7 @@ class ConfirmationDialog extends StatelessWidget {
     this.showCloseIcon = true,
     this.scrollable = false,
     this.confirmLabel,
+    this.cancelLabel,
   });
 
   final dynamic Function()? onConfirm;
@@ -27,7 +28,7 @@ class ConfirmationDialog extends StatelessWidget {
   final bool showCancel;
   final bool showCloseIcon;
   final bool scrollable;
-  final String? confirmLabel;
+  final String? confirmLabel, cancelLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class ConfirmationDialog extends StatelessWidget {
                       Navigator.of(context).pop();
                     }
                   },
-                  child: Text(l10n.cancel),
+                  child: Text(cancelLabel ?? l10n.cancel),
                 ),
               ElevatedButton(
                 onPressed: () {

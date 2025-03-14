@@ -8,6 +8,8 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../chat_room/input/draft_model.dart';
+import '../../common/chat_model.dart';
+import '../../common/event_x.dart';
 import '../../data/emojis.dart';
 
 class ChatMessageMenu extends StatefulWidget {
@@ -30,10 +32,8 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
   @override
   Widget build(BuildContext context) {
     final style = context.textTheme.bodyMedium;
-    final pinned =
-        widget.event.room.pinnedEventIds.contains(widget.event.eventId);
+
     return GestureDetector(
-      key: ValueKey('${widget.event.eventId}_$pinned'),
       onSecondaryTap: () => _controller.open(),
       behavior: HitTestBehavior.opaque,
       child: MenuAnchor(
@@ -61,7 +61,8 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                     style: style,
                   ),
                 ),
-                if (widget.event.room.canSendDefaultMessages)
+                if (widget.event.room.canSendDefaultMessages &&
+                    di<ChatModel>().isUserEvent(widget.event))
                   MenuItemButton(
                     trailingIcon: const Icon(YaruIcons.pen),
                     onPressed: () {
@@ -98,24 +99,12 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                   MenuItemButton(
                     trailingIcon: const Icon(YaruIcons.pin),
                     child: Text(
-                      pinned ? context.l10n.unpin : context.l10n.pinMessage,
+                      widget.event.pinned
+                          ? context.l10n.unpin
+                          : context.l10n.pinMessage,
                       style: style,
                     ),
-                    onPressed: () {
-                      if (pinned) {
-                        final newPinned =
-                            List<String>.from(widget.event.room.pinnedEventIds);
-                        newPinned.remove(widget.event.eventId);
-                        widget.event.room.setPinnedEvents(newPinned);
-                      } else {
-                        widget.event.room.setPinnedEvents(
-                          [
-                            ...widget.event.room.pinnedEventIds,
-                            widget.event.eventId,
-                          ],
-                        );
-                      }
-                    },
+                    onPressed: () => widget.event.togglePinned(),
                   ),
                 ChatMessageReactionPicker(event: widget.event),
               ],
