@@ -33,7 +33,10 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
             Flexible(
               child: room.isArchived
                   ? Text(context.l10n.archive)
-                  : ChatRoomDisplayName(room: room),
+                  : ChatRoomDisplayName(
+                      key: ValueKey('${room.id}_displayname'),
+                      room: room,
+                    ),
             ),
           ],
         ),
