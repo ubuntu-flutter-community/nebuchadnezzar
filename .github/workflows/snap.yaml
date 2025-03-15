@@ -1,4 +1,4 @@
-name: Snap
+name: Snap build & publish
 
 on:
   push:
@@ -6,11 +6,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  amd64:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0
-        fetch-tags: true
+        fetch-depth: 5
     - uses: snapcore/action-build@v1
+      id: build
+    - uses: snapcore/action-publish@v1
+      if: steps.build.outcome == 'success'
+      env:
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
+      with:
+        snap: ${{ steps.build.outputs.snap }}
+        release: edge
+  arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 5
+    - uses: snapcore/action-build@v1
+      id: build
+    - uses: snapcore/action-publish@v1
+      if: steps.build.outcome == 'success'
+      env:
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
+      with:
+        snap: ${{ steps.build.outputs.snap }}
+        release: edge
