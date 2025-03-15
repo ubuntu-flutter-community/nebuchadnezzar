@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
+import '../common/view/show_text_input_dialog.dart';
 import 'authentication_model.dart';
 
 Future uiaRequestHandler({
@@ -111,87 +110,4 @@ class UiaException implements Exception {
 
   @override
   String toString() => reason;
-}
-
-Future<String?> showTextInputDialog({
-  required BuildContext context,
-  required String title,
-  String? message,
-  String? okLabel,
-  String? cancelLabel,
-  String? hintText,
-  String? labelText,
-  String? initialText,
-  bool isDestructive = false,
-  String? Function(String input)? validator,
-  TextInputType? keyboardType,
-  int? maxLength,
-  bool autocorrect = true,
-}) {
-  final l10n = context.l10n;
-  final theme = Theme.of(context);
-  return showAdaptiveDialog<String>(
-    context: context,
-    builder: (context) {
-      final controller = TextEditingController(text: initialText);
-      final error = ValueNotifier<String?>(null);
-      return AlertDialog(
-        title: Text(title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (message != null)
-              SelectableLinkify(
-                text: message,
-                linkStyle: TextStyle(
-                  color: theme.colorScheme.primary,
-                  decorationColor: theme.colorScheme.primary,
-                ),
-                options: const LinkifyOptions(humanize: false),
-                onOpen: (url) => launchUrl(Uri.parse(url.url)),
-              ),
-            const SizedBox(height: 16),
-            ValueListenableBuilder<String?>(
-              valueListenable: error,
-              builder: (context, error, _) => TextField(
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  errorText: error,
-                  labelText: labelText,
-                ),
-                controller: controller,
-                maxLength: maxLength,
-                keyboardType: keyboardType,
-                obscureText: true,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(cancelLabel ?? l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              final input = controller.text;
-              final errorText = validator?.call(input);
-              if (errorText != null) {
-                error.value = errorText;
-                return;
-              }
-              Navigator.of(context).pop<String>(input);
-            },
-            autofocus: true,
-            child: Text(
-              okLabel ?? l10n.ok,
-              style: isDestructive
-                  ? TextStyle(color: theme.colorScheme.error)
-                  : null,
-            ),
-          ),
-        ],
-      );
-    },
-  );
 }

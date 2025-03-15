@@ -56,6 +56,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
     _UserTile itemBuilder(BuildContext context, int index) {
       final user = users.elementAt(index);
       return _UserTile(
+        showChatIcon: showChatIcon,
         key: ValueKey('invited${user.id}'),
         user: user,
         trailing: !showChatIcon && room.canKick
@@ -89,10 +90,12 @@ class _UserTile extends StatelessWidget {
     super.key,
     required this.user,
     this.trailing,
+    required this.showChatIcon,
   });
 
   final User user;
   final Widget? trailing;
+  final bool showChatIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +118,7 @@ class _UserTile extends StatelessWidget {
                   : context.l10n.admin,
             ),
       trailing: trailing ??
-          (user.id == chatModel.myUserId
+          (user.id == chatModel.myUserId || !showChatIcon
               ? null
               : IconButton(
                   onPressed: () => chatModel.joinDirectChat(

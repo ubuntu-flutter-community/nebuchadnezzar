@@ -9,6 +9,7 @@ import '../../../common/view/build_context_x.dart';
 import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../common/view/chat_room_display_name.dart';
 import '../common/view/chat_room_page.dart';
 import 'chat_room_encryption_status_button.dart';
 import 'chat_room_pin_button.dart';
@@ -30,9 +31,9 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             ChatRoomEncryptionStatusButton(room: room),
             Flexible(
-              child: Text(
-                '${room.isArchived ? '(${context.l10n.archive}) ' : ''}${room.getLocalizedDisplayname()}',
-              ),
+              child: room.isArchived
+                  ? Text(context.l10n.archive)
+                  : ChatRoomDisplayName(room: room),
             ),
           ],
         ),
