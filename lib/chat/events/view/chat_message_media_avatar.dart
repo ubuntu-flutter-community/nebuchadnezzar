@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -34,25 +33,15 @@ class ChatMessageMediaAvatar extends StatelessWidget {
                     title: switch (event.messageType) {
                       MessageTypes.File ||
                       MessageTypes.Audio ||
-                      MessageTypes.Video ||
-                      MessageTypes.Image =>
+                      MessageTypes.Video =>
                         Text(context.l10n.saveFile),
-                      MessageTypes.Location =>
-                        Text(context.l10n.openLinkInBrowser),
                       _ => const Text('')
                     },
                     onConfirm: switch (event.messageType) {
                       MessageTypes.File ||
                       MessageTypes.Audio ||
-                      MessageTypes.Video ||
-                      MessageTypes.Image =>
+                      MessageTypes.Video =>
                         () => di<ChatDownloadModel>().safeFile(event),
-                      MessageTypes.Location => () {
-                          final maybeUri = Uri.tryParse(event.body);
-                          if (maybeUri != null) {
-                            launchUrl(maybeUri);
-                          }
-                        },
                       _ => () {}
                     },
                   ),
@@ -63,7 +52,6 @@ class ChatMessageMediaAvatar extends StatelessWidget {
           child: switch (event.messageType) {
             MessageTypes.Audio => const Icon(YaruIcons.media_play),
             MessageTypes.Video => const Icon(YaruIcons.video_filled),
-            MessageTypes.Location => const Icon(YaruIcons.location),
             MessageTypes.File => const Icon(YaruIcons.document_filled),
             _ => const Icon(YaruIcons.document_filled),
           },

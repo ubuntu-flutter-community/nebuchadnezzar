@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -14,6 +15,7 @@ import '../../bootstrap/view/key_verification_dialog.dart';
 import '../../chat_room/common/view/chat_no_selected_room_page.dart';
 import '../../chat_room/common/view/chat_room_page.dart';
 import '../../common/chat_model.dart';
+import '../../events/local_notification_x.dart';
 import 'chat_master_panel.dart';
 
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
@@ -56,6 +58,23 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
             ),
             (route) => false,
           );
+        }
+      },
+    );
+
+    registerStreamHandler(
+      select: (ChatModel m) => m.notificationStream,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasData) {
+          final event = newValue.data!;
+          LocalNotification(
+            title: event.room.getLocalizedDisplayname(),
+            body: event.body,
+          )
+            ..setOnClick(
+              () => di<ChatModel>().setSelectedRoom(event.room),
+            )
+            ..show();
         }
       },
     );
