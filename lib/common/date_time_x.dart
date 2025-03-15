@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,8 +9,7 @@ extension DateTimeX on DateTime {
   String formatAndLocalize(AppLocalizations l10n, {bool simple = false}) {
     final now = DateTime.now();
 
-    final countryCode =
-        Platform.localeName == 'und' ? 'en_US' : Platform.localeName;
+    final countryCode = PlatformDispatcher.instance.locale.countryCode;
 
     if (!simple && year == now.year && month == now.month) {
       if (day == now.day - 1) {
@@ -38,7 +37,7 @@ extension DateTimeX on DateTime {
       }
     }
     return DateFormat.yMd(
-      locale.countryCode,
+      locale.toString(),
     ).format(this);
   }
 
@@ -46,7 +45,7 @@ extension DateTimeX on DateTime {
     final locale = WidgetsBinding.instance.platformDispatcher.locale;
 
     return DateFormat.Hm(
-      locale.countryCode,
+      locale.toString(),
     ).format(this);
   }
 }
