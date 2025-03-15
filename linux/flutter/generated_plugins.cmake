@@ -13,6 +13,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   system_theme
   url_launcher_linux
   window_manager
+  window_to_front
   xdg_icons
   yaru_window_linux
 )

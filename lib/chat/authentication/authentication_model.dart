@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
@@ -76,6 +77,51 @@ class AuthenticationModel extends SafeChangeNotifier {
     } finally {
       _setProcessingAccess(false);
     }
+  }
+
+  Future<LoginResponse?> ssoLogin({
+    required String homeServer,
+    required Function(String error) onFail,
+    required Future Function() onSuccess,
+  }) async {
+    final redirectUrl = Platform.isMacOS
+        ? '${appOpenUrlScheme.toLowerCase()}://login'
+        : 'http://localhost:3001//login';
+
+    await _client.checkHomeserver(Uri.https(homeServer, ''));
+    final url = _client.homeserver!.replace(
+      path: '/_matrix/client/v3/login/sso/redirect',
+      queryParameters: {'redirectUrl': redirectUrl},
+    );
+
+    final urlScheme = Platform.isMacOS
+        ? Uri.parse(redirectUrl).scheme
+        : 'http://localhost:3001';
+    final result = await FlutterWebAuth2.authenticate(
+      url: url.toString(),
+      callbackUrlScheme: urlScheme,
+      options: const FlutterWebAuth2Options(),
+    );
+    final token = Uri.parse(result).queryParameters['loginToken'];
+    if (token?.isEmpty ?? false) return null;
+
+    _setProcessingAccess(true);
+    LoginResponse? response;
+    try {
+      response = await _client.login(
+        LoginType.mLoginToken,
+        token: token,
+        initialDeviceDisplayName: '$kAppTitle ${Platform.operatingSystem}',
+      );
+      await _loadMediaConfig();
+      await onSuccess();
+    } catch (e) {
+      onFail(e.toString());
+    } finally {
+      _setProcessingAccess(false);
+    }
+
+    return response;
   }
 
   int get maxUploadSize => _mediaConfig?.mUploadSize ?? 100 * 1000 * 1000;
