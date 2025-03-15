@@ -6,6 +6,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../../../common/view/build_context_x.dart';
 import '../../../../common/view/common_widgets.dart';
+import '../../../../common/view/sliver_sticky_panel.dart';
 import '../../../../common/view/snackbars.dart';
 import '../../../../common/view/space.dart';
 import '../../../../common/view/ui_constants.dart';
@@ -15,9 +16,10 @@ import '../../input/draft_model.dart';
 import '../../../common/view/chat_avatar.dart';
 import '../../../common/view/search_auto_complete.dart';
 import 'chat_room_create_or_edit_avatar.dart';
+import 'chat_room_permissions.dart';
 import 'chat_room_users_list.dart';
 
-const _maxWidth = 400.0;
+const _maxWidth = 500.0;
 
 class ChatCreateOrEditRoomDialog extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -96,16 +98,15 @@ class _ChatCreateOrEditRoomDialogState
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final mediaQueryWidth = context.mediaQuerySize.width;
-    final twoPaneMode = mediaQueryWidth > 1200;
 
     final usedWidth = mediaQueryWidth > 520.0 ? _maxWidth : 280.0;
     final avatarDraftFile =
         watchPropertyValue((DraftModel m) => m.avatarDraftFile);
 
     final profileListView = ListView.builder(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: kMediumPadding,
-        vertical: twoPaneMode ? 0 : kBigPadding,
+        vertical: kBigPadding,
       ),
       itemCount: _profiles.length,
       itemBuilder: (context, index) {
@@ -138,250 +139,277 @@ class _ChatCreateOrEditRoomDialogState
       },
     );
 
-    final userSearchField = Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: kMediumPadding,
-      ),
-      child: ChatUserSearchAutoComplete(
-        width: usedWidth - 2 * kMediumPadding,
-        suffix: const Icon(YaruIcons.user),
-        onProfileSelected: (p) {
-          if (_existingGroup) {
-            widget.room!.invite(p.userId);
-          } else {
-            setState(() => _profiles.add(p));
-          }
-        },
-      ),
-    );
-
-    final leftColumn = Column(
-      mainAxisSize: MainAxisSize.min,
-      spacing: kBigPadding,
-      children: [
-        if (!_isSpace)
-          ChatRoomCreateOrEditAvatar(
-            avatarDraftBytes: avatarDraftFile?.bytes,
-            room: widget.room,
-          ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: kMediumPadding,
-          ),
-          child: TextField(
-            autofocus: true,
-            enabled: widget.room == null ||
-                widget.room?.canChangeStateEvent(EventTypes.RoomName) == true,
-            controller: _groupNameController,
-            onChanged: (v) => setState(() {
-              _groupName = v;
-            }),
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.all(12),
-              label: Text(_isSpace ? l10n.spaceName : l10n.groupName),
-              suffixIcon: (_existingGroup &&
-                      widget.room!.canChangeStateEvent(EventTypes.RoomName))
-                  ? IconButton(
-                      padding: EdgeInsets.zero,
-                      style: IconButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(6),
-                            bottomRight: Radius.circular(6),
-                          ),
-                        ),
-                      ),
-                      onPressed: _groupName != widget.room!.name
-                          ? () => widget.room!.setName(_groupName!)
-                          : null,
-                      icon: const Icon(YaruIcons.save),
-                    )
-                  : null,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: kMediumPadding,
-          ),
-          child: TextField(
-            enabled: widget.room == null ||
-                widget.room?.canChangeStateEvent(EventTypes.RoomTopic) == true,
-            controller: _groupTopicController,
-            onChanged: (v) => setState(() {
-              _topic = v;
-            }),
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.all(12),
-              label: Text(l10n.chatDescription),
-              suffixIcon: (_existingGroup &&
-                      widget.room!.canChangeStateEvent(EventTypes.RoomTopic))
-                  ? IconButton(
-                      padding: EdgeInsets.zero,
-                      style: IconButton.styleFrom(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(6),
-                            bottomRight: Radius.circular(6),
-                          ),
-                        ),
-                      ),
-                      onPressed: _topic != widget.room!.topic
-                          ? () => widget.room!.setDescription(_topic!)
-                          : null,
-                      icon: const Icon(YaruIcons.save),
-                    )
-                  : null,
-            ),
-          ),
-        ),
-        if (!_isSpace)
-          YaruTile(
-            leading: _enableEncryption
-                ? const Icon(YaruIcons.shield_filled)
-                : const Icon(YaruIcons.shield),
-            padding: const EdgeInsets.symmetric(
-              horizontal: kMediumPadding,
-            ),
-            trailing: CommonSwitch(
-              value: _enableEncryption,
-              onChanged: widget.room?.encrypted == true ||
-                      widget.room?.canChangeStateEvent(EventTypes.Encryption) ==
-                          false
-                  ? null
-                  : (v) {
-                      setState(() => _enableEncryption = v);
-
-                      if (_enableEncryption &&
-                          widget.room?.encrypted == false) {
-                        widget.room?.enableEncryption();
-                      }
-                    },
-            ),
-            title: Text(l10n.encrypted),
-            subtitle: widget.room?.encrypted == true
-                ? null
-                : (Text(l10n.enableEncryptionWarning)),
-          ),
-        YaruTile(
-          leading: _visibility == Visibility.private
-              ? const Icon(YaruIcons.private_mask_filled)
-              : const Icon(YaruIcons.private_mask),
-          padding: const EdgeInsets.symmetric(
-            horizontal: kMediumPadding,
-          ),
-          title: _visibility == Visibility.private
-              ? Text(l10n.guestsCanJoin)
-              : Text(l10n.anyoneCanJoin),
-          trailing: CommonSwitch(
-            value: _visibility == Visibility.private,
-            onChanged:
-                widget.room?.canChangeStateEvent(EventTypes.RoomJoinRules) ==
-                        false
-                    ? null
-                    : (v) {
-                        if (v) {
-                          widget.room?.setJoinRules(JoinRules.public);
-                        } else {
-                          widget.room?.setJoinRules(JoinRules.private);
-                        }
-                        setState(
-                          () => _visibility =
-                              v ? Visibility.private : Visibility.public,
-                        );
-                      },
-          ),
-        ),
-        if (!twoPaneMode) userSearchField,
-        if (!twoPaneMode)
-          Expanded(
-            child: _existingGroup
-                ? widget.room?.canInvite == true
-                    ? ChatRoomUsersList(
-                        room: widget.room!,
-                        sliver: false,
-                        showChatIcon: false,
-                      )
-                    : const SizedBox.shrink()
-                : profileListView,
-          ),
-      ],
-    );
-
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
-      title: YaruDialogTitleBar(
-        border: BorderSide.none,
-        backgroundColor: Colors.transparent,
-        title: Text(
-          _existingGroup
-              ? '${l10n.edit} ${_isSpace ? l10n.space : l10n.group}'
-              : _isSpace
-                  ? l10n.createNewSpace
-                  : l10n.createGroup,
-        ),
-      ),
       actionsAlignment: MainAxisAlignment.start,
       actionsOverflowAlignment: OverflowBarAlignment.center,
       actionsPadding: const EdgeInsets.all(kMediumPadding),
-      contentPadding: const EdgeInsets.all(kMediumPadding),
+      contentPadding: EdgeInsets.zero,
       content: SizedBox(
         height: 2 * _maxWidth,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: usedWidth,
-              child: leftColumn,
-            ),
-            if (twoPaneMode)
-              const Padding(
-                padding: EdgeInsets.all(kMediumPadding),
-                child: VerticalDivider(
-                  width: 0.1,
-                  thickness: 0.5,
-                ),
-              ),
-            if (twoPaneMode)
-              SizedBox(
-                width: usedWidth,
-                child: Column(
-                  spacing: kMediumPadding,
-                  children: [
-                    userSearchField,
-                    Expanded(
-                      child: _profiles.isEmpty
-                          ? const Center(
-                              child: Icon(
-                                YaruIcons.users,
-                                size: 100,
-                              ),
-                            )
-                          : _existingGroup
-                              ? widget.room?.canInvite == true
-                                  ? ChatRoomUsersList(
-                                      room: widget.room!,
-                                      sliver: false,
-                                      showChatIcon: false,
-                                    )
-                                  : const SizedBox.shrink()
-                              : profileListView,
+        width: _maxWidth,
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(kYaruContainerRadius),
+            topRight: Radius.circular(kYaruContainerRadius),
+          ),
+          child: CustomScrollView(
+            slivers: space(
+              sliver: true,
+              heightGap: kBigPadding,
+              children: [
+                SliverStickyPanel(
+                  backgroundColor: context.theme.dialogTheme.backgroundColor,
+                  padding: EdgeInsets.zero,
+                  child: YaruDialogTitleBar(
+                    backgroundColor: Colors.transparent,
+                    border: BorderSide.none,
+                    title: Text(
+                      _existingGroup
+                          ? '${l10n.edit} ${_isSpace ? l10n.space : l10n.group}'
+                          : _isSpace
+                              ? l10n.createNewSpace
+                              : l10n.createGroup,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-          ],
+                if (!_isSpace)
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: ChatRoomCreateOrEditAvatar(
+                        avatarDraftBytes: avatarDraftFile?.bytes,
+                        room: widget.room,
+                      ),
+                    ),
+                  ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kMediumPadding,
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: YaruSection(
+                      headline: Text(l10n.group),
+                      child: Padding(
+                        padding: const EdgeInsets.all(kMediumPadding),
+                        child: Column(
+                          spacing: kBigPadding,
+                          children: [
+                            TextField(
+                              autofocus: true,
+                              enabled: widget.room == null ||
+                                  widget.room?.canChangeStateEvent(
+                                        EventTypes.RoomName,
+                                      ) ==
+                                      true,
+                              controller: _groupNameController,
+                              onChanged: (v) => setState(() {
+                                _groupName = v;
+                              }),
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.all(12),
+                                label: Text(
+                                  _isSpace ? l10n.spaceName : l10n.groupName,
+                                ),
+                                suffixIcon: (_existingGroup &&
+                                        widget.room!.canChangeStateEvent(
+                                          EventTypes.RoomName,
+                                        ))
+                                    ? IconButton(
+                                        padding: EdgeInsets.zero,
+                                        style: IconButton.styleFrom(
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(6),
+                                              bottomRight: Radius.circular(6),
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed:
+                                            _groupName != widget.room!.name
+                                                ? () => widget.room!
+                                                    .setName(_groupName!)
+                                                : null,
+                                        icon: const Icon(YaruIcons.save),
+                                      )
+                                    : null,
+                              ),
+                            ),
+                            TextField(
+                              enabled: widget.room == null ||
+                                  widget.room?.canChangeStateEvent(
+                                        EventTypes.RoomTopic,
+                                      ) ==
+                                      true,
+                              controller: _groupTopicController,
+                              onChanged: (v) => setState(() {
+                                _topic = v;
+                              }),
+                              decoration: InputDecoration(
+                                contentPadding: const EdgeInsets.all(12),
+                                label: Text(l10n.chatDescription),
+                                suffixIcon: (_existingGroup &&
+                                        widget.room!.canChangeStateEvent(
+                                          EventTypes.RoomTopic,
+                                        ))
+                                    ? IconButton(
+                                        padding: EdgeInsets.zero,
+                                        style: IconButton.styleFrom(
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(6),
+                                              bottomRight: Radius.circular(6),
+                                            ),
+                                          ),
+                                        ),
+                                        onPressed: _topic != widget.room!.topic
+                                            ? () => widget.room!
+                                                .setDescription(_topic!)
+                                            : null,
+                                        icon: const Icon(YaruIcons.save),
+                                      )
+                                    : null,
+                              ),
+                            ),
+                            if (!_isSpace)
+                              YaruTile(
+                                leading: _enableEncryption
+                                    ? const Icon(YaruIcons.shield_filled)
+                                    : const Icon(YaruIcons.shield),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: kMediumPadding,
+                                ),
+                                trailing: CommonSwitch(
+                                  value: _enableEncryption,
+                                  onChanged: widget.room?.encrypted == true ||
+                                          widget.room?.canChangeStateEvent(
+                                                EventTypes.Encryption,
+                                              ) ==
+                                              false
+                                      ? null
+                                      : (v) {
+                                          setState(() => _enableEncryption = v);
+
+                                          if (_enableEncryption &&
+                                              widget.room?.encrypted == false) {
+                                            widget.room?.enableEncryption();
+                                          }
+                                        },
+                                ),
+                                title: Text(l10n.encrypted),
+                              ),
+                            if (!_existingGroup)
+                              YaruTile(
+                                leading: _visibility == Visibility.private
+                                    ? const Icon(YaruIcons.private_mask_filled)
+                                    : const Icon(YaruIcons.private_mask),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: kMediumPadding,
+                                ),
+                                title: _visibility == Visibility.private
+                                    ? Text(l10n.guestsCanJoin)
+                                    : Text(l10n.anyoneCanJoin),
+                                trailing: CommonSwitch(
+                                  value: _visibility == Visibility.private,
+                                  onChanged: widget.room?.canChangeStateEvent(
+                                            EventTypes.RoomJoinRules,
+                                          ) ==
+                                          false
+                                      ? null
+                                      : (v) {
+                                          if (v) {
+                                            widget.room?.setJoinRules(
+                                              JoinRules.public,
+                                            );
+                                          } else {
+                                            widget.room?.setJoinRules(
+                                              JoinRules.private,
+                                            );
+                                          }
+                                          setState(
+                                            () => _visibility = v
+                                                ? Visibility.private
+                                                : Visibility.public,
+                                          );
+                                        },
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (_existingGroup && widget.room!.canChangePowerLevel)
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kMediumPadding,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: ChatPermissionsSettingsView(
+                        room: widget.room!,
+                      ),
+                    ),
+                  ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kMediumPadding,
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: YaruSection(
+                      headline: Text(l10n.users),
+                      child: Column(
+                        children: [
+                          if (!_existingGroup || widget.room?.canInvite == true)
+                            SizedBox(
+                              height: 38,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: kMediumPadding,
+                                ),
+                                child: ChatUserSearchAutoComplete(
+                                  labelText: l10n.inviteOtherUsers,
+                                  width: usedWidth - 2 * kMediumPadding,
+                                  suffix: const Icon(YaruIcons.user),
+                                  onProfileSelected: (p) {
+                                    if (_existingGroup) {
+                                      widget.room!.invite(p.userId);
+                                    } else {
+                                      setState(() => _profiles.add(p));
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          SizedBox(
+                            height: 200,
+                            width: _maxWidth,
+                            child: _existingGroup
+                                ? widget.room?.canInvite == true
+                                    ? ChatRoomUsersList(
+                                        room: widget.room!,
+                                        sliver: false,
+                                        showChatIcon: false,
+                                      )
+                                    : const SizedBox.shrink()
+                                : profileListView,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      scrollable: true,
       actions: _existingGroup
           ? null
           : [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: space(
-                  expand: !twoPaneMode,
+                  expand: true,
                   widthGap: kMediumPadding,
                   children: [
                     OutlinedButton(

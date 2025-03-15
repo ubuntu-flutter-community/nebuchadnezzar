@@ -8,15 +8,23 @@ List<Widget> space({
   final bool expand = false,
   final bool flex = false,
   final bool spaceEnd = false,
+  final bool sliver = false,
 }) =>
     children
         .expand(
           (item) sync* {
             if (!spaceEnd) {
-              yield SizedBox(
-                width: widthGap,
-                height: heightGap,
-              );
+              yield sliver
+                  ? SliverToBoxAdapter(
+                      child: SizedBox(
+                        width: widthGap,
+                        height: heightGap,
+                      ),
+                    )
+                  : SizedBox(
+                      width: widthGap,
+                      height: heightGap,
+                    );
             }
             yield expand
                 ? Expanded(child: item)
@@ -24,10 +32,17 @@ List<Widget> space({
                     ? Flexible(child: item)
                     : item;
             if (spaceEnd) {
-              yield SizedBox(
-                width: widthGap,
-                height: heightGap,
-              );
+              yield sliver
+                  ? SliverToBoxAdapter(
+                      child: SizedBox(
+                        width: widthGap,
+                        height: heightGap,
+                      ),
+                    )
+                  : SizedBox(
+                      width: widthGap,
+                      height: heightGap,
+                    );
             }
           },
         )

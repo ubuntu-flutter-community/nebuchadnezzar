@@ -102,6 +102,48 @@ class ChatModel extends SafeChangeNotifier {
   Stream<List<Room>> get spacesStream =>
       syncStream.map((e) => rooms.where((e) => e.isSpace).toList());
 
+  Stream<SyncUpdate> getPermissionsStream(String roomId) => syncStream.where(
+        (e) =>
+            (e.rooms?.join?.containsKey(roomId) ?? false) &&
+            (e.rooms!.join![roomId]?.timeline?.events
+                    ?.any((s) => s.type == EventTypes.RoomPowerLevels) ??
+                false),
+      );
+
+  void editPowerLevel({
+    required Room room,
+    required String key,
+    int? newLevel,
+    String? category,
+    required Function() onFail,
+    required Future<int?> Function() onCustomPermissionsChosen,
+  }) async {
+    if (!room.canSendEvent(EventTypes.RoomPowerLevels)) {
+      onFail();
+      return;
+    }
+    newLevel ??= await onCustomPermissionsChosen();
+
+    if (newLevel == null) return;
+    final content = Map<String, dynamic>.from(
+      room.getState(EventTypes.RoomPowerLevels)!.content,
+    );
+    if (category != null) {
+      if (!content.containsKey(category)) {
+        content[category] = <String, dynamic>{};
+      }
+      content[category][key] = newLevel;
+    } else {
+      content[key] = newLevel;
+    }
+    await room.client.setRoomStateWithKey(
+      room.id,
+      EventTypes.RoomPowerLevels,
+      '',
+      content,
+    );
+  }
+
   List<Room> get spaces => rooms.where((e) => e.isSpace).toList();
 
   RoomsFilter? _roomsFilter;

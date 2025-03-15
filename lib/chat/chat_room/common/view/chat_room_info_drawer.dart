@@ -13,6 +13,7 @@ import '../../../common/chat_model.dart';
 import '../../../common/room_x.dart';
 import '../../../common/view/chat_avatar.dart';
 import 'chat_create_or_edit_room_dialog.dart';
+import 'chat_room_display_name.dart';
 import 'chat_room_info_drawer_topic.dart';
 import 'chat_room_users_list.dart';
 import '../../titlebar/chat_room_join_or_leave_button.dart';
@@ -49,7 +50,9 @@ class ChatRoomInfoDrawer extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(room.getLocalizedDisplayname()),
+                      room.isArchived
+                          ? Text(context.l10n.archive)
+                          : ChatRoomDisplayName(room: room),
                       if (room.canonicalAlias.isNotEmpty)
                         Text(
                           room.canonicalAlias,

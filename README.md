@@ -37,8 +37,8 @@ cp /Users/frederik/Downloads/libcrypto.1.1.dylib ~/Projects/nebuchadnezzar/build
 
 ### Credits: Fluffy-Chat
 
-The bootstrap UI, the HTML message and the english translations are copied from the fluffy-chat repository.
-This will be replaced soon. Thank you for your awesome dart sdk!
+The bootstrap UI, the HTML message, the room permission logic and the english translations are copied and modified from the fluffy-chat repository.
+Thank you for your awesome dart sdk!
 
 ### Why this name?
 
