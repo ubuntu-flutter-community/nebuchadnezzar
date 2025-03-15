@@ -37,7 +37,7 @@ extension DateTimeX on DateTime {
       }
     }
     return DateFormat.yMd(
-      locale.countryCode,
+      locale.toString(),
     ).format(this);
   }
 
@@ -45,7 +45,7 @@ extension DateTimeX on DateTime {
     final locale = WidgetsBinding.instance.platformDispatcher.locale;
 
     return DateFormat.Hm(
-      locale.countryCode,
+      locale.toString(),
     ).format(this);
   }
 }
