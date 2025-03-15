@@ -54,7 +54,7 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: kAppTitle,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: supportedLocales,
+        supportedLocales: AppLocalizations.supportedLocales,
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {
             PointerDeviceKind.mouse,
