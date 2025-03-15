@@ -3,7 +3,7 @@
 ## Linux setup
 
 ```
-sudo apt install libsqlite3-dev libolm-dev libolm3 libcrypto++-dev libsecret-1-dev libjsoncpp-dev
+sudo apt install libsqlite3-dev libolm-dev libolm3 libcrypto++-dev libsecret-1-dev libjsoncpp-dev libnotify-dev
 ```
 
 snap TODO:

@@ -44,6 +44,7 @@ dependencies:
   latlong2: ^0.9.1
   linkify: ^5.0.0
   liquid_progress_indicator_v2: ^0.5.0
+  local_notifier: ^0.1.6
   matrix: ^0.38.0
   mesh: ^0.4.2
   mime: ^2.0.0

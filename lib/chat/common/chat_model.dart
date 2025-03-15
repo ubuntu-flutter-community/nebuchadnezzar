@@ -96,6 +96,8 @@ class ChatModel extends SafeChangeNotifier {
                 room.typingUsers.where((e) => e.senderId != myUserId).toList(),
           );
 
+  Stream<Event> get notificationStream => _client.onNotification.stream;
+
   Stream<Event?> getLastEventStream(Room room) =>
       getJoinedRoomUpdate(room.id).map((update) => room.lastEvent);
 

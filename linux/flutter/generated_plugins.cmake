@@ -9,6 +9,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_secure_storage_linux
   gtk
   handy_window
+  local_notifier
   screen_retriever_linux
   system_theme
   url_launcher_linux

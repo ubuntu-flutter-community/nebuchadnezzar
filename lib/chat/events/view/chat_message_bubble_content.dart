@@ -15,6 +15,7 @@ import 'chat_image.dart';
 import 'chat_map.dart';
 import 'chat_message_bubble_shape.dart';
 import 'chat_message_image_full_screen_dialog.dart';
+import 'chat_message_media_avatar.dart';
 import 'chat_message_menu.dart';
 import 'chat_message_reply_header.dart';
 import 'chat_text_message.dart';
@@ -135,6 +136,25 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                   partOfMessageCohort: partOfMessageCohort,
                                   timeline: timeline,
                                   onReplyOriginClick: onReplyOriginClick,
+                                ),
+                              // TODO: #5
+                              MessageTypes.Audio ||
+                              MessageTypes.Video ||
+                              MessageTypes.File =>
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(top: kSmallPadding),
+                                  child: Row(
+                                    spacing: kMediumPadding,
+                                    children: [
+                                      ChatMessageMediaAvatar(event: event),
+                                      ChatTextMessage(
+                                        event: event,
+                                        displayEvent: displayEvent,
+                                        messageStyle: messageStyle,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               _ => ChatTextMessage(
                                   event: event,

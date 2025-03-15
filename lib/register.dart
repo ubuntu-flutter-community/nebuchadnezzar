@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watch_it/watch_it.dart';
@@ -18,6 +19,7 @@ import 'chat/events/chat_download_model.dart';
 import 'chat/events/chat_download_service.dart';
 import 'chat/settings/settings_model.dart';
 import 'chat/settings/settings_service.dart';
+import 'constants.dart';
 
 void registerDependencies() => di
   ..registerSingletonAsync<Client>(
@@ -129,4 +131,11 @@ void registerDependencies() => di
   ..registerLazySingleton<TimelineModel>(
     () => TimelineModel(),
     dispose: (s) => s.dispose(),
+  )
+  ..registerSingletonAsync<LocalNotifier>(
+    () async {
+      await localNotifier.setup(appName: kAppId);
+
+      return localNotifier;
+    },
   );
