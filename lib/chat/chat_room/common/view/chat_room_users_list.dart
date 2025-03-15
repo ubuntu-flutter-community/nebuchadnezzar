@@ -27,18 +27,11 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final membershipFilter = [Membership.join];
 
-    watchStream(
+    final users = watchStream(
       (ChatModel m) => m.getUsersStreamOfJoinedRoom(
         room,
         membershipFilter: membershipFilter,
       ),
-      initialValue: room.getParticipants(membershipFilter),
-      preserveState: false,
-    );
-
-    final users = watchFuture(
-      (users) => users,
-      target: room.requestParticipants(membershipFilter),
       initialValue: room.getParticipants(membershipFilter),
       preserveState: false,
     ).data?.sorted(
