@@ -14,8 +14,10 @@ import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../authentication/authentication_model.dart';
+import '../../authentication/chat_login_page.dart';
 import '../../authentication/uia_request_handler.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
+import '../../settings/view/logout_button.dart';
 import '../bootstrap_model.dart';
 import 'key_verification_dialog.dart';
 
@@ -78,7 +80,7 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
 
     final buttons = <Widget>[];
     Widget body = const Progress();
-    var titleText = l10n.recoveryKey;
+    var titleText = '';
 
     if (key != null && recoveryKeyStored == false) {
       return Scaffold(
@@ -215,8 +217,12 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
             body = const Icon(YaruIcons.error, color: Colors.red, size: 80);
             buttons.add(
               OutlinedButton(
-                onPressed: () => Navigator.of(context, rootNavigator: false)
-                    .pop<bool>(false),
+                onPressed: () => () => Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (_) => const ChatLoginPage(),
+                      ),
+                      (route) => false,
+                    ),
                 child: Text(l10n.close),
               ),
             );
@@ -240,8 +246,12 @@ class BootstrapPage extends StatelessWidget with WatchItMixin {
             );
             buttons.add(
               OutlinedButton(
-                onPressed: () => Navigator.of(context, rootNavigator: false)
-                    .pop<bool>(false),
+                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const ChatMasterDetailPage(),
+                  ),
+                  (route) => false,
+                ),
                 child: Text(l10n.close),
               ),
             );
@@ -451,6 +461,7 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
                           }
                         },
                 ),
+                const LogoutButton(),
               ],
             ),
           ),

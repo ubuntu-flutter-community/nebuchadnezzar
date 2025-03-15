@@ -11,6 +11,7 @@ import '../../constants.dart';
 import '../../l10n/l10n.dart';
 import '../bootstrap/view/bootstrap_page.dart';
 import 'authentication_model.dart';
+import 'chat_matrix_id_login_page.dart';
 
 class ChatLoginPage extends StatefulWidget with WatchItStatefulWidgetMixin {
   const ChatLoginPage({super.key});
@@ -22,47 +23,30 @@ class ChatLoginPage extends StatefulWidget with WatchItStatefulWidgetMixin {
 class _ChatLoginPageState extends State<ChatLoginPage> {
   final TextEditingController _homeServerController =
       TextEditingController(text: 'matrix.org');
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _homeServerController.dispose();
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final authenticationModel = di<AuthenticationModel>();
     bool processingAccess =
         watchPropertyValue((AuthenticationModel m) => m.processingAccess);
-    bool showPassword =
-        watchPropertyValue((AuthenticationModel m) => m.showPassword);
 
     var onPressed = processingAccess
         ? null
-        : () async {
-            authenticationModel.toggleShowPassword(forceValue: false);
-            return authenticationModel.login(
-              homeServer: _homeServerController.text.trim(),
-              username: _usernameController.text,
-              password: _passwordController.text,
+        : () => di<AuthenticationModel>().ssoLogin(
               onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (_) => const CheckBootstrapPage(),
                 ),
                 (route) => false,
               ),
-              onFail: (e) => showSnackBar(context, content: Text(e.toString())),
+              onFail: (e) => showSnackBar(
+                context,
+                content: Text(e.toString()),
+              ),
+              homeServer: _homeServerController.text.trim(),
             );
-          };
-
     return Scaffold(
       appBar: const YaruWindowTitleBar(
-        title: Text(kAppTitle),
+        title: Text(''),
         backgroundColor: Colors.transparent,
         border: BorderSide.none,
       ),
@@ -72,12 +56,27 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
             child: SizedBox(
               width: kLoginFormWidth,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
+                padding: const EdgeInsets.only(bottom: kYaruTitleBarHeight),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: space(
                     heightGap: kMediumPadding,
                     children: [
+                      Text(
+                        kAppTitle,
+                        style: context.theme.textTheme.headlineLarge,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: kMediumPadding,
+                          bottom: 2 * kBigPadding,
+                        ),
+                        child: Image.asset(
+                          'assets/nebuchadnezzar.png',
+                          width: 100,
+                          height: 100,
+                        ),
+                      ),
                       TextField(
                         controller: _homeServerController,
                         readOnly: processingAccess,
@@ -88,56 +87,40 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
                           labelText: l10n.homeserver,
                         ),
                       ),
-                      TextField(
-                        controller: _usernameController,
-                        readOnly: processingAccess,
-                        autocorrect: false,
-                        onSubmitted: (value) => onPressed?.call(),
-                        decoration: InputDecoration(
-                          labelText: l10n.username,
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          iconAlignment: IconAlignment.start,
+                          onPressed: onPressed,
+                          icon: const Icon(
+                            YaruIcons.globe,
+                          ),
+                          label: Text(l10n.login),
                         ),
                       ),
-                      TextField(
-                        controller: _passwordController,
-                        readOnly: processingAccess,
-                        autocorrect: false,
-                        obscureText: !showPassword,
-                        onSubmitted: (value) => onPressed?.call(),
-                        decoration: InputDecoration(
-                          labelText: l10n.password,
-                          suffixIconConstraints: const BoxConstraints(
-                            maxHeight: kYaruTitleBarItemHeight,
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Text(l10n.or),
                           ),
-                          suffixIcon: IconButton(
-                            isSelected: showPassword,
-                            padding: EdgeInsets.zero,
-                            style: IconButton.styleFrom(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(6),
-                                  bottomRight: Radius.circular(6),
-                                ),
-                              ),
-                            ),
-                            onPressed: authenticationModel.toggleShowPassword,
-                            icon: Icon(
-                              showPassword
-                                  ? YaruIcons.eye_filled
-                                  : YaruIcons.eye,
-                            ),
-                          ),
-                        ),
+                          const Expanded(child: Divider()),
+                        ],
                       ),
                       SizedBox(
                         width: double.infinity,
-                        height: 35,
-                        child: ElevatedButton(
-                          onPressed: onPressed,
-                          child: const Text('Login'),
+                        child: OutlinedButton.icon(
+                          onPressed: processingAccess
+                              ? null
+                              : () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const ChatMatrixIdLoginPage(),
+                                    ),
+                                  ),
+                          label: Text(l10n.loginWithMatrixId),
                         ),
-                      ),
-                      const SizedBox(
-                        height: kYaruTitleBarHeight,
                       ),
                     ],
                   ),

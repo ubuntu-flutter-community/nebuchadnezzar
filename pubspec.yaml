@@ -36,6 +36,7 @@ dependencies:
   flutter_openssl_crypto: ^0.5.0
   flutter_secure_storage: ^9.2.2
   flutter_svg: ^2.0.16
+  flutter_web_auth_2: ^3.1.1
   future_loading_dialog: ^0.3.0
   handy_window: ^0.4.0
   html: ^0.15.4
@@ -59,6 +60,7 @@ dependencies:
   sqflite: ^2.4.1
   sqflite_common_ffi: ^2.3.4
   system_theme: ^3.1.2
+  tabler_icons: ^2.5.0+1
   url_launcher: ^6.3.1
   video_compress: ^3.1.3
   watch_it: ^1.6.1

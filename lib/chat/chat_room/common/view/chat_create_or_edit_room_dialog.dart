@@ -144,7 +144,7 @@ class _ChatCreateOrEditRoomDialogState
       actionsAlignment: MainAxisAlignment.start,
       actionsOverflowAlignment: OverflowBarAlignment.center,
       actionsPadding: const EdgeInsets.all(kMediumPadding),
-      contentPadding: EdgeInsets.zero,
+      contentPadding: const EdgeInsets.only(bottom: kBigPadding),
       content: SizedBox(
         height: 2 * _maxWidth,
         width: _maxWidth,
@@ -174,17 +174,20 @@ class _ChatCreateOrEditRoomDialogState
                   ),
                 ),
                 if (!_isSpace)
-                  SliverToBoxAdapter(
-                    child: Center(
-                      child: ChatRoomCreateOrEditAvatar(
-                        avatarDraftBytes: avatarDraftFile?.bytes,
-                        room: widget.room,
+                  SliverPadding(
+                    padding: const EdgeInsets.only(bottom: kBigPadding),
+                    sliver: SliverToBoxAdapter(
+                      child: Center(
+                        child: ChatRoomCreateOrEditAvatar(
+                          avatarDraftBytes: avatarDraftFile?.bytes,
+                          room: widget.room,
+                        ),
                       ),
                     ),
                   ),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: kMediumPadding,
+                    horizontal: kBigPadding,
                   ),
                   sliver: SliverToBoxAdapter(
                     child: YaruSection(
@@ -342,7 +345,7 @@ class _ChatCreateOrEditRoomDialogState
                 if (_existingGroup && widget.room!.canChangePowerLevel)
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: kMediumPadding,
+                      horizontal: kBigPadding,
                     ),
                     sliver: SliverToBoxAdapter(
                       child: ChatPermissionsSettingsView(
@@ -352,7 +355,7 @@ class _ChatCreateOrEditRoomDialogState
                   ),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: kMediumPadding,
+                    horizontal: kBigPadding,
                   ),
                   sliver: SliverToBoxAdapter(
                     child: YaruSection(
