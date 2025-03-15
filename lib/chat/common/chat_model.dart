@@ -3,7 +3,6 @@ import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
-import 'event_x.dart';
 import 'rooms_filter.dart';
 
 class ChatModel extends SafeChangeNotifier {
@@ -99,11 +98,6 @@ class ChatModel extends SafeChangeNotifier {
 
   Stream<Event?> getLastEventStream(Room room) =>
       getJoinedRoomUpdate(room.id).map((update) => room.lastEvent);
-
-  Future<List<Event>> getEvents(Room room) async {
-    final timeline = await room.getTimeline();
-    return timeline.events.where((e) => !e.showAsBadge).toList();
-  }
 
   Stream<List<Room>> get spacesStream =>
       syncStream.map((e) => rooms.where((e) => e.isSpace).toList());

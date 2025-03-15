@@ -14,7 +14,6 @@ import '../../../common/chat_model.dart';
 import '../../../common/event_x.dart';
 import '../../../events/view/chat_event_tile.dart';
 import '../../../settings/settings_model.dart';
-import '../../titlebar/chat_room_title_bar.dart';
 import '../timeline_model.dart';
 import 'chat_room_pinned_events_dialog.dart';
 import 'chat_seen_by_indicator.dart';
@@ -158,29 +157,6 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                 ),
                 child: Icon(
                   YaruIcons.pin,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ),
-        if (_showScrollButton)
-          Positioned(
-            right: kBigPadding,
-            bottom: kBigPadding,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: EdgeInsets.only(
-                bottom: _showScrollButton ? 3 * kBigPadding : 0,
-              ),
-              child: FloatingActionButton.small(
-                backgroundColor: getMonochromeBg(theme: theme, darkFactor: 5),
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (context) =>
-                      ChatRoomSearchDialog(room: widget.timeline.room),
-                ),
-                child: Icon(
-                  YaruIcons.search,
                   color: theme.colorScheme.onSurface,
                 ),
               ),
