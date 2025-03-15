@@ -37,13 +37,21 @@ double colorDistance(Color color1, Color color2) {
 Color getTileColor(
   bool isUserEvent,
   ThemeData theme,
-) =>
-    isUserEvent
-        ? theme.colorScheme.primary.scale(
-            saturation: theme.colorScheme.isLight ? (yaru ? -0.3 : -0.6) : -0.6,
-            lightness: theme.colorScheme.isLight ? 0.65 : (yaru ? -0.5 : -0.7),
-          )
-        : getMonochromeBg(theme: theme, factor: 6, darkFactor: 15);
+) {
+  final userColor = theme.colorScheme.primary == YaruColors.orange
+      ? theme.colorScheme.link.scale(
+          saturation: theme.colorScheme.isLight ? -0.5 : -0.7,
+          lightness: theme.colorScheme.isLight ? 0.85 : -0.5,
+        )
+      : theme.colorScheme.primary.scale(
+          saturation: theme.colorScheme.isLight ? (yaru ? -0.3 : -0.6) : -0.6,
+          lightness: theme.colorScheme.isLight ? 0.65 : (yaru ? -0.5 : -0.7),
+        );
+
+  return isUserEvent
+      ? userColor
+      : getMonochromeBg(theme: theme, factor: 6, darkFactor: 15);
+}
 
 Color getPanelBg(ThemeData theme) =>
     getMonochromeBg(theme: theme, darkFactor: 3);
