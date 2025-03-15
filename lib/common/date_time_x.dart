@@ -10,7 +10,7 @@ extension DateTimeX on DateTime {
     final now = DateTime.now();
 
     final countryCode =
-        Platform.localeName == 'und' ? 'en_US' : Platform.localeName;
+        Platform.localeName == 'und' ? 'en' : Platform.localeName;
 
     if (!simple && year == now.year && month == now.month) {
       if (day == now.day - 1) {
