@@ -5,6 +5,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/chat_model.dart';
+import '../../l10n/l10n.dart';
 
 class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
   const ChatRoomPinButton({
@@ -24,6 +25,7 @@ class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
         false;
 
     return IconButton(
+      tooltip: context.l10n.toggleFavorite,
       onPressed: () => room.setFavourite(!room.isFavourite),
       icon: Icon(
         YaruIcons.pin,
