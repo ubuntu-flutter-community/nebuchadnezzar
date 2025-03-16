@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
@@ -92,3 +93,52 @@ ButtonStyle get textFieldSuffixStyle => IconButton.styleFrom(
 
 Color avatarFallbackColor(ColorScheme colorScheme) =>
     colorScheme.primary.withValues(alpha: 0.3);
+
+Config emojiPickerConfig({
+  required ThemeData theme,
+  double emojiSizeMax = 25.0,
+}) {
+  final colorScheme = theme.colorScheme;
+  return Config(
+    customSearchIcon: const Icon(YaruIcons.search),
+    customBackspaceIcon: const Icon(YaruIcons.edit_clear),
+    emojiViewConfig: EmojiViewConfig(
+      gridPadding: const EdgeInsets.all(kSmallPadding),
+      verticalSpacing: 0,
+      horizontalSpacing: 0,
+      emojiSizeMax: emojiSizeMax,
+      backgroundColor: Colors.transparent,
+    ),
+    bottomActionBarConfig: BottomActionBarConfig(
+      backgroundColor: colorScheme.surface,
+      buttonIconColor: colorScheme.primary,
+      buttonColor: colorScheme.surface,
+    ),
+    skinToneConfig: const SkinToneConfig(
+      dialogBackgroundColor: Colors.transparent,
+    ),
+    categoryViewConfig: CategoryViewConfig(
+      categoryIcons: const CategoryIcons(
+        smileyIcon: YaruIcons.emote_smile,
+        animalIcon: YaruIcons.emote_monkey,
+        foodIcon: YaruIcons.emote_raspberry,
+        activityIcon: YaruIcons.rule_and_pen,
+        flagIcon: YaruIcons.flag,
+        recentIcon: YaruIcons.clock,
+        travelIcon: YaruIcons.calendar,
+        objectIcon: YaruIcons.light_bulb_on,
+        symbolIcon: YaruIcons.droplets,
+      ),
+      initCategory: Category.SMILEYS,
+      indicatorColor: colorScheme.onSurface,
+      iconColorSelected: colorScheme.primary,
+      backspaceColor: theme.primaryColor,
+      backgroundColor: Colors.transparent,
+      iconColor: colorScheme.onSurface,
+    ),
+    searchViewConfig: SearchViewConfig(
+      backgroundColor: Colors.transparent,
+      buttonIconColor: colorScheme.onSurface,
+    ),
+  );
+}

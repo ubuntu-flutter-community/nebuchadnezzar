@@ -5,7 +5,7 @@ import 'package:system_theme/system_theme.dart';
 import 'package:yaru/yaru.dart';
 
 import 'app/view/app.dart';
-import 'register.dart';
+import 'register_dependencies.dart';
 
 void main() async {
   await YaruWindowTitleBar.ensureInitialized();

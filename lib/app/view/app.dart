@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:system_theme/system_theme_builder.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat/chat_start_page.dart';
-import '../../constants.dart';
+import 'home_page.dart';
+import '../app_config.dart';
 import '../../l10n/l10n.dart';
 
 class NebuchadnezzarApp extends StatelessWidget {
@@ -52,7 +52,7 @@ class App extends StatelessWidget {
         highContrastTheme: highContrastTheme,
         highContrastDarkTheme: highContrastDarkTheme,
         debugShowCheckedModeBanner: false,
-        title: kAppTitle,
+        title: AppConfig.kAppTitle,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         scrollBehavior: const MaterialScrollBehavior().copyWith(
@@ -64,6 +64,6 @@ class App extends StatelessWidget {
             PointerDeviceKind.trackpad,
           },
         ),
-        home: const ChatStartPage(),
+        home: const HomePage(),
       );
 }
