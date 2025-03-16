@@ -6,7 +6,7 @@ import '../../../common/view/build_context_x.dart';
 import '../../../common/view/space.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
+
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
 import 'chat_new_chat_popup_menu_button.dart';

@@ -7,7 +7,7 @@ import 'package:yaru/yaru.dart';
 import '../../../../common/view/build_context_x.dart';
 import '../../../../common/view/common_widgets.dart';
 import '../../../../common/view/snackbars.dart';
-import '../../../../l10n/l10n.dart';
+
 import '../../../common/chat_model.dart';
 import '../../../common/view/chat_avatar.dart';
 

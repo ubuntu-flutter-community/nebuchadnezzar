@@ -10,7 +10,6 @@ import '../../../../common/view/sliver_sticky_panel.dart';
 import '../../../../common/view/snackbars.dart';
 import '../../../../common/view/space.dart';
 import '../../../../common/view/ui_constants.dart';
-import '../../../../l10n/l10n.dart';
 import '../../../common/chat_model.dart';
 import '../../input/draft_model.dart';
 import '../../../common/view/chat_avatar.dart';

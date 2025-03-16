@@ -6,7 +6,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../chat/chat_start_page.dart';
 import '../../constants.dart';
-import '../../l10n/l10n.dart';
+import '../../l10n/app_localizations.dart';
 
 class NebuchadnezzarApp extends StatelessWidget {
   const NebuchadnezzarApp({super.key, required this.yaruApp});

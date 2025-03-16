@@ -3,7 +3,6 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../../common/view/build_context_x.dart';
-import '../../../../l10n/l10n.dart';
 import '../../../common/chat_model.dart';
 
 class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {

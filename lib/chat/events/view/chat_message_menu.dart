@@ -6,7 +6,7 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
+
 import '../../chat_room/input/draft_model.dart';
 import '../../common/chat_model.dart';
 import '../../common/event_x.dart';

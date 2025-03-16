@@ -12,7 +12,6 @@ import '../../../common/view/common_widgets.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
 import '../../authentication/authentication_model.dart';
 import '../../authentication/chat_login_page.dart';
 import '../../authentication/uia_request_handler.dart';

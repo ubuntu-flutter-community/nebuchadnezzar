@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../l10n/l10n.dart';
+import '../l10n/app_localizations.dart';
 
 extension DateTimeX on DateTime {
   String formatAndLocalize(AppLocalizations l10n, {bool simple = false}) {

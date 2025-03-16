@@ -12,7 +12,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/confirm.dart';
-import '../../../l10n/l10n.dart';
+
 import '../../common/view/mxc_image.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat

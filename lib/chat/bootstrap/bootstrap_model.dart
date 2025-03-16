@@ -5,7 +5,7 @@ import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
-import '../../l10n/l10n.dart';
+import '../../l10n/app_localizations.dart';
 
 class BootstrapModel extends SafeChangeNotifier {
   BootstrapModel({

@@ -8,7 +8,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../constants.dart';
-import '../../l10n/l10n.dart';
+
 import '../bootstrap/view/bootstrap_page.dart';
 import 'authentication_model.dart';
 import 'chat_matrix_id_login_page.dart';

@@ -7,7 +7,6 @@ import '../../../../common/view/common_widgets.dart';
 import '../../../../common/view/confirm.dart';
 import '../../../../common/view/snackbars.dart';
 import '../../../../common/view/ui_constants.dart';
-import '../../../../l10n/l10n.dart';
 import '../../../common/chat_model.dart';
 import '../../input/view/chat_input.dart';
 import '../../titlebar/chat_room_title_bar.dart';

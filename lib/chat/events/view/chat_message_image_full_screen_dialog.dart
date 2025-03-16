@@ -6,7 +6,7 @@ import 'package:yaru/yaru.dart';
 import '../../../common/date_time_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
+
 import '../chat_download_model.dart';
 import 'chat_image.dart';
 

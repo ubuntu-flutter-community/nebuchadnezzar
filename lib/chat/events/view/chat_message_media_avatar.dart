@@ -7,7 +7,7 @@ import '../../../common/view/build_context_x.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
+
 import '../chat_download_model.dart';
 
 class ChatMessageMediaAvatar extends StatelessWidget {

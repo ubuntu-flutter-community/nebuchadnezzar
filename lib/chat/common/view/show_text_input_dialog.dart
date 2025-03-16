@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../l10n/l10n.dart';
+
+import '../../../common/view/build_context_x.dart';
 
 Future<String?> showTextInputDialog({
   required BuildContext context,
