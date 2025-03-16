@@ -12,6 +12,7 @@ import '../../l10n/l10n.dart';
 import '../common/view/chat_room_display_name.dart';
 import '../common/view/chat_room_page.dart';
 import 'chat_room_encryption_status_button.dart';
+import 'chat_room_notification_button.dart';
 import 'chat_room_pin_button.dart';
 import 'side_bar_button.dart';
 
@@ -51,10 +52,19 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
                 key: ValueKey('${room.id}_${room.roomAccountData.length}'),
                 room: room,
               ),
+            if (!room.isArchived)
+              ChatRoomNotificationButton(
+                key: ValueKey('${room.id}_${room.pushRuleState.hashCode}'),
+                room: room,
+              ),
             IconButton(
+              key: ValueKey('${room.id}_${room.isDirectChat}'),
+              tooltip: context.l10n.chatDetails,
               onPressed: () =>
                   chatRoomScaffoldKey.currentState?.openEndDrawer(),
-              icon: const Icon(YaruIcons.information),
+              icon: room.isDirectChat
+                  ? const Icon(YaruIcons.user)
+                  : const Icon(YaruIcons.information),
             ),
             if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
               const SideBarButton(),
