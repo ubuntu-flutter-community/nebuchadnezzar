@@ -1847,11 +1847,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "4a943961ad6c1d382b1bfc3bc0e67bb9f6440089"
-      resolved-ref: "4a943961ad6c1d382b1bfc3bc0e67bb9f6440089"
+      ref: "4fac4105b66d4e0ed3ec3abc11c37e4e306bd61e"
+      resolved-ref: "4fac4105b66d4e0ed3ec3abc11c37e4e306bd61e"
       url: "https://github.com/ubuntu/yaru.dart"
     source: git
-    version: "6.0.0"
+    version: "7.0.0"
   yaru_window:
     dependency: transitive
     description:
