@@ -6,12 +6,10 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/image_shimmer.dart';
-import '../../common/view/ui_constants.dart';
 import '../../common/event_x.dart';
 import '../../common/local_image_model.dart';
-import '../chat_download_model.dart';
-import 'chat_message_attachment_indicator.dart';
+import '../../common/view/image_shimmer.dart';
+import '../../common/view/ui_constants.dart';
 
 class ChatImage extends StatelessWidget with WatchItMixin {
   const ChatImage({
@@ -37,6 +35,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
 
   static const double imageWidth = 370.0;
   static const double imageHeight = 270.0;
+  static const borderRadius = BorderRadius.all(kBubbleRadius);
 
   @override
   Widget build(BuildContext context) {
@@ -59,66 +58,34 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
       child: ClipRRect(
-        borderRadius: const BorderRadius.all(kBigBubbleRadius),
-        child: Stack(
-          children: [
-            SizedBox(
-              height: theHeight,
-              width: theWidth,
-              child: maybeImage != null
-                  ? event.isSvgImage
-                      ? SvgPicture.memory(
-                          maybeImage,
-                          fit: theFit,
-                          height: theHeight,
-                          width: theWidth,
-                        )
-                      : Image.memory(
-                          maybeImage,
-                          fit: theFit,
-                          height: theHeight,
-                          width: theWidth,
-                        )
-                  : ChatImageFuture(
-                      event: event,
-                      width: theWidth,
-                      height: theHeight,
-                      fit: theFit,
-                    ),
-            ),
-            Positioned(
-              top: kSmallPadding,
-              right: onTap != null ? 10 * kSmallPadding : kSmallPadding,
-              child: IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.black.withValues(alpha: 0.5),
-                  shape: const CircleBorder(),
-                ),
-                onPressed: () => di<ChatDownloadModel>().safeFile(event),
-                icon: ChatMessageAttachmentIndicator(
-                  event: event,
-                  iconSize: 22,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            if (onTap != null)
-              Positioned(
-                top: kSmallPadding,
-                right: kSmallPadding,
-                child: IconButton(
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.black.withValues(alpha: 0.5),
-                    shape: const CircleBorder(),
+        borderRadius: borderRadius,
+        child: InkWell(
+          borderRadius: borderRadius,
+          onTap: onTap,
+          child: SizedBox(
+            height: theHeight,
+            width: theWidth,
+            child: maybeImage != null
+                ? event.isSvgImage
+                    ? SvgPicture.memory(
+                        maybeImage,
+                        fit: theFit,
+                        height: theHeight,
+                        width: theWidth,
+                      )
+                    : Image.memory(
+                        maybeImage,
+                        fit: theFit,
+                        height: theHeight,
+                        width: theWidth,
+                      )
+                : ChatImageFuture(
+                    event: event,
+                    width: theWidth,
+                    height: theHeight,
+                    fit: theFit,
                   ),
-                  onPressed: onTap,
-                  icon: const Icon(
-                    YaruIcons.fullscreen,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );

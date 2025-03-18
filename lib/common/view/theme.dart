@@ -54,6 +54,19 @@ Color getTileColor(
       : getMonochromeBg(theme: theme, factor: 6, darkFactor: 15);
 }
 
+Color getTileOutlineColor(
+  bool isUserEvent,
+  ThemeData theme,
+) {
+  final userColor = theme.colorScheme.primary == YaruColors.orange
+      ? theme.colorScheme.link
+      : theme.colorScheme.primary;
+
+  return isUserEvent
+      ? userColor
+      : (theme.colorScheme.isDark ? Colors.white : Colors.black).withAlpha(140);
+}
+
 Color getPanelBg(ThemeData theme) =>
     getMonochromeBg(theme: theme, darkFactor: 3);
 

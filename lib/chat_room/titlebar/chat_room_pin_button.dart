@@ -11,9 +11,11 @@ class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
   const ChatRoomPinButton({
     super.key,
     required this.room,
+    this.small = false,
   });
 
   final Room room;
+  final bool small;
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +27,15 @@ class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
         false;
 
     return IconButton(
+      constraints:
+          small ? const BoxConstraints(maxHeight: 18, maxWidth: 18) : null,
+      padding: small ? EdgeInsets.zero : null,
       tooltip: context.l10n.toggleFavorite,
       onPressed: () => room.setFavourite(!room.isFavourite),
       icon: Icon(
         YaruIcons.pin,
         color: isFavourite ? context.colorScheme.primary : null,
+        size: small ? 14 : null,
       ),
     );
   }

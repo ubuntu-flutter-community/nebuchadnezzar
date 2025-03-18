@@ -19,14 +19,14 @@ class ChatModel extends SafeChangeNotifier {
 
   // Room management
   /// The list of all rooms the user is participating or invited.
-  List<Room> get rooms => _client.rooms;
+  List<Room> get _rooms => _client.rooms;
 
   /// The list of the archived rooms, call loadArchive() before first call
-  List<Room> get archivedRooms =>
+  List<Room> get _archivedRooms =>
       _client.archivedRooms.map((e) => e.room).toList();
 
   List<Room> get filteredRooms {
-    final theRooms = (archiveActive ? archivedRooms : rooms)
+    final theRooms = (archiveActive ? _archivedRooms : _rooms)
         .where(roomsFilter?.filter ?? (e) => true)
         .toList();
     if (roomsFilter != RoomsFilter.spaces) {
@@ -102,14 +102,18 @@ class ChatModel extends SafeChangeNotifier {
       getJoinedRoomUpdate(room.id).map((update) => room.lastEvent);
 
   Stream<List<Room>> get spacesStream =>
-      syncStream.map((e) => rooms.where((e) => e.isSpace).toList());
+      syncStream.map((e) => _rooms.where((e) => e.isSpace).toList());
 
-  Stream<SyncUpdate> getPermissionsStream(String roomId) => syncStream.where(
+  Stream<Map<String, Object?>> getPermissionsStream(Room room) => syncStream
+      .where(
         (e) =>
-            (e.rooms?.join?.containsKey(roomId) ?? false) &&
-            (e.rooms!.join![roomId]?.timeline?.events
+            (e.rooms?.join?.containsKey(room.id) ?? false) &&
+            (e.rooms!.join![room.id]?.timeline?.events
                     ?.any((s) => s.type == EventTypes.RoomPowerLevels) ??
                 false),
+      )
+      .map(
+        (event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
       );
 
   void editPowerLevel({
@@ -146,7 +150,7 @@ class ChatModel extends SafeChangeNotifier {
     );
   }
 
-  List<Room> get spaces => rooms.where((e) => e.isSpace).toList();
+  List<Room> get spaces => _rooms.where((e) => e.isSpace).toList();
 
   RoomsFilter? _roomsFilter;
   RoomsFilter? get roomsFilter => _roomsFilter;
@@ -235,6 +239,10 @@ class ChatModel extends SafeChangeNotifier {
       try {
         _setProcessingJoinOrLeave(true);
         await room.join();
+        if (room.isDirectChat && !room.encrypted) {
+          await room.enableEncryption();
+          printMessageInDebugMode('Room encrypted: ${room.encrypted}');
+        }
         if (select) {
           setSelectedRoom(room);
         }
@@ -352,7 +360,7 @@ class ChatModel extends SafeChangeNotifier {
   }) async {
     _setProcessingJoinOrLeave(true);
 
-    Room? maybeRoom = rooms.firstWhereOrNull(
+    Room? maybeRoom = _rooms.firstWhereOrNull(
       (e) =>
           e.getParticipants().length == 2 &&
           e.getParticipants().any((e) => e.id == myUserId) &&

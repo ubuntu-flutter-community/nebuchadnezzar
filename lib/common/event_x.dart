@@ -21,7 +21,7 @@ extension EventX on Event {
         EventTypes.Encryption,
       }.contains(type);
 
-  bool hideEventInTimeline({
+  bool hideInTimeline({
     required bool showAvatarChanges,
     required bool showDisplayNameChanges,
   }) {
