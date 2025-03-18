@@ -356,4 +356,14 @@ class DraftModel extends SafeChangeNotifier {
 
     setAttachingAvatar(false);
   }
+
+  final Map<String, bool> _selectedMessages = {};
+  void setMessageSelected({required String eventId, required bool selected}) {
+    if (isMessageSelected(eventId: eventId) == selected) return;
+    _selectedMessages[eventId] = selected;
+    notifyListeners();
+  }
+
+  bool isMessageSelected({required String eventId}) =>
+      _selectedMessages[eventId] ?? false;
 }

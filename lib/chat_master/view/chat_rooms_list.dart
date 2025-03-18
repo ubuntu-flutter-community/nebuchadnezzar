@@ -12,7 +12,6 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
     final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
     watchPropertyValue((ChatModel m) => m.filteredRooms.length);
@@ -37,7 +36,6 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
 
                 return ChatRoomMasterTile(
                   key: ValueKey(room.id),
-                  selected: selectedRoom?.id == room.id,
                   room: room,
                 );
               },

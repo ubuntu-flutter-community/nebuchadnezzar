@@ -34,7 +34,8 @@ Future uiaRequestHandler({
           title: l10n.pleaseEnterYourPassword,
           okLabel: l10n.ok,
           cancelLabel: l10n.cancel,
-          hintText: '******',
+          hintText: l10n.password,
+          obscureText: true,
         );
         if (input == null || input.isEmpty) {
           return uiaRequest.cancel();

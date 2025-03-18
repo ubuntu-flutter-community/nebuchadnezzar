@@ -25,7 +25,8 @@ class ChatMessageBubble extends StatelessWidget {
   final Future<void> Function(Event event) onReplyOriginClick;
   final bool partOfMessageCohort;
 
-  static const width = 450.0;
+  static const maxWidth = 450.0;
+  static const minWidth = 205.0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +38,8 @@ class ChatMessageBubble extends StatelessWidget {
         children: [
           ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: ChatMessageBubble.width,
-              minWidth: 205,
+              maxWidth: ChatMessageBubble.maxWidth,
+              minWidth: ChatMessageBubble.minWidth,
             ),
             child: Container(
               margin: tilePadding(partOfMessageCohort),

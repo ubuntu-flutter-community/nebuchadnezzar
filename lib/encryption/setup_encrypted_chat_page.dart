@@ -9,53 +9,56 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_master/view/chat_master_detail_page.dart';
-import '../../common/view/build_context_x.dart';
-import '../../common/view/common_widgets.dart';
-import '../../common/view/snackbars.dart';
-import '../../common/view/space.dart';
-import '../../common/view/ui_constants.dart';
-import '../../l10n/l10n.dart';
-import '../../settings/view/logout_button.dart';
-import '../authentication_model.dart';
-import 'chat_login_page.dart';
+import '../chat_master/view/chat_master_detail_page.dart';
+import '../common/view/build_context_x.dart';
+import '../common/view/common_widgets.dart';
+import '../common/view/snackbars.dart';
+import '../common/view/space.dart';
+import '../common/view/ui_constants.dart';
+import '../l10n/l10n.dart';
+import '../settings/view/logout_button.dart';
+import '../authentication/authentication_model.dart';
+import 'encryption_model.dart';
+import '../authentication/view/chat_login_page.dart';
 import 'key_verification_dialog.dart';
-import 'uia_request_handler.dart';
+import '../authentication/view/uia_request_handler.dart';
 
-class CheckBootstrapPage extends StatefulWidget {
-  const CheckBootstrapPage({super.key});
+class CheckEncryptionSetupNeededPage extends StatefulWidget {
+  const CheckEncryptionSetupNeededPage({super.key});
 
   @override
-  State<CheckBootstrapPage> createState() => _CheckBootstrapPageState();
+  State<CheckEncryptionSetupNeededPage> createState() =>
+      _CheckEncryptionSetupNeededPageState();
 }
 
-class _CheckBootstrapPageState extends State<CheckBootstrapPage> {
-  late Future<bool> _requireBootstrapInitial;
+class _CheckEncryptionSetupNeededPageState
+    extends State<CheckEncryptionSetupNeededPage> {
+  late Future<bool> _isEncryptionSetupNeeded;
 
   @override
   void initState() {
     super.initState();
-    _requireBootstrapInitial = di<AuthenticationModel>()
-        .checkBootstrap(startBootstrappingIfNeeded: true);
+    _isEncryptionSetupNeeded = di<EncryptionModel>()
+        .checkIfEncryptionSetupIsNeeded(startBootstrappingIfNeeded: true);
   }
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
-        future: _requireBootstrapInitial,
-        builder: (context, snapshot) => snapshot.data != false
-            ? const _BootstrapPage()
+        future: _isEncryptionSetupNeeded,
+        builder: (context, snapshot) => snapshot.data == true
+            ? const _SetupEncryptedChatPage()
             : const ChatMasterDetailPage(),
       );
 }
 
-class _BootstrapPage extends StatelessWidget with WatchItMixin {
-  const _BootstrapPage();
+class _SetupEncryptedChatPage extends StatelessWidget with WatchItMixin {
+  const _SetupEncryptedChatPage();
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
     final l10n = context.l10n;
-    final model = di<AuthenticationModel>();
+    final model = di<EncryptionModel>();
 
     registerStreamHandler(
       select: (AuthenticationModel m) => m.onUiaRequestStream,
@@ -66,19 +69,22 @@ class _BootstrapPage extends StatelessWidget with WatchItMixin {
       },
     );
 
-    final bootstrap =
-        watchPropertyValue((AuthenticationModel m) => m.bootstrap);
-    final bootstrapState =
-        watchPropertyValue((AuthenticationModel m) => m.bootstrap?.state);
+    final bootstrap = watchPropertyValue((EncryptionModel m) => m.bootstrap);
+    final bootstrapState = watchPropertyValue(
+      (EncryptionModel m) => m.bootstrap?.state,
+    );
 
-    final wipe = watchPropertyValue((AuthenticationModel m) => m.wipe);
-    final recoveryKeyStored =
-        watchPropertyValue((AuthenticationModel m) => m.recoveryKeyStored);
-    final recoveryKeyCopied =
-        watchPropertyValue((AuthenticationModel m) => m.recoveryKeyCopied);
-    final storeInSecureStorage =
-        watchPropertyValue((AuthenticationModel m) => m.storeInSecureStorage);
-    final key = watchPropertyValue((AuthenticationModel m) => m.key);
+    final wipe = watchPropertyValue((EncryptionModel m) => m.wipe);
+    final recoveryKeyStored = watchPropertyValue(
+      (EncryptionModel m) => m.recoveryKeyStored,
+    );
+    final recoveryKeyCopied = watchPropertyValue(
+      (EncryptionModel m) => m.recoveryKeyCopied,
+    );
+    final storeInSecureStorage = watchPropertyValue(
+      (EncryptionModel m) => m.storeInSecureStorage,
+    );
+    final key = watchPropertyValue((EncryptionModel m) => m.key);
 
     final buttons = <Widget>[];
     Widget body = const Progress();
@@ -191,7 +197,7 @@ class _BootstrapPage extends StatelessWidget with WatchItMixin {
             );
           case BootstrapState.openExistingSsss:
             model.setRecoveryKeyStored(true);
-            return const OpenExistingSSSSPage();
+            return const _OpenExistingSSSSPage();
           case BootstrapState.askWipeCrossSigning:
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => bootstrap.wipeCrossSigning(wipe),
@@ -290,15 +296,15 @@ class _BootstrapPage extends StatelessWidget with WatchItMixin {
   }
 }
 
-class OpenExistingSSSSPage extends StatefulWidget
+class _OpenExistingSSSSPage extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const OpenExistingSSSSPage({super.key});
+  const _OpenExistingSSSSPage();
 
   @override
-  State<OpenExistingSSSSPage> createState() => _OpenExistingSSSSPageState();
+  State<_OpenExistingSSSSPage> createState() => _OpenExistingSSSSPageState();
 }
 
-class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
+class _OpenExistingSSSSPageState extends State<_OpenExistingSSSSPage> {
   final TextEditingController _recoveryKeyTextEditingController =
       TextEditingController();
 
@@ -312,15 +318,15 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final l10n = context.l10n;
-    final model = di<AuthenticationModel>();
+    final model = di<EncryptionModel>();
 
-    final bootstrap =
-        watchPropertyValue((AuthenticationModel m) => m.bootstrap);
+    final bootstrap = watchPropertyValue((EncryptionModel m) => m.bootstrap);
     final recoveryKeyInputLoading = watchPropertyValue(
-      (AuthenticationModel m) => m.recoveryKeyInputLoading,
+      (EncryptionModel m) => m.recoveryKeyInputLoading,
     );
-    final recoveryKeyInputError =
-        watchPropertyValue((AuthenticationModel m) => m.recoveryKeyInputError);
+    final recoveryKeyInputError = watchPropertyValue(
+      (EncryptionModel m) => m.recoveryKeyInputError,
+    );
 
     return Scaffold(
       appBar: const YaruWindowTitleBar(
@@ -439,8 +445,8 @@ class _OpenExistingSSSSPageState extends State<OpenExistingSSSSPage> {
                           if (context.mounted) {
                             final req = await showFutureLoadingDialog(
                               context: context,
-                              future: di<AuthenticationModel>()
-                                  .startKeyVerification,
+                              future:
+                                  di<EncryptionModel>().startKeyVerification,
                             );
                             if (context.mounted) {
                               if (req.error != null) return;

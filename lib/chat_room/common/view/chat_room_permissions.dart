@@ -12,7 +12,7 @@ import '../../../common/view/show_text_input_dialog.dart';
 
 // Credit: this code has been inspired by https://github.com/krille-chan/fluffychat permissions
 // Thank you @krille-chan
-class ChatPermissionsSettingsView extends StatelessWidget {
+class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
   final Room room;
 
   const ChatPermissionsSettingsView({
@@ -26,140 +26,140 @@ class ChatPermissionsSettingsView extends StatelessWidget {
     final l10n = context.l10n;
     final chatModel = di<ChatModel>();
 
-    return StreamBuilder(
-      stream: chatModel.getPermissionsStream(room.id),
-      builder: (context, _) {
-        final powerLevelsContent = Map<String, Object?>.from(
-          room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
-        );
-        final powerLevels = Map<String, dynamic>.from(powerLevelsContent)
-          ..removeWhere((k, v) => v is! int);
-        final eventsPowerLevels = Map<String, int?>.from(
-          powerLevelsContent.tryGetMap<String, int?>('events') ?? {},
-        )..removeWhere((k, v) => v is! int);
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
-          child: YaruInfoBox(
-            yaruInfoType: YaruInfoType.information,
-            subtitle: Padding(
-              padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
-              child: Text(
-                l10n.chatPermissionsDescription,
-              ),
-            ),
-          ),
-        );
+    final powerLevelsContent = watchStream(
+          (ChatModel m) => m.getPermissionsStream(room),
+          initialValue:
+              room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
+        ).data ??
+        {};
 
-        return YaruExpansionPanel(
-          shrinkWrap: true,
-          headers: [
-            Text(
-              l10n.chatPermissions,
-              style: theme.textTheme.titleLarge,
-            ),
-            Text(
-              l10n.notifications,
-              style: theme.textTheme.titleLarge,
-            ),
-            Text(
-              l10n.configureChat,
-              style: theme.textTheme.titleLarge,
-            ),
-          ],
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: kMediumPadding),
-              child: Column(
-                spacing: kMediumPadding,
-                children: [
-                  for (final entry in powerLevels.entries)
-                    _ChatRoomPermissionTile(
-                      permissionKey: entry.key,
-                      permission: entry.value,
-                      onChanged: (level) => chatModel.editPowerLevel(
-                        room: room,
-                        key: entry.key,
-                        newLevel: level,
-                        onFail: () => showSnackBar(
-                          context,
-                          content: Text(l10n.noPermission),
-                        ),
-                        onCustomPermissionsChosen: () => _showPermissionChooser(
-                          context,
-                          currentLevel: entry.value,
-                        ),
-                      ),
-                      canEdit: room.canChangePowerLevel,
+    final powerLevels = Map<String, dynamic>.from(powerLevelsContent)
+      ..removeWhere((k, v) => v is! int);
+    final eventsPowerLevels = Map<String, int?>.from(
+      powerLevelsContent.tryGetMap<String, int?>('events') ?? {},
+    )..removeWhere((k, v) => v is! int);
+
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
+      child: YaruInfoBox(
+        yaruInfoType: YaruInfoType.information,
+        subtitle: Padding(
+          padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
+          child: Text(
+            l10n.chatPermissionsDescription,
+          ),
+        ),
+      ),
+    );
+
+    return YaruExpansionPanel(
+      shrinkWrap: true,
+      headers: [
+        Text(
+          l10n.chatPermissions,
+          style: theme.textTheme.titleLarge,
+        ),
+        Text(
+          l10n.notifications,
+          style: theme.textTheme.titleLarge,
+        ),
+        Text(
+          l10n.configureChat,
+          style: theme.textTheme.titleLarge,
+        ),
+      ],
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: kMediumPadding),
+          child: Column(
+            spacing: kMediumPadding,
+            children: [
+              for (final entry in powerLevels.entries)
+                _ChatRoomPermissionTile(
+                  permissionKey: entry.key,
+                  permission: entry.value,
+                  onChanged: (level) => chatModel.editPowerLevel(
+                    room: room,
+                    key: entry.key,
+                    newLevel: level,
+                    onFail: () => showSnackBar(
+                      context,
+                      content: Text(l10n.noPermission),
                     ),
-                ],
-              ),
-            ),
-            Builder(
-              builder: (context) {
-                const key = 'rooms';
-                final value = powerLevelsContent.containsKey('notifications')
-                    ? powerLevelsContent
-                            .tryGetMap<String, Object?>('notifications')
-                            ?.tryGet<int>('rooms') ??
-                        0
-                    : 0;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: kMediumPadding),
-                  child: _ChatRoomPermissionTile(
-                    permissionKey: key,
-                    permission: value,
-                    category: 'notifications',
-                    canEdit: room.canChangePowerLevel,
-                    onChanged: (level) => chatModel.editPowerLevel(
-                      room: room,
-                      key: key,
-                      onFail: () => showSnackBar(
-                        context,
-                        content: Text(l10n.noPermission),
-                      ),
-                      onCustomPermissionsChosen: () => _showPermissionChooser(
-                        context,
-                        currentLevel: value,
-                      ),
-                      newLevel: level,
-                      category: 'notifications',
+                    onCustomPermissionsChosen: () => _showPermissionChooser(
+                      context,
+                      currentLevel: entry.value,
                     ),
                   ),
-                );
-              },
-            ),
-            Padding(
+                  canEdit: room.canChangePowerLevel,
+                ),
+            ],
+          ),
+        ),
+        Builder(
+          builder: (context) {
+            const key = 'rooms';
+            final value = powerLevelsContent.containsKey('notifications')
+                ? powerLevelsContent
+                        .tryGetMap<String, Object?>('notifications')
+                        ?.tryGet<int>('rooms') ??
+                    0
+                : 0;
+            return Padding(
               padding: const EdgeInsets.only(bottom: kMediumPadding),
-              child: Column(
-                spacing: kMediumPadding,
-                children: [
-                  for (final entry in eventsPowerLevels.entries)
-                    _ChatRoomPermissionTile(
-                      permissionKey: entry.key,
-                      category: 'events',
-                      permission: entry.value ?? 0,
-                      canEdit: room.canChangePowerLevel,
-                      onChanged: (level) => di<ChatModel>().editPowerLevel(
-                        room: room,
-                        onFail: () => showSnackBar(
-                          context,
-                          content: Text(l10n.noPermission),
-                        ),
-                        key: entry.key,
-                        onCustomPermissionsChosen: () => _showPermissionChooser(
-                          context,
-                          currentLevel: entry.value ?? 0,
-                        ),
-                        newLevel: level,
-                        category: 'events',
-                      ),
-                    ),
-                ],
+              child: _ChatRoomPermissionTile(
+                permissionKey: key,
+                permission: value,
+                category: 'notifications',
+                canEdit: room.canChangePowerLevel,
+                onChanged: (level) => chatModel.editPowerLevel(
+                  room: room,
+                  key: key,
+                  onFail: () => showSnackBar(
+                    context,
+                    content: Text(l10n.noPermission),
+                  ),
+                  onCustomPermissionsChosen: () => _showPermissionChooser(
+                    context,
+                    currentLevel: value,
+                  ),
+                  newLevel: level,
+                  category: 'notifications',
+                ),
               ),
-            ),
-          ],
-        );
-      },
+            );
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: kMediumPadding),
+          child: Column(
+            spacing: kMediumPadding,
+            children: [
+              for (final entry in eventsPowerLevels.entries)
+                _ChatRoomPermissionTile(
+                  permissionKey: entry.key,
+                  category: 'events',
+                  permission: entry.value ?? 0,
+                  canEdit: room.canChangePowerLevel,
+                  onChanged: (level) => di<ChatModel>().editPowerLevel(
+                    room: room,
+                    onFail: () => showSnackBar(
+                      context,
+                      content: Text(l10n.noPermission),
+                    ),
+                    key: entry.key,
+                    onCustomPermissionsChosen: () => _showPermissionChooser(
+                      context,
+                      currentLevel: entry.value ?? 0,
+                    ),
+                    newLevel: level,
+                    category: 'events',
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

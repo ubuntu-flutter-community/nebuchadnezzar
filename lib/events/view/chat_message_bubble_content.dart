@@ -119,6 +119,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
                             )
                           : switch (event.messageType) {
                               MessageTypes.Image => ChatImage(
+                                  fit: BoxFit.contain,
                                   timeline: timeline,
                                   event: event,
                                   onTap: event.isSvgImage

@@ -6,6 +6,7 @@ import 'package:watch_it/watch_it.dart';
 
 import 'app/app_config.dart';
 import 'authentication/authentication_model.dart';
+import 'encryption/encryption_model.dart';
 import 'chat_room/common/timeline_model.dart';
 import 'chat_room/input/draft_model.dart';
 import 'common/chat_model.dart';
@@ -27,6 +28,13 @@ void registerDependencies() => di
   )
   ..registerSingletonWithDependencies<AuthenticationModel>(
     () => AuthenticationModel(
+      client: di<Client>(),
+    ),
+    dispose: (s) => s.dispose(),
+    dependsOn: [Client],
+  )
+  ..registerSingletonWithDependencies<EncryptionModel>(
+    () => EncryptionModel(
       client: di<Client>(),
       secureStorage: di<FlutterSecureStorage>(),
     ),

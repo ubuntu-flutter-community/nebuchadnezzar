@@ -5,7 +5,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/common_widgets.dart';
 import '../../authentication/authentication_model.dart';
 import '../../authentication/view/chat_login_page.dart';
-import '../../authentication/view/bootstrap_page.dart';
+import '../../encryption/setup_encrypted_chat_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
         builder: (context, snapshot) => snapshot.hasData
             ? (!di<AuthenticationModel>().isLogged)
                 ? const ChatLoginPage()
-                : const CheckBootstrapPage()
+                : const CheckEncryptionSetupNeededPage()
             : const Scaffold(
                 appBar: YaruWindowTitleBar(
                   border: BorderSide.none,

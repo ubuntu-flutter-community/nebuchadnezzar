@@ -18,7 +18,6 @@ Future<String?> showTextInputDialog({
   bool obscureText = false,
   bool isDestructive = false,
   int? minLines,
-  int? maxLines,
   String? Function(String input)? validator,
   TextInputType? keyboardType,
   int? maxLength,
@@ -58,6 +57,7 @@ Future<String?> showTextInputDialog({
                   valueListenable: error,
                   builder: (context, error, _) {
                     return TextField(
+                      obscureText: obscureText,
                       decoration: InputDecoration(
                         hintText: hintText,
                         errorText: error,
@@ -67,7 +67,6 @@ Future<String?> showTextInputDialog({
                       ),
                       controller: controller,
                       minLines: minLines,
-                      maxLines: maxLines,
                       maxLength: maxLength,
                       keyboardType: keyboardType,
                     );

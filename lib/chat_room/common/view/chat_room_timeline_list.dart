@@ -75,8 +75,8 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
           child: AnimatedList(
             controller: _controller,
             padding: const EdgeInsets.symmetric(
-              horizontal: kMediumPadding,
-              vertical: kSmallPadding,
+              horizontal: kMediumPlusPadding,
+              vertical: kMediumPlusPadding,
             ),
             key: widget.listKey,
             reverse: true,
@@ -84,13 +84,11 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             itemBuilder: (context, i, animation) {
               final event = widget.timeline.events[i];
 
-              if (event.hideEventInTimeline(
+              if (event.hideInTimeline(
                 showAvatarChanges: showAvatarChanges,
                 showDisplayNameChanges: showDisplayNameChanges,
               )) {
-                return SizedBox.shrink(
-                  key: ValueKey(ValueKey(event.eventId)),
-                );
+                return const SizedBox.shrink();
               }
 
               final previous = widget.timeline.events.elementAtOrNull(i + 1);

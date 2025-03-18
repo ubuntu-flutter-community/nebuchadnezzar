@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/view/build_context_x.dart';
-import '../../common/view/common_widgets.dart';
-import '../../common/view/ui_constants.dart';
 import '../../authentication/authentication_model.dart';
+import '../../encryption/encryption_model.dart';
 import '../../authentication/view/chat_login_page.dart';
+import '../../encryption/key_verification_dialog.dart';
 import '../../authentication/view/uia_request_handler.dart';
-import '../../authentication/view/key_verification_dialog.dart';
 import '../../chat_room/common/view/chat_no_selected_room_page.dart';
 import '../../chat_room/common/view/chat_room_page.dart';
 import '../../common/chat_model.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
+import '../../common/view/ui_constants.dart';
 import '../../notification/chat_notification_handler.dart';
 import 'chat_master_panel.dart';
 
@@ -27,7 +28,7 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     registerStreamHandler(
-      select: (AuthenticationModel m) => m.onKeyVerificationRequest,
+      select: (EncryptionModel m) => m.onKeyVerificationRequest,
       handler: (context, newValue, cancel) {
         if (newValue.hasData) {
           KeyVerificationDialog(
