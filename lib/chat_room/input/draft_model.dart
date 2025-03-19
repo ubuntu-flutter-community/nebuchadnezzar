@@ -175,26 +175,29 @@ class DraftModel extends SafeChangeNotifier {
   Future<void> addAttachment(
     String roomId, {
     required Function(String error) onFail,
+    List<XFile>? existingFiles,
   }) async {
     setAttaching(true);
 
-    List<XFile>? xFiles;
+    List<XFile>? xFiles = existingFiles;
 
-    if (Platform.isLinux) {
-      xFiles = await openFiles();
-    } else {
-      final result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.any,
-      );
-      xFiles = result?.files
-          .map(
-            (f) => XFile(
-              f.path!,
-              mimeType: lookupMimeType(f.path!),
-            ),
-          )
-          .toList();
+    if (xFiles == null) {
+      if (Platform.isLinux) {
+        xFiles = await openFiles();
+      } else {
+        final result = await FilePicker.platform.pickFiles(
+          allowMultiple: true,
+          type: FileType.any,
+        );
+        xFiles = result?.files
+            .map(
+              (f) => XFile(
+                f.path!,
+                mimeType: lookupMimeType(f.path!),
+              ),
+            )
+            .toList();
+      }
     }
 
     if (xFiles?.isEmpty ?? true) {

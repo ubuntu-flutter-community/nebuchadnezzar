@@ -116,6 +116,9 @@ Config emojiPickerConfig({
     customSearchIcon: const Icon(YaruIcons.search),
     customBackspaceIcon: const Icon(YaruIcons.edit_clear),
     emojiViewConfig: EmojiViewConfig(
+      loadingIndicator: const Center(
+        child: YaruCircularProgressIndicator(),
+      ),
       gridPadding: const EdgeInsets.all(kSmallPadding),
       verticalSpacing: 0,
       horizontalSpacing: 0,
