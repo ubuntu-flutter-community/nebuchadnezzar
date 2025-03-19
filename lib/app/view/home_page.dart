@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/common_widgets.dart';
 import '../../authentication/authentication_model.dart';
 import '../../authentication/view/chat_login_page.dart';
-import '../../encryption/setup_encrypted_chat_page.dart';
+import '../../common/view/common_widgets.dart';
+import '../../encryption/view/setup_encrypted_chat_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

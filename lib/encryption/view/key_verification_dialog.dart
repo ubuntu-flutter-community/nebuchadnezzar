@@ -9,11 +9,11 @@ import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
-import '../common/view/build_context_x.dart';
-import '../common/view/ui_constants.dart';
-import '../l10n/l10n.dart';
-import '../chat_master/view/chat_master_detail_page.dart';
-import '../common/view/chat_avatar.dart';
+import '../../chat_master/view/chat_master_detail_page.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/chat_avatar.dart';
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
 import 'setup_encrypted_chat_page.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
