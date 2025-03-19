@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
-import '../../common/view/common_widgets.dart';
-import '../../common/view/theme.dart';
-import '../../common/view/ui_constants.dart';
-import '../../l10n/l10n.dart';
 import '../../common/chat_model.dart';
 import '../../common/rooms_filter.dart';
 import '../../common/search_model.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/search_auto_complete.dart';
+import '../../common/view/theme.dart';
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
+import '../../settings/view/chat_my_user_avatar.dart';
 import '../../settings/view/settings_dialog.dart';
 import 'chat_master_list_filter_bar.dart';
 import 'chat_master_title_bar.dart';
@@ -86,7 +87,10 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kMediumPadding),
             child: YaruMasterTile(
-              leading: const Icon(YaruIcons.settings),
+              leading: const ChatMyUserAvatar(
+                dimension: 25,
+                showEditButton: false,
+              ),
               title: Text(l10n.settings),
               onTap: () => showDialog(
                 context: context,

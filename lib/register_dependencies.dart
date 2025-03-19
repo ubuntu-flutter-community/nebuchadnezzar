@@ -100,14 +100,14 @@ void registerDependencies() => di
     dependsOn: [Client, SharedPreferences],
   )
   ..registerSingletonWithDependencies<ChatDownloadModel>(
-    () => ChatDownloadModel(service: di<ChatDownloadService>())..init(),
+    () => ChatDownloadModel(service: di<ChatDownloadService>()),
     dispose: (s) => s.dispose(),
     dependsOn: [ChatDownloadService],
   )
   ..registerSingletonWithDependencies<LocalImageModel>(
     () => LocalImageModel(
       service: di<LocalImageService>(),
-    )..init(),
+    ),
     dispose: (s) => s.dispose(),
     dependsOn: [LocalImageService],
   )
@@ -119,7 +119,7 @@ void registerDependencies() => di
   ..registerSingletonWithDependencies<RemoteImageModel>(
     () => RemoteImageModel(
       service: di<RemoteImageService>(),
-    )..init(),
+    ),
     dependsOn: [RemoteImageService],
     dispose: (s) => s.dispose(),
   )

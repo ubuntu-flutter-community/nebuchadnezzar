@@ -3,12 +3,12 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../../common/chat_model.dart';
 import '../../../common/view/build_context_x.dart';
+import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../../common/chat_model.dart';
-import '../../../common/view/show_text_input_dialog.dart';
 
 // Credit: this code has been inspired by https://github.com/krille-chan/fluffychat permissions
 // Thank you @krille-chan
@@ -168,7 +168,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
     int currentLevel = 0,
   }) async {
     final l10n = context.l10n;
-    final customLevel = await showTextInputDialog(
+    final customLevel = await showConfirmDialogWithInput(
       context: context,
       title: l10n.setPermissionsLevel,
       initialText: currentLevel.toString(),

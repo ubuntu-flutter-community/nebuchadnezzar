@@ -3,13 +3,13 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/chat_model.dart';
 import '../../common/date_time_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
 import '../matrix_devices_x.dart';
 import '../settings_model.dart';
 import 'chat_my_user_avatar.dart';
@@ -72,12 +72,12 @@ class _SettingsDialogState extends State<SettingsDialog> {
         child: Column(
           spacing: 2 * kBigPadding,
           children: [
-            ChatMyUserAvatar(
-              key: ValueKey(profile?.avatarUrl),
-              uri: profile?.avatarUrl,
+            const ChatMyUserAvatar(
               dimension: 100,
               iconSize: 70,
             ),
+            // TODO: check which servers support presence
+            // const ChatPresenceButton(),
             YaruSection(
               headline: Text(l10n.account),
               child: Column(

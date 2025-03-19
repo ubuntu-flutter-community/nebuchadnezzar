@@ -3,10 +3,10 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/chat_avatar.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/snackbars.dart';
 import '../../l10n/l10n.dart';
-import '../../common/view/chat_avatar.dart';
 import '../settings_model.dart';
 
 class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
@@ -14,12 +14,12 @@ class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
     super.key,
     this.dimension,
     this.iconSize,
-    this.uri,
+    this.showEditButton = true,
   });
 
   final double? dimension;
   final double? iconSize;
-  final Uri? uri;
+  final bool showEditButton;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +28,11 @@ class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
     final l10n = context.l10n;
     final attachingAvatar =
         watchPropertyValue((SettingsModel m) => m.attachingAvatar);
+    final uri = watchStream(
+      (SettingsModel m) => m.myProfileStream,
+      initialValue: di<SettingsModel>().myProfile,
+    ).data?.avatarUrl;
+
     return Stack(
       children: [
         ChatAvatar(
@@ -35,38 +40,39 @@ class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
           dimension: dimension ?? 38,
           fallBackIconSize: iconSize,
         ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: IconButton.filled(
-            style: IconButton.styleFrom(
-              shape: const CircleBorder(),
-              disabledBackgroundColor: context.colorScheme.surface,
-              disabledForegroundColor: foreGroundColor,
-            ),
-            onPressed: attachingAvatar
-                ? null
-                : () => di<SettingsModel>().setMyProfilAvatar(
-                      onFail: (e) => showErrorSnackBar(context, e),
-                      onWrongFileFormat: () => showSnackBar(
-                        context,
-                        content: Text(l10n.notAnImage),
+        if (showEditButton)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: IconButton.filled(
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                disabledBackgroundColor: context.colorScheme.surface,
+                disabledForegroundColor: foreGroundColor,
+              ),
+              onPressed: attachingAvatar
+                  ? null
+                  : () => di<SettingsModel>().setMyProfilAvatar(
+                        onFail: (e) => showErrorSnackBar(context, e),
+                        onWrongFileFormat: () => showSnackBar(
+                          context,
+                          content: Text(l10n.notAnImage),
+                        ),
                       ),
+              icon: attachingAvatar
+                  ? SizedBox.square(
+                      dimension: 15,
+                      child: Progress(
+                        strokeWidth: 2,
+                        color: foreGroundColor,
+                      ),
+                    )
+                  : const Icon(
+                      YaruIcons.pen,
+                      color: Colors.white,
                     ),
-            icon: attachingAvatar
-                ? SizedBox.square(
-                    dimension: 15,
-                    child: Progress(
-                      strokeWidth: 2,
-                      color: foreGroundColor,
-                    ),
-                  )
-                : const Icon(
-                    YaruIcons.pen,
-                    color: Colors.white,
-                  ),
+            ),
           ),
-        ),
       ],
     );
   }

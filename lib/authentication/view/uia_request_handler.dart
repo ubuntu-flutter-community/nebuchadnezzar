@@ -7,7 +7,6 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
-import '../../common/view/show_text_input_dialog.dart';
 import '../authentication_model.dart';
 
 Future uiaRequestHandler({
@@ -29,7 +28,7 @@ Future uiaRequestHandler({
     Logs().d('Uia Request Stage: $stage');
     switch (stage) {
       case AuthenticationTypes.password:
-        final input = await showTextInputDialog(
+        final input = await showConfirmDialogWithInput(
           context: navigatorContext,
           title: l10n.pleaseEnterYourPassword,
           okLabel: l10n.ok,
