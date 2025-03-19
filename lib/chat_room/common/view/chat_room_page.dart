@@ -1,14 +1,19 @@
+import 'dart:io';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../../common/chat_model.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../../common/chat_model.dart';
+import '../../input/draft_model.dart';
 import '../../input/view/chat_input.dart';
 import '../../titlebar/chat_room_title_bar.dart';
 import '../timeline_model.dart';
@@ -78,53 +83,82 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       },
     );
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Scaffold(
-          key: chatRoomScaffoldKey,
-          endDrawer: ChatRoomInfoDrawer(room: widget.room),
-          appBar: ChatRoomTitleBar(room: widget.room),
-          bottomNavigationBar: widget.room.isArchived
-              ? null
-              : ChatInput(
-                  key: ValueKey('${widget.room.id}input'),
-                  room: widget.room,
-                ),
-          body: FutureBuilder<Timeline>(
-            key: ValueKey(widget.room.id),
-            future: _timelineFuture,
-            builder: (context, snapshot) => snapshot.hasData
-                ? Padding(
-                    padding: const EdgeInsets.only(bottom: kMediumPadding),
-                    child: ChatRoomTimelineList(
-                      timeline: snapshot.data!,
-                      listKey: _roomListKey,
-                    ),
-                  )
-                : const Center(
-                    child: Progress(),
+    return DropRegion(
+      formats: Formats.standardFormats,
+      hitTestBehavior: HitTestBehavior.opaque,
+      onPerformDrop: (e) async {
+        for (var item in e.session.items.take(5)) {
+          item.dataReader?.getValue(
+            Formats.fileUri,
+            (value) async {
+              if (value == null) return;
+              final file = File.fromUri(value);
+
+              await di<DraftModel>().addAttachment(
+                widget.room.id,
+                onFail: (error) => showSnackBar(context, content: Text(error)),
+                existingFiles: [XFile.fromData(file.readAsBytesSync())],
+              );
+            },
+            onError: (e) => showSnackBar(context, content: Text(e.toString())),
+          );
+        }
+      },
+      onDropOver: (event) {
+        if (event.session.allowedOperations.contains(DropOperation.copy)) {
+          return DropOperation.copy;
+        } else {
+          return DropOperation.none;
+        }
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Scaffold(
+            key: chatRoomScaffoldKey,
+            endDrawer: ChatRoomInfoDrawer(room: widget.room),
+            appBar: ChatRoomTitleBar(room: widget.room),
+            bottomNavigationBar: widget.room.isArchived
+                ? null
+                : ChatInput(
+                    key: ValueKey('${widget.room.id}input'),
+                    room: widget.room,
                   ),
+            body: FutureBuilder<Timeline>(
+              key: ValueKey(widget.room.id),
+              future: _timelineFuture,
+              builder: (context, snapshot) => snapshot.hasData
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: kMediumPadding),
+                      child: ChatRoomTimelineList(
+                        timeline: snapshot.data!,
+                        listKey: _roomListKey,
+                      ),
+                    )
+                  : const Center(
+                      child: Progress(),
+                    ),
+            ),
           ),
-        ),
-        if (updating)
-          Positioned(
-            top: 4 * kBigPadding,
-            child: RepaintBoundary(
-              child: CircleAvatar(
-                backgroundColor: colorScheme.surface,
-                maxRadius: 15,
-                child: SizedBox.square(
-                  dimension: 18,
-                  child: Progress(
-                    strokeWidth: 2,
-                    color: colorScheme.onSurface,
+          if (updating)
+            Positioned(
+              top: 4 * kBigPadding,
+              child: RepaintBoundary(
+                child: CircleAvatar(
+                  backgroundColor: colorScheme.surface,
+                  maxRadius: 15,
+                  child: SizedBox.square(
+                    dimension: 18,
+                    child: Progress(
+                      strokeWidth: 2,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }

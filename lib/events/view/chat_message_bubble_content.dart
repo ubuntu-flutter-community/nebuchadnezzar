@@ -149,11 +149,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                     spacing: kMediumPadding,
                                     children: [
                                       ChatMessageMediaAvatar(event: event),
-                                      ChatTextMessage(
-                                        event: event,
-                                        displayEvent: displayEvent,
-                                        messageStyle: messageStyle,
-                                      ),
+                                      Text(displayEvent.attachmentMimetype),
                                     ],
                                   ),
                                 ),
