@@ -31,6 +31,10 @@ parts:
     flutter-target: lib/main.dart
     build-packages:
       - git
+    override-build: |
+      set -eux
+      curl https://sh.rustup.rs -sSf | sh -s -- -y
+      craftctl default
 
   deps:
     plugin: nil
