@@ -8,7 +8,10 @@ import 'remote_image_service.dart';
 class RemoteImageModel extends SafeChangeNotifier {
   RemoteImageModel({
     required RemoteImageService service,
-  }) : _onlineArtService = service;
+  }) : _onlineArtService = service {
+    _propertiesChangedSub ??=
+        _onlineArtService.propertiesChanged.listen((_) => notifyListeners());
+  }
 
   final RemoteImageService _onlineArtService;
   Map<String, String> get httpHeaders => _onlineArtService.httpHeaders;
@@ -29,11 +32,6 @@ class RemoteImageModel extends SafeChangeNotifier {
         width: width,
         method: method,
       );
-
-  void init() {
-    _propertiesChangedSub ??=
-        _onlineArtService.propertiesChanged.listen((_) => notifyListeners());
-  }
 
   @override
   Future<void> dispose() async {

@@ -51,15 +51,30 @@ class SettingsModel extends SafeChangeNotifier {
 
   Profile? _myProfile;
   Profile? get myProfile => _myProfile;
+  CachedPresence? get presence => _presence;
+  CachedPresence? _presence;
+
+  Stream<CachedPresence?> get presenceStream => _client.onPresenceChanged.stream
+      .where((cachedPresence) => cachedPresence.userid == _client.userID);
+
+  Future<void> setStatus(String? text) => _client.userID == null
+      ? Future.value()
+      : _client.setPresence(
+          _client.userID!,
+          PresenceType.online,
+          statusMsg: text,
+        );
 
   Future<Profile?> getMyProfile({
     Function(String error)? onFail,
   }) async {
     if (_client.userID == null) return null;
     try {
+      _presence = await _client.fetchCurrentPresence(_client.userID!);
       _myProfile = await _client.getProfileFromUserId(
         _client.userID!,
       );
+      notifyListeners();
     } on Exception catch (e, s) {
       onFail?.call(e.toString());
       printMessageInDebugMode(e, s);

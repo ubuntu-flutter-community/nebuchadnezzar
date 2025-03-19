@@ -35,6 +35,9 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
   Widget build(BuildContext context) {
     final style = context.textTheme.bodyMedium;
 
+    var onTap = widget.event.redacted
+        ? null
+        : () => _controller.isOpen ? _controller.close() : _controller.open();
     return Material(
       borderRadius: const BorderRadius.all(kBigBubbleRadius)
           .outer(const EdgeInsets.all(1)),
@@ -46,10 +49,8 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
         borderRadius: const BorderRadius.all(kBigBubbleRadius)
             .outer(const EdgeInsets.all(1)),
         mouseCursor: SystemMouseCursors.basic,
-        onTap: widget.event.redacted
-            ? null
-            : () =>
-                _controller.isOpen ? _controller.close() : _controller.open(),
+        onSecondaryTap: onTap,
+        onTap: onTap,
         child: MenuAnchor(
           controller: _controller,
           consumeOutsideTap: true,

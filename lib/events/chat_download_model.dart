@@ -7,16 +7,16 @@ import 'chat_download_service.dart';
 
 class ChatDownloadModel extends SafeChangeNotifier {
   ChatDownloadModel({required ChatDownloadService service})
-      : _service = service;
+      : _service = service {
+    _propertiesChangedSub =
+        _service.propertiesChanged.listen((_) => notifyListeners());
+  }
 
   final ChatDownloadService _service;
   StreamSubscription<bool>? _propertiesChangedSub;
 
   String? isEventDownloaded(Event event) => _service.isEventDownloaded(event);
   Future<void> safeFile(Event event) async => _service.safeFile(event);
-
-  void init() => _propertiesChangedSub =
-      _service.propertiesChanged.listen((_) => notifyListeners());
 
   @override
   Future<void> dispose() async {

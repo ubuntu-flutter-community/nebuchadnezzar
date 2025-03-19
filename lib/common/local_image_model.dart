@@ -9,7 +9,10 @@ import 'local_image_service.dart';
 class LocalImageModel extends SafeChangeNotifier {
   LocalImageModel({
     required LocalImageService service,
-  }) : _service = service;
+  }) : _service = service {
+    _propertiesChangedSub ??=
+        _service.propertiesChanged.listen((_) => notifyListeners());
+  }
 
   final LocalImageService _service;
   StreamSubscription<bool>? _propertiesChangedSub;
@@ -42,9 +45,6 @@ class LocalImageModel extends SafeChangeNotifier {
         isThumbnail: isThumbnail,
         animated: animated,
       );
-
-  void init() => _propertiesChangedSub ??=
-      _service.propertiesChanged.listen((_) => notifyListeners());
 
   @override
   Future<void> dispose() async {
