@@ -4,7 +4,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../app/app_config.dart';
 import '../../common/view/snackbars.dart';
-import '../../encryption/setup_encrypted_chat_page.dart';
+import '../../encryption/view/setup_encrypted_chat_page.dart';
 import '../../l10n/l10n.dart';
 import '../authentication_model.dart';
 import 'chat_login_page_scaffold.dart';

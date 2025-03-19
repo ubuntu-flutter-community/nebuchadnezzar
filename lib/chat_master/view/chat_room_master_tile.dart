@@ -4,7 +4,6 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../chat_room/common/view/chat_invitation_dialog.dart';
-import '../../chat_room/common/view/chat_room_master_tile_subtitle.dart';
 import '../../chat_room/input/draft_model.dart';
 import '../../chat_room/titlebar/chat_room_pin_button.dart';
 import '../../common/chat_model.dart';
@@ -14,6 +13,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import 'chat_master_detail_page.dart';
+import 'chat_room_master_tile_subtitle.dart';
 
 class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
   const ChatRoomMasterTile({

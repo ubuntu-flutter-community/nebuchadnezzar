@@ -9,19 +9,19 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../chat_master/view/chat_master_detail_page.dart';
-import '../common/view/build_context_x.dart';
-import '../common/view/common_widgets.dart';
-import '../common/view/snackbars.dart';
-import '../common/view/space.dart';
-import '../common/view/ui_constants.dart';
-import '../l10n/l10n.dart';
-import '../settings/view/logout_button.dart';
-import '../authentication/authentication_model.dart';
-import 'encryption_model.dart';
-import '../authentication/view/chat_login_page.dart';
+import '../../authentication/authentication_model.dart';
+import '../../authentication/view/chat_login_page.dart';
+import '../../authentication/view/uia_request_handler.dart';
+import '../../chat_master/view/chat_master_detail_page.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
+import '../../common/view/snackbars.dart';
+import '../../common/view/space.dart';
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
+import '../../settings/view/logout_button.dart';
+import '../encryption_model.dart';
 import 'key_verification_dialog.dart';
-import '../authentication/view/uia_request_handler.dart';
 
 class CheckEncryptionSetupNeededPage extends StatefulWidget {
   const CheckEncryptionSetupNeededPage({super.key});

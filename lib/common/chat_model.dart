@@ -450,4 +450,16 @@ class ChatModel extends SafeChangeNotifier {
       _setProcessingJoinOrLeave(false);
     }
   }
+
+  int get maxUploadSize => _mediaConfig?.mUploadSize ?? 100 * 1000 * 1000;
+  MediaConfig? _mediaConfig;
+
+  Future<void> _loadMediaConfig() async {
+    _mediaConfig = await _client.getConfig();
+  }
+
+  Future<void> initAfterEncryptionSetup() async {
+    await _client.roomsLoading;
+    await _loadMediaConfig();
+  }
 }

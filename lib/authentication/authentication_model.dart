@@ -56,26 +56,11 @@ class AuthenticationModel extends SafeChangeNotifier {
         initialDeviceDisplayName:
             '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
       );
-      await _client.firstSyncReceived;
-      await _client.roomsLoading;
-      await _loadMediaConfig();
+      await _init();
       await onSuccess();
     } on Exception catch (e, s) {
       await onFail(e.toString());
       printMessageInDebugMode(e, s);
-    } finally {
-      _setProcessingAccess(false);
-    }
-  }
-
-  Future logout({
-    required Function(String error) onFail,
-  }) async {
-    _setProcessingAccess(true);
-    try {
-      await _client.logout();
-    } on Exception catch (e) {
-      onFail(e.toString());
     } finally {
       _setProcessingAccess(false);
     }
@@ -116,7 +101,7 @@ class AuthenticationModel extends SafeChangeNotifier {
         initialDeviceDisplayName:
             '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
       );
-      await _loadMediaConfig();
+      await _init();
       await onSuccess();
     } catch (e) {
       onFail(e.toString());
@@ -127,10 +112,21 @@ class AuthenticationModel extends SafeChangeNotifier {
     return response;
   }
 
-  int get maxUploadSize => _mediaConfig?.mUploadSize ?? 100 * 1000 * 1000;
-  MediaConfig? _mediaConfig;
+  Future<void> _init() async {
+    await _client.firstSyncReceived;
+    await _client.roomsLoading;
+  }
 
-  Future<void> _loadMediaConfig() async {
-    _mediaConfig = await _client.getConfig();
+  Future logout({
+    required Function(String error) onFail,
+  }) async {
+    _setProcessingAccess(true);
+    try {
+      await _client.logout();
+    } on Exception catch (e) {
+      onFail(e.toString());
+    } finally {
+      _setProcessingAccess(false);
+    }
   }
 }

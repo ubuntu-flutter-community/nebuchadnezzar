@@ -10,7 +10,7 @@ import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../common/logging.dart';
-import '../encryption/key_verification_dialog.dart';
+import '../encryption/view/key_verification_dialog.dart';
 import 'settings_service.dart';
 
 class SettingsModel extends SafeChangeNotifier {
