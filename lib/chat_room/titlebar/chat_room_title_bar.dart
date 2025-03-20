@@ -30,7 +30,10 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: kSmallPadding,
           children: [
-            ChatRoomEncryptionStatusButton(room: room),
+            ChatRoomEncryptionStatusButton(
+              key: ValueKey('${room.id}_encryption'),
+              room: room,
+            ),
             Flexible(
               child: room.isArchived
                   ? Text(context.l10n.archive)

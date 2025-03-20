@@ -30,7 +30,7 @@ class ChatRoomEncryptionStatusButton extends StatelessWidget with WatchItMixin {
     return IconButton(
       onPressed: null,
       tooltip: encrypted ? l10n.encrypted : l10n.encryptionNotEnabled,
-      icon: !room.encrypted
+      icon: !encrypted
           ? Icon(YaruIcons.shield_warning, color: colorScheme.onSurface)
           : Icon(YaruIcons.shield_filled, color: colorScheme.onSurface),
     );
