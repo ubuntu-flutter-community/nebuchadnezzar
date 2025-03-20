@@ -4,20 +4,20 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/chat_model.dart';
-import '../../../common/view/build_context_x.dart';
-import '../../../common/view/chat_avatar.dart';
-import '../../../common/view/common_widgets.dart';
-import '../../../common/view/search_auto_complete.dart';
-import '../../../common/view/sliver_sticky_panel.dart';
-import '../../../common/view/snackbars.dart';
-import '../../../common/view/space.dart';
-import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
-import '../../input/draft_model.dart';
+import '../../common/chat_model.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/chat_avatar.dart';
+import '../../common/view/common_widgets.dart';
+import '../../common/view/search_auto_complete.dart';
+import '../../common/view/sliver_sticky_panel.dart';
+import '../../common/view/snackbars.dart';
+import '../../common/view/space.dart';
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
+import '../input/draft_model.dart';
 import 'chat_room_create_or_edit_avatar.dart';
 import 'chat_room_permissions.dart';
-import 'chat_room_users_list.dart';
+import '../common/view/chat_room_users_list.dart';
 
 const _maxWidth = 500.0;
 
@@ -363,12 +363,13 @@ class _ChatCreateOrEditRoomDialogState
                       child: Column(
                         children: [
                           if (!_existingGroup || widget.room?.canInvite == true)
-                            SizedBox(
-                              height: 38,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: kMediumPadding,
-                                ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: kMediumPadding,
+                                vertical: kSmallPadding,
+                              ),
+                              child: SizedBox(
+                                height: 38,
                                 child: ChatUserSearchAutoComplete(
                                   labelText: l10n.inviteOtherUsers,
                                   width: usedWidth - 2 * kMediumPadding,

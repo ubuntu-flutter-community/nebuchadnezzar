@@ -3,12 +3,12 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/chat_model.dart';
-import '../../../common/view/build_context_x.dart';
-import '../../../common/view/confirm.dart';
-import '../../../common/view/snackbars.dart';
-import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
+import '../../common/chat_model.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/confirm.dart';
+import '../../common/view/snackbars.dart';
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
 
 // Credit: this code has been inspired by https://github.com/krille-chan/fluffychat permissions
 // Thank you @krille-chan
@@ -72,7 +72,6 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
         Padding(
           padding: const EdgeInsets.only(bottom: kMediumPadding),
           child: Column(
-            spacing: kMediumPadding,
             children: [
               for (final entry in powerLevels.entries)
                 _ChatRoomPermissionTile(
@@ -277,9 +276,13 @@ class _ChatRoomPermissionTile extends StatelessWidget {
         color: color.withAlpha(32),
         borderRadius: BorderRadius.circular(kYaruContainerRadius),
         child: DropdownButton<int>(
+          isDense: true,
           style: TextStyle(color: colorScheme.onSurface),
           icon: const SizedBox.shrink(),
-          padding: const EdgeInsets.symmetric(horizontal: kMediumPadding),
+          padding: const EdgeInsets.symmetric(
+            horizontal: kMediumPadding,
+            vertical: kSmallPadding,
+          ),
           borderRadius: BorderRadius.circular(kYaruContainerRadius),
           underline: const SizedBox.shrink(),
           onChanged: canEdit ? onChanged : null,

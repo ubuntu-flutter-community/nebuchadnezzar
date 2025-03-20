@@ -7,7 +7,7 @@ import 'package:watch_it/watch_it.dart';
 import 'app/app_config.dart';
 import 'authentication/authentication_model.dart';
 import 'encryption/encryption_model.dart';
-import 'chat_room/common/timeline_model.dart';
+import 'chat_room/timeline/timeline_model.dart';
 import 'chat_room/input/draft_model.dart';
 import 'common/chat_model.dart';
 import 'common/client_x.dart';

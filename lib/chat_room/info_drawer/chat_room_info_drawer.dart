@@ -4,19 +4,19 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/view/build_context_x.dart';
-import '../../../common/view/confirm.dart';
-import '../../../common/view/snackbars.dart';
-import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
-import '../../../common/chat_model.dart';
-import '../../../common/room_x.dart';
-import '../../../common/view/chat_avatar.dart';
-import 'chat_create_or_edit_room_dialog.dart';
-import 'chat_room_display_name.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/confirm.dart';
+import '../../common/view/snackbars.dart';
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
+import '../../common/chat_model.dart';
+import '../../common/room_x.dart';
+import '../../common/view/chat_avatar.dart';
+import '../create_or_edit/chat_create_or_edit_room_dialog.dart';
+import '../common/view/chat_room_display_name.dart';
 import 'chat_room_info_drawer_topic.dart';
-import 'chat_room_users_list.dart';
-import '../../titlebar/chat_room_join_or_leave_button.dart';
+import '../common/view/chat_room_users_list.dart';
+import 'chat_room_join_or_leave_button.dart';
 
 class ChatRoomInfoDrawer extends StatelessWidget {
   const ChatRoomInfoDrawer({super.key, required this.room});

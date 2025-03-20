@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../l10n/l10n.dart';
-import '../../chat_room/common/view/chat_create_or_edit_room_dialog.dart';
-import '../../chat_room/common/view/chat_new_direct_chat_dialog.dart';
+import '../../chat_room/create_or_edit/chat_create_or_edit_room_dialog.dart';
+import '../../chat_room/create_or_edit/chat_new_direct_chat_dialog.dart';
 
 class ChatNewChatPopupMenuButton extends StatelessWidget {
   const ChatNewChatPopupMenuButton({super.key});

@@ -5,16 +5,16 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/date_time_x.dart';
-import '../../../common/view/build_context_x.dart';
-import '../../../common/view/theme.dart';
-import '../../../common/view/ui_constants.dart';
-import '../../../l10n/l10n.dart';
-import '../../../common/chat_model.dart';
-import '../../../common/event_x.dart';
-import '../../../events/view/chat_event_tile.dart';
-import '../../../settings/settings_model.dart';
-import '../timeline_model.dart';
+import '../../common/date_time_x.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/theme.dart';
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
+import '../../common/chat_model.dart';
+import '../../common/event_x.dart';
+import '../../events/view/chat_event_tile.dart';
+import '../../settings/settings_model.dart';
+import 'timeline_model.dart';
 import 'chat_room_pinned_events_dialog.dart';
 import 'chat_seen_by_indicator.dart';
 
