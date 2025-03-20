@@ -27,9 +27,11 @@ class CopyClipboardContent extends StatefulWidget {
     required this.text,
     this.onSearch,
     this.showActions = true,
+    this.child,
   });
 
   final String text;
+  final Widget? child;
   final void Function()? onSearch;
   final bool showActions;
 
@@ -58,6 +60,7 @@ class _CopyClipboardContentState extends State<CopyClipboardContent> {
             child: Wrap(
               spacing: 10,
               runSpacing: 10,
+              direction: Axis.vertical,
               children: [
                 Text(
                   context.l10n.copiedToClipboard,
@@ -65,10 +68,11 @@ class _CopyClipboardContentState extends State<CopyClipboardContent> {
                     color: textColor,
                   ),
                 ),
-                Text(
-                  widget.text,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                widget.child ??
+                    Text(
+                      widget.text,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
               ],
             ),
           ),

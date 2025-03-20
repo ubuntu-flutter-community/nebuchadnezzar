@@ -22,7 +22,7 @@ class ChatTextMessage extends StatelessWidget {
           room: event.room,
           style: messageStyle,
         )
-      : SelectableText.rich(
+      : Text.rich(
           TextSpan(
             style: messageStyle,
             text: displayEvent.body,
