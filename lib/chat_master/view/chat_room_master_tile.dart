@@ -41,7 +41,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
         room.pushRuleState;
 
     return Opacity(
-      opacity: processingJoinOrLeave || loadingArchive ? 0.5 : 1,
+      opacity: processingJoinOrLeave || loadingArchive ? 0.3 : 1,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 5),
         child: Stack(
@@ -50,6 +50,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
             YaruMasterTile(
               selected: selectedRoom?.id != null && selectedRoom?.id == room.id,
               leading: ChatAvatar(
+                key: ValueKey(room.avatar?.toString()),
                 avatarUri: pushRuleState == PushRuleState.dontNotify
                     ? null
                     : room.avatar,

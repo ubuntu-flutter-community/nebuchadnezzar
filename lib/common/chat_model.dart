@@ -199,7 +199,7 @@ class ChatModel extends SafeChangeNotifier {
 
   Room? _selectedRoom;
   Room? get selectedRoom => _selectedRoom;
-  Future<void> setSelectedRoom(Room? value) async {
+  void setSelectedRoom(Room? value) {
     _selectedRoom = value;
     notifyListeners();
   }
@@ -275,6 +275,7 @@ class ChatModel extends SafeChangeNotifier {
     Map<String, dynamic>? powerLevelContentOverride,
     MatrixFile? avatarFile,
   }) async {
+    setSelectedRoom(null);
     _setProcessingJoinOrLeave(true);
     String? roomId;
 
@@ -302,12 +303,13 @@ class ChatModel extends SafeChangeNotifier {
       await _client.waitForRoomInSync(roomId, join: true);
       final maybeRoom = _client.getRoomById(roomId);
       if (maybeRoom != null) {
+        setSelectedRoom(maybeRoom);
         if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
             avatarFile?.bytes != null) {
-          maybeRoom.setAvatar(avatarFile);
+          await maybeRoom.setAvatar(avatarFile);
         }
         _archiveActive = false;
-        setSelectedRoom(maybeRoom);
+
         onSuccess();
       }
     }
