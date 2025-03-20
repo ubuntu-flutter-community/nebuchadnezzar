@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../../common/view/build_context_x.dart';
-import '../../../common/view/ui_constants.dart';
-import '../../../common/chat_model.dart';
-import '../../../common/search_model.dart';
-import '../../../common/view/chat_avatar.dart';
-import '../../../common/view/chat_profile_dialog.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/ui_constants.dart';
+import '../../common/chat_model.dart';
+import '../../common/search_model.dart';
+import '../../common/view/chat_avatar.dart';
+import '../../common/view/chat_profile_dialog.dart';
 
 class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
   const ChatEventSeenByIndicator({

@@ -16,9 +16,9 @@ import '../../../l10n/l10n.dart';
 import '../../input/draft_model.dart';
 import '../../input/view/chat_input.dart';
 import '../../titlebar/chat_room_title_bar.dart';
-import '../timeline_model.dart';
-import 'chat_room_info_drawer.dart';
-import 'chat_room_timeline_list.dart';
+import '../../timeline/timeline_model.dart';
+import '../../info_drawer/chat_room_info_drawer.dart';
+import '../../timeline/chat_room_timeline_list.dart';
 
 final GlobalKey<ScaffoldState> chatRoomScaffoldKey = GlobalKey();
 

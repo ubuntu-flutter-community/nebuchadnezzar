@@ -3,8 +3,9 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../../common/view/ui_constants.dart';
-import '../timeline_model.dart';
+import '../../common/chat_model.dart';
+import '../../common/view/ui_constants.dart';
+import '../timeline/timeline_model.dart';
 
 class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
   const ChatRoomInfoDrawerTopic({
@@ -19,6 +20,13 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
     final updatingTimeline =
         watchPropertyValue((TimelineModel m) => m.getUpdatingTimeline(room.id));
 
+    final topic = watchStream(
+          (ChatModel m) =>
+              m.getJoinedRoomUpdate(room.id).map((_) => room.topic),
+          initialValue: room.topic,
+        ).data ??
+        room.topic;
+
     return SliverToBoxAdapter(
       child: Center(
         child: AnimatedOpacity(
@@ -31,7 +39,7 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
             child: ListTile(
               dense: true,
               title: Html(
-                data: room.topic,
+                data: topic,
                 style: {
                   'body': Style(
                     margin: Margins.zero,
