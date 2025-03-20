@@ -36,15 +36,17 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
           if (!archiveActive) const ChatNewChatPopupMenuButton(),
           if (!archiveActive)
             IconButton(
+              tooltip: context.l10n.search,
               isSelected: searchActive,
               onPressed: searchModel.toggleSearch,
               icon: const Icon(YaruIcons.search),
             ),
           IconButton(
-            selectedIcon: const Icon(YaruIcons.bookmark_filled),
+            tooltip: context.l10n.archive,
+            selectedIcon: const Icon(YaruIcons.trash_filled),
             isSelected: archiveActive,
             onPressed: chatModel.toggleArchive,
-            icon: const Icon(YaruIcons.bookmark),
+            icon: const Icon(YaruIcons.trash),
           ),
         ],
       ),

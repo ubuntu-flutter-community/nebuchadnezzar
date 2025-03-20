@@ -13,6 +13,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_my_user_avatar.dart';
 import '../../settings/view/settings_dialog.dart';
+import 'chat_archive_search_field.dart';
 import 'chat_master_list_filter_bar.dart';
 import 'chat_master_title_bar.dart';
 import 'chat_rooms_list.dart';
@@ -55,7 +56,9 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
       child: Column(
         children: [
           const ChatMasterTitleBar(),
-          if (searchActive && !archiveActive)
+          if (archiveActive)
+            const ChatArchiveSearchField()
+          else if (searchActive)
             Padding(
               padding: const EdgeInsets.only(
                 left: kMediumPlusPadding,

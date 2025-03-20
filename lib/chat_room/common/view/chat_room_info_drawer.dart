@@ -51,7 +51,7 @@ class ChatRoomInfoDrawer extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       room.isArchived
-                          ? Text(context.l10n.archive)
+                          ? Text(room.getLocalizedDisplayname())
                           : ChatRoomDisplayName(room: room),
                       if (room.canonicalAlias.isNotEmpty)
                         Text(
