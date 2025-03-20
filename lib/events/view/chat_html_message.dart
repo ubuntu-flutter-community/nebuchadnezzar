@@ -36,7 +36,8 @@ class HtmlMessage extends StatelessWidget {
     final defaultTextColor = context.colorScheme.onSurface;
     final element = _linkifyHtml(HtmlParser.parseHTML(html));
 
-    final theStyle = Style.fromTextStyle(style!).copyWith(
+    final theStyle =
+        (style == null ? Style() : Style.fromTextStyle(style!)).copyWith(
       padding: HtmlPaddings.zero,
       margin: Margins.zero,
     );
