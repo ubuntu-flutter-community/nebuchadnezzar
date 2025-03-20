@@ -20,34 +20,42 @@ import '../../common/view/mxc_image.dart';
 class HtmlMessage extends StatelessWidget {
   final String html;
   final Room room;
-  final Color defaultTextColor;
+  final TextStyle? style;
 
   const HtmlMessage({
     super.key,
     required this.html,
     required this.room,
-    required this.defaultTextColor,
+    required this.style,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final fontSize = theme.textTheme.bodyMedium?.fontSize ?? 12;
-
+    final fontSize = style?.fontSize ?? 12;
+    final defaultTextColor = context.colorScheme.onSurface;
     final element = _linkifyHtml(HtmlParser.parseHTML(html));
 
+    final theStyle = Style.fromTextStyle(style!).copyWith(
+      padding: HtmlPaddings.zero,
+      margin: Margins.zero,
+    );
     return Html.fromElement(
       documentElement: element as dom.Element,
-      style: {
-        'code': Style(padding: HtmlPaddings.zero, margin: Margins.zero),
-        'pre': Style(padding: HtmlPaddings.zero, margin: Margins.zero),
-      },
+      style: style == null
+          ? {}
+          : {
+              '*': theStyle,
+              'code': theStyle,
+              'pre': theStyle,
+              'a': theStyle.copyWith(color: context.colorScheme.link),
+            },
       extensions: [
         CodeExtension(fontSize: fontSize, isLight: theme.colorScheme.isLight),
         SpoilerExtension(textColor: defaultTextColor),
         const ImageExtension(),
         FontColorExtension(),
-        FallbackTextExtension(fontSize: fontSize),
+        FallbackTextExtension(style: style),
       ],
       onLinkTap: (url, attributes, element) {
         if (url != null && Uri.tryParse(url) != null) {
@@ -266,18 +274,16 @@ class CodeExtension extends HtmlExtension {
 }
 
 class FallbackTextExtension extends HtmlExtension {
-  final double fontSize;
+  final TextStyle? style;
 
-  FallbackTextExtension({required this.fontSize});
+  FallbackTextExtension({required this.style});
   @override
   Set<String> get supportedTags => _fallbackTextTags;
 
   @override
   InlineSpan build(ExtensionContext context) => TextSpan(
         text: context.element?.text ?? '',
-        style: TextStyle(
-          fontSize: fontSize,
-        ),
+        style: style,
       );
 }
 
