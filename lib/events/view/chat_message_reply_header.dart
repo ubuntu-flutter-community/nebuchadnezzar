@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
@@ -95,7 +96,7 @@ class _Message extends StatelessWidget {
           style: context.textTheme.labelSmall?.copyWith(
             fontStyle: FontStyle.italic,
             overflow: TextOverflow.ellipsis,
-            color: Colors.lightBlue,
+            color: context.colorScheme.link,
           ),
         ),
       ),

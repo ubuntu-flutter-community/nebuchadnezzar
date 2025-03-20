@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../common/view/build_context_x.dart';
 import 'chat_html_message.dart';
 
 class ChatTextMessage extends StatelessWidget {
@@ -21,7 +20,7 @@ class ChatTextMessage extends StatelessWidget {
       ? HtmlMessage(
           html: event.formattedText,
           room: event.room,
-          defaultTextColor: context.colorScheme.onSurface,
+          style: messageStyle,
         )
       : SelectableText.rich(
           TextSpan(

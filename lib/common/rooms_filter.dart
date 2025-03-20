@@ -3,9 +3,9 @@ import 'package:matrix/matrix.dart';
 import '../l10n/l10n.dart';
 
 enum RoomsFilter {
+  directChat,
   spaces,
   unread,
-  directChat,
   privateGroups,
   publicRooms;
 

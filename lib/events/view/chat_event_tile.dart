@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../common/view/ui_constants.dart';
 import '../../common/event_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
+import '../../common/view/ui_constants.dart';
 import 'chat_message_badge.dart';
 import 'chat_message_bubble.dart';
 

@@ -12,11 +12,14 @@ extension PushRuleStateX on PushRuleState {
       };
 
   Icon getIcon(ColorScheme colorScheme) => switch (this) {
-        PushRuleState.mentionsOnly => const Icon(YaruIcons.notification_filled),
-        PushRuleState.notify => Icon(
-            YaruIcons.notification_filled,
-            color: colorScheme.primary,
-          ),
-        PushRuleState.dontNotify => const Icon(YaruIcons.notification),
+        PushRuleState.mentionsOnly => const Icon(YaruIcons.speaker_high),
+        PushRuleState.notify => const Icon(YaruIcons.speaker_high_filled),
+        PushRuleState.dontNotify => const Icon(YaruIcons.speaker_muted),
+      };
+
+  IconData getIconData() => switch (this) {
+        PushRuleState.mentionsOnly => YaruIcons.speaker_high,
+        PushRuleState.notify => YaruIcons.speaker_high_filled,
+        PushRuleState.dontNotify => YaruIcons.speaker_muted,
       };
 }

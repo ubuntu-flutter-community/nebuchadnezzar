@@ -7,6 +7,7 @@ import '../../chat_room/common/view/chat_invitation_dialog.dart';
 import '../../chat_room/input/draft_model.dart';
 import '../../chat_room/titlebar/chat_room_pin_button.dart';
 import '../../common/chat_model.dart';
+import '../../common/push_rule_state_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/scaffold_state_x.dart';
 import '../../common/view/snackbars.dart';
@@ -33,8 +34,14 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
     final loadingArchive =
         watchPropertyValue((ChatModel m) => m.loadingArchive);
 
+    final pushRuleState = watchStream(
+          (ChatModel m) => m.syncStream.map((_) => room.pushRuleState),
+          initialValue: room.pushRuleState,
+        ).data ??
+        room.pushRuleState;
+
     return Opacity(
-      opacity: processingJoinOrLeave || loadingArchive ? 0.5 : 1,
+      opacity: processingJoinOrLeave || loadingArchive ? 0.3 : 1,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 5),
         child: Stack(
@@ -43,11 +50,16 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
             YaruMasterTile(
               selected: selectedRoom?.id != null && selectedRoom?.id == room.id,
               leading: ChatAvatar(
-                avatarUri: room.avatar,
+                key: ValueKey(room.avatar?.toString()),
+                avatarUri: pushRuleState == PushRuleState.dontNotify
+                    ? null
+                    : room.avatar,
                 fallBackIcon: room.membership != Membership.invite
-                    ? room.isDirectChat
-                        ? YaruIcons.user
-                        : YaruIcons.users
+                    ? pushRuleState == PushRuleState.dontNotify
+                        ? pushRuleState.getIconData()
+                        : room.isDirectChat
+                            ? YaruIcons.user
+                            : YaruIcons.users
                     : YaruIcons.mail_unread,
               ),
               title: Text(
