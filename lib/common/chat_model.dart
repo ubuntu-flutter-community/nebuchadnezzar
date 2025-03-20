@@ -22,8 +22,26 @@ class ChatModel extends SafeChangeNotifier {
   List<Room> get _rooms => _client.rooms;
 
   /// The list of the archived rooms, call loadArchive() before first call
-  List<Room> get _archivedRooms =>
-      _client.archivedRooms.map((e) => e.room).toList();
+  List<Room> get _archivedRooms => _client.archivedRooms
+      .map((e) => e.room)
+      .where(
+        (e) =>
+            _filteredRoomsQuery == null || _filteredRoomsQuery!.trim().isEmpty
+                ? true
+                : e
+                    .getLocalizedDisplayname()
+                    .toLowerCase()
+                    .contains(_filteredRoomsQuery!.toLowerCase()),
+      )
+      .toList();
+
+  String? _filteredRoomsQuery;
+  String? get filteredRoomsQuery => _filteredRoomsQuery;
+  void setFilteredRoomsQuery(String? value) {
+    if (value == _filteredRoomsQuery) return;
+    _filteredRoomsQuery = value;
+    notifyListeners();
+  }
 
   List<Room> get filteredRooms {
     final theRooms = (archiveActive ? _archivedRooms : _rooms)

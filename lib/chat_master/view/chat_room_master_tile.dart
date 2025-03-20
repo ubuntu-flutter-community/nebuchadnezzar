@@ -98,7 +98,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                       masterScaffoldKey.currentState?.hideDrawer();
                     },
             ),
-            ...[
+            if (!room.isArchived) ...[
               if (room.notificationCount > 0)
                 Positioned(
                   right: kBigPadding,
