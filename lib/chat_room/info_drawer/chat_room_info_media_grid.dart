@@ -1,23 +1,91 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
-import 'package:yaru/icons.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/chat_model.dart';
 import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
+import '../../events/chat_download_model.dart';
 import '../../events/view/chat_image.dart';
 import '../../events/view/chat_message_image_full_screen_dialog.dart';
 import '../../l10n/l10n.dart';
 import '../timeline/timeline_model.dart';
 import '../timeline/timeline_x.dart';
 
-class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
-  ChatRoomInfoMediaGrid({super.key, required this.room});
+class ChatRoomInfoMediaGridTabs extends StatefulWidget {
+  const ChatRoomInfoMediaGridTabs({super.key, required this.room});
 
   final Room room;
+
+  @override
+  State<ChatRoomInfoMediaGridTabs> createState() =>
+      _ChatRoomInfoMediaGridTabsState();
+}
+
+class _ChatRoomInfoMediaGridTabsState extends State<ChatRoomInfoMediaGridTabs>
+    with SingleTickerProviderStateMixin {
+  late TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+        spacing: kMediumPadding,
+        children: [
+          TabBar(
+            controller: _controller,
+            tabs: [
+              const Tab(icon: Icon(YaruIcons.image)),
+              const Tab(icon: Icon(YaruIcons.video)),
+              const Tab(icon: Icon(YaruIcons.music_note)),
+              const Tab(icon: Icon(YaruIcons.document)),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _controller,
+              children: [
+                MessageTypes.Image,
+                MessageTypes.Video,
+                MessageTypes.Audio,
+                MessageTypes.File,
+              ]
+                  .map(
+                    (e) => ChatRoomInfoMediaGrid(
+                      room: widget.room,
+                      messageType: e,
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ],
+      );
+}
+
+class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
+  ChatRoomInfoMediaGrid({
+    super.key,
+    required this.room,
+    e,
+    required this.messageType,
+  });
+
+  final Room room;
+  final String messageType;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +115,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
       );
     }
 
-    final events = timeline.imageEvents;
+    final events = timeline.getMediaEvents(messageType);
 
     if (events.isEmpty) {
       return const SizedBox.shrink();
@@ -69,23 +137,44 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
         itemBuilder: (context, i) {
           final event = events[i];
 
-          return ChatImage(
-            dimension: 200,
-            event: event,
-            timeline: timeline,
-            onTap: event.isSvgImage
-                ? null
-                : () => showDialog(
-                      context: context,
-                      builder: (context) => ChatMessageImageFullScreenDialog(
-                        event: event,
-                      ),
-                    ),
-          );
+          return switch (messageType) {
+            MessageTypes.Image => ChatImage(
+                dimension: 200,
+                event: event,
+                timeline: timeline,
+                onTap: event.isSvgImage
+                    ? null
+                    : () => showDialog(
+                          context: context,
+                          builder: (context) =>
+                              ChatMessageImageFullScreenDialog(
+                            event: event,
+                          ),
+                        ),
+              ),
+            _ => Center(
+                child: IconButton.outlined(
+                  tooltip: context.l10n.downloadFile,
+                  onPressed: () => di<ChatDownloadModel>().safeFile(event),
+                  icon: switch (messageType) {
+                    MessageTypes.Audio => const Icon(YaruIcons.music_note),
+                    MessageTypes.File => const Icon(YaruIcons.document),
+                    MessageTypes.Video => const Icon(YaruIcons.video),
+                    _ => const Placeholder(),
+                  },
+                ),
+              ),
+          };
         },
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 100,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: switch (messageType) {
+            MessageTypes.Audio || MessageTypes.File || MessageTypes.Video => 4,
+            _ => 2,
+          },
+          mainAxisExtent: switch (messageType) {
+            MessageTypes.Audio || MessageTypes.File || MessageTypes.Video => 80,
+            _ => 100
+          },
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
