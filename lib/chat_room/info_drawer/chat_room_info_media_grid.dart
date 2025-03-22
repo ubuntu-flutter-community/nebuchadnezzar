@@ -173,7 +173,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
           },
           mainAxisExtent: switch (messageType) {
             MessageTypes.Audio || MessageTypes.File || MessageTypes.Video => 80,
-            _ => 200
+            _ => 100
           },
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
