@@ -392,7 +392,6 @@ class _ChatCreateOrEditRoomDialogState
                                     ? ChatRoomUsersList(
                                         room: widget.room!,
                                         sliver: false,
-                                        showChatIcon: false,
                                       )
                                     : const SizedBox.shrink()
                                 : profileListView,

@@ -7,13 +7,11 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
-import '../../common/view/confirm.dart';
-import '../../l10n/l10n.dart';
 import '../../common/view/mxc_image.dart';
+import 'chat_html_message_link_handler.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan
@@ -58,23 +56,8 @@ class HtmlMessage extends StatelessWidget {
         FontColorExtension(),
         FallbackTextExtension(style: style),
       ],
-      onLinkTap: (url, attributes, element) {
-        if (url != null && Uri.tryParse(url) != null) {
-          showDialog(
-            context: context,
-            builder: (context) => ConfirmationDialog(
-              title: Text(
-                '${context.l10n.openLinkInBrowser}?',
-              ),
-              content: SizedBox(
-                width: 400,
-                child: Text(url),
-              ),
-              onConfirm: () => launchUrl(Uri.parse(url)),
-            ),
-          );
-        }
-      },
+      onLinkTap: (url, attributes, element) =>
+          chatHtmlMessageLinkHandler(url, attributes, element, context),
       onlyRenderTheseTags: const {
         ..._allowedHtmlTags,
         'body',

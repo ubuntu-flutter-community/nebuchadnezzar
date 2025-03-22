@@ -20,17 +20,26 @@ import 'chat_master_panel.dart';
 
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
-class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
+class ChatMasterDetailPage extends StatefulWidget
+    with WatchItStatefulWidgetMixin {
   const ChatMasterDetailPage({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    callOnce(
-      (context) => di<ChatModel>().initAfterEncryptionSetup,
-    );
+  State<ChatMasterDetailPage> createState() => _ChatMasterDetailPageState();
+}
 
+class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
+  late final Future<void> _initAfterEncryptionSetup;
+  @override
+  void initState() {
+    super.initState();
+    _initAfterEncryptionSetup = di<ChatModel>().initAfterEncryptionSetup();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     registerStreamHandler(
       select: (EncryptionModel m) => m.onKeyVerificationRequest,
       handler: (context, newValue, cancel) {
@@ -85,33 +94,44 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
           !Platform.isMacOS ? const Drawer(child: ChatMasterSidePanel()) : null,
       endDrawer:
           Platform.isMacOS ? const Drawer(child: ChatMasterSidePanel()) : null,
-      body: Row(
-        children: [
-          if (context.showSideBar)
-            const SizedBox(width: kSideBarWith, child: ChatMasterSidePanel()),
-          if (context.showSideBar)
-            const VerticalDivider(
-              width: 0,
-              thickness: 0,
-            ),
-          if (processingJoinOrLeave || loadingArchive)
-            const Expanded(
-              child: Center(
-                child: Progress(),
-              ),
-            )
-          else if (selectedRoom == null)
-            const Expanded(child: ChatNoSelectedRoomPage())
-          else
-            Expanded(
-              child: ChatRoomPage(
-                key: ValueKey(
-                  '${selectedRoom.id} $isArchivedRoom',
-                ),
-                room: selectedRoom,
-              ),
-            ),
-        ],
+      body: FutureBuilder(
+        future: _initAfterEncryptionSetup,
+        builder: (context, snapshot) =>
+            snapshot.connectionState == ConnectionState.done
+                ? Row(
+                    children: [
+                      if (context.showSideBar)
+                        const SizedBox(
+                          width: kSideBarWith,
+                          child: ChatMasterSidePanel(),
+                        ),
+                      if (context.showSideBar)
+                        const VerticalDivider(
+                          width: 0,
+                          thickness: 0,
+                        ),
+                      if (processingJoinOrLeave || loadingArchive)
+                        const Expanded(
+                          child: Center(
+                            child: Progress(),
+                          ),
+                        )
+                      else if (selectedRoom == null)
+                        const Expanded(child: ChatNoSelectedRoomPage())
+                      else
+                        Expanded(
+                          child: ChatRoomPage(
+                            key: ValueKey(
+                              '${selectedRoom.id} $isArchivedRoom',
+                            ),
+                            room: selectedRoom,
+                          ),
+                        ),
+                    ],
+                  )
+                : const Center(
+                    child: Progress(),
+                  ),
       ),
     );
   }

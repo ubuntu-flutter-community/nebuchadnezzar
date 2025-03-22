@@ -1,21 +1,21 @@
-import 'package:animated_emoji/animated_emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/chat_model.dart';
+import '../../common/room_x.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/chat_avatar.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
-import '../../common/room_x.dart';
-import '../../common/view/chat_avatar.dart';
-import '../create_or_edit/chat_create_or_edit_room_dialog.dart';
 import '../common/view/chat_room_display_name.dart';
-import 'chat_room_info_drawer_topic.dart';
 import '../common/view/chat_room_users_list.dart';
+import '../create_or_edit/chat_create_or_edit_room_dialog.dart';
+import 'chat_room_info_drawer_topic.dart';
+import 'chat_room_info_media_grid.dart';
 import 'chat_room_join_or_leave_button.dart';
 
 class ChatRoomInfoDrawer extends StatelessWidget {
@@ -33,6 +33,7 @@ class ChatRoomInfoDrawer extends StatelessWidget {
       child: SizedBox(
         width: kSideBarWith,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (!room.isDirectChat)
@@ -52,12 +53,26 @@ class ChatRoomInfoDrawer extends StatelessWidget {
                     children: [
                       room.isArchived
                           ? Text(room.getLocalizedDisplayname())
-                          : ChatRoomDisplayName(room: room),
+                          : ChatRoomDisplayName(
+                              key: ValueKey(
+                                '${room.id}_name_,',
+                              ),
+                              room: room,
+                            ),
                       if (room.canonicalAlias.isNotEmpty)
-                        Text(
-                          room.canonicalAlias,
-                          style: textTheme.labelSmall,
-                          textAlign: TextAlign.center,
+                        InkWell(
+                          borderRadius: BorderRadius.circular(kSmallPadding),
+                          onTap: () => showSnackBar(
+                            context,
+                            content: CopyClipboardContent(
+                              text: room.canonicalAlias,
+                            ),
+                          ),
+                          child: Text(
+                            room.canonicalAlias,
+                            style: textTheme.labelSmall,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       Text(
                         room.isArchived
@@ -150,28 +165,74 @@ class ChatRoomInfoDrawer extends StatelessWidget {
                     ),
                   ],
                 ),
-              )
+              ),
+            if (room.isArchived)
+              const Expanded(child: Text(''))
             else
               Expanded(
-                child: CustomScrollView(
-                  slivers: room.isArchived
-                      ? [
-                          const SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Center(
-                              child: AnimatedEmoji(
-                                AnimatedEmojis.fallenLeaf,
-                                size: 100,
+                child: room.isDirectChat
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: kBigPadding,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: kBigPadding,
+                              ),
+                              title: Text(
+                                'Media',
+                                style: theme.textTheme.titleSmall,
                               ),
                             ),
-                          ),
+                            SizedBox(
+                              height: context.mediaQuerySize.height - 500,
+                              child: ChatRoomInfoMediaGrid(
+                                key: ValueKey('${room.id}_media'),
+                                room: room,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : YaruExpansionPanel(
+                        border: Border.all(color: Colors.transparent),
+                        placeDividers: false,
+                        headers: [
+                          l10n.chatDescription,
+                          l10n.users,
+                          'Media',
                         ]
-                      : [
-                          if (room.topic.isNotEmpty)
-                            ChatRoomInfoDrawerTopic(room: room),
-                          ChatRoomUsersList(room: room),
+                            .map(
+                              (e) => Text(
+                                e,
+                                style: theme.textTheme.titleSmall,
+                              ),
+                            )
+                            .toList(),
+                        children: [
+                          ChatRoomInfoDrawerTopic(
+                            key: ValueKey('${room.id}_topic'),
+                            room: room,
+                          ),
+                          SizedBox(
+                            height: context.mediaQuerySize.height - 340,
+                            child: ChatRoomUsersList(
+                              room: room,
+                              sliver: false,
+                            ),
+                          ),
+                          SizedBox(
+                            height: context.mediaQuerySize.height - 340,
+                            child: ChatRoomInfoMediaGrid(
+                              key: ValueKey('${room.id}_media'),
+                              room: room,
+                            ),
+                          ),
                         ],
-                ),
+                      ),
               ),
             if (room.isArchived)
               Container(

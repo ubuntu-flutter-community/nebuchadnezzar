@@ -104,6 +104,14 @@ class ChatModel extends SafeChangeNotifier {
           )
           .map((e) => room?.avatar);
 
+  Stream<bool?> getJoinedRoomEncryptedStream(Room? room) =>
+      getJoinedRoomUpdate(room?.id)
+          .map(
+            (e) => e?.ephemeral
+                ?.firstWhereOrNull((e) => e.type == EventTypes.Encrypted),
+          )
+          .map((e) => room?.encrypted);
+
   Stream<List<User>> getTypingUsersStream(Room room) =>
       getJoinedRoomUpdate(room.id)
           .where(
@@ -380,12 +388,12 @@ class ChatModel extends SafeChangeNotifier {
   }) async {
     _setProcessingJoinOrLeave(true);
 
-    Room? maybeRoom = _rooms.firstWhereOrNull(
-      (e) =>
-          e.getParticipants().length == 2 &&
-          e.getParticipants().any((e) => e.id == myUserId) &&
-          e.getParticipants().any((e) => e.id == userId),
-    );
+    Room? maybeRoom = _rooms.where((e) => !e.isArchived).firstWhereOrNull(
+          (e) =>
+              e.isDirectChat &&
+              e.getParticipants().any((e) => e.id == myUserId) &&
+              e.getParticipants().any((e) => e.id == userId),
+        );
 
     if (maybeRoom == null) {
       String? maybeId;
@@ -480,6 +488,8 @@ class ChatModel extends SafeChangeNotifier {
 
   Future<void> initAfterEncryptionSetup() async {
     await _client.roomsLoading;
+    await _client.userDeviceKeysLoading;
+    await _client.firstSyncReceived;
     await _loadMediaConfig();
   }
 }

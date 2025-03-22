@@ -28,14 +28,14 @@ class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
 
     return IconButton(
       constraints:
-          small ? const BoxConstraints(maxHeight: 18, maxWidth: 18) : null,
+          small ? const BoxConstraints(maxHeight: 20, maxWidth: 20) : null,
       padding: small ? EdgeInsets.zero : null,
       tooltip: context.l10n.toggleFavorite,
       onPressed: () => room.setFavourite(!room.isFavourite),
       icon: Icon(
         YaruIcons.pin,
         color: isFavourite ? context.colorScheme.primary : null,
-        size: small ? 14 : null,
+        size: small ? 15 : null,
       ),
     );
   }

@@ -56,16 +56,20 @@ class SearchModel extends SafeChangeNotifier {
     String? nextBatch;
     _spaceSearch = null;
     notifyListeners();
-    final hierarchy = await _client.getSpaceHierarchy(
-      room.id,
-      suggestedOnly: false,
-      maxDepth: 2,
-      from: nextBatch,
-    );
-    nextBatch = hierarchy.nextBatch;
-    _spaceSearch = hierarchy.rooms
-        .where((c) => room.client.getRoomById(c.roomId) == null)
-        .toList();
+    try {
+      final hierarchy = await _client.getSpaceHierarchy(
+        room.id,
+        suggestedOnly: false,
+        maxDepth: 2,
+        from: nextBatch,
+      );
+      nextBatch = hierarchy.nextBatch;
+      _spaceSearch = hierarchy.rooms
+          .where((c) => room.client.getRoomById(c.roomId) == null)
+          .toList();
+    } on Exception catch (e) {
+      onFail(e.toString());
+    }
 
     notifyListeners();
   }

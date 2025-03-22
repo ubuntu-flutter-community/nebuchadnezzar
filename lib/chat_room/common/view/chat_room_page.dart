@@ -11,14 +11,15 @@ import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
+import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../info_drawer/chat_room_info_drawer.dart';
 import '../../input/draft_model.dart';
 import '../../input/view/chat_input.dart';
-import '../../titlebar/chat_room_title_bar.dart';
-import '../../timeline/timeline_model.dart';
-import '../../info_drawer/chat_room_info_drawer.dart';
 import '../../timeline/chat_room_timeline_list.dart';
+import '../../timeline/timeline_model.dart';
+import '../../titlebar/chat_room_title_bar.dart';
 
 final GlobalKey<ScaffoldState> chatRoomScaffoldKey = GlobalKey();
 
@@ -39,6 +40,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   void initState() {
     super.initState();
+    widget.room.postLoad();
     _timelineFuture = widget.room.getTimeline(
       onNewEvent: () => _roomListKey.currentState?.setState(() {}),
       onChange: (i) => _roomListKey.currentState?.setState(() {}),
@@ -127,17 +129,21 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             body: FutureBuilder<Timeline>(
               key: ValueKey(widget.room.id),
               future: _timelineFuture,
-              builder: (context, snapshot) => snapshot.hasData
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: kMediumPadding),
-                      child: ChatRoomTimelineList(
-                        timeline: snapshot.data!,
-                        listKey: _roomListKey,
-                      ),
-                    )
-                  : const Center(
-                      child: Progress(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: kMediumPadding),
+                    child: ChatRoomTimelineList(
+                      timeline: snapshot.data!,
+                      listKey: _roomListKey,
                     ),
+                  );
+                } else {
+                  return const Center(
+                    child: Progress(),
+                  );
+                }
+              },
             ),
           ),
           if (updating)
@@ -145,7 +151,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               top: 4 * kBigPadding,
               child: RepaintBoundary(
                 child: CircleAvatar(
-                  backgroundColor: colorScheme.surface,
+                  backgroundColor: getMonochromeBg(
+                    theme: context.theme,
+                    factor: 3,
+                    darkFactor: 4,
+                  ),
                   maxRadius: 15,
                   child: SizedBox.square(
                     dimension: 18,
