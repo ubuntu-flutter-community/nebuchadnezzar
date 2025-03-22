@@ -146,7 +146,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               },
             ),
           ),
-          if (updating)
+          if (updating &&
+              chatRoomScaffoldKey.currentState?.isEndDrawerOpen != true)
             Positioned(
               top: 4 * kBigPadding,
               child: RepaintBoundary(
