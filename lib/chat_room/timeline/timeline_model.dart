@@ -25,7 +25,9 @@ class TimelineModel extends SafeChangeNotifier {
   final Map<String, Timeline> _timelines = {};
   Timeline? getTimeline(String roomId) => _timelines[roomId];
   void addTimeline({required Timeline timeline}) {
-    _timelines[timeline.room.id] = timeline;
+    if (_timelines[timeline.room.id] == null) {
+      _timelines[timeline.room.id] = timeline;
+    }
     notifyListeners();
   }
 
@@ -45,6 +47,7 @@ class TimelineModel extends SafeChangeNotifier {
     int historyCount = 50,
     StateFilter? filter,
   }) async {
+    addTimeline(timeline: timeline);
     if (!timeline.room.isArchived) {
       await timeline.setReadMarker();
     }
@@ -64,6 +67,5 @@ class TimelineModel extends SafeChangeNotifier {
     await timeline.requestHistory(filter: filter, historyCount: historyCount);
     await timeline.room.requestParticipants();
     setUpdatingTimeline(roomId: timeline.room.id, value: false);
-    addTimeline(timeline: timeline);
   }
 }

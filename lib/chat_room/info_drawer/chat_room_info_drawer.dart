@@ -227,7 +227,7 @@ class ChatRoomInfoDrawer extends StatelessWidget {
                           SizedBox(
                             height: context.mediaQuerySize.height - 340,
                             child: ChatRoomInfoMediaGrid(
-                              key: ValueKey('${room.id}_media'),
+                              key: ValueKey('${room.id}_media_'),
                               room: room,
                             ),
                           ),

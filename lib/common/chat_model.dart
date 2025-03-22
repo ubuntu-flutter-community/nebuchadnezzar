@@ -142,6 +142,12 @@ class ChatModel extends SafeChangeNotifier {
         (event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
       );
 
+  Stream<Event> getEventStream(Room room) =>
+      _client.onTimelineEvent.stream.where((e) => e.room.id == room.id);
+
+  Stream<Event> getHistoryStream(Room room) =>
+      _client.onHistoryEvent.stream.where((e) => e.room.id == room.id);
+
   void editPowerLevel({
     required Room room,
     required String key,
