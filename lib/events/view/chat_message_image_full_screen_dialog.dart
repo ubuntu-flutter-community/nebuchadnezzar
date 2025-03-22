@@ -112,8 +112,13 @@ class _ChatMessageImageFullScreenDialogState
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  'Scale: ${_controller.scale?.toStringAsFixed(2) ?? '0.5'}',
+                child: StreamBuilder(
+                  stream: _controller.outputStateStream,
+                  builder: (context, child) {
+                    return Text(
+                      'Scale: ${_controller.scale?.toStringAsFixed(2) ?? '0.5'}',
+                    );
+                  },
                 ),
               ),
               IconButton(

@@ -43,7 +43,8 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => di<TimelineModel>().requestHistory(widget.timeline),
+      (_) => di<TimelineModel>()
+          .requestHistory(widget.timeline, historyCount: 200),
     );
   }
 

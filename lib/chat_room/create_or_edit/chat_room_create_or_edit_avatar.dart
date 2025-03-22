@@ -71,44 +71,43 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                   ),
                 ),
         ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: IconButton.filled(
-            style: IconButton.styleFrom(
-              backgroundColor: context.colorScheme.primary,
-              foregroundColor: Colors.white,
-              shape: const CircleBorder(),
-              disabledBackgroundColor: context.colorScheme.surface,
-              disabledForegroundColor: foreGroundColor,
-            ),
-            onPressed: attachingAvatar ||
-                    room != null &&
-                        room?.canChangeStateEvent(EventTypes.RoomAvatar) != true
-                ? null
-                : () => di<DraftModel>().setRoomAvatar(
-                      room: room,
-                      onFail: (error) =>
-                          showSnackBar(context, content: Text(error)),
-                      onWrongFileFormat: () => showSnackBar(
-                        context,
-                        content: Text(l10n.notAnImage),
+        if (room?.canChangeStateEvent(EventTypes.RoomAvatar) == true)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: IconButton.filled(
+              style: IconButton.styleFrom(
+                backgroundColor: context.colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: const CircleBorder(),
+                disabledBackgroundColor: context.colorScheme.surface.scale(
+                  lightness: context.colorScheme.isLight ? -0.1 : 0.5,
+                ),
+              ),
+              onPressed: attachingAvatar
+                  ? null
+                  : () => di<DraftModel>().setRoomAvatar(
+                        room: room,
+                        onFail: (error) =>
+                            showSnackBar(context, content: Text(error)),
+                        onWrongFileFormat: () => showSnackBar(
+                          context,
+                          content: Text(l10n.notAnImage),
+                        ),
                       ),
+              icon: attachingAvatar
+                  ? SizedBox.square(
+                      dimension: 15,
+                      child: Progress(
+                        strokeWidth: 2,
+                        color: foreGroundColor,
+                      ),
+                    )
+                  : const Icon(
+                      YaruIcons.pen,
                     ),
-            icon: attachingAvatar
-                ? SizedBox.square(
-                    dimension: 15,
-                    child: Progress(
-                      strokeWidth: 2,
-                      color: foreGroundColor,
-                    ),
-                  )
-                : Icon(
-                    YaruIcons.pen,
-                    color: contrastColor(context.colorScheme.primary),
-                  ),
+            ),
           ),
-        ),
       ],
     );
   }
