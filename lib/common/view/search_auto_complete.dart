@@ -3,13 +3,13 @@ import 'package:flutter/scheduler.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import 'build_context_x.dart';
-import 'snackbars.dart';
-import 'ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../chat_model.dart';
 import '../search_model.dart';
+import 'build_context_x.dart';
 import 'chat_avatar.dart';
+import 'snackbars.dart';
+import 'ui_constants.dart';
 
 class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
   const ChatUserSearchAutoComplete({
@@ -66,10 +66,7 @@ class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
             textEditingValue.text,
             onFail: () => showSnackBar(
               context,
-              // TODO: localize
-              content: const Text(
-                'User search not available',
-              ),
+              content: Text(context.l10n.oopsSomethingWentWrong),
             ),
           ) ??
           <Profile>[],

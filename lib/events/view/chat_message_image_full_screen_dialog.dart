@@ -52,16 +52,20 @@ class ChatMessageImageFullScreenDialog extends StatelessWidget {
             ),
           ],
         ),
-        content: SizedBox(
-          width: context.mediaQuerySize.width,
-          height: context.mediaQuerySize.height - 150,
-          child: ChatImageFuture(
-            width: context.mediaQuerySize.width,
-            height: context.mediaQuerySize.height - 150,
-            fit: BoxFit.fitWidth,
-            event: event,
-            getThumbnail: false,
-          ),
+        content: Builder(
+          builder: (context) {
+            return SizedBox(
+              width: context.mediaQuerySize.width,
+              height: context.mediaQuerySize.height - 150,
+              child: ChatImageFuture(
+                width: context.mediaQuerySize.width,
+                height: context.mediaQuerySize.height - 150,
+                fit: BoxFit.contain,
+                event: event,
+                getThumbnail: false,
+              ),
+            );
+          },
         ),
       );
 }

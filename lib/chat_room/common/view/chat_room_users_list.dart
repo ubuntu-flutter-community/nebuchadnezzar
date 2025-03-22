@@ -4,24 +4,26 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/view/build_context_x.dart';
-import '../../../common/view/common_widgets.dart';
-import '../../../common/view/snackbars.dart';
-import '../../../l10n/l10n.dart';
 import '../../../common/chat_model.dart';
+import '../../../common/view/build_context_x.dart';
 import '../../../common/view/chat_avatar.dart';
+import '../../../common/view/chat_profile_dialog.dart';
+import '../../../common/view/common_widgets.dart';
+import '../../../common/view/confirm.dart';
+import '../../../common/view/ui_constants.dart';
+import '../../../l10n/l10n.dart';
 
 class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
   const ChatRoomUsersList({
     super.key,
     required this.room,
     this.sliver = true,
-    this.showChatIcon = true,
+    this.showTrailing = true,
   });
 
   final Room room;
   final bool sliver;
-  final bool showChatIcon;
+  final bool showTrailing;
 
   @override
   Widget build(BuildContext context) {
@@ -55,19 +57,50 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
 
     _UserTile itemBuilder(BuildContext context, int index) {
       final user = users.elementAt(index);
+      final l10n = context.l10n;
       return _UserTile(
-        showChatIcon: showChatIcon,
         key: ValueKey('invited${user.id}'),
         user: user,
-        trailing: !showChatIcon && room.canKick
-            ? IconButton(
-                onPressed: () => room.kick(user.id),
-                icon: Icon(
-                  YaruIcons.trash,
-                  color: context.colorScheme.error,
-                ),
+        trailing: showTrailing
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: kSmallPadding,
+                children: [
+                  if (room.canKick && user.id != di<ChatModel>().myUserId)
+                    IconButton(
+                      tooltip: l10n.kickFromChat,
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => ConfirmationDialog(
+                          title: Text(l10n.kickFromChat),
+                          content: Text(user.id),
+                          onConfirm: () => room.kick(user.id),
+                        ),
+                      ),
+                      icon: Icon(
+                        YaruIcons.trash,
+                        color: context.colorScheme.error,
+                      ),
+                    ),
+                  if (room.canBan && user.id != di<ChatModel>().myUserId)
+                    IconButton(
+                      tooltip: context.l10n.banFromChat,
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => ConfirmationDialog(
+                          title: Text(l10n.banFromChat),
+                          content: Text(user.id),
+                          onConfirm: () => room.ban(user.id),
+                        ),
+                      ),
+                      icon: Icon(
+                        YaruIcons.private_mask,
+                        color: context.colorScheme.error,
+                      ),
+                    ),
+                ],
               )
-            : null,
+            : const SizedBox.shrink(),
       );
     }
 
@@ -90,48 +123,32 @@ class _UserTile extends StatelessWidget {
     super.key,
     required this.user,
     this.trailing,
-    required this.showChatIcon,
   });
 
   final User user;
   final Widget? trailing;
-  final bool showChatIcon;
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final chatModel = di<ChatModel>();
-    return ListTile(
-      key: key,
-      leading: Opacity(
-        opacity: user.membership == Membership.invite ? 0.5 : 1,
-        child: ChatAvatar(
-          avatarUri: user.avatarUrl,
-        ),
-      ),
-      title: Text(user.displayName ?? user.id),
-      subtitle: user.membership == Membership.invite
-          ? Text(l10n.invited)
-          : Text(
-              user.powerLevel == 0
-                  ? context.l10n.participant
-                  : context.l10n.admin,
+  Widget build(BuildContext context) => ListTile(
+        key: key,
+        leading: Opacity(
+          opacity: user.membership == Membership.invite ? 0.5 : 1,
+          child: ChatAvatar(
+            avatarUri: user.avatarUrl,
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => ChatProfileDialog(userId: user.id),
             ),
-      trailing: trailing ??
-          (user.id == chatModel.myUserId || !showChatIcon
-              ? null
-              : IconButton(
-                  onPressed: () => chatModel.joinDirectChat(
-                    user.id,
-                    onFail: (error) => showSnackBar(
-                      context,
-                      content: Text(error.toString()),
-                    ),
-                  ),
-                  icon: const Icon(
-                    YaruIcons.chat_bubble,
-                  ),
-                )),
-    );
-  }
+          ),
+        ),
+        title: Text(user.displayName ?? user.id),
+        subtitle: user.membership == Membership.invite
+            ? Text(context.l10n.invited)
+            : Text(
+                user.powerLevel == 0
+                    ? context.l10n.participant
+                    : context.l10n.admin,
+              ),
+        trailing: trailing,
+      );
 }

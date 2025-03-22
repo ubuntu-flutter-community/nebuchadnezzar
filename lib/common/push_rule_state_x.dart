@@ -7,8 +7,8 @@ import '../l10n/l10n.dart';
 extension PushRuleStateX on PushRuleState {
   String localize(AppLocalizations l10n) => switch (this) {
         PushRuleState.dontNotify => l10n.muteChat,
-        PushRuleState.notify => l10n.unmuteChat,
-        PushRuleState.mentionsOnly => l10n.mention,
+        PushRuleState.notify => '${l10n.notifyMeFor}: ${l10n.all}',
+        PushRuleState.mentionsOnly => '${l10n.notifyMeFor}: ${l10n.mention}',
       };
 
   Icon getIcon(ColorScheme colorScheme) => switch (this) {

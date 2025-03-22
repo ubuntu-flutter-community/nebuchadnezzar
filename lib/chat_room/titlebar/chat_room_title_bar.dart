@@ -31,7 +31,7 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
           spacing: kSmallPadding,
           children: [
             ChatRoomEncryptionStatusButton(
-              key: ValueKey('${room.id}_encryption'),
+              key: ValueKey('${room.id}_${room.encrypted}'),
               room: room,
             ),
             Flexible(
@@ -52,7 +52,7 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             if (!room.isArchived)
               ChatRoomPinButton(
-                key: ValueKey('${room.id}_${room.roomAccountData.length}'),
+                key: ValueKey('${room.id}_${room.isFavourite}'),
                 room: room,
               ),
             if (!room.isArchived)

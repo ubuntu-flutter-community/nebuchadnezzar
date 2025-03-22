@@ -31,6 +31,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
           initialValue:
               room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
         ).data ??
+        room.getState(EventTypes.RoomPowerLevels)?.content ??
         {};
 
     final powerLevels = Map<String, dynamic>.from(powerLevelsContent)
@@ -55,19 +56,17 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
     return YaruExpansionPanel(
       shrinkWrap: true,
       headers: [
-        Text(
-          l10n.chatPermissions,
-          style: theme.textTheme.titleLarge,
-        ),
-        Text(
-          l10n.notifications,
-          style: theme.textTheme.titleLarge,
-        ),
-        Text(
-          l10n.configureChat,
-          style: theme.textTheme.titleLarge,
-        ),
-      ],
+        l10n.chatPermissions,
+        l10n.notifications,
+        l10n.configureChat,
+      ]
+          .map(
+            (e) => Text(
+              e,
+              style: theme.textTheme.titleLarge,
+            ),
+          )
+          .toList(),
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: kMediumPadding),

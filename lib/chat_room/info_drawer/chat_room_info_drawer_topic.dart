@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/chat_model.dart';
+import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
-import '../timeline/timeline_model.dart';
+import '../../events/view/chat_html_message_link_handler.dart';
 
 class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
   const ChatRoomInfoDrawerTopic({
@@ -17,9 +19,6 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final updatingTimeline =
-        watchPropertyValue((TimelineModel m) => m.getUpdatingTimeline(room.id));
-
     final topic = watchStream(
           (ChatModel m) =>
               m.getJoinedRoomUpdate(room.id).map((_) => room.topic),
@@ -27,30 +26,26 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
         ).data ??
         room.topic;
 
-    return SliverToBoxAdapter(
-      child: Center(
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: updatingTimeline ? 0 : 1,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              bottom: kMediumPadding,
+    return Padding(
+      padding: const EdgeInsets.only(
+        bottom: kMediumPadding,
+      ),
+      child: ListTile(
+        dense: true,
+        title: Html(
+          onLinkTap: (url, attributes, element) =>
+              chatHtmlMessageLinkHandler(url, attributes, element, context),
+          data: topic,
+          style: {
+            'a': Style.fromTextStyle(context.textTheme.bodyMedium!)
+                .copyWith(color: context.colorScheme.link),
+            'body': Style(
+              margin: Margins.zero,
+              padding: HtmlPaddings.zero,
+              textAlign: TextAlign.center,
+              fontSize: FontSize(12),
             ),
-            child: ListTile(
-              dense: true,
-              title: Html(
-                data: topic,
-                style: {
-                  'body': Style(
-                    margin: Margins.zero,
-                    padding: HtmlPaddings.zero,
-                    textAlign: TextAlign.center,
-                    fontSize: FontSize(12),
-                  ),
-                },
-              ),
-            ),
-          ),
+          },
         ),
       ),
     );

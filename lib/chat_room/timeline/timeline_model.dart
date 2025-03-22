@@ -22,8 +22,15 @@ class TimelineModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
+  final Map<String, Timeline> _timelines = {};
+  Timeline? getTimeline(String roomId) => _timelines[roomId];
+  void addTimeline({required Timeline timeline}) {
+    _timelines[timeline.room.id] = timeline;
+    notifyListeners();
+  }
+
   final Map<String, bool> _updatingTimeline = {};
-  bool getUpdatingTimeline(String roomId) => _updatingTimeline[roomId] == true;
+  bool getUpdatingTimeline(String? roomId) => _updatingTimeline[roomId] == true;
   void setUpdatingTimeline({
     required String roomId,
     required bool value,
@@ -37,24 +44,26 @@ class TimelineModel extends SafeChangeNotifier {
     Timeline timeline, {
     int historyCount = 50,
     StateFilter? filter,
-    bool notify = true,
   }) async {
     if (!timeline.room.isArchived) {
       await timeline.setReadMarker();
     }
 
-    if (timeline.isRequestingHistory || !timeline.canRequestHistory) {
+    if (!timeline.canRequestHistory) {
+      setUpdatingTimeline(roomId: timeline.room.id, value: false);
       return;
     }
 
-    if (notify) {
+    if (timeline.isRequestingHistory) {
       setUpdatingTimeline(roomId: timeline.room.id, value: true);
+      return;
     }
+
+    setUpdatingTimeline(roomId: timeline.room.id, value: true);
 
     await timeline.requestHistory(filter: filter, historyCount: historyCount);
     await timeline.room.requestParticipants();
-    if (notify) {
-      setUpdatingTimeline(roomId: timeline.room.id, value: false);
-    }
+    setUpdatingTimeline(roomId: timeline.room.id, value: false);
+    addTimeline(timeline: timeline);
   }
 }
