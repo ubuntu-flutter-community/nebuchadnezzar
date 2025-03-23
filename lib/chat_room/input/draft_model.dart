@@ -348,10 +348,19 @@ class DraftModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
+  String? _roomAvatarError;
+  String? get roomAvatarError => _roomAvatarError;
+  void setRoomAvatarError(String? value) {
+    _roomAvatarError = value;
+    notifyListeners();
+  }
+
   Future<void> setRoomAvatar({
     required Room? room,
     required Function(String error) onFail,
+    required String wrongFormatString,
   }) async {
+    setRoomAvatarError(null);
     setAttachingAvatar(true);
 
     try {
@@ -379,8 +388,14 @@ class DraftModel extends SafeChangeNotifier {
         return;
       }
 
-      final mime = xFile.mimeType;
+      final mime = lookupMimeType(xFile.path);
       final bytes = await xFile.readAsBytes();
+
+      if (mime?.startsWith('image') != true) {
+        setRoomAvatarError(wrongFormatString);
+        setAttachingAvatar(false);
+        return;
+      }
 
       _avatarDraftFile = await MatrixImageFile.shrink(
         bytes: bytes,
