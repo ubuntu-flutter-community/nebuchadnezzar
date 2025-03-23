@@ -33,6 +33,7 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
     final loadingArchive =
         watchPropertyValue((ChatModel m) => m.loadingArchive);
     final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
+    final chatModel = di<ChatModel>();
 
     final suffix = IconButton(
       padding: EdgeInsets.zero,
@@ -89,16 +90,31 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
             ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kMediumPadding),
-            child: YaruMasterTile(
-              leading: const ChatMyUserAvatar(
-                dimension: 25,
-                showEditButton: false,
-              ),
-              title: Text(l10n.settings),
-              onTap: () => showDialog(
-                context: context,
-                builder: (context) => const SettingsDialog(),
-              ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                YaruMasterTile(
+                  leading: const ChatMyUserAvatar(
+                    dimension: 25,
+                    showEditButton: false,
+                  ),
+                  title: Text(l10n.settings),
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (context) => const SettingsDialog(),
+                  ),
+                ),
+                Positioned(
+                  right: kMediumPadding,
+                  child: IconButton(
+                    tooltip: context.l10n.archive,
+                    selectedIcon: const Icon(YaruIcons.trash_filled),
+                    isSelected: archiveActive,
+                    onPressed: chatModel.toggleArchive,
+                    icon: const Icon(YaruIcons.trash),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
