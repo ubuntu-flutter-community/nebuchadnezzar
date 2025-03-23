@@ -90,6 +90,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
+    final l10n = context.l10n;
 
     watchStream((ChatModel m) => m.getEventStream(room), initialValue: null);
     watchStream((ChatModel m) => m.getHistoryStream(room), initialValue: null);
@@ -155,7 +156,11 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
             _ => Center(
                 child: IconButton.outlined(
                   tooltip: context.l10n.downloadFile,
-                  onPressed: () => di<ChatDownloadModel>().safeFile(event),
+                  onPressed: () => di<ChatDownloadModel>().safeFile(
+                    event: event,
+                    dialogTitle: l10n.saveFile,
+                    confirmButtonText: l10n.saveFile,
+                  ),
                   icon: switch (messageType) {
                     MessageTypes.Audio => const Icon(YaruIcons.music_note),
                     MessageTypes.File => const Icon(YaruIcons.document),

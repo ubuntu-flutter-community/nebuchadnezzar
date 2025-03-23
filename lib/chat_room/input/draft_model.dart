@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
+import 'package:os_mime_type/os_mime_type.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:yaru/yaru.dart';
@@ -193,7 +194,10 @@ class DraftModel extends SafeChangeNotifier {
             .map(
               (f) => XFile(
                 f.path!,
-                mimeType: lookupMimeType(f.path!),
+                mimeType: (f.extension == null
+                        ? null
+                        : mimeFromExtension(extension: f.extension!)) ??
+                    lookupMimeType(f.path!),
               ),
             )
             .toList();
@@ -304,14 +308,19 @@ class DraftModel extends SafeChangeNotifier {
   Future<void> setRoomAvatar({
     required Room? room,
     required Function(String error) onFail,
-    required Function() onWrongFileFormat,
   }) async {
     setAttachingAvatar(true);
 
     try {
       XFile? xFile;
       if (Platform.isLinux) {
-        xFile = await openFile();
+        xFile = await openFile(
+          acceptedTypeGroups: [
+            const XTypeGroup(
+              extensions: <String>['jpg', 'png', 'jpeg,'],
+            ),
+          ],
+        );
       } else {
         final result = await FilePicker.platform.pickFiles(
           allowMultiple: false,
@@ -321,7 +330,10 @@ class DraftModel extends SafeChangeNotifier {
             .map(
               (f) => XFile(
                 f.path!,
-                mimeType: lookupMimeType(f.path!),
+                mimeType: (f.extension == null
+                        ? null
+                        : mimeFromExtension(extension: f.extension!)) ??
+                    lookupMimeType(f.path!),
               ),
             )
             .toList()
@@ -336,17 +348,13 @@ class DraftModel extends SafeChangeNotifier {
       final mime = xFile.mimeType;
       final bytes = await xFile.readAsBytes();
 
-      if (mime?.startsWith('image') == true && mime?.endsWith('svg') != true) {
-        _avatarDraftFile = await MatrixImageFile.shrink(
-          bytes: bytes,
-          name: xFile.name,
-          mimeType: mime,
-          maxDimension: 1000,
-          nativeImplementations: _client.nativeImplementations,
-        );
-      } else {
-        onWrongFileFormat();
-      }
+      _avatarDraftFile = await MatrixImageFile.shrink(
+        bytes: bytes,
+        name: xFile.name,
+        mimeType: mime,
+        maxDimension: 1000,
+        nativeImplementations: _client.nativeImplementations,
+      );
 
       if (room != null) {
         await room.setAvatar(_avatarDraftFile);

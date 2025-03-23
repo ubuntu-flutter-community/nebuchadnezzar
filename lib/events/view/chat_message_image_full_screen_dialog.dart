@@ -59,120 +59,126 @@ class _ChatMessageImageFullScreenDialogState
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-        scrollable: true,
-        titlePadding: EdgeInsets.zero,
-        title: YaruDialogTitleBar(
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: kSmallPadding,
-            children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 100),
-                child: Text(
-                  '${widget.event.senderFromMemoryOrFallback.calcDisplayname()}, ',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text(
-                widget.event.originServerTs
-                    .toLocal()
-                    .formatAndLocalize(context.l10n),
-                textAlign: TextAlign.start,
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return AlertDialog(
+      scrollable: true,
+      titlePadding: EdgeInsets.zero,
+      title: YaruDialogTitleBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: kSmallPadding,
+          children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 100),
+              child: Text(
+                '${widget.event.senderFromMemoryOrFallback.calcDisplayname()}, ',
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const AnimatedSwitcher(
-                duration: Duration(milliseconds: 300),
-              ),
-            ],
-          ),
-          border: BorderSide.none,
-          backgroundColor: Colors.transparent,
-          actions: [
-            IconButton(
-              tooltip: context.l10n.downloadFile,
-              onPressed: () => di<ChatDownloadModel>().safeFile(widget.event),
-              icon: const Icon(YaruIcons.download),
+            ),
+            Text(
+              widget.event.originServerTs
+                  .toLocal()
+                  .formatAndLocalize(context.l10n),
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
             ),
           ],
         ),
-        contentPadding: EdgeInsets.zero,
-        actionsPadding: const EdgeInsets.symmetric(
-          vertical: kMediumPadding,
-          horizontal: kSmallPadding,
-        ),
+        border: BorderSide.none,
+        backgroundColor: Colors.transparent,
         actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                onPressed: () => _zoom(false),
-                icon: const Icon(YaruIcons.minus),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: StreamBuilder(
-                  stream: _controller.outputStateStream,
-                  builder: (context, child) {
-                    return Text(
-                      'Scale: ${_controller.scale?.toStringAsFixed(2) ?? '0.5'}',
-                    );
-                  },
-                ),
-              ),
-              IconButton(
-                onPressed: () => _zoom(true),
-                icon: const Icon(YaruIcons.plus),
-              ),
-            ],
+          IconButton(
+            tooltip: l10n.downloadFile,
+            onPressed: () => di<ChatDownloadModel>().safeFile(
+              event: widget.event,
+              dialogTitle: l10n.saveFile,
+              confirmButtonText: l10n.saveFile,
+            ),
+            icon: const Icon(YaruIcons.download),
           ),
         ],
-        content: Builder(
-          builder: (context) {
-            return Listener(
-              onPointerSignal: (event) {
-                if (_controller.scale == null || event is! PointerScrollEvent) {
-                  return;
-                }
-
-                _zoom(event.scrollDelta.dy < 0);
-              },
-              child: SizedBox(
-                width: context.mediaQuerySize.width,
-                height: context.mediaQuerySize.height - 150,
-                child: Column(
-                  spacing: kBigPadding,
-                  children: [
-                    Expanded(
-                      child: FutureBuilder(
-                        future: _future,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return ClipRRect(
-                              child: PhotoView(
-                                imageProvider: MemoryImage(snapshot.data!),
-                                minScale:
-                                    PhotoViewComputedScale.contained * 0.8,
-                                maxScale: PhotoViewComputedScale.covered * 10,
-                                initialScale:
-                                    PhotoViewComputedScale.contained * 0.5,
-                                controller: _controller,
-                              ),
-                            );
-                          } else {
-                            return const Center(
-                              child: Progress(),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+      ),
+      contentPadding: EdgeInsets.zero,
+      actionsPadding: const EdgeInsets.symmetric(
+        vertical: kMediumPadding,
+        horizontal: kSmallPadding,
+      ),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              onPressed: () => _zoom(false),
+              icon: const Icon(YaruIcons.minus),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: StreamBuilder(
+                stream: _controller.outputStateStream,
+                builder: (context, child) {
+                  return Text(
+                    'Scale: ${_controller.scale?.toStringAsFixed(2) ?? '0.5'}',
+                  );
+                },
               ),
-            );
-          },
+            ),
+            IconButton(
+              onPressed: () => _zoom(true),
+              icon: const Icon(YaruIcons.plus),
+            ),
+          ],
         ),
-      );
+      ],
+      content: Builder(
+        builder: (context) {
+          return Listener(
+            onPointerSignal: (event) {
+              if (_controller.scale == null || event is! PointerScrollEvent) {
+                return;
+              }
+
+              _zoom(event.scrollDelta.dy < 0);
+            },
+            child: SizedBox(
+              width: context.mediaQuerySize.width,
+              height: context.mediaQuerySize.height - 150,
+              child: Column(
+                spacing: kBigPadding,
+                children: [
+                  Expanded(
+                    child: FutureBuilder(
+                      future: _future,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ClipRRect(
+                            child: PhotoView(
+                              imageProvider: MemoryImage(snapshot.data!),
+                              minScale: PhotoViewComputedScale.contained * 0.8,
+                              maxScale: PhotoViewComputedScale.covered * 10,
+                              initialScale:
+                                  PhotoViewComputedScale.contained * 0.5,
+                              controller: _controller,
+                            ),
+                          );
+                        } else {
+                          return const Center(
+                            child: Progress(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
