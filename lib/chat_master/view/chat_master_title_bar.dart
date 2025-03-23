@@ -17,7 +17,6 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final chatModel = di<ChatModel>();
     final searchModel = di<SearchModel>();
     final searchActive = watchPropertyValue((SearchModel m) => m.searchActive);
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
@@ -32,23 +31,17 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
         spaceEnd: true,
         widthGap: kSmallPadding,
         skip: 0,
-        children: [
-          if (!archiveActive) const ChatNewChatPopupMenuButton(),
-          if (!archiveActive)
-            IconButton(
-              tooltip: context.l10n.search,
-              isSelected: searchActive,
-              onPressed: searchModel.toggleSearch,
-              icon: const Icon(YaruIcons.search),
-            ),
-          IconButton(
-            tooltip: context.l10n.archive,
-            selectedIcon: const Icon(YaruIcons.trash_filled),
-            isSelected: archiveActive,
-            onPressed: chatModel.toggleArchive,
-            icon: const Icon(YaruIcons.trash),
-          ),
-        ],
+        children: !archiveActive
+            ? [
+                const ChatNewChatPopupMenuButton(),
+                IconButton(
+                  tooltip: context.l10n.search,
+                  isSelected: searchActive,
+                  onPressed: searchModel.toggleSearch,
+                  icon: const Icon(YaruIcons.search),
+                ),
+              ]
+            : [],
       ),
     );
   }
