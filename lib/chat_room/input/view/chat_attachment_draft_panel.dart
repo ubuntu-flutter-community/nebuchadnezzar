@@ -49,6 +49,9 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
                 return AnimatedContainer(
                   duration: const Duration(seconds: 1),
                   child: ChatPendingAttachment(
+                    roomId: roomId,
+                    onToggleCompress: () => di<DraftModel>()
+                        .toggleCompress(roomId: roomId, file: file),
                     onTap: sending
                         ? null
                         : () => di<DraftModel>().removeFileFromDraft(

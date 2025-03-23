@@ -1109,14 +1109,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.4"
-  os_mime_type:
-    dependency: "direct main"
-    description:
-      name: os_mime_type
-      sha256: "9adca55076573d849b0774ea54ca606f4474c7720baa4cbb2f92485a09ac8784"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2"
   package_config:
     dependency: transitive
     description:

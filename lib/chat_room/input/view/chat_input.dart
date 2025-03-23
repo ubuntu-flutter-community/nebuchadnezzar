@@ -6,11 +6,11 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../../common/chat_model.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../../common/chat_model.dart';
 import '../../common/view/chat_typing_indicator.dart';
 import '../draft_model.dart';
 import 'chat_attachment_draft_panel.dart';
@@ -80,10 +80,13 @@ class _ChatInputState extends State<ChatInput> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final draftModel = di<DraftModel>();
     final draftFiles =
         watchPropertyValue((DraftModel m) => m.getFilesDraft(widget.room.id));
     final attaching = watchPropertyValue((DraftModel m) => m.attaching);
+    final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
+    final sending = watchPropertyValue((DraftModel m) => m.sending);
 
     final replyEvent = watchPropertyValue((DraftModel m) => m.replyEvent);
     final editEvent =
@@ -145,7 +148,7 @@ class _ChatInputState extends State<ChatInput> {
                       maxLines: 3,
                     ),
                     title: Text(
-                      '${context.l10n.reply} (${(editEvent ?? replyEvent)!.senderFromMemoryOrFallback.displayName}):',
+                      '${l10n.reply} (${(editEvent ?? replyEvent)!.senderFromMemoryOrFallback.displayName}):',
                     ),
                   ),
                 ),
@@ -157,8 +160,7 @@ class _ChatInputState extends State<ChatInput> {
                   maxLines: 10,
                   focusNode: _sendNode,
                   controller: _sendController,
-                  enabled:
-                      watchPropertyValue((ChatModel m) => !m.archiveActive),
+                  enabled: !archiveActive && !sending,
                   autofocus: true,
                   onChanged: (v) {
                     draftModel.setDraft(
@@ -169,7 +171,7 @@ class _ChatInputState extends State<ChatInput> {
                     widget.room.setTyping(v.isNotEmpty, timeout: 500);
                   },
                   decoration: InputDecoration(
-                    hintText: context.l10n.sendAMessage,
+                    hintText: l10n.sendAMessage,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(kSmallPadding),
                       child: Row(
@@ -177,7 +179,7 @@ class _ChatInputState extends State<ChatInput> {
                         children: [
                           IconButton(
                             padding: EdgeInsets.zero,
-                            onPressed: attaching
+                            onPressed: attaching || sending || archiveActive
                                 ? null
                                 : () => draftModel.addAttachment(
                                       widget.room.id,
@@ -198,16 +200,19 @@ class _ChatInputState extends State<ChatInput> {
                                   ),
                           ),
                           ChatInputEmojiMenu(
-                            onEmojiSelected: (cat, emo) {
-                              _sendController.text =
-                                  _sendController.text + emo.emoji;
-                              draftModel.setDraft(
-                                roomId: widget.room.id,
-                                draft: _sendController.text,
-                                notify: true,
-                              );
-                              _sendNode.requestFocus();
-                            },
+                            onEmojiSelected:
+                                attaching || sending || archiveActive
+                                    ? null
+                                    : (cat, emo) {
+                                        _sendController.text =
+                                            _sendController.text + emo.emoji;
+                                        draftModel.setDraft(
+                                          roomId: widget.room.id,
+                                          draft: _sendController.text,
+                                          notify: true,
+                                        );
+                                        _sendNode.requestFocus();
+                                      },
                           ),
                         ],
                       ),
@@ -216,9 +221,12 @@ class _ChatInputState extends State<ChatInput> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
+                          tooltip: l10n.send,
                           padding: EdgeInsets.zero,
                           icon: transform,
-                          onPressed: send,
+                          onPressed: attaching || sending || archiveActive
+                              ? null
+                              : send,
                         ),
                       ],
                     ),
