@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../../common/matrix_file_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../common/matrix_file_x.dart';
+import '../draft_model.dart';
 
 class ChatPendingAttachment extends StatelessWidget {
   const ChatPendingAttachment({
     super.key,
     this.onTap,
     required this.file,
+    this.onToggleCompress,
+    required this.roomId,
   });
 
   final VoidCallback? onTap;
+  final VoidCallback? onToggleCompress;
   final MatrixFile file;
+  final String roomId;
 
   static const dimension = 220.0;
 
@@ -55,8 +61,45 @@ class ChatPendingAttachment extends StatelessWidget {
                 ),
               ),
             ),
+          Positioned(
+            bottom: kSmallPadding,
+            left: kSmallPadding,
+            child: ChatPendingAttachmentCompressButton(
+              onToggleCompress: onToggleCompress,
+              file: file,
+              roomId: roomId,
+            ),
+          ),
         ],
       ),
+    );
+  }
+}
+
+class ChatPendingAttachmentCompressButton extends StatelessWidget
+    with WatchItMixin {
+  const ChatPendingAttachmentCompressButton({
+    super.key,
+    required this.onToggleCompress,
+    required this.file,
+    required this.roomId,
+  });
+
+  final VoidCallback? onToggleCompress;
+  final MatrixFile file;
+  final String roomId;
+
+  @override
+  Widget build(BuildContext context) {
+    final compress = watchPropertyValue(
+      (DraftModel m) => m.getCompressFile(roomId: roomId, file: file),
+    );
+    return ElevatedButton.icon(
+      onPressed: onToggleCompress,
+      label: const Text('Compress'),
+      icon: compress
+          ? const Icon(YaruIcons.checkbox_checked_filled)
+          : const Icon(YaruIcons.checkbox),
     );
   }
 }

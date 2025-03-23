@@ -4,13 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
-import 'package:os_mime_type/os_mime_type.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/logging.dart';
 import '../../common/local_image_service.dart';
+import '../../common/logging.dart';
 
 class DraftModel extends SafeChangeNotifier {
   DraftModel({
@@ -44,6 +43,9 @@ class DraftModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
+  int get maxUploadSize => _mediaConfig?.mUploadSize ?? 100 * 1000 * 1000;
+  MediaConfig? _mediaConfig;
+
   Future<void> send({
     required Room room,
     required Function(String error) onFail,
@@ -63,15 +65,28 @@ class DraftModel extends SafeChangeNotifier {
         removeFileFromDraft(roomId: room.id, file: matrixFile);
         final xFile = _matrixFilesToXFile[matrixFile];
         String? eventId;
+        MatrixFile? compressedFile;
         try {
+          if (getCompressFile(roomId: room.id, file: matrixFile)) {
+            _mediaConfig ??= await _client.getConfig();
+            compressedFile = await MatrixImageFile.shrink(
+              bytes: matrixFile.bytes,
+              name: matrixFile.name,
+              mimeType: matrixFile.mimeType,
+              maxDimension: 2500,
+              nativeImplementations: _client.nativeImplementations,
+            );
+          }
+
           eventId = await room.sendFileEvent(
-            matrixFile,
+            compressedFile ?? matrixFile,
             thumbnail: matrixFile.mimeType.startsWith('video') && xFile != null
                 ? await getVideoThumbnail(xFile)
                 : null,
           );
           if (eventId != null) {
             _matrixFilesToXFile.remove(matrixFile);
+            removeCompress(roomId: room.id, file: matrixFile);
           }
         } on Exception catch (e, s) {
           onFail(e.toString());
@@ -164,6 +179,39 @@ class DraftModel extends SafeChangeNotifier {
     }
   }
 
+  final Map<String, Set<MatrixFile>> _toCompressFiles = {};
+  bool getCompressFile({required String roomId, required MatrixFile file}) {
+    final set = _toCompressFiles[roomId];
+    if (set == null) {
+      return false;
+    }
+    return set.contains(file);
+  }
+
+  void toggleCompress({required String roomId, required MatrixFile file}) {
+    final files = _toCompressFiles[roomId] ?? {};
+    if (files.contains(file)) {
+      files.remove(file);
+    } else {
+      files.add(file);
+    }
+    _toCompressFiles.update(
+      roomId,
+      (value) => files,
+      ifAbsent: () => files,
+    );
+    notifyListeners();
+  }
+
+  void removeCompress({required String roomId, required MatrixFile file}) {
+    final files = _toCompressFiles[roomId] ?? {};
+    if (files.contains(file)) {
+      files.remove(file);
+    }
+
+    notifyListeners();
+  }
+
   bool _attaching = false;
   bool get attaching => _attaching;
   void setAttaching(bool value) {
@@ -194,10 +242,7 @@ class DraftModel extends SafeChangeNotifier {
             .map(
               (f) => XFile(
                 f.path!,
-                mimeType: (f.extension == null
-                        ? null
-                        : mimeFromExtension(extension: f.extension!)) ??
-                    lookupMimeType(f.path!),
+                mimeType: lookupMimeType(f.path!),
               ),
             )
             .toList();
@@ -215,12 +260,10 @@ class DraftModel extends SafeChangeNotifier {
       final bytes = await xFile.readAsBytes();
       MatrixFile matrixFile;
       if (mime?.startsWith('image') == true) {
-        matrixFile = await MatrixImageFile.shrink(
+        matrixFile = MatrixImageFile(
           bytes: bytes,
           name: xFile.name,
           mimeType: mime,
-          maxDimension: 2500,
-          nativeImplementations: _client.nativeImplementations,
         );
       } else if (mime?.startsWith('video') == true) {
         matrixFile =
@@ -330,10 +373,7 @@ class DraftModel extends SafeChangeNotifier {
             .map(
               (f) => XFile(
                 f.path!,
-                mimeType: (f.extension == null
-                        ? null
-                        : mimeFromExtension(extension: f.extension!)) ??
-                    lookupMimeType(f.path!),
+                mimeType: lookupMimeType(f.path!),
               ),
             )
             .toList()

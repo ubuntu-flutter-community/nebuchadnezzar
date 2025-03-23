@@ -34,7 +34,7 @@ class ChatInputEmojiMenu extends StatefulWidget {
     required this.onEmojiSelected,
   });
 
-  final void Function(Category?, Emoji) onEmojiSelected;
+  final void Function(Category?, Emoji)? onEmojiSelected;
 
   @override
   State<ChatInputEmojiMenu> createState() => _ChatInputEmojiMenuState();
@@ -57,20 +57,22 @@ class _ChatInputEmojiMenuState extends State<ChatInputEmojiMenu> {
       menuChildren: [
         ChatEmojiPicker(
           onEmojiSelected: (p0, p1) {
-            widget.onEmojiSelected(p0, p1);
+            widget.onEmojiSelected?.call(p0, p1);
             _controller?.close();
           },
         ),
       ],
       child: IconButton(
-        onPressed: () {
-          if (_controller?.isOpen == true) {
-            _controller?.close();
-          } else {
-            _controller?.open();
-          }
-          setState(() {});
-        },
+        onPressed: widget.onEmojiSelected == null
+            ? null
+            : () {
+                if (_controller?.isOpen == true) {
+                  _controller?.close();
+                } else {
+                  _controller?.open();
+                }
+                setState(() {});
+              },
         icon: const Icon(YaruIcons.emote_smile),
         selectedIcon: const Icon(YaruIcons.emote_smile_big_filled),
       ),

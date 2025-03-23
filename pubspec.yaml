@@ -48,7 +48,6 @@ dependencies:
   matrix: ^0.38.0
   mesh: ^0.4.2
   mime: ^2.0.0
-  os_mime_type: ^0.0.2
   path: ^1.9.0
   path_provider: ^2.1.4
   phoenix_theme:
