@@ -357,13 +357,7 @@ class DraftModel extends SafeChangeNotifier {
     try {
       XFile? xFile;
       if (Platform.isLinux) {
-        xFile = await openFile(
-          acceptedTypeGroups: [
-            const XTypeGroup(
-              extensions: <String>['jpg', 'png', 'jpeg,'],
-            ),
-          ],
-        );
+        xFile = await openFile();
       } else {
         final result = await FilePicker.platform.pickFiles(
           allowMultiple: false,

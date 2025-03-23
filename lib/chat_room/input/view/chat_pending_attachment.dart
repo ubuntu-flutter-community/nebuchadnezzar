@@ -61,15 +61,16 @@ class ChatPendingAttachment extends StatelessWidget {
                 ),
               ),
             ),
-          Positioned(
-            bottom: kSmallPadding,
-            left: kSmallPadding,
-            child: ChatPendingAttachmentCompressButton(
-              onToggleCompress: onToggleCompress,
-              file: file,
-              roomId: roomId,
+          if (file is MatrixImageFile)
+            Positioned(
+              bottom: kSmallPadding,
+              left: kSmallPadding,
+              child: ChatPendingAttachmentCompressButton(
+                onToggleCompress: onToggleCompress,
+                file: file,
+                roomId: roomId,
+              ),
             ),
-          ),
         ],
       ),
     );
