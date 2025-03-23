@@ -20,6 +20,7 @@ class ChatMessageMediaAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Material(
       borderRadius: BorderRadius.circular(38 / 2),
       color: Colors.transparent,
@@ -41,7 +42,11 @@ class ChatMessageMediaAvatar extends StatelessWidget {
                       MessageTypes.File ||
                       MessageTypes.Audio ||
                       MessageTypes.Video =>
-                        () => di<ChatDownloadModel>().safeFile(event),
+                        () => di<ChatDownloadModel>().safeFile(
+                              event: event,
+                              dialogTitle: l10n.saveFile,
+                              confirmButtonText: l10n.saveFile,
+                            ),
                       _ => () {}
                     },
                   ),

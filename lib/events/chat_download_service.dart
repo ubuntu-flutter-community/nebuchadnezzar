@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yaru/yaru.dart';
@@ -27,7 +28,11 @@ class ChatDownloadService {
   Future<void> init() async {}
 
   // TODO: use dio to download then decrypt with client, to show the download progress
-  Future<void> safeFile(Event event) async {
+  Future<void> safeFile({
+    required Event event,
+    required String confirmButtonText,
+    required String dialogTitle,
+  }) async {
     if (event.attachmentMxcUrl == null) {
       return;
     }
@@ -40,7 +45,14 @@ class ChatDownloadService {
         bytes: file.bytes,
       );
     } else {
-      final directoryPath = await FilePicker.platform.getDirectoryPath();
+      String? directoryPath;
+      if (Platform.isLinux) {
+        directoryPath =
+            await getDirectoryPath(confirmButtonText: confirmButtonText);
+      } else {
+        directoryPath = await FilePicker.platform
+            .getDirectoryPath(dialogTitle: dialogTitle);
+      }
       if (directoryPath != null) {
         file = await event.downloadAndDecryptAttachment();
         path = '$directoryPath/${file.name}';

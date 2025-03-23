@@ -16,7 +16,16 @@ class ChatDownloadModel extends SafeChangeNotifier {
   StreamSubscription<bool>? _propertiesChangedSub;
 
   String? isEventDownloaded(Event event) => _service.isEventDownloaded(event);
-  Future<void> safeFile(Event event) async => _service.safeFile(event);
+  Future<void> safeFile({
+    required Event event,
+    required String confirmButtonText,
+    required String dialogTitle,
+  }) async =>
+      _service.safeFile(
+        event: event,
+        confirmButtonText: confirmButtonText,
+        dialogTitle: dialogTitle,
+      );
 
   @override
   Future<void> dispose() async {

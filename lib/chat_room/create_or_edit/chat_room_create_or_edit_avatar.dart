@@ -5,14 +5,13 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/chat_avatar.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
-import '../../common/view/chat_avatar.dart';
 import '../input/draft_model.dart';
 
 class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
@@ -27,7 +26,6 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final ava = watchStream(
       (ChatModel m) => m.getJoinedRoomAvatarStream(room),
       initialValue: room?.avatar,
@@ -90,10 +88,6 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                         room: room,
                         onFail: (error) =>
                             showSnackBar(context, content: Text(error)),
-                        onWrongFileFormat: () => showSnackBar(
-                          context,
-                          content: Text(l10n.notAnImage),
-                        ),
                       ),
               icon: attachingAvatar
                   ? SizedBox.square(
@@ -103,8 +97,9 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                         color: foreGroundColor,
                       ),
                     )
-                  : const Icon(
+                  : Icon(
                       YaruIcons.pen,
+                      color: contrastColor(context.colorScheme.primary),
                     ),
             ),
           ),
