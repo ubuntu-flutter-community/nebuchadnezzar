@@ -131,15 +131,15 @@ class _Reaction extends StatelessWidget {
     Widget content;
     if (reactionKey.startsWith('mxc://')) {
       content = Row(
+        spacing: kSmallPadding,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
+        children: [
           MxcImage(
             uri: Uri.parse(reactionKey),
-            width: 20,
-            height: 20,
+            width: kBigPadding,
+            height: kBigPadding,
           ),
           if (count > 1) ...[
-            const SizedBox(width: 4),
             Text(
               count.toString(),
               style: TextStyle(

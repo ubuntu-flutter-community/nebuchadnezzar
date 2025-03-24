@@ -1,4 +1,5 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
@@ -12,6 +13,7 @@ import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
 import '../../l10n/l10n.dart';
+import 'chat_event_inspect_dialog.dart';
 import 'chat_text_message.dart';
 
 class ChatMessageMenu extends StatefulWidget {
@@ -123,6 +125,21 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                     ),
                     child: Text(
                       context.l10n.deleteMessage,
+                      style: style,
+                    ),
+                  ),
+                if (kDebugMode)
+                  MenuItemButton(
+                    trailingIcon: const Icon(YaruIcons.code),
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (context) => ChatEventInspectDialog(
+                        event: widget.event,
+                        child: widget.child,
+                      ),
+                    ),
+                    child: Text(
+                      'Inspect',
                       style: style,
                     ),
                   ),

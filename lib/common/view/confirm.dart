@@ -21,6 +21,7 @@ class ConfirmationDialog extends StatelessWidget {
     this.confirmLabel,
     this.cancelLabel,
     this.confirmEnabled = true,
+    this.contentPadding,
   });
 
   final dynamic Function()? onConfirm;
@@ -33,6 +34,7 @@ class ConfirmationDialog extends StatelessWidget {
   final bool showCloseIcon;
   final bool scrollable;
   final String? confirmLabel, cancelLabel;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class ConfirmationDialog extends StatelessWidget {
       scrollable: scrollable,
       titlePadding: EdgeInsets.zero,
       content: content,
+      contentPadding: contentPadding,
       actionsAlignment: MainAxisAlignment.start,
       actionsOverflowAlignment: OverflowBarAlignment.center,
       actionsPadding: const EdgeInsets.all(kMediumPadding),
