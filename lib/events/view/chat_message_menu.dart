@@ -1,4 +1,3 @@
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
@@ -11,9 +10,9 @@ import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
-import '../../common/view/theme.dart';
 import '../../l10n/l10n.dart';
 import 'chat_event_inspect_dialog.dart';
+import 'chat_message_menu_reaction_picker.dart';
 import 'chat_text_message.dart';
 
 class ChatMessageMenu extends StatefulWidget {
@@ -47,6 +46,8 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
         menuChildren: widget.event.redacted
             ? []
             : [
+                ChatMessageMenuReactionPicker(event: widget.event),
+                const Divider(),
                 MenuItemButton(
                   trailingIcon: const Icon(YaruIcons.reply),
                   onPressed: () => di<DraftModel>().setReplyEvent(widget.event),
@@ -143,33 +144,8 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                       style: style,
                     ),
                   ),
-                ChatMessageReactionPicker(event: widget.event),
               ],
         child: widget.child,
-      ),
-    );
-  }
-}
-
-class ChatMessageReactionPicker extends StatelessWidget {
-  const ChatMessageReactionPicker({
-    super.key,
-    required this.event,
-  });
-
-  final Event event;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 250,
-      height: 220,
-      child: EmojiPicker(
-        config: emojiPickerConfig(theme: context.theme, emojiSizeMax: 15),
-        onEmojiSelected: (category, emoji) => event.room.sendReaction(
-          event.eventId,
-          emoji.emoji,
-        ),
       ),
     );
   }

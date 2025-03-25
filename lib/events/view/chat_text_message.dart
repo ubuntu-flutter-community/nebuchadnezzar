@@ -40,7 +40,7 @@ class ChatTextMessage extends StatelessWidget {
                   ),
                   content: SizedBox(
                     width: 400,
-                    child: Text(link.toString()),
+                    child: Text(link.url),
                   ),
                   onConfirm: () => launchUrl(maybe),
                 ),

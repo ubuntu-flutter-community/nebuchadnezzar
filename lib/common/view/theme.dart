@@ -109,7 +109,9 @@ Color avatarFallbackColor(ColorScheme colorScheme) =>
 
 Config emojiPickerConfig({
   required ThemeData theme,
-  double emojiSizeMax = 25.0,
+  double emojiSizeMax = 20.0,
+  bool bottom = true,
+  EdgeInsets gridPadding = const EdgeInsets.all(kSmallPadding),
 }) {
   final colorScheme = theme.colorScheme;
   return Config(
@@ -119,13 +121,14 @@ Config emojiPickerConfig({
       loadingIndicator: const Center(
         child: YaruCircularProgressIndicator(),
       ),
-      gridPadding: const EdgeInsets.all(kSmallPadding),
+      gridPadding: gridPadding,
       verticalSpacing: 0,
       horizontalSpacing: 0,
       emojiSizeMax: emojiSizeMax,
       backgroundColor: Colors.transparent,
     ),
     bottomActionBarConfig: BottomActionBarConfig(
+      enabled: bottom,
       backgroundColor: colorScheme.surface,
       buttonIconColor: colorScheme.primary,
       buttonColor: colorScheme.surface,
@@ -134,6 +137,7 @@ Config emojiPickerConfig({
       dialogBackgroundColor: Colors.transparent,
     ),
     categoryViewConfig: CategoryViewConfig(
+      tabBarHeight: 35,
       categoryIcons: const CategoryIcons(
         smileyIcon: YaruIcons.emote_smile,
         animalIcon: YaruIcons.emote_monkey,
@@ -155,6 +159,13 @@ Config emojiPickerConfig({
     searchViewConfig: SearchViewConfig(
       backgroundColor: Colors.transparent,
       buttonIconColor: colorScheme.onSurface,
+      customSearchView: (config, state, showEmojiView) => Padding(
+        padding: const EdgeInsets.only(
+          left: kSmallPadding,
+          right: kMediumPadding,
+        ),
+        child: DefaultSearchView(config, state, showEmojiView),
+      ),
     ),
   );
 }

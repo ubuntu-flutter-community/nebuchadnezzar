@@ -49,6 +49,11 @@ class SettingsModel extends SafeChangeNotifier {
   void setShowChatDisplaynameChanges(bool value) =>
       _settingsService.setShowChatDisplaynameChanges(value);
 
+  List<String> get defaultReactions => _settingsService.defaultReactions;
+  List<String> get fallbackReactions => _settingsService.fallbackReactions;
+  void setDefaultReactions(List<String> value) =>
+      _settingsService.setDefaultReactions(value);
+
   Profile? _myProfile;
   Profile? get myProfile => _myProfile;
   CachedPresence? get presence => _presence;
