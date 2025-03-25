@@ -27,6 +27,18 @@ class SettingsService {
   bool get showChatDisplaynameChanges =>
       _sharedPreferences.getBool(SettingKeys.showChatDisplaynameChanges) ??
       false;
+
+  List<String> get defaultReactions =>
+      (_sharedPreferences.getStringList(SettingKeys.defaultReactions) ??
+              fallbackReactions)
+          .take(6)
+          .toList();
+
+  List<String> get fallbackReactions => ['👍', '😃', '❤️', '👀', '🎸', '👌'];
+  void setDefaultReactions(List<String> value) => _sharedPreferences
+      .setStringList(SettingKeys.defaultReactions, value)
+      .then(notify);
+
   void setShowChatDisplaynameChanges(bool value) => _sharedPreferences
       .setBool(SettingKeys.showChatDisplaynameChanges, value)
       .then(notify);
@@ -66,4 +78,5 @@ class SettingsService {
 class SettingKeys {
   static const showChatAvatarChanges = 'showChatAvatarChanges';
   static const showChatDisplaynameChanges = 'showChatDisplaynameChanges';
+  static String defaultReactions = 'defaultReactions';
 }

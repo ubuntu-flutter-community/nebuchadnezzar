@@ -14,7 +14,7 @@ import '../../../l10n/l10n.dart';
 import '../../common/view/chat_typing_indicator.dart';
 import '../draft_model.dart';
 import 'chat_attachment_draft_panel.dart';
-import 'chat_emoji_picker.dart';
+import 'chat_input_emoji_picker.dart';
 
 class ChatInput extends StatefulWidget with WatchItStatefulWidgetMixin {
   const ChatInput({super.key, required this.room});
@@ -199,7 +199,7 @@ class _ChatInputState extends State<ChatInput> {
                                     YaruIcons.plus,
                                   ),
                           ),
-                          ChatInputEmojiMenu(
+                          ChatInputEmojiPicker(
                             onEmojiSelected:
                                 attaching || sending || archiveActive
                                     ? null

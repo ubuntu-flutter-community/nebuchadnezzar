@@ -83,7 +83,7 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
         return ConfirmationDialog(
           confirmEnabled: snapshot.hasData,
           onConfirm: snapshot.hasData
-              ? () => () => di<ChatModel>().joinAndSelectRoomByChunk(
+              ? () => di<ChatModel>().joinAndSelectRoomByChunk(
                     snapshot.data!.first,
                     onFail: (e) => showSnackBar(
                       context,

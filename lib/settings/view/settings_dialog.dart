@@ -8,12 +8,14 @@ import '../../common/date_time_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/snackbars.dart';
+import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../matrix_devices_x.dart';
 import '../settings_model.dart';
 import 'chat_my_user_avatar.dart';
 import 'logout_button.dart';
+import 'reactions_section.dart';
 
 class SettingsDialog extends StatefulWidget with WatchItStatefulWidgetMixin {
   const SettingsDialog({super.key});
@@ -70,7 +72,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
       content: SizedBox(
         width: 450,
         child: Column(
-          spacing: 2 * kBigPadding,
+          spacing: kBigPadding,
           children: [
             const ChatMyUserAvatar(
               dimension: 100,
@@ -83,32 +85,30 @@ class _SettingsDialogState extends State<SettingsDialog> {
               child: Column(
                 children: [
                   YaruTile(
-                    title: TextField(
-                      controller: _displayNameController,
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          padding: EdgeInsets.zero,
-                          style: IconButton.styleFrom(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(6),
-                                bottomRight: Radius.circular(6),
-                              ),
+                    title: ListenableBuilder(
+                      listenable: _displayNameController,
+                      builder: (context, c) {
+                        return TextField(
+                          controller: _displayNameController,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              padding: EdgeInsets.zero,
+                              style: textFieldSuffixStyle,
+                              onPressed: profile?.displayName !=
+                                      _displayNameController.text
+                                  ? () => di<SettingsModel>().setDisplayName(
+                                        name: _displayNameController.text,
+                                        onFail: (e) =>
+                                            showErrorSnackBar(context, e),
+                                      )
+                                  : null,
+                              icon: const Icon(YaruIcons.save),
                             ),
+                            contentPadding: const EdgeInsets.all(10.5),
+                            label: Text(l10n.editDisplayname),
                           ),
-                          onPressed: profile?.displayName !=
-                                  _displayNameController.text
-                              ? () => di<SettingsModel>().setDisplayName(
-                                    name: _displayNameController.text,
-                                    onFail: (e) =>
-                                        showErrorSnackBar(context, e),
-                                  )
-                              : null,
-                          icon: const Icon(YaruIcons.save),
-                        ),
-                        contentPadding: const EdgeInsets.all(10.5),
-                        label: Text(l10n.editDisplayname),
-                      ),
+                        );
+                      },
                     ),
                   ),
                   YaruTile(
@@ -121,6 +121,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                 ],
               ),
             ),
+            const ReactionsSection(),
             const ChatEventSettings(),
             YaruSection(
               headline: Text(l10n.devices),

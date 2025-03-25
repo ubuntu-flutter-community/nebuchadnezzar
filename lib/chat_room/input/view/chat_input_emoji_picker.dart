@@ -5,31 +5,8 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
 
-class ChatEmojiPicker extends StatelessWidget {
-  const ChatEmojiPicker({
-    super.key,
-    this.onEmojiSelected,
-  });
-
-  final void Function(Category?, Emoji)? onEmojiSelected;
-
-  @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: const BoxConstraints(
-          minHeight: 300,
-          maxHeight: 300,
-          minWidth: 300,
-          maxWidth: 300,
-        ),
-        child: EmojiPicker(
-          onEmojiSelected: onEmojiSelected,
-          config: emojiPickerConfig(theme: context.theme),
-        ),
-      );
-}
-
-class ChatInputEmojiMenu extends StatefulWidget {
-  const ChatInputEmojiMenu({
+class ChatInputEmojiPicker extends StatefulWidget {
+  const ChatInputEmojiPicker({
     super.key,
     required this.onEmojiSelected,
   });
@@ -37,10 +14,10 @@ class ChatInputEmojiMenu extends StatefulWidget {
   final void Function(Category?, Emoji)? onEmojiSelected;
 
   @override
-  State<ChatInputEmojiMenu> createState() => _ChatInputEmojiMenuState();
+  State<ChatInputEmojiPicker> createState() => _ChatInputEmojiPickerState();
 }
 
-class _ChatInputEmojiMenuState extends State<ChatInputEmojiMenu> {
+class _ChatInputEmojiPickerState extends State<ChatInputEmojiPicker> {
   MenuController? _controller;
 
   @override
@@ -55,11 +32,20 @@ class _ChatInputEmojiMenuState extends State<ChatInputEmojiMenu> {
       alignmentOffset: const Offset(-40, 12),
       controller: _controller,
       menuChildren: [
-        ChatEmojiPicker(
-          onEmojiSelected: (p0, p1) {
-            widget.onEmojiSelected?.call(p0, p1);
-            _controller?.close();
-          },
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+            minHeight: 300,
+            maxHeight: 300,
+            minWidth: 300,
+            maxWidth: 300,
+          ),
+          child: EmojiPicker(
+            onEmojiSelected: (p0, p1) {
+              widget.onEmojiSelected?.call(p0, p1);
+              _controller?.close();
+            },
+            config: emojiPickerConfig(theme: context.theme),
+          ),
         ),
       ],
       child: IconButton(

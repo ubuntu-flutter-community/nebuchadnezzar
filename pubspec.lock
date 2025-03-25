@@ -13,10 +13,10 @@ packages:
     dependency: "direct main"
     description:
       name: adaptive_dialog
-      sha256: "760acece71b957dbab6f2071b84eb52b4b0236f20ba6cfb89446834ee92086dc"
+      sha256: "4cfd1567ba305c8df05499f2d6df8c19b0a20b31f35b1e58371f990eb9bfe987"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.4.1"
   analyzer:
     dependency: transitive
     description:
@@ -69,18 +69,18 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: "0c64e928dcbefddecd234205422bcfc2b5e6d31be0b86fef0d0dd48d7b4c9742"
+      sha256: "7dcbd0f87fe5f61cb28da39a1a8b70dbc106e2fe0516f7836eb7bb2948481a12"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.4"
+    version: "4.0.5"
   args:
     dependency: transitive
     description:
       name: args
-      sha256: bf9f5caeea8d8fe6721a9c358dd8a5c1947b27f1cfaa18b39c301273594919e6
+      sha256: d0481093c50b1da8910eb0bb301626d4d8eb7284aa739614d2b394ee09e3ea04
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.7.0"
   assorted_layout_widgets:
     dependency: transitive
     description:
@@ -833,10 +833,10 @@ packages:
     dependency: transitive
     description:
       name: image
-      sha256: "13d3349ace88f12f4a0d175eb5c12dcdd39d35c4c109a8a13dfeb6d0bd9e31c3"
+      sha256: "4e973fcf4caae1a4be2fa0a13157aa38a8f9cb049db6529aa00b4d71abc4d928"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.3"
+    version: "4.5.4"
   intersperse:
     dependency: transitive
     description:
@@ -1009,10 +1009,10 @@ packages:
     dependency: transitive
     description:
       name: macos_window_utils
-      sha256: "3534f2af024f2f24112ca28789a44e6750083f8c0065414546c6593ee48a5009"
+      sha256: "10036bd91202d3542b75d40b5b3f4001ca5a232081477ca71690d7c4ea91f7cb"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.1"
+    version: "1.7.0"
   markdown:
     dependency: transitive
     description:
@@ -1041,10 +1041,10 @@ packages:
     dependency: "direct main"
     description:
       name: matrix
-      sha256: d0da69e5ee8dfc1692c02e4b460a1bc136120f0dcf5e02cf604b23cd39d76903
+      sha256: "23e87bb625c53f06568ae3a68badf31e95fbfd0f97f8a6781b9685dd207c9add"
       url: "https://pub.dev"
     source: hosted
-    version: "0.38.0"
+    version: "0.38.1"
   matrix4_transform:
     dependency: transitive
     description:
@@ -1847,10 +1847,10 @@ packages:
     dependency: transitive
     description:
       name: webrtc_interface
-      sha256: e05f00091c9c70a15bab4ccb1b6c46d9a16a6075002f02cfac3641eccb05e25d
+      sha256: e92afec11152a9ccb5c9f35482754edd99696e886ab6acaf90c06dd2d09f09eb
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1+hotfix.1"
+    version: "1.2.2+hotfix.1"
   win32:
     dependency: transitive
     description:
@@ -1927,8 +1927,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "4fac4105b66d4e0ed3ec3abc11c37e4e306bd61e"
-      resolved-ref: "4fac4105b66d4e0ed3ec3abc11c37e4e306bd61e"
+      ref: f9db616a71e0cb0b82ad0b994928b8cbc0688acc
+      resolved-ref: f9db616a71e0cb0b82ad0b994928b8cbc0688acc
       url: "https://github.com/ubuntu/yaru.dart"
     source: git
     version: "7.0.0"
@@ -1974,4 +1974,4 @@ packages:
     version: "0.0.3+1"
 sdks:
   dart: ">=3.7.0 <4.0.0"
-  flutter: ">=3.29.1"
+  flutter: ">=3.29.2"
