@@ -58,7 +58,6 @@ dependencies:
   safe_change_notifier: ^0.4.0
   scroll_to_index: ^3.0.1
   shared_preferences: ^2.3.3
-  shimmer: ^3.0.0
   sqflite: ^2.4.1
   sqflite_common_ffi: ^2.3.4
   super_drag_and_drop: ^0.8.24
