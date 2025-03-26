@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
+import 'common_widgets.dart';
 import 'ui_constants.dart';
 
 bool yaru = !kIsWeb && (Platform.isLinux || Platform.isMacOS);
@@ -118,9 +119,7 @@ Config emojiPickerConfig({
     customSearchIcon: const Icon(YaruIcons.search),
     customBackspaceIcon: const Icon(YaruIcons.edit_clear),
     emojiViewConfig: EmojiViewConfig(
-      loadingIndicator: const Center(
-        child: YaruCircularProgressIndicator(),
-      ),
+      loadingIndicator: const Center(child: Progress()),
       gridPadding: gridPadding,
       verticalSpacing: 0,
       horizontalSpacing: 0,

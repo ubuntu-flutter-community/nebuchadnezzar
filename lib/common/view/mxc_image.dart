@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import '../local_image_model.dart';
-import 'image_shimmer.dart';
+import 'common_widgets.dart';
 
 class MxcImage extends StatelessWidget with WatchItMixin {
   const MxcImage({
@@ -85,7 +85,9 @@ class _MxcImageFutureState extends State<MxcImageFuture> {
             );
           }
 
-          return const ImageShimmer();
+          return const Center(
+            child: Progress(),
+          );
         },
       );
 }

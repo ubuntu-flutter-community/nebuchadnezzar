@@ -19,8 +19,10 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
     final defaultReactions =
         watchPropertyValue((SettingsModel m) => m.defaultReactions);
     return YaruExpandable(
+      expandButtonPosition: YaruExpandableButtonPosition.start,
       gapHeight: 0,
-      expandIconPadding: const EdgeInsets.only(bottom: 5),
+      expandIconPadding:
+          const EdgeInsets.only(bottom: kSmallPadding, left: kMediumPadding),
       header: SizedBox(
         width: 220,
         height: 50,

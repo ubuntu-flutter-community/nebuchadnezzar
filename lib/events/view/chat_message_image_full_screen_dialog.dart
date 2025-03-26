@@ -47,6 +47,9 @@ class _ChatMessageImageFullScreenDialogState
   }
 
   void _zoom(bool zoomIn) {
+    if (_controller.scale == null) {
+      return;
+    }
     if (zoomIn) {
       setState(() {
         _controller.scale = _controller.scale! + 0.1;
@@ -157,6 +160,9 @@ class _ChatMessageImageFullScreenDialogState
                         if (snapshot.hasData) {
                           return ClipRRect(
                             child: PhotoView(
+                              loadingBuilder: (context, event) => const Center(
+                                child: Progress(),
+                              ),
                               imageProvider: MemoryImage(snapshot.data!),
                               minScale: PhotoViewComputedScale.contained * 0.8,
                               maxScale: PhotoViewComputedScale.covered * 10,

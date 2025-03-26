@@ -8,7 +8,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/event_x.dart';
 import '../../common/local_image_model.dart';
-import '../../common/view/image_shimmer.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 
 class ChatImage extends StatelessWidget with WatchItMixin {
@@ -46,11 +46,10 @@ class ChatImage extends StatelessWidget with WatchItMixin {
         watchPropertyValue((LocalImageModel m) => m.get(event.eventId));
 
     if (event.status == EventStatus.error) {
-      return const Padding(
-        padding: EdgeInsets.all(kSmallPadding),
+      return const Center(
         child: Icon(
           YaruIcons.image_missing,
-          size: 30,
+          size: 45,
         ),
       );
     }
@@ -118,33 +117,44 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
   @override
   void initState() {
     super.initState();
-    _future = di<LocalImageModel>()
-        .downloadImage(event: widget.event, getThumbnail: widget.getThumbnail);
+    final localImageModel = di<LocalImageModel>();
+    final image = localImageModel.get(widget.event.eventId);
+    _future = image != null
+        ? Future.value(image)
+        : localImageModel.downloadImage(
+            event: widget.event,
+            getThumbnail: widget.getThumbnail,
+          );
   }
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
         future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (widget.event.isSvgImage) {
-              SvgPicture.memory(
-                snapshot.data!,
-                fit: widget.fit ?? BoxFit.contain,
-                height: widget.height,
-                width: widget.width,
-              );
-            }
-
-            return Image.memory(
-              snapshot.data!,
-              fit: widget.fit,
-              height: widget.height,
-              width: widget.width,
-            );
-          }
-
-          return const ImageShimmer();
-        },
+        builder: (context, snapshot) => snapshot.hasData
+            ? AnimatedOpacity(
+                opacity: snapshot.hasData ? 1 : 0,
+                duration: const Duration(milliseconds: 300),
+                child: (widget.event.isSvgImage)
+                    ? SvgPicture.memory(
+                        snapshot.data!,
+                        fit: widget.fit ?? BoxFit.contain,
+                        height: widget.height,
+                        width: widget.width,
+                      )
+                    : Image.memory(
+                        snapshot.data!,
+                        fit: widget.fit,
+                        height: widget.height,
+                        width: widget.width,
+                      ),
+              )
+            : const Center(
+                child: SizedBox.square(
+                  dimension: 20,
+                  child: Progress(
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
       );
 }

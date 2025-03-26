@@ -44,7 +44,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => di<TimelineModel>()
-          .requestHistory(widget.timeline, historyCount: 200),
+          .requestHistory(widget.timeline, historyCount: 500),
     );
   }
 
@@ -102,8 +102,8 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                 index: i,
                 controller: _controller,
                 key: ValueKey('${event.eventId}tag'),
-                child: FadeTransition(
-                  opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
