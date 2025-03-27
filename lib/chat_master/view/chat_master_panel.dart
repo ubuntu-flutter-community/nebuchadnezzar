@@ -11,8 +11,8 @@ import '../../common/view/search_auto_complete.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../settings/view/chat_my_user_avatar.dart';
-import '../../settings/view/settings_dialog.dart';
+import '../../settings/view/chat_settings_avatar.dart';
+import '../../settings/view/chat_settings_dialog.dart';
 import 'chat_archive_search_field.dart';
 import 'chat_master_list_filter_bar.dart';
 import 'chat_master_title_bar.dart';
@@ -94,14 +94,14 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
               alignment: Alignment.center,
               children: [
                 YaruMasterTile(
-                  leading: const ChatMyUserAvatar(
+                  leading: const ChatSettingsAvatar(
                     dimension: 25,
                     showEditButton: false,
                   ),
                   title: Text(l10n.settings),
                   onTap: () => showDialog(
                     context: context,
-                    builder: (context) => const SettingsDialog(),
+                    builder: (context) => const ChatSettingsDialog(),
                   ),
                 ),
                 Positioned(

@@ -9,8 +9,8 @@ import '../../common/view/snackbars.dart';
 import '../../l10n/l10n.dart';
 import '../settings_model.dart';
 
-class ChatMyUserAvatar extends StatelessWidget with WatchItMixin {
-  const ChatMyUserAvatar({
+class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
+  const ChatSettingsAvatar({
     super.key,
     this.dimension,
     this.iconSize,

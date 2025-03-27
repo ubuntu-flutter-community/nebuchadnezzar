@@ -149,12 +149,7 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
                       ),
               )
             : const Center(
-                child: SizedBox.square(
-                  dimension: 20,
-                  child: Progress(
-                    strokeWidth: 2,
-                  ),
-                ),
+                child: Progress(),
               ),
       );
 }

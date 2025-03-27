@@ -5,8 +5,8 @@ import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
 import '../settings_model.dart';
 
-class ChatPresenceButton extends StatelessWidget with WatchItMixin {
-  const ChatPresenceButton({
+class ChatSettingsPresenceButton extends StatelessWidget with WatchItMixin {
+  const ChatSettingsPresenceButton({
     super.key,
   });
 

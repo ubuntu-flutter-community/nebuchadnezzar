@@ -5,7 +5,6 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../chat_room/input/draft_model.dart';
-import '../../common/chat_model.dart';
 import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
@@ -57,7 +56,7 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                   ),
                 ),
                 if (widget.event.room.canSendDefaultMessages &&
-                    di<ChatModel>().isUserEvent(widget.event))
+                    widget.event.isUserEvent)
                   MenuItemButton(
                     trailingIcon: const Icon(YaruIcons.pen),
                     onPressed: () {

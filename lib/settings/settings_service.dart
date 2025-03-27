@@ -28,13 +28,17 @@ class SettingsService {
       _sharedPreferences.getBool(SettingKeys.showChatDisplaynameChanges) ??
       false;
 
-  List<String> get defaultReactions =>
-      (_sharedPreferences.getStringList(SettingKeys.defaultReactions) ??
-              fallbackReactions)
-          .take(6)
-          .toList();
+  List<String> get defaultReactions {
+    final stringList =
+        _sharedPreferences.getStringList(SettingKeys.defaultReactions);
+    return (stringList == null || stringList.isEmpty
+            ? _fallbackReactions
+            : stringList)
+        .take(6)
+        .toList();
+  }
 
-  List<String> get fallbackReactions => ['👍', '😃', '❤️', '👀', '🎸', '👌'];
+  List<String> get _fallbackReactions => ['👍', '😃', '❤️', '👀', '🎸', '👌'];
   void setDefaultReactions(List<String> value) => _sharedPreferences
       .setStringList(SettingKeys.defaultReactions, value)
       .then(notify);

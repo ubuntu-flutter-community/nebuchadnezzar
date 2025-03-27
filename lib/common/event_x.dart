@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:yaru/yaru.dart';
 
 extension EventX on Event {
   bool get isImage => messageType == MessageTypes.Image;
   bool get isSvgImage => attachmentMimetype == 'image/svg+xml';
 
   bool get showAsBadge =>
+      type.contains('m.call.') ||
       messageType == MessageTypes.Emote ||
       {
         EventTypes.RoomAvatar,
@@ -20,6 +23,24 @@ extension EventX on Event {
         EventTypes.GuestAccess,
         EventTypes.Encryption,
       }.contains(type);
+
+  bool get isCallEvent => type.contains('m.call.');
+
+  bool get isUserEvent => room.client.userID == senderId;
+
+  // TODO: #6
+  IconData get callIconData => switch (type) {
+        'm.call.invite' => YaruIcons.call_outgoing,
+        'm.call.answer' => YaruIcons.call_start,
+        'm.call.candidates' => YaruIcons.call_start,
+        'm.call.hangup' => YaruIcons.call_stop,
+        'm.call.select_answer' => YaruIcons.call_start,
+        'm.call.reject' => YaruIcons.call_stop,
+        'm.call.negotiate' => YaruIcons.call_start,
+        'm.call.replaces' => YaruIcons.call_start,
+        'm.call.asserted_identity' => YaruIcons.call_start,
+        _ => YaruIcons.error,
+      };
 
   bool hideInTimeline({
     required bool showAvatarChanges,

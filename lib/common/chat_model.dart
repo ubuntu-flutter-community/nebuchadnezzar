@@ -15,7 +15,6 @@ class ChatModel extends SafeChangeNotifier {
   String? get myUserId => _client.userID;
 
   String? get homeServerId => _client.homeserver?.host;
-  bool isUserEvent(Event event) => myUserId == event.senderId;
 
   // Room management
   /// The list of all rooms the user is participating or invited.

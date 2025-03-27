@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
-import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
-import '../../common/view/theme.dart';
-import '../../common/view/ui_constants.dart';
-import '../../common/chat_model.dart';
 import '../../common/event_x.dart';
+import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
+import '../../common/view/theme.dart';
+import '../../common/view/ui_constants.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_image.dart';
 import 'chat_map.dart';
@@ -77,7 +75,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: kMediumPadding),
                   decoration: BoxDecoration(
                     color: getTileColor(
-                      di<ChatModel>().isUserEvent(event),
+                      event.isUserEvent,
                       context.theme,
                     ),
                     borderRadius:

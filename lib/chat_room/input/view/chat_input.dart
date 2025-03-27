@@ -104,6 +104,10 @@ class _ChatInputState extends State<ChatInput> {
         child: Icon(YaruIcons.send_filled),
       ),
     );
+    final unAcceptedDirectChat = widget.room.isDirectChat &&
+        widget.room
+            .getParticipants()
+            .any((e) => e.membership == Membership.invite);
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -160,7 +164,7 @@ class _ChatInputState extends State<ChatInput> {
                   maxLines: 10,
                   focusNode: _sendNode,
                   controller: _sendController,
-                  enabled: !archiveActive && !sending,
+                  enabled: !archiveActive && !sending && !unAcceptedDirectChat,
                   autofocus: true,
                   onChanged: (v) {
                     draftModel.setDraft(
@@ -171,7 +175,9 @@ class _ChatInputState extends State<ChatInput> {
                     widget.room.setTyping(v.isNotEmpty, timeout: 500);
                   },
                   decoration: InputDecoration(
-                    hintText: l10n.sendAMessage,
+                    hintText: unAcceptedDirectChat
+                        ? l10n.waitingPartnerAcceptRequest
+                        : l10n.sendAMessage,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(kSmallPadding),
                       child: Row(

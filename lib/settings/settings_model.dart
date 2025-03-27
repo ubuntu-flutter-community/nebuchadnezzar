@@ -50,7 +50,6 @@ class SettingsModel extends SafeChangeNotifier {
       _settingsService.setShowChatDisplaynameChanges(value);
 
   List<String> get defaultReactions => _settingsService.defaultReactions;
-  List<String> get fallbackReactions => _settingsService.fallbackReactions;
   void setDefaultReactions(List<String> value) =>
       _settingsService.setDefaultReactions(value);
 

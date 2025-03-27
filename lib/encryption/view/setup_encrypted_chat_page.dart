@@ -19,7 +19,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../settings/view/logout_button.dart';
+import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_model.dart';
 import 'key_verification_dialog.dart';
 
@@ -481,7 +481,7 @@ class _OpenExistingSSSSPageState extends State<_OpenExistingSSSSPage> {
                           }
                         },
                 ),
-                const LogoutButton(),
+                const ChatSettingsLogoutButton(),
               ],
             ),
           ),
