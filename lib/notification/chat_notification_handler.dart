@@ -14,10 +14,8 @@ Future<void> chatNotificationHandler(
 ) async {
   final focused = await windowManager.isFocused();
   final selectedRoom = di<ChatModel>().selectedRoom;
-  if (newValue.hasData &&
-      !focused &&
-      selectedRoom != null &&
-      selectedRoom.id != newValue.data?.room.id) {
+  if (newValue.hasData && !focused && selectedRoom == null ||
+      selectedRoom?.id != newValue.data?.room.id) {
     final event = newValue.data!;
     final notification = LocalNotification(
       title: event.room.getLocalizedDisplayname(),
@@ -33,6 +31,7 @@ Future<void> chatNotificationHandler(
     };
     notification.onClickAction = (i) {
       di<ChatModel>().setSelectedRoom(event.room);
+      windowManager.focus();
     };
     notification.show();
   }
