@@ -4,14 +4,14 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../l10n/l10n.dart';
-import '../../settings/view/settings_dialog.dart';
+import '../../settings/view/chat_settings_dialog.dart';
+import '../chat_model.dart';
+import '../search_model.dart';
 import 'build_context_x.dart';
+import 'chat_avatar.dart';
 import 'common_widgets.dart';
 import 'snackbars.dart';
 import 'ui_constants.dart';
-import '../chat_model.dart';
-import '../search_model.dart';
-import 'chat_avatar.dart';
 
 class ChatProfileDialog extends StatelessWidget {
   const ChatProfileDialog({super.key, required this.userId});
@@ -109,7 +109,7 @@ class _ChatProfileState extends State<ChatProfile> {
                                     showDialog(
                                       context: context,
                                       builder: (context) =>
-                                          const SettingsDialog(),
+                                          const ChatSettingsDialog(),
                                     );
                                   } else {
                                     di<ChatModel>().joinDirectChat(

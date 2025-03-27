@@ -41,7 +41,15 @@ class ChatEventTile extends StatelessWidget {
                   ),
                 ),
               )
-            : null,
+            : event.isCallEvent
+                ? Padding(
+                    padding: const EdgeInsets.only(right: kSmallPadding),
+                    child: Icon(
+                      event.callIconData,
+                      size: 15,
+                    ),
+                  )
+                : null,
       );
     }
 

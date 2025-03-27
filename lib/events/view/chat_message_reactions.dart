@@ -4,17 +4,16 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
-import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/chat_avatar.dart';
 import '../../common/view/common_widgets.dart';
+import '../../common/view/mxc_image.dart';
 import '../../common/view/space.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../common/chat_model.dart';
-import '../../common/view/chat_avatar.dart';
-import '../../common/view/mxc_image.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan
@@ -59,9 +58,7 @@ class ChatMessageReactions extends StatelessWidget {
     return Wrap(
       spacing: kSmallPadding,
       runSpacing: kSmallPadding,
-      alignment: di<ChatModel>().isUserEvent(event)
-          ? WrapAlignment.end
-          : WrapAlignment.start,
+      alignment: event.isUserEvent ? WrapAlignment.end : WrapAlignment.start,
       children: [
         ...reactionList.map(
           (r) => _Reaction(

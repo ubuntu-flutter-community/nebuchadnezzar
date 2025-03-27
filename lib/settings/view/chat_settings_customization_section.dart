@@ -5,41 +5,37 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
+import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../settings_model.dart';
 
-class ReactionsSection extends StatefulWidget {
-  const ReactionsSection({super.key});
+class ChatSettingsCustomizationSection extends StatefulWidget {
+  const ChatSettingsCustomizationSection({super.key});
 
   @override
-  State<ReactionsSection> createState() => _ReactionsSectionState();
+  State<ChatSettingsCustomizationSection> createState() =>
+      _ChatSettingsCustomizationSectionState();
 }
 
-class _ReactionsSectionState extends State<ReactionsSection> {
-  late final TextEditingController _emojiController;
+class _ChatSettingsCustomizationSectionState
+    extends State<ChatSettingsCustomizationSection> {
+  bool saved = false;
+  late final TextEditingController _textController;
   final MenuController _menuController = MenuController();
+  final double height = 38.0;
 
   @override
   void initState() {
     super.initState();
 
-    _emojiController = TextEditingController(
-      text: (di<SettingsModel>().defaultReactions.isEmpty
-              ? di<SettingsModel>().fallbackReactions
-              : di<SettingsModel>().defaultReactions)
-          .map((e) => e.trim())
-          .toString()
-          .replaceAll('[', '')
-          .replaceAll(']', '')
-          .replaceAll('(', '')
-          .replaceAll(')', '')
-          .replaceAll(',', ''),
+    _textController = TextEditingController(
+      text: di<SettingsModel>().defaultReactions.join(),
     );
   }
 
   @override
   void dispose() {
-    _emojiController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
@@ -48,53 +44,80 @@ class _ReactionsSectionState extends State<ReactionsSection> {
     final l10n = context.l10n;
 
     return YaruSection(
-      headline: const Text('Message reactions'),
-      child: Column(
-        children: [
-          YaruTile(
-            subtitle: const Text('Insert 6 emojis split by a comma'),
-            title: MenuAnchor(
-              menuChildren: [
-                SizedBox(
-                  height: 300,
-                  width: 420,
-                  child: EmojiPicker(
-                    onEmojiSelected: (category, emoji) => _emojiController
-                        .text = '${_emojiController.text}${emoji.emoji}',
-                    config: emojiPickerConfig(theme: context.theme),
+      headline: const Text('Customization'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: kMediumPadding,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                top: kSmallPadding,
+                bottom: kSmallPadding,
+              ),
+              child: MenuAnchor(
+                menuChildren: [
+                  SizedBox(
+                    height: 300,
+                    width: 420,
+                    child: EmojiPicker(
+                      onEmojiSelected: (category, emoji) {
+                        setState(() => saved = false);
+                        _textController.text = _textController.text.length >= 12
+                            ? emoji.emoji
+                            : '${_textController.text}${emoji.emoji}';
+                      },
+                      config: emojiPickerConfig(theme: context.theme),
+                    ),
                   ),
-                ),
-              ],
-              controller: _menuController,
-              child: SizedBox(
-                height: 38,
+                ],
+                controller: _menuController,
                 child: TextField(
-                  onTap: _menuController.open,
-                  controller: _emojiController,
+                  onTap: () {
+                    _textController.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: _textController.value.text.length,
+                    );
+                    _menuController.open();
+                  },
+                  controller: _textController,
                   onSubmitted: (v) => submit(v),
                   decoration: InputDecoration(
-                    suffix: Center(
-                      widthFactor: 0.4,
-                      child: IconButton(
-                        style: textFieldSuffixStyle,
-                        onPressed: () => submit(_emojiController.text),
-                        icon: const Icon(YaruIcons.save),
+                    label: const Text('Select 6 emojis as quick reactions'),
+                    suffix: SizedBox.square(
+                      dimension: 20,
+                      child: InkWell(
+                        onTap: () {
+                          _menuController.close();
+                          submit(_textController.text);
+                          setState(() => saved = true);
+                        },
+                        child: saved
+                            ? YaruAnimatedVectorIcon(
+                                YaruAnimatedIcons.ok_filled,
+                                color: context.colorScheme.success,
+                              )
+                            : Icon(
+                                saved ? YaruIcons.checkmark : YaruIcons.save,
+                                color:
+                                    saved ? context.colorScheme.success : null,
+                              ),
                       ),
                     ),
-                    label: const Text('Default Emojis'),
                     hintText: l10n.emojis,
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   void submit(String v) {
-    _emojiController.text = _emojiController.text.characters
+    _textController.text = _textController.text.characters
         .where((e) => stringContainsEmoji(e))
         .string;
     var list = v.characters

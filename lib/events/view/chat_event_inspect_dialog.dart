@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
-import 'package:watch_it/watch_it.dart';
 
-import '../../common/chat_model.dart';
 import '../../common/date_time_x.dart';
+import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/confirm.dart';
@@ -60,7 +59,7 @@ class ChatEventInspectDialog extends StatelessWidget {
               padding: const EdgeInsets.all(12.0),
               child: Material(
                 borderRadius: const BorderRadius.all(kBubbleRadius),
-                color: getTileColor(di<ChatModel>().isUserEvent(event), theme),
+                color: getTileColor(event.isUserEvent, theme),
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   scrollDirection: Axis.horizontal,
@@ -79,8 +78,7 @@ class ChatEventInspectDialog extends StatelessWidget {
                 padding: const EdgeInsets.all(12.0),
                 child: Material(
                   borderRadius: const BorderRadius.all(kBubbleRadius),
-                  color:
-                      getTileColor(di<ChatModel>().isUserEvent(event), theme),
+                  color: getTileColor(event.isUserEvent, theme),
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(16),
                     scrollDirection: Axis.horizontal,

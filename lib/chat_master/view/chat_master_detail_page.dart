@@ -80,6 +80,12 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
       handler: chatNotificationHandler,
     );
 
+    // TODO: #6
+    // registerStreamHandler(
+    //   select: (Client m) => m.onCallEvents.stream,
+    //   handler: callHandler,
+    // );
+
     final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
     final isArchivedRoom =
         watchPropertyValue((ChatModel m) => m.selectedRoom?.isArchived == true);
