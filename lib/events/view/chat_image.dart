@@ -83,6 +83,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
                     width: theWidth,
                     height: theHeight,
                     fit: theFit,
+                    getThumbnail: onlyThumbnail,
                   ),
           ),
         ),
@@ -98,7 +99,7 @@ class ChatImageFuture extends StatefulWidget {
     this.height,
     required this.width,
     this.fit,
-    this.getThumbnail = true,
+    required this.getThumbnail,
   });
 
   final Event event;

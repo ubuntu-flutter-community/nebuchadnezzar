@@ -49,6 +49,7 @@ class DraftModel extends SafeChangeNotifier {
   Future<void> send({
     required Room room,
     required Function(String error) onFail,
+    required Function() onSuccess,
   }) async {
     _setSending(true);
 
@@ -88,6 +89,7 @@ class DraftModel extends SafeChangeNotifier {
             _matrixFilesToXFile.remove(matrixFile);
             removeCompress(roomId: room.id, file: matrixFile);
           }
+          onSuccess();
         } on Exception catch (e, s) {
           onFail(e.toString());
           printMessageInDebugMode(e, s);

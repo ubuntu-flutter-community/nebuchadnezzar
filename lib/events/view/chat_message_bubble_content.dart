@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/event_x.dart';
@@ -8,6 +9,8 @@ import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
+import '../chat_download_model.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_image.dart';
 import 'chat_map.dart';
@@ -39,6 +42,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final textTheme = context.textTheme;
     final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
@@ -144,10 +148,27 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                   padding:
                                       const EdgeInsets.only(top: kSmallPadding),
                                   child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     spacing: kMediumPadding,
                                     children: [
-                                      ChatMessageMediaAvatar(event: event),
-                                      Text(displayEvent.attachmentMimetype),
+                                      Row(
+                                        spacing: kMediumPadding,
+                                        children: [
+                                          ChatMessageMediaAvatar(event: event),
+                                          Text(displayEvent.attachmentMimetype),
+                                        ],
+                                      ),
+                                      IconButton(
+                                        tooltip: l10n.downloadFile,
+                                        onPressed: () =>
+                                            di<ChatDownloadModel>().safeFile(
+                                          event: event,
+                                          dialogTitle: l10n.saveFile,
+                                          confirmButtonText: l10n.saveFile,
+                                        ),
+                                        icon: const Icon(YaruIcons.download),
+                                      ),
                                     ],
                                   ),
                                 ),
