@@ -70,11 +70,14 @@ class _ChatInputState extends State<ChatInput> {
     if (model.sending) {
       return;
     }
-    _sendController.clear();
-    _sendNode.requestFocus();
+
     await model.send(
       room: widget.room,
       onFail: (error) => showSnackBar(context, content: Text(error)),
+      onSuccess: () {
+        _sendController.clear();
+        _sendNode.requestFocus();
+      },
     );
   }
 
@@ -164,7 +167,7 @@ class _ChatInputState extends State<ChatInput> {
                   maxLines: 10,
                   focusNode: _sendNode,
                   controller: _sendController,
-                  enabled: !archiveActive && !sending && !unAcceptedDirectChat,
+                  enabled: !archiveActive && !unAcceptedDirectChat,
                   autofocus: true,
                   onChanged: (v) {
                     draftModel.setDraft(
