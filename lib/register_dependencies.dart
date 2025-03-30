@@ -6,9 +6,8 @@ import 'package:watch_it/watch_it.dart';
 
 import 'app/app_config.dart';
 import 'authentication/authentication_model.dart';
-import 'encryption/encryption_model.dart';
-import 'chat_room/timeline/timeline_model.dart';
 import 'chat_room/input/draft_model.dart';
+import 'chat_room/timeline/timeline_model.dart';
 import 'common/chat_model.dart';
 import 'common/client_x.dart';
 import 'common/local_image_model.dart';
@@ -16,6 +15,7 @@ import 'common/local_image_service.dart';
 import 'common/remote_image_model.dart';
 import 'common/remote_image_service.dart';
 import 'common/search_model.dart';
+import 'encryption/encryption_model.dart';
 import 'events/chat_download_model.dart';
 import 'events/chat_download_service.dart';
 import 'settings/settings_model.dart';

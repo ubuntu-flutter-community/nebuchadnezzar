@@ -85,25 +85,23 @@ class _ChatSettingsCustomizationSectionState
                   onSubmitted: (v) => submit(v),
                   decoration: InputDecoration(
                     label: const Text('Select 6 emojis as quick reactions'),
-                    suffix: SizedBox.square(
-                      dimension: 20,
-                      child: InkWell(
-                        onTap: () {
-                          _menuController.close();
-                          submit(_textController.text);
-                          setState(() => saved = true);
-                        },
-                        child: saved
-                            ? YaruAnimatedVectorIcon(
-                                YaruAnimatedIcons.ok_filled,
-                                color: context.colorScheme.success,
-                              )
-                            : Icon(
-                                saved ? YaruIcons.checkmark : YaruIcons.save,
-                                color:
-                                    saved ? context.colorScheme.success : null,
-                              ),
-                      ),
+                    suffixIcon: IconButton(
+                      padding: EdgeInsets.zero,
+                      style: textFieldSuffixStyle,
+                      onPressed: () {
+                        _menuController.close();
+                        submit(_textController.text);
+                        setState(() => saved = true);
+                      },
+                      icon: saved
+                          ? YaruAnimatedVectorIcon(
+                              YaruAnimatedIcons.ok_filled,
+                              color: context.colorScheme.success,
+                            )
+                          : Icon(
+                              saved ? YaruIcons.checkmark : YaruIcons.save,
+                              color: saved ? context.colorScheme.success : null,
+                            ),
                     ),
                     hintText: l10n.emojis,
                   ),

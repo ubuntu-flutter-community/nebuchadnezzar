@@ -53,6 +53,9 @@ class SettingsModel extends SafeChangeNotifier {
   void setDefaultReactions(List<String> value) =>
       _settingsService.setDefaultReactions(value);
 
+  int get themModeIndex => _settingsService.themModeIndex;
+  void setThemModeIndex(int i) => _settingsService.setThemModeIndex(i);
+
   Profile? _myProfile;
   Profile? get myProfile => _myProfile;
   CachedPresence? get presence => _presence;
