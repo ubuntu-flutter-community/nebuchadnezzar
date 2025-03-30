@@ -56,15 +56,19 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
           ),
           SizedBox.square(
             dimension: kAvatarDefaultSize,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.zero,
+            child: IconButton.outlined(
+              padding: EdgeInsets.zero,
+              tooltip: context.l10n.leave,
+              style: IconButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(kYaruButtonRadius),
+                ),
               ),
               onPressed: () => di<ChatModel>().leaveSelectedRoom(
                 room: activeSpace,
                 onFail: (e) => showSnackBar(context, content: Text(e)),
               ),
-              child: const Icon(
+              icon: const Icon(
                 YaruIcons.log_out,
               ),
             ),

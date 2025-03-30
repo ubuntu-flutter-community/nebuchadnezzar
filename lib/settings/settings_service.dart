@@ -43,6 +43,11 @@ class SettingsService {
       .setStringList(SettingKeys.defaultReactions, value)
       .then(notify);
 
+  int get themModeIndex =>
+      _sharedPreferences.getInt(SettingKeys.themeModeIndex) ?? 0;
+  void setThemModeIndex(int i) =>
+      _sharedPreferences.setInt(SettingKeys.themeModeIndex, i).then(notify);
+
   void setShowChatDisplaynameChanges(bool value) => _sharedPreferences
       .setBool(SettingKeys.showChatDisplaynameChanges, value)
       .then(notify);
@@ -82,5 +87,6 @@ class SettingsService {
 class SettingKeys {
   static const showChatAvatarChanges = 'showChatAvatarChanges';
   static const showChatDisplaynameChanges = 'showChatDisplaynameChanges';
-  static String defaultReactions = 'defaultReactions';
+  static const String defaultReactions = 'defaultReactions';
+  static const String themeModeIndex = 'themeModeIndex';
 }
