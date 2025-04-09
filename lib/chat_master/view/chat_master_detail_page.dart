@@ -105,9 +105,8 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
           ? const Drawer(child: ChatMasterSidePanel())
           : null,
       // Use endDrawer only for macOS desktop
-      endDrawer: isDesktopMacOS
-          ? const Drawer(child: ChatMasterSidePanel())
-          : null,
+      endDrawer:
+          isDesktopMacOS ? const Drawer(child: ChatMasterSidePanel()) : null,
       body: FutureBuilder(
         future: _initAfterEncryptionSetup,
         builder: (context, snapshot) =>
