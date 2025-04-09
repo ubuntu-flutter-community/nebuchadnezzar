@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart'; // Added for kIsWeb
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
@@ -134,8 +135,11 @@ void registerDependencies() => di
   )
   ..registerSingletonAsync<LocalNotifier>(
     () async {
-      await localNotifier.setup(appName: AppConfig.appId);
-
+      // Only setup local_notifier on non-web platforms
+      if (!kIsWeb) {
+        await localNotifier.setup(appName: AppConfig.appId);
+      }
+      // Still return the instance, even if not set up on web
       return localNotifier;
     },
   );
