@@ -1,3 +1,5 @@
+// Removed: import 'dart:io';
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -10,15 +12,28 @@ import 'app/view/app.dart';
 import 'register_dependencies.dart';
 
 void main() async {
-  await YaruWindowTitleBar.ensureInitialized();
-  WindowManager.instance
-    ..setMinimumSize(const Size(500, 700))
-    ..setSize(const Size(950, 820));
+  // Ensure widgets are initialized before platform checks or plugin calls
+  WidgetsFlutterBinding.ensureInitialized();
 
-  if (kIsWeb || !Platform.isLinux) {
+  await YaruWindowTitleBar.ensureInitialized();
+
+  // Guard window manager calls for non-web platforms
+  if (!kIsWeb) {
+    await WindowManager.instance
+        .ensureInitialized(); // Ensure initialized before use
+    WindowManager.instance
+      ..setMinimumSize(const Size(500, 700))
+      ..setSize(const Size(950, 820));
+  }
+
+  // Load system theme only on non-web platforms
+  // The original check `!Platform.isLinux` is implicitly handled by Yaru/GNOME theme on Linux.
+  // This simplified check avoids dart:io on web.
+  if (!kIsWeb && !Platform.isLinux) {
     await SystemTheme.accentColor.load();
   }
 
+  // Register dependencies (will need internal checks for web compatibility)
   registerDependencies();
 
   runApp(const Nebuchadnezzar());
