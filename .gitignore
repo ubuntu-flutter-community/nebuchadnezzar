@@ -23,6 +23,15 @@ migrate_working_dir/
 # is commented out by default.
 .vscode/
 
+# Do not ignore launch/run configurations and workspace settings
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.idea/codeStyles/
+!.idea/dictionaries/
+!.idea/runConfigurations/
+
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -43,7 +52,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-.vscode/settings.json
 
 # FVM Version Cache
 .fvm/
