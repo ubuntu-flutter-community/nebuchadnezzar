@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<title>Authentication complete</title>
+<p>Authentication is complete. If this does not happen automatically, please close the window.</p>
+<script>
+  function postAuthenticationMessage() {
+    // Construct the message expected by flutter_web_auth_2
+    const message = {
+      'flutter-web-auth-2': window.location.href
+    };
+
+    // Try sending to opener (popup window scenario)
+    if (window.opener) {
+      // Use '*' for targetOrigin for simplicity in local dev,
+      // but consider restricting to window.location.origin in production
+      window.opener.postMessage(message, '*');
+      window.close();
+    }
+    // Try sending to parent (iframe scenario)
+    else if (window.parent && window.parent !== window) {
+       // Use '*' for targetOrigin for simplicity in local dev,
+      // but consider restricting to window.location.origin in production
+      window.parent.postMessage(message, '*');
+    }
+    // Fallback: Store in localStorage (less common, might not be picked up)
+    else {
+      try {
+        localStorage.setItem('flutter-web-auth-2', window.location.href);
+      } catch (e) {
+        console.error('Failed to set localStorage item:', e);
+      }
+      // Attempt to close anyway, might not work depending on context
+      try {
+        window.close();
+      } catch (e) {
+        console.error('Failed to close window:', e);
+      }
+    }
+  }
+
+  // Execute the function when the page loads
+  postAuthenticationMessage();
+</script>

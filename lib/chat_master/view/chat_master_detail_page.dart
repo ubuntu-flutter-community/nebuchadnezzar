@@ -1,5 +1,6 @@
-import 'dart:io';
+import 'dart:io'; // Still needed for Platform.isMacOS check
 
+import 'package:flutter/foundation.dart'; // Added for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
@@ -94,12 +95,19 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
     final loadingArchive =
         watchPropertyValue((ChatModel m) => m.loadingArchive);
 
+    // Determine if running on macOS desktop
+    final bool isDesktopMacOS = !kIsWeb && Platform.isMacOS;
+
     return Scaffold(
       key: masterScaffoldKey,
-      drawer:
-          !Platform.isMacOS ? const Drawer(child: ChatMasterSidePanel()) : null,
-      endDrawer:
-          Platform.isMacOS ? const Drawer(child: ChatMasterSidePanel()) : null,
+      // Use drawer for non-web, non-macOS platforms
+      drawer: !kIsWeb && !isDesktopMacOS
+          ? const Drawer(child: ChatMasterSidePanel())
+          : null,
+      // Use endDrawer only for macOS desktop
+      endDrawer: isDesktopMacOS
+          ? const Drawer(child: ChatMasterSidePanel())
+          : null,
       body: FutureBuilder(
         future: _initAfterEncryptionSetup,
         builder: (context, snapshot) =>

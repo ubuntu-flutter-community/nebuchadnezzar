@@ -1,6 +1,6 @@
-import 'dart:io';
+import 'dart:io'; // Still needed for Platform.isMacOS check
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart'; // Added for kIsWeb check
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
@@ -44,7 +44,8 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         ),
-        leading: !Platform.isMacOS && !context.showSideBar
+        // Show leading sidebar button only on non-web, non-macOS when sidebar isn't shown
+        leading: !kIsWeb && !Platform.isMacOS && !context.showSideBar
             ? const SideBarButton()
             : null,
         actions: space(
@@ -69,6 +70,7 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
                   ? const Icon(YaruIcons.user)
                   : const Icon(YaruIcons.information),
             ),
+            // Show trailing sidebar button only on macOS desktop when sidebar isn't shown
             if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
               const SideBarButton(),
             const SizedBox(width: kSmallPadding),

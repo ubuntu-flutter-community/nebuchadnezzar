@@ -1,6 +1,7 @@
-import 'dart:io';
+import 'dart:io'; // Still needed for non-web checks
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:flutter/foundation.dart'; // Added for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
@@ -45,9 +46,21 @@ class _CheckEncryptionSetupNeededPageState
   @override
   Widget build(BuildContext context) => FutureBuilder(
         future: _isEncryptionSetupNeeded,
-        builder: (context, snapshot) => snapshot.data == true
-            ? const _SetupEncryptedChatPage()
-            : const ChatMasterDetailPage(),
+        builder: (context, snapshot) {
+          // Handle cases where future is still loading or has error
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Scaffold(body: Center(child: Progress()));
+          }
+          if (snapshot.hasError) {
+            // Optionally show an error page or message
+            return Scaffold(
+                body: Center(child: Text('Error checking encryption setup: ${snapshot.error}')));
+          }
+          // Proceed based on the result
+          return snapshot.data == true
+              ? const _SetupEncryptedChatPage()
+              : const ChatMasterDetailPage();
+        },
       );
 }
 
@@ -135,14 +148,16 @@ class _SetupEncryptedChatPage extends StatelessWidget with WatchItMixin {
                   ),
                 ),
                 const SizedBox(height: 16),
-                YaruCheckboxListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  value: storeInSecureStorage,
-                  onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
-                  title: Text(getSecureStorageLocalizedName(context.l10n)),
-                  subtitle: Text(l10n.storeInSecureStorageDescription),
-                ),
-                const SizedBox(height: 16),
+                // Secure storage option might not be applicable/available on web
+                if (!kIsWeb)
+                  YaruCheckboxListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    value: storeInSecureStorage,
+                    onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
+                    title: Text(getSecureStorageLocalizedName(context.l10n)),
+                    subtitle: Text(l10n.storeInSecureStorageDescription),
+                  ),
+                if (!kIsWeb) const SizedBox(height: 16),
                 YaruCheckboxListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                   value: recoveryKeyCopied,
@@ -161,7 +176,8 @@ class _SetupEncryptedChatPage extends StatelessWidget with WatchItMixin {
                 ElevatedButton.icon(
                   icon: const Icon(YaruIcons.checkmark),
                   label: Text(l10n.next),
-                  onPressed: (recoveryKeyCopied || storeInSecureStorage)
+                  // Allow proceeding if copied, or if stored (only possible on non-web)
+                  onPressed: (recoveryKeyCopied || (!kIsWeb && storeInSecureStorage))
                       ? () => model.storeRecoveryKey()
                       : null,
                 ),
@@ -286,12 +302,20 @@ class _SetupEncryptedChatPage extends StatelessWidget with WatchItMixin {
   }
 
   String getSecureStorageLocalizedName(AppLocalizations l10n) {
+    // Handle web first, as Platform.* is unavailable
+    if (kIsWeb) {
+      // Secure storage might not be applicable or work differently on web.
+      // Return a generic or web-specific string.
+      return l10n.storeSecurlyOnThisDevice; // Or potentially a new l10n string for web
+    }
+    // Only check Platform.* if not on web
     if (Platform.isAndroid) {
       return l10n.storeInAndroidKeystore;
     }
     if (Platform.isIOS || Platform.isMacOS) {
       return l10n.storeInAppleKeyChain;
     }
+    // Default for other non-web platforms (Linux, Windows, Fuchsia)
     return l10n.storeSecurlyOnThisDevice;
   }
 }
