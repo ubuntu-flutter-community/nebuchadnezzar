@@ -73,13 +73,15 @@ class AuthenticationModel extends SafeChangeNotifier {
     required Function(String error) onFail,
     required Future Function() onSuccess,
   }) async {
-    // Use custom scheme only on non-web macOS.
     // For web, redirect to the auth.html page on the same origin.
-    final isDesktopMacOS = !kIsWeb && Platform.isMacOS;
-    final redirectUrl = isDesktopMacOS
-        ? '${AppConfig.appOpenUrlScheme.toLowerCase()}://login'
-        // IMPORTANT: Path must point to auth.html for web callback mechanism
-        : 'http://localhost:7331/auth.html'; // Assuming 7331 is the correct dev server port
+    // IMPORTANT: Path must point to auth.html for web callback mechanism
+    // Assuming 7331 is the correct dev server port
+
+    final redirectUrl = kIsWeb
+        ? 'http://localhost:7331/auth.html'
+        : Platform.isMacOS
+            ? '${AppConfig.appOpenUrlScheme.toLowerCase()}://login'
+            : 'http://localhost:3001//login';
 
     await _client.checkHomeserver(Uri.https(homeServer, ''));
     final url = _client.homeserver!.replace(
@@ -88,9 +90,13 @@ class AuthenticationModel extends SafeChangeNotifier {
     );
 
     // Use custom scheme only on non-web macOS, otherwise use http scheme for localhost
-    final urlScheme = isDesktopMacOS
-        ? Uri.parse(redirectUrl).scheme
-        : 'http'; // Scheme for localhost URL
+    final urlScheme =
+        // Scheme for localhost URL
+        kIsWeb
+            ? 'http'
+            : Platform.isMacOS
+                ? Uri.parse(redirectUrl).scheme
+                : 'http://localhost:3001';
 
     String result;
     try {
@@ -102,10 +108,13 @@ class AuthenticationModel extends SafeChangeNotifier {
             ),
       );
       // Log the raw result from the authentication package (now expected to be posted from auth.html)
-      print('SSO Auth Result (from postMessage): $result');
+      printMessageInDebugMode('SSO Auth Result (from postMessage): $result');
     } catch (e, s) {
       // Handle potential errors during authentication itself
-      printMessageInDebugMode('Error during FlutterWebAuth2.authenticate: $e', s);
+      printMessageInDebugMode(
+        'Error during FlutterWebAuth2.authenticate: $e',
+        s,
+      );
       onFail('SSO authentication failed or was cancelled.');
       return null;
     }
@@ -116,14 +125,20 @@ class AuthenticationModel extends SafeChangeNotifier {
       parsedResult = Uri.parse(result);
     } catch (e, s) {
       // Handle potential errors during URI parsing
-      printMessageInDebugMode('Error parsing SSO result URI: "$result" - $e', s);
+      printMessageInDebugMode(
+        'Error parsing SSO result URI: "$result" - $e',
+        s,
+      );
       onFail('Failed to parse SSO response.');
       return null;
     }
 
     final token = parsedResult.queryParameters['loginToken'];
-    if (token == null || token.isEmpty) { // Simplified null/empty check
-      print('Login token not found in SSO result query parameters: ${parsedResult.queryParameters}');
+    if (token == null || token.isEmpty) {
+      // Simplified null/empty check
+      printMessageInDebugMode(
+        'Login token not found in SSO result query parameters: ${parsedResult.queryParameters}',
+      );
       onFail('Login token not received from SSO.');
       return null;
     }
@@ -140,7 +155,8 @@ class AuthenticationModel extends SafeChangeNotifier {
       );
       await _init();
       await onSuccess();
-    } catch (e, s) { // Catch specific login errors
+    } catch (e, s) {
+      // Catch specific login errors
       printMessageInDebugMode('Error during client.login with token: $e', s);
       onFail('Failed to login with SSO token: ${e.toString()}');
     } finally {

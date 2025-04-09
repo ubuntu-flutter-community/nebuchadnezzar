@@ -128,9 +128,11 @@ class _XdgFileSystem implements FileSystem {
 // It's correctly guarded by the !kIsWeb && Platform.isLinux check above.
 class XdgCacheManager extends CacheManager with ImageCacheManager {
   // Use a more specific key if possible, Platform.resolvedExecutable might be empty/unreliable on some platforms
-  static final key = p.basename(Platform.resolvedExecutable.isNotEmpty
-      ? Platform.resolvedExecutable
-      : 'flutter_app_cache');
+  static final key = p.basename(
+    Platform.resolvedExecutable.isNotEmpty
+        ? Platform.resolvedExecutable
+        : 'flutter_app_cache',
+  );
 
   static final XdgCacheManager _instance = XdgCacheManager._();
 

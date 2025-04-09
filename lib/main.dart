@@ -1,5 +1,7 @@
 // Removed: import 'dart:io';
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:system_theme/system_theme.dart';
@@ -27,7 +29,7 @@ void main() async {
   // Load system theme only on non-web platforms
   // The original check `!Platform.isLinux` is implicitly handled by Yaru/GNOME theme on Linux.
   // This simplified check avoids dart:io on web.
-  if (!kIsWeb) {
+  if (!kIsWeb && !Platform.isLinux) {
     await SystemTheme.accentColor.load();
   }
 

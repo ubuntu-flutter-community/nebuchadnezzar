@@ -54,7 +54,11 @@ class _CheckEncryptionSetupNeededPageState
           if (snapshot.hasError) {
             // Optionally show an error page or message
             return Scaffold(
-                body: Center(child: Text('Error checking encryption setup: ${snapshot.error}')));
+              body: Center(
+                child:
+                    Text('Error checking encryption setup: ${snapshot.error}'),
+              ),
+            );
           }
           // Proceed based on the result
           return snapshot.data == true
@@ -177,9 +181,10 @@ class _SetupEncryptedChatPage extends StatelessWidget with WatchItMixin {
                   icon: const Icon(YaruIcons.checkmark),
                   label: Text(l10n.next),
                   // Allow proceeding if copied, or if stored (only possible on non-web)
-                  onPressed: (recoveryKeyCopied || (!kIsWeb && storeInSecureStorage))
-                      ? () => model.storeRecoveryKey()
-                      : null,
+                  onPressed:
+                      (recoveryKeyCopied || (!kIsWeb && storeInSecureStorage))
+                          ? () => model.storeRecoveryKey()
+                          : null,
                 ),
               ],
             ),
@@ -306,7 +311,8 @@ class _SetupEncryptedChatPage extends StatelessWidget with WatchItMixin {
     if (kIsWeb) {
       // Secure storage might not be applicable or work differently on web.
       // Return a generic or web-specific string.
-      return l10n.storeSecurlyOnThisDevice; // Or potentially a new l10n string for web
+      return l10n
+          .storeSecurlyOnThisDevice; // Or potentially a new l10n string for web
     }
     // Only check Platform.* if not on web
     if (Platform.isAndroid) {
