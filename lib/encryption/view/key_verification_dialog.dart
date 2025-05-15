@@ -14,7 +14,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import 'setup_encrypted_chat_page.dart';
+import 'check_encryption_setup_page.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan
@@ -367,7 +367,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
               Navigator.of(context, rootNavigator: false).pop();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => const CheckEncryptionSetupNeededPage(),
+                  builder: (_) => const CheckEncryptionSetupPage(),
                 ),
                 (route) => false,
               );

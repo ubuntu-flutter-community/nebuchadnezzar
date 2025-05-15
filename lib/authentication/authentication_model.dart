@@ -49,13 +49,15 @@ class AuthenticationModel extends SafeChangeNotifier {
     try {
       await _client.checkHomeserver(Uri.https(homeServer, ''));
 
-      await _client.login(
-        LoginType.mLoginPassword,
-        password: password,
-        identifier: AuthenticationUserIdentifier(user: username),
-        initialDeviceDisplayName:
-            '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
-      );
+      await _client
+          .login(
+            LoginType.mLoginPassword,
+            password: password,
+            identifier: AuthenticationUserIdentifier(user: username),
+            initialDeviceDisplayName:
+                '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
+          )
+          .timeout(const Duration(seconds: 30));
       await _init();
       await onSuccess();
     } on Exception catch (e, s) {
@@ -95,12 +97,14 @@ class AuthenticationModel extends SafeChangeNotifier {
     _setProcessingAccess(true);
     LoginResponse? response;
     try {
-      response = await _client.login(
-        LoginType.mLoginToken,
-        token: token,
-        initialDeviceDisplayName:
-            '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
-      );
+      response = await _client
+          .login(
+            LoginType.mLoginToken,
+            token: token,
+            initialDeviceDisplayName:
+                '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
+          )
+          .timeout(const Duration(seconds: 30));
       await _init();
       await onSuccess();
     } catch (e) {

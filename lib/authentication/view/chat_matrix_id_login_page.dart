@@ -4,7 +4,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../app/app_config.dart';
 import '../../common/view/snackbars.dart';
-import '../../encryption/view/setup_encrypted_chat_page.dart';
+import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/l10n.dart';
 import '../authentication_model.dart';
 import 'chat_login_page_scaffold.dart';
@@ -42,7 +42,7 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
               password: _passwordController.text,
               onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => const CheckEncryptionSetupNeededPage(),
+                  builder: (_) => const CheckEncryptionSetupPage(),
                 ),
                 (route) => false,
               ),

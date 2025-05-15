@@ -781,14 +781,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.1"
-  hive:
-    dependency: transitive
-    description:
-      name: hive
-      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.3"
   html:
     dependency: "direct main"
     description:
@@ -1041,10 +1033,10 @@ packages:
     dependency: "direct main"
     description:
       name: matrix
-      sha256: "23e87bb625c53f06568ae3a68badf31e95fbfd0f97f8a6781b9685dd207c9add"
+      sha256: "7d15fdbc760be7e40c58bb65e03baa8241b1e31db2bc67dab61883aabc083a85"
       url: "https://pub.dev"
     source: hosted
-    version: "0.38.1"
+    version: "0.40.0"
   matrix4_transform:
     dependency: transitive
     description:
@@ -1105,10 +1097,10 @@ packages:
     dependency: transitive
     description:
       name: olm
-      sha256: "3306bf534ceb914fd148b3b4a3d603fb5e067b2e6da8304025b47c24cfdf6b46"
+      sha256: "6a3fe1e5170b954dd9e4ba3b27513e6aa9b7591eb7bb0d7f6f32140b7f140c6f"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4"
+    version: "3.1.0"
   package_config:
     dependency: transitive
     description:

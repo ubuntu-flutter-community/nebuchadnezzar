@@ -6,7 +6,7 @@ import 'package:system_theme/system_theme.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yaru/yaru.dart';
 
-import 'app/view/app.dart';
+import 'app/view/nebuchadnezzar.dart';
 import 'register_dependencies.dart';
 
 void main() async {

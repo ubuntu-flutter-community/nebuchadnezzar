@@ -17,12 +17,8 @@ class EncryptionModel extends SafeChangeNotifier {
   Stream<KeyVerification> get onKeyVerificationRequest =>
       _client.onKeyVerificationRequest.stream;
 
-  Future<bool> checkIfEncryptionSetupIsNeeded({
-    bool startBootstrappingIfNeeded = false,
-  }) async {
-    if (!_client.encryptionEnabled) {
-      return true;
-    }
+  Future<bool> checkIfEncryptionSetupIsNeeded() async {
+    if (!_client.encryptionEnabled) return true;
 
     await _client.accountDataLoading;
     await _client.userDeviceKeysLoading;
@@ -31,19 +27,12 @@ class EncryptionModel extends SafeChangeNotifier {
     }
     final crossSigning =
         await _client.encryption?.crossSigning.isCached() ?? false;
-    final needsSetup =
+    final needsBootstrap =
         await _client.encryption?.keyManager.isCached() == false ||
             _client.encryption?.crossSigning.enabled == false ||
             crossSigning == false;
-    final isUnknownSession = _client.isUnknownSession;
 
-    final requireSetup = needsSetup || isUnknownSession;
-
-    if (requireSetup && startBootstrappingIfNeeded) {
-      startBootstrap(wipe: false);
-    }
-
-    return requireSetup;
+    return needsBootstrap || _client.isUnknownSession;
   }
 
   String get secureStorageKey => 'ssss_recovery_key_${_client.userID}';
@@ -106,8 +95,41 @@ class EncryptionModel extends SafeChangeNotifier {
   Bootstrap? _bootstrap;
   Bootstrap? get bootstrap => _bootstrap;
   void _setBootsTrap(Bootstrap bootstrap) {
+    switch (bootstrap.state) {
+      case BootstrapState.loading ||
+            BootstrapState.done ||
+            BootstrapState.error:
+        return;
+      case BootstrapState.openExistingSsss:
+        setRecoveryKeyStored(true);
+      case BootstrapState.askWipeSsss:
+        bootstrap.wipeSsss(wipe);
+      case BootstrapState.askBadSsss:
+        bootstrap.ignoreBadSecrets(true);
+      case BootstrapState.askUseExistingSsss:
+        bootstrap.useExistingSsss(!wipe);
+      case BootstrapState.askUnlockSsss:
+        bootstrap.unlockedSsss();
+      case BootstrapState.askNewSsss:
+        bootstrap.newSsss();
+      case BootstrapState.askWipeCrossSigning:
+        bootstrap.wipeCrossSigning(wipe);
+      case BootstrapState.askSetupCrossSigning:
+        bootstrap.askSetupCrossSigning(
+          setupMasterKey: true,
+          setupSelfSigningKey: true,
+          setupUserSigningKey: true,
+        );
+      case BootstrapState.askWipeOnlineKeyBackup:
+        bootstrap.wipeOnlineKeyBackup(wipe);
+
+      case BootstrapState.askSetupOnlineKeyBackup:
+        bootstrap.askSetupOnlineKeyBackup(true);
+    }
+
     _bootstrap = bootstrap;
     _key = bootstrap.newSsssKey?.recoveryKey;
+
     notifyListeners();
   }
 

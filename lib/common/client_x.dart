@@ -23,6 +23,8 @@ extension ClientX on Client {
         KeyVerificationMethod.numbers,
         if (Platform.isAndroid || Platform.isLinux) KeyVerificationMethod.emoji,
       },
+      enableDehydratedDevices: true,
+      shareKeysWith: ShareKeysWith.crossVerified,
       databaseBuilder: (_) async {
         final dir = await getApplicationSupportDirectory();
         final db = MatrixSdkDatabase(
