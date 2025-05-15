@@ -37,7 +37,7 @@ class ChatEventStatusIcon extends StatelessWidget {
           )
         : userEvent
             ? switch (event.status) {
-                EventStatus.sending || EventStatus.sent => Icon(
+                EventStatus.sending => Icon(
                     key: ValueKey(event.status.index),
                     YaruIcons.sync,
                     size: iconSize,
@@ -49,17 +49,18 @@ class ChatEventStatusIcon extends StatelessWidget {
                     size: iconSize,
                     color: foregroundColor,
                   ),
-                EventStatus.roomState => Icon(
+                EventStatus.sent => Icon(
                     key: ValueKey(event.status.index),
-                    YaruIcons.information,
+                    YaruIcons.checkmark,
+                    size: iconSize,
                     color: foregroundColor,
                   ),
                 EventStatus.synced => Icon(
                     key: ValueKey(event.status.index),
                     YaruIcons.checkmark,
                     size: iconSize,
-                    color: foregroundColor,
-                  )
+                    color: context.colorScheme.primary,
+                  ),
               }
             : const SizedBox.shrink();
 
@@ -100,6 +101,7 @@ class ChatEventStatusIcon extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             AnimatedSwitcher(
+              key: ValueKey('${event.eventId}${event.status.index}'),
               duration: const Duration(milliseconds: 300),
               child: icon,
             ),

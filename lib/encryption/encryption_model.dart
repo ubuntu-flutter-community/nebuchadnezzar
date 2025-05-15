@@ -17,12 +17,8 @@ class EncryptionModel extends SafeChangeNotifier {
   Stream<KeyVerification> get onKeyVerificationRequest =>
       _client.onKeyVerificationRequest.stream;
 
-  Future<bool> checkIfEncryptionSetupIsNeeded({
-    bool startBootstrappingIfNeeded = false,
-  }) async {
-    if (!_client.encryptionEnabled) {
-      return true;
-    }
+  Future<bool> checkIfEncryptionSetupIsNeeded() async {
+    if (!_client.encryptionEnabled) return true;
 
     await _client.accountDataLoading;
     await _client.userDeviceKeysLoading;
@@ -31,19 +27,12 @@ class EncryptionModel extends SafeChangeNotifier {
     }
     final crossSigning =
         await _client.encryption?.crossSigning.isCached() ?? false;
-    final needsSetup =
+    final needsBootstrap =
         await _client.encryption?.keyManager.isCached() == false ||
             _client.encryption?.crossSigning.enabled == false ||
             crossSigning == false;
-    final isUnknownSession = _client.isUnknownSession;
 
-    final requireSetup = needsSetup || isUnknownSession;
-
-    if (requireSetup && startBootstrappingIfNeeded) {
-      startBootstrap(wipe: false);
-    }
-
-    return requireSetup;
+    return needsBootstrap || _client.isUnknownSession;
   }
 
   String get secureStorageKey => 'ssss_recovery_key_${_client.userID}';

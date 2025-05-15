@@ -6,7 +6,7 @@ import '../../app/app_config.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
-import '../../encryption/view/setup_encrypted_chat_page.dart';
+import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/l10n.dart';
 import '../authentication_model.dart';
 import 'chat_login_page_scaffold.dart';
@@ -33,7 +33,7 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
         : () => di<AuthenticationModel>().singleSingOnLogin(
               onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => const CheckEncryptionSetupNeededPage(),
+                  builder: (_) => const CheckEncryptionSetupPage(),
                 ),
                 (route) => false,
               ),
