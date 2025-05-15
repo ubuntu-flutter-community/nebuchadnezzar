@@ -95,8 +95,41 @@ class EncryptionModel extends SafeChangeNotifier {
   Bootstrap? _bootstrap;
   Bootstrap? get bootstrap => _bootstrap;
   void _setBootsTrap(Bootstrap bootstrap) {
+    switch (bootstrap.state) {
+      case BootstrapState.loading ||
+            BootstrapState.done ||
+            BootstrapState.error:
+        return;
+      case BootstrapState.openExistingSsss:
+        setRecoveryKeyStored(true);
+      case BootstrapState.askWipeSsss:
+        bootstrap.wipeSsss(wipe);
+      case BootstrapState.askBadSsss:
+        bootstrap.ignoreBadSecrets(true);
+      case BootstrapState.askUseExistingSsss:
+        bootstrap.useExistingSsss(!wipe);
+      case BootstrapState.askUnlockSsss:
+        bootstrap.unlockedSsss();
+      case BootstrapState.askNewSsss:
+        bootstrap.newSsss();
+      case BootstrapState.askWipeCrossSigning:
+        bootstrap.wipeCrossSigning(wipe);
+      case BootstrapState.askSetupCrossSigning:
+        bootstrap.askSetupCrossSigning(
+          setupMasterKey: true,
+          setupSelfSigningKey: true,
+          setupUserSigningKey: true,
+        );
+      case BootstrapState.askWipeOnlineKeyBackup:
+        bootstrap.wipeOnlineKeyBackup(wipe);
+
+      case BootstrapState.askSetupOnlineKeyBackup:
+        bootstrap.askSetupOnlineKeyBackup(true);
+    }
+
     _bootstrap = bootstrap;
     _key = bootstrap.newSsssKey?.recoveryKey;
+
     notifyListeners();
   }
 
