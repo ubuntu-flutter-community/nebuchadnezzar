@@ -5,7 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yaru/yaru.dart';
+
+import '../common/platforms.dart';
 
 class ChatDownloadService {
   ChatDownloadService({
@@ -38,7 +39,7 @@ class ChatDownloadService {
     }
     MatrixFile? file;
     String? path;
-    if (isMobile) {
+    if (Platforms.isMobile) {
       file = await event.downloadAndDecryptAttachment();
       path = await FilePicker.platform.saveFile(
         fileName: file.name,

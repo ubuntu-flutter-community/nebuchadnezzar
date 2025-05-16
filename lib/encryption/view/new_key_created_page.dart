@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
@@ -37,7 +38,7 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
         centerTitle: true,
         title: Text(l10n.recoveryKey),
         actions: [
-          const ChatSettingsLogoutButton(),
+          const Flexible(child: ChatSettingsLogoutButton()),
           const SizedBox(width: kSmallPadding),
         ],
       ),
@@ -101,7 +102,15 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                 icon: const Icon(YaruIcons.checkmark),
                 label: Text(l10n.next),
                 onPressed: (recoveryKeyCopied || storeInSecureStorage)
-                    ? () => model.storeRecoveryKey()
+                    ? () {
+                        model.storeRecoveryKey();
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const ChatMasterDetailPage(),
+                          ),
+                          (route) => false,
+                        );
+                      }
                     : null,
               ),
             ],

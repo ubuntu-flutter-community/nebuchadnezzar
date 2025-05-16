@@ -37,7 +37,7 @@ extension ClientX on Client {
       },
     );
     // This reads potential credentials that might exist from previous sessions.
-    await client.init();
+    await client.init().timeout(const Duration(seconds: 55));
     return client;
   }
 }

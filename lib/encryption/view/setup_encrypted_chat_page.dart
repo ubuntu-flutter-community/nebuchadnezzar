@@ -31,9 +31,13 @@ class _SetupEncryptedChatPageState extends State<SetupEncryptedChatPage> {
   Widget build(BuildContext context) {
     registerStreamHandler(
       select: (AuthenticationModel m) => m.onUiaRequestStream,
-      handler: (context, newValue, cancel) {
+      handler: (context, newValue, cancel) async {
         if (newValue.hasData) {
-          uiaRequestHandler(uiaRequest: newValue.data!, context: context);
+          await uiaRequestHandler(
+            uiaRequest: newValue.data!,
+            context: context,
+            rootNavigator: true,
+          );
         }
       },
     );

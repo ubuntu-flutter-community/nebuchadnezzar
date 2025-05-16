@@ -9,15 +9,17 @@ import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
 import '../authentication_model.dart';
 
-Future uiaRequestHandler({
+Future<void> uiaRequestHandler({
   required UiaRequest uiaRequest,
   required BuildContext context,
+  required bool rootNavigator,
 }) async {
   final l10n = context.l10n;
   var currentThreepidCreds = di<AuthenticationModel>().currentThreepidCreds;
   var currentClientSecret = di<AuthenticationModel>().currentClientSecret;
   final client = di<Client>();
-  final navigatorContext = Navigator.of(context).context;
+  final navigatorContext =
+      Navigator.of(context, rootNavigator: rootNavigator).context;
   try {
     if (uiaRequest.state != UiaRequestState.waitForUser ||
         uiaRequest.nextStages.isEmpty) {
@@ -60,7 +62,7 @@ Future uiaRequestHandler({
             clientSecret: currentClientSecret,
           ),
         );
-        showDialog(
+        return showDialog(
           context: context,
           builder: (context) => ConfirmationDialog(
             title: Text(l10n.weSentYouAnEmail),
@@ -68,7 +70,7 @@ Future uiaRequestHandler({
             confirmLabel: l10n.iHaveClickedOnLink,
             cancelLabel: l10n.cancel,
             onCancel: uiaRequest.cancel,
-            onConfirm: () => uiaRequest.completeStage(auth),
+            onConfirm: () async => uiaRequest.completeStage(auth),
           ),
         );
 
@@ -85,12 +87,12 @@ Future uiaRequestHandler({
         );
         launchUrlString(url.toString());
 
-        showDialog(
+        return showDialog(
           context: context,
           builder: (context) => ConfirmationDialog(
             title: Text(l10n.pleaseFollowInstructionsOnWeb),
             confirmLabel: l10n.next,
-            onConfirm: () => uiaRequest.completeStage(
+            onConfirm: () async => uiaRequest.completeStage(
               AuthenticationData(session: uiaRequest.session),
             ),
             onCancel: uiaRequest.cancel,

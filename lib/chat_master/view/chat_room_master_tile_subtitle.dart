@@ -69,7 +69,8 @@ class _LastEventState extends State<_LastEvent> {
     super.initState();
     _future = widget.lastEvent != null &&
             !widget.lastEvent!.redacted &&
-            _cache.containsKey(widget.lastEvent!.eventId)
+            _cache.containsKey(widget.lastEvent!.eventId) &&
+            widget.lastEvent?.type != EventTypes.Encrypted
         ? Future.value(_cache[widget.lastEvent!.eventId]!)
         : widget.lastEvent?.calcLocalizedBody(
               const MatrixDefaultLocalizations(),

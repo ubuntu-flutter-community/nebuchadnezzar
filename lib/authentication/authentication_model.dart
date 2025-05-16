@@ -104,7 +104,7 @@ class AuthenticationModel extends SafeChangeNotifier {
             initialDeviceDisplayName:
                 '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
-          .timeout(const Duration(seconds: 30));
+          .timeout(const Duration(seconds: 55));
       await _init();
       await onSuccess();
     } catch (e) {

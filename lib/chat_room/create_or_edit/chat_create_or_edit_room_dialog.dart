@@ -8,10 +8,12 @@ import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/common_widgets.dart';
+import '../../common/view/save_text_icon.dart';
 import '../../common/view/search_auto_complete.dart';
 import '../../common/view/sliver_sticky_panel.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
+import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../input/draft_model.dart';
@@ -219,20 +221,19 @@ class _ChatCreateOrEditRoomDialogState
                                         ))
                                     ? IconButton(
                                         padding: EdgeInsets.zero,
-                                        style: IconButton.styleFrom(
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(6),
-                                              bottomRight: Radius.circular(6),
-                                            ),
-                                          ),
-                                        ),
+                                        style: textFieldSuffixStyle,
                                         onPressed:
                                             _groupName != widget.room!.name
                                                 ? () => widget.room!
                                                     .setName(_groupName!)
                                                 : null,
-                                        icon: const Icon(YaruIcons.save),
+                                        icon: SaveTextIcon(
+                                          room: widget.room,
+                                          textEditingController:
+                                              _groupNameController,
+                                          isSaved: () =>
+                                              _groupName == widget.room?.name,
+                                        ),
                                       )
                                     : null,
                               ),
@@ -256,19 +257,17 @@ class _ChatCreateOrEditRoomDialogState
                                         ))
                                     ? IconButton(
                                         padding: EdgeInsets.zero,
-                                        style: IconButton.styleFrom(
-                                          shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(6),
-                                              bottomRight: Radius.circular(6),
-                                            ),
-                                          ),
-                                        ),
+                                        style: textFieldSuffixStyle,
                                         onPressed: _topic != widget.room!.topic
                                             ? () => widget.room!
                                                 .setDescription(_topic!)
                                             : null,
-                                        icon: const Icon(YaruIcons.save),
+                                        icon: SaveTextIcon(
+                                          textEditingController:
+                                              _groupTopicController,
+                                          isSaved: () =>
+                                              _topic == widget.room?.topic,
+                                        ),
                                       )
                                     : null,
                               ),

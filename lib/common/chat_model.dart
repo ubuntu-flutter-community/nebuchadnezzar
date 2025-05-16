@@ -484,9 +484,12 @@ class ChatModel extends SafeChangeNotifier {
     }
   }
 
-  Future<void> initAfterEncryptionSetup() async {
-    await _client.roomsLoading;
-    await _client.userDeviceKeysLoading;
-    await _client.firstSyncReceived;
-  }
+  Future initAfterEncryptionSetup() async => Future.wait<Future<dynamic>?>(
+        Iterable.castFrom(<Future<dynamic>?>[
+          _client.roomsLoading,
+          _client.accountDataLoading,
+          _client.userDeviceKeysLoading,
+          _client.firstSyncReceived,
+        ]),
+      );
 }

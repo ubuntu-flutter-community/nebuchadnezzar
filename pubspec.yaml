@@ -72,7 +72,7 @@ dependencies:
   yaru:
     git:
       url: https://github.com/ubuntu/yaru.dart
-      ref: f9db616a71e0cb0b82ad0b994928b8cbc0688acc
+      ref: 163b4b5e1ad79bf5eb8677e7f4cd78e2eb566627
 
 dev_dependencies:
   build_runner: ^2.4.8

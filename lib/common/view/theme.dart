@@ -55,6 +55,14 @@ Color getTileColor(
       : getMonochromeBg(theme: theme, factor: 6, darkFactor: 15);
 }
 
+Color getTileIconColor(
+  ThemeData theme,
+) {
+  return theme.colorScheme.primary == YaruColors.orange
+      ? theme.colorScheme.link
+      : theme.colorScheme.primary;
+}
+
 Color getTileOutlineColor(
   bool isUserEvent,
   ThemeData theme,

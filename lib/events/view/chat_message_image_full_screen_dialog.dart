@@ -17,9 +17,14 @@ import '../../l10n/l10n.dart';
 import '../chat_download_model.dart';
 
 class ChatMessageImageFullScreenDialog extends StatefulWidget {
-  const ChatMessageImageFullScreenDialog({super.key, required this.event});
+  const ChatMessageImageFullScreenDialog({
+    super.key,
+    required this.event,
+    this.getThumbnail = false,
+  });
 
   final Event event;
+  final bool getThumbnail;
 
   @override
   State<ChatMessageImageFullScreenDialog> createState() =>
@@ -37,7 +42,7 @@ class _ChatMessageImageFullScreenDialogState
     super.initState();
     _controller = PhotoViewController();
     _future = di<LocalImageModel>()
-        .downloadImage(event: widget.event, getThumbnail: false);
+        .downloadImage(event: widget.event, getThumbnail: widget.getThumbnail);
   }
 
   @override

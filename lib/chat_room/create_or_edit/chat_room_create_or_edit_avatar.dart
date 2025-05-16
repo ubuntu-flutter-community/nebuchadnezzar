@@ -79,7 +79,8 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                       ),
                     ),
             ),
-            if (room?.canChangeStateEvent(EventTypes.RoomAvatar) == true)
+            if (room?.canChangeStateEvent(EventTypes.RoomAvatar) == true ||
+                room == null)
               Positioned(
                 bottom: 0,
                 right: 0,

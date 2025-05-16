@@ -119,8 +119,8 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                 decoration: TextDecoration.lineThrough,
                               ),
                             )
-                          : switch (event.messageType) {
-                              MessageTypes.Image => ChatImage(
+                          : switch ((event.messageType, event.hasThumbnail)) {
+                              (MessageTypes.Image, _) => ChatImage(
                                   fit: BoxFit.contain,
                                   timeline: timeline,
                                   event: event,
@@ -134,16 +134,33 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                             ),
                                           ),
                                 ),
-                              MessageTypes.Location => ChatMap(
+                              // TODO: #5
+                              (MessageTypes.Video, true) => ChatImage(
+                                  fit: BoxFit.contain,
+                                  timeline: timeline,
+                                  event: event,
+                                  onTap: () => showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        ChatMessageImageFullScreenDialog(
+                                      event: event,
+                                      getThumbnail: true,
+                                    ),
+                                  ),
+                                ),
+                              (MessageTypes.Location, _) => ChatMap(
                                   event: event,
                                   partOfMessageCohort: partOfMessageCohort,
                                   timeline: timeline,
                                   onReplyOriginClick: onReplyOriginClick,
                                 ),
                               // TODO: #5
-                              MessageTypes.Audio ||
-                              MessageTypes.Video ||
-                              MessageTypes.File =>
+                              (
+                                MessageTypes.Audio ||
+                                    MessageTypes.File ||
+                                    MessageTypes.Video,
+                                _
+                              ) =>
                                 Padding(
                                   padding:
                                       const EdgeInsets.only(top: kSmallPadding),

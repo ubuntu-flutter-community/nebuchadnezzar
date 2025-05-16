@@ -6,10 +6,10 @@ import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:video_compress/video_compress.dart';
-import 'package:yaru/yaru.dart';
 
 import '../../common/local_image_service.dart';
 import '../../common/logging.dart';
+import '../../common/platforms.dart';
 
 class DraftModel extends SafeChangeNotifier {
   DraftModel({
@@ -298,7 +298,7 @@ class DraftModel extends SafeChangeNotifier {
   Future<MatrixVideoFile> resizeVideo(XFile xFile) async {
     MediaInfo? mediaInfo;
     try {
-      if (isMobile) {
+      if (Platforms.isMobile || Platforms.isMacOS) {
         // will throw an error e.g. on Android SDK < 18
         mediaInfo = await VideoCompress.compressVideo(xFile.path);
       }
@@ -319,7 +319,7 @@ class DraftModel extends SafeChangeNotifier {
   // final Map<MatrixVideoFile, XFile> _fileMap = {};
 
   Future<MatrixImageFile?> getVideoThumbnail(XFile xFile) async {
-    if (!isMobile) return null;
+    if (!(Platforms.isMobile || Platforms.isMacOS)) return null;
 
     try {
       final bytes = await VideoCompress.getByteThumbnail(xFile.path);

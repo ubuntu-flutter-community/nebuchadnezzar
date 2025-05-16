@@ -5,6 +5,8 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../authentication/authentication_model.dart';
+import '../../authentication/view/uia_request_handler.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
@@ -46,12 +48,25 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
       (EncryptionModel m) => m.recoveryKeyInputError,
     );
 
+    registerStreamHandler(
+      select: (AuthenticationModel m) => m.onUiaRequestStream,
+      handler: (context, newValue, cancel) async {
+        if (newValue.hasData) {
+          await uiaRequestHandler(
+            uiaRequest: newValue.data!,
+            context: context,
+            rootNavigator: true,
+          );
+        }
+      },
+    );
+
     return Scaffold(
       appBar: const YaruWindowTitleBar(
         border: BorderSide.none,
         backgroundColor: Colors.transparent,
         actions: [
-          ChatSettingsLogoutButton(),
+          Flexible(child: ChatSettingsLogoutButton()),
           SizedBox(width: kSmallPadding),
         ],
       ),

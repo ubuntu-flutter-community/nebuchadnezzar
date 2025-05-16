@@ -18,7 +18,7 @@ class SplashPage extends StatelessWidget {
         border: BorderSide.none,
         backgroundColor: Colors.transparent,
         actions: const [
-          ChatSettingsLogoutButton(),
+          Flexible(child: ChatSettingsLogoutButton()),
           SizedBox(width: kSmallPadding),
         ],
       ),

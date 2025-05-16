@@ -5,6 +5,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/date_time_x.dart';
 import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
@@ -59,7 +60,7 @@ class ChatEventStatusIcon extends StatelessWidget {
                     key: ValueKey(event.status.index),
                     YaruIcons.checkmark,
                     size: iconSize,
-                    color: context.colorScheme.primary,
+                    color: getTileIconColor(context.theme),
                   ),
               }
             : const SizedBox.shrink();
