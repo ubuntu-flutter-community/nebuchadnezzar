@@ -54,6 +54,8 @@ parts:
       set -eux
       curl https://sh.rustup.rs -sSf | sh -s -- -y
       craftctl default
+      fvm flutter pub get
+      fvm flutter build linux --release -v
 
   deps:
     plugin: nil
