@@ -29,7 +29,7 @@ parts:
     plugin: nil
     source: .
     override-build: |
-      bash install-fvm.sh
+      bash $CRAFT_PART_SRC/scripts/install-fvm.sh
       fvm install
       fvm flutter doctor
     build-packages:
