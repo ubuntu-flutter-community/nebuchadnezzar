@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  desktop_webview_window
   dynamic_color
   emoji_picker_flutter
   file_selector_linux
