@@ -47,7 +47,7 @@ class ChatDownloadService {
       );
     } else {
       String? directoryPath;
-      if (Platform.isLinux) {
+      if (Platforms.isLinux) {
         directoryPath =
             await getDirectoryPath(confirmButtonText: confirmButtonText);
       } else {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
-import '../l10n/l10n.dart';
+import '../l10n/app_localizations.dart';
 
 extension PushRuleStateX on PushRuleState {
   String localize(AppLocalizations l10n) => switch (this) {

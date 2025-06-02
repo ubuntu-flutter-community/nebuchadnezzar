@@ -6,9 +6,7 @@ import 'logging.dart';
 import 'rooms_filter.dart';
 
 class ChatModel extends SafeChangeNotifier {
-  ChatModel({
-    required Client client,
-  }) : _client = client;
+  ChatModel({required Client client}) : _client = client;
 
   // The matrix dart SDK client
   final Client _client;
@@ -26,11 +24,10 @@ class ChatModel extends SafeChangeNotifier {
       .where(
         (e) =>
             _filteredRoomsQuery == null || _filteredRoomsQuery!.trim().isEmpty
-                ? true
-                : e
-                    .getLocalizedDisplayname()
-                    .toLowerCase()
-                    .contains(_filteredRoomsQuery!.toLowerCase()),
+            ? true
+            : e.getLocalizedDisplayname().toLowerCase().contains(
+                _filteredRoomsQuery!.toLowerCase(),
+              ),
       )
       .toList();
 
@@ -77,14 +74,14 @@ class ChatModel extends SafeChangeNotifier {
       Membership.invite,
       Membership.knock,
     ],
-  }) =>
-      syncStream.asyncMap((_) => room.requestParticipants(membershipFilter));
+  }) => syncStream.asyncMap((_) => room.requestParticipants(membershipFilter));
 
   /// A stream of [LeftRoomUpdate]s for a specific `roomId`
-  Stream<LeftRoomUpdate?> getLeftRoomStream(String roomId) =>
-      _client.onSync.stream
-          .where((e) => e.rooms?.leave?.isNotEmpty ?? false)
-          .map((s) => s.rooms?.leave?[roomId]);
+  Stream<LeftRoomUpdate?> getLeftRoomStream(String roomId) => _client
+      .onSync
+      .stream
+      .where((e) => e.rooms?.leave?.isNotEmpty ?? false)
+      .map((s) => s.rooms?.leave?[roomId]);
 
   Stream<SyncUpdate> get joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
@@ -98,24 +95,24 @@ class ChatModel extends SafeChangeNotifier {
   Stream<Uri?> getJoinedRoomAvatarStream(Room? room) =>
       getJoinedRoomUpdate(room?.id)
           .map(
-            (e) => e?.ephemeral
-                ?.firstWhereOrNull((e) => e.type == EventTypes.RoomAvatar),
+            (e) => e?.ephemeral?.firstWhereOrNull(
+              (e) => e.type == EventTypes.RoomAvatar,
+            ),
           )
           .map((e) => room?.avatar);
 
   Stream<bool?> getJoinedRoomEncryptedStream(Room? room) =>
       getJoinedRoomUpdate(room?.id)
           .map(
-            (e) => e?.ephemeral
-                ?.firstWhereOrNull((e) => e.type == EventTypes.Encrypted),
+            (e) => e?.ephemeral?.firstWhereOrNull(
+              (e) => e.type == EventTypes.Encrypted,
+            ),
           )
           .map((e) => room?.encrypted);
 
   Stream<List<User>> getTypingUsersStream(Room room) =>
       getJoinedRoomUpdate(room.id)
-          .where(
-            (u) => u?.ephemeral?.any((e) => e.type == 'm.typing') ?? false,
-          )
+          .where((u) => u?.ephemeral?.any((e) => e.type == 'm.typing') ?? false)
           .map(
             (u) =>
                 room.typingUsers.where((e) => e.senderId != myUserId).toList(),
@@ -133,13 +130,12 @@ class ChatModel extends SafeChangeNotifier {
       .where(
         (e) =>
             (e.rooms?.join?.containsKey(room.id) ?? false) &&
-            (e.rooms!.join![room.id]?.timeline?.events
-                    ?.any((s) => s.type == EventTypes.RoomPowerLevels) ??
+            (e.rooms!.join![room.id]?.timeline?.events?.any(
+                  (s) => s.type == EventTypes.RoomPowerLevels,
+                ) ??
                 false),
       )
-      .map(
-        (event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
-      );
+      .map((event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {});
 
   Stream<Event> getEventStream(Room room) =>
       _client.onTimelineEvent.stream.where((e) => e.room.id == room.id);
@@ -237,7 +233,7 @@ class ChatModel extends SafeChangeNotifier {
 
   bool _loadingArchive = false;
   bool get loadingArchive => _loadingArchive;
-  _setLoadingArchive(bool value) {
+  void _setLoadingArchive(bool value) {
     if (value == _loadingArchive) return;
     _loadingArchive = value;
     notifyListeners();
@@ -393,7 +389,9 @@ class ChatModel extends SafeChangeNotifier {
   }) async {
     _setProcessingJoinOrLeave(true);
 
-    Room? maybeRoom = _rooms.where((e) => !e.isArchived).firstWhereOrNull(
+    Room? maybeRoom = _rooms
+        .where((e) => !e.isArchived)
+        .firstWhereOrNull(
           (e) =>
               e.isDirectChat &&
               e.getParticipants().any((e) => e.id == myUserId) &&
@@ -485,11 +483,11 @@ class ChatModel extends SafeChangeNotifier {
   }
 
   Future initAfterEncryptionSetup() async => Future.wait<Future<dynamic>?>(
-        Iterable.castFrom(<Future<dynamic>?>[
-          _client.roomsLoading,
-          _client.accountDataLoading,
-          _client.userDeviceKeysLoading,
-          _client.firstSyncReceived,
-        ]),
-      );
+    Iterable.castFrom(<Future<dynamic>?>[
+      _client.roomsLoading,
+      _client.accountDataLoading,
+      _client.userDeviceKeysLoading,
+      _client.firstSyncReceived,
+    ]),
+  );
 }

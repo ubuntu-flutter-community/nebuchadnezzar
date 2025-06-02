@@ -10,6 +10,8 @@ import 'package:path/path.dart' as p;
 import 'package:xdg_directories/xdg_directories.dart';
 import 'package:yaru/yaru.dart';
 
+import '../platforms.dart';
+
 class SafeNetworkImage extends StatelessWidget {
   const SafeNetworkImage({
     super.key,
@@ -60,7 +62,7 @@ class SafeNetworkImage extends StatelessWidget {
 
       return CachedNetworkImage(
         httpHeaders: httpHeaders,
-        cacheManager: Platform.isLinux ? XdgCacheManager() : null,
+        cacheManager: Platforms.isLinux ? XdgCacheManager() : null,
         imageUrl: url!,
         imageBuilder: (context, imageProvider) => Image(
           image: imageProvider,

@@ -18,14 +18,11 @@ class LocalImageService {
     required Event event,
     required bool getThumbnail,
   }) async {
-    final bytes =
-        (await event.downloadAndDecryptAttachment(getThumbnail: getThumbnail))
-            .bytes;
+    final bytes = (await event.downloadAndDecryptAttachment(
+      getThumbnail: getThumbnail,
+    )).bytes;
 
-    final cover = put(
-      id: event.eventId,
-      data: bytes,
-    );
+    final cover = put(id: event.eventId, data: bytes);
     if (cover != null) {
       _propertiesChangedController.add(true);
     }
@@ -50,10 +47,7 @@ class LocalImageService {
       httpHeaders: httpHeaders,
     );
 
-    final cover = put(
-      id: uri.toString(),
-      data: bytes,
-    );
+    final cover = put(id: uri.toString(), data: bytes);
     if (cover != null) {
       _propertiesChangedController.add(true);
     }
@@ -61,13 +55,13 @@ class LocalImageService {
   }
 
   Map<String, String> get httpHeaders => {
-        'authorization': 'Bearer ${_client.accessToken}',
-      };
+    'authorization': 'Bearer ${_client.accessToken}',
+  };
 
   Uint8List? put({required String id, Uint8List? data}) =>
       _store.containsKey(id)
-          ? _store.update(id, (value) => data)
-          : _store.putIfAbsent(id, () => data);
+      ? _store.update(id, (value) => data)
+      : _store.putIfAbsent(id, () => data);
 
   Uint8List? get(String? id) => id == null ? null : _store[id];
 

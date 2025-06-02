@@ -1,15 +1,14 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
+import '../platforms.dart';
 import 'common_widgets.dart';
 import 'ui_constants.dart';
 
-bool yaru = !kIsWeb && (Platform.isLinux || Platform.isMacOS);
+bool yaru = Platforms.isDesktop;
 
 Color remixColor(
   Color targetColor, {

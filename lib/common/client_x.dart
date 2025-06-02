@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
@@ -9,20 +7,18 @@ import 'package:sqflite/sqflite.dart' as sqlite;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../app/app_config.dart';
+import 'platforms.dart';
 
 extension ClientX on Client {
   static Future<Client> registerAsync() async {
-    if (Platform.isLinux) {
+    if (Platforms.isLinux) {
       sqlite.Sqflite();
       sqlite.databaseFactoryOrNull = databaseFactoryFfi;
     }
     final client = Client(
       AppConfig.appId,
       nativeImplementations: NativeImplementationsIsolate(compute),
-      verificationMethods: {
-        KeyVerificationMethod.numbers,
-        if (Platform.isAndroid || Platform.isLinux) KeyVerificationMethod.emoji,
-      },
+      verificationMethods: {KeyVerificationMethod.numbers},
       enableDehydratedDevices: true,
       shareKeysWith: ShareKeysWith.crossVerified,
       databaseBuilder: (_) async {

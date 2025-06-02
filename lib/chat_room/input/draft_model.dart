@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
@@ -233,7 +231,7 @@ class DraftModel extends SafeChangeNotifier {
     List<XFile>? xFiles = existingFiles;
 
     if (xFiles == null) {
-      if (Platform.isLinux) {
+      if (Platforms.isLinux) {
         xFiles = await openFiles();
       } else {
         final result = await FilePicker.platform.pickFiles(
@@ -367,7 +365,7 @@ class DraftModel extends SafeChangeNotifier {
 
     try {
       XFile? xFile;
-      if (Platform.isLinux) {
+      if (Platforms.isLinux) {
         xFile = await openFile();
       } else {
         final result = await FilePicker.platform.pickFiles(

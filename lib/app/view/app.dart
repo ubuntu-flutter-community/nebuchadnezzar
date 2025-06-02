@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../l10n/l10n.dart';
+import '../../l10n/app_localizations.dart';
 import '../../settings/settings_model.dart';
 import '../app_config.dart';
 

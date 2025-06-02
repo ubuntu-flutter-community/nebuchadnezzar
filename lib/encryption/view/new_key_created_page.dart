@@ -9,6 +9,7 @@ import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
+import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_model.dart';

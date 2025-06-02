@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
@@ -10,6 +9,7 @@ import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../common/logging.dart';
+import '../common/platforms.dart';
 import '../encryption/view/key_verification_dialog.dart';
 import 'settings_service.dart';
 
@@ -149,7 +149,7 @@ class SettingsModel extends SafeChangeNotifier {
 
     try {
       XFile? xFile;
-      if (Platform.isLinux) {
+      if (Platforms.isLinux) {
         xFile = await openFile();
       } else {
         final result = await FilePicker.platform.pickFiles(

@@ -1,6 +1,6 @@
 import 'package:matrix/matrix.dart';
 
-import '../l10n/l10n.dart';
+import '../l10n/app_localizations.dart';
 
 enum RoomsFilter {
   directChat,
