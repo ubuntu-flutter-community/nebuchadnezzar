@@ -58,6 +58,11 @@ class _ChatAvatarState extends State<ChatAvatar> {
       (RemoteImageModel m) => m.getAvatarUri(widget.avatarUri),
     );
 
+    final fallback = Icon(
+      widget.fallBackIcon ?? YaruIcons.user,
+      size: widget.fallBackIconSize,
+    );
+
     final sizedBox = AvatarVignette(
       fallBackColor: widget.fallBackColor,
       dimension: widget.dimension,
@@ -67,10 +72,7 @@ class _ChatAvatarState extends State<ChatAvatar> {
               httpHeaders: di<RemoteImageModel>().httpHeaders,
               url: uri.toString(),
               fit: widget.fit,
-              fallBackIcon: Icon(
-                widget.fallBackIcon ?? YaruIcons.user,
-                size: widget.fallBackIconSize,
-              ),
+              fallBackIcon: fallback,
             )
           : FutureBuilder(
               future: _futureUri,
@@ -78,10 +80,7 @@ class _ChatAvatarState extends State<ChatAvatar> {
                 fit: widget.fit,
                 httpHeaders: di<RemoteImageModel>().httpHeaders,
                 url: snapshot.data?.toString(),
-                fallBackIcon: Icon(
-                  widget.fallBackIcon ?? YaruIcons.user,
-                  size: widget.fallBackIconSize,
-                ),
+                fallBackIcon: fallback,
               ),
             ),
     );

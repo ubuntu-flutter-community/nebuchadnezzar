@@ -20,39 +20,35 @@ class ChatLoginPage extends StatefulWidget with WatchItStatefulWidgetMixin {
 }
 
 class _ChatLoginPageState extends State<ChatLoginPage> {
-  final TextEditingController _homeServerController =
-      TextEditingController(text: 'matrix.org');
+  final TextEditingController _homeServerController = TextEditingController(
+    text: 'matrix.org',
+  );
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    bool processingAccess =
-        watchPropertyValue((AuthenticationModel m) => m.processingAccess);
+    bool processingAccess = watchPropertyValue(
+      (AuthenticationModel m) => m.processingAccess,
+    );
 
     var onPressed = processingAccess
         ? null
         : () => di<AuthenticationModel>().singleSingOnLogin(
-              onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const CheckEncryptionSetupPage(),
-                ),
-                (route) => false,
+            onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (_) => const CheckEncryptionSetupPage(),
               ),
-              onFail: (e) => showSnackBar(
-                context,
-                content: Text(e.toString()),
-              ),
-              homeServer: _homeServerController.text.trim(),
-            );
+              (route) => false,
+            ),
+            onFail: (e) => showSnackBar(context, content: Text(e.toString())),
+            homeServer: _homeServerController.text.trim(),
+          );
 
     return ChatLoginPageScaffold(
       processingAccess: processingAccess,
       titleLabel: '',
       canPop: false,
       content: [
-        Text(
-          AppConfig.kAppTitle,
-          style: context.theme.textTheme.headlineLarge,
-        ),
+        Text(AppConfig.kAppTitle, style: context.theme.textTheme.headlineLarge),
         Padding(
           padding: const EdgeInsets.only(
             top: kMediumPadding,
@@ -79,19 +75,14 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
           child: OutlinedButton.icon(
             iconAlignment: IconAlignment.start,
             onPressed: onPressed,
-            icon: const Icon(
-              YaruIcons.globe,
-            ),
+            icon: const Icon(YaruIcons.globe),
             label: Text(l10n.login),
           ),
         ),
         Row(
           children: [
             const Expanded(child: Divider()),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(l10n.or),
-            ),
+            Padding(padding: const EdgeInsets.all(12.0), child: Text(l10n.or)),
             const Expanded(child: Divider()),
           ],
         ),
@@ -101,10 +92,10 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
             onPressed: processingAccess
                 ? null
                 : () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const ChatMatrixIdLoginPage(),
-                      ),
+                    MaterialPageRoute(
+                      builder: (_) => const ChatMatrixIdLoginPage(),
                     ),
+                  ),
             label: Text(l10n.loginWithMatrixId),
           ),
         ),

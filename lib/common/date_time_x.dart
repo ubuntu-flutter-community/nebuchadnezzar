@@ -11,23 +11,17 @@ extension DateTimeX on DateTime {
 
     final countryCode =
         Platform.localeName == 'und' || Platform.localeName == 'US'
-            ? 'en'
-            : Platform.localeName;
+        ? 'en'
+        : Platform.localeName;
 
     if (!simple && year == now.year && month == now.month) {
       if (day == now.day - 1) {
-        return '${l10n.yesterday}, ${DateFormat.Hm(
-          countryCode,
-        ).format(this)}';
+        return '${l10n.yesterday}, ${DateFormat.Hm(countryCode).format(this)}';
       } else if (day == now.day) {
-        return DateFormat.Hm(
-          countryCode,
-        ).format(this);
+        return DateFormat.Hm(countryCode).format(this);
       }
     }
-    return DateFormat.yMd(
-      countryCode,
-    ).add_Hm().format(this);
+    return DateFormat.yMd(countryCode).add_Hm().format(this);
   }
 
   String formatAndLocalizeDay(AppLocalizations l10n) {
@@ -39,16 +33,12 @@ extension DateTimeX on DateTime {
         return l10n.yesterday;
       }
     }
-    return DateFormat.yMd(
-      locale.toString(),
-    ).format(this);
+    return DateFormat.yMd(locale.toString()).format(this);
   }
 
   String formatAndLocalizeTime(AppLocalizations l10n) {
     final locale = WidgetsBinding.instance.platformDispatcher.locale;
 
-    return DateFormat.Hm(
-      locale.toString(),
-    ).format(this);
+    return DateFormat.Hm(locale.toString()).format(this);
   }
 }

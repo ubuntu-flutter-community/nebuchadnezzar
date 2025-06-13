@@ -24,12 +24,7 @@ class ChatNewChatPopupMenuButton extends StatelessWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.directChat),
-                const Icon(
-                  YaruIcons.user,
-                ),
-              ],
+              children: [Text(l10n.directChat), const Icon(YaruIcons.user)],
             ),
           ),
           PopupMenuItem(
@@ -39,27 +34,18 @@ class ChatNewChatPopupMenuButton extends StatelessWidget {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.newGroup),
-                const Icon(
-                  YaruIcons.users,
-                ),
-              ],
+              children: [Text(l10n.newGroup), const Icon(YaruIcons.users)],
             ),
           ),
           PopupMenuItem(
             onTap: () => showDialog(
               context: context,
-              builder: (context) => const ChatCreateOrEditRoomDialog(
-                space: true,
-              ),
+              builder: (context) =>
+                  const ChatCreateOrEditRoomDialog(space: true),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.newSpace),
-                const Icon(YaruIcons.globe),
-              ],
+              children: [Text(l10n.newSpace), const Icon(YaruIcons.globe)],
             ),
           ),
         ];

@@ -29,18 +29,13 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
           SizedBox.square(
             dimension: kAvatarDefaultSize,
             child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.zero,
-              ),
+              style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
               onPressed: () => showDialog(
                 context: context,
-                builder: (context) => ChatCreateOrEditRoomDialog(
-                  room: activeSpace,
-                ),
+                builder: (context) =>
+                    ChatCreateOrEditRoomDialog(room: activeSpace),
               ),
-              child: const Icon(
-                YaruIcons.pen,
-              ),
+              child: const Icon(YaruIcons.pen),
             ),
           ),
           Expanded(
@@ -48,9 +43,9 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
               onPressed: spaceSearch == null || activeSpace == null
                   ? null
                   : () => di<SearchModel>().searchSpaces(
-                        activeSpace,
-                        onFail: (e) => showSnackBar(context, content: Text(e)),
-                      ),
+                      activeSpace,
+                      onFail: (e) => showSnackBar(context, content: Text(e)),
+                    ),
               child: Text(context.l10n.discover),
             ),
           ),
@@ -68,9 +63,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
                 room: activeSpace,
                 onFail: (e) => showSnackBar(context, content: Text(e)),
               ),
-              icon: const Icon(
-                YaruIcons.log_out,
-              ),
+              icon: const Icon(YaruIcons.log_out),
             ),
           ),
         ],

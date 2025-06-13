@@ -6,9 +6,7 @@ import '../../l10n/l10n.dart';
 import '../settings_model.dart';
 
 class ChatSettingsPresenceButton extends StatelessWidget with WatchItMixin {
-  const ChatSettingsPresenceButton({
-    super.key,
-  });
+  const ChatSettingsPresenceButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +28,7 @@ class ChatSettingsPresenceButton extends StatelessWidget with WatchItMixin {
         minLines: 1,
         maxLength: 255,
       ).then((status) => di<SettingsModel>().setStatus(status)),
-      child: Text(
-        presence?.statusMsg ?? context.l10n.status,
-      ),
+      child: Text(presence?.statusMsg ?? context.l10n.status),
     );
   }
 }

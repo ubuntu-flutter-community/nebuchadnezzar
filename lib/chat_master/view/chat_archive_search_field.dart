@@ -8,9 +8,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
 class ChatArchiveSearchField extends StatelessWidget {
-  const ChatArchiveSearchField({
-    super.key,
-  });
+  const ChatArchiveSearchField({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +22,7 @@ class ChatArchiveSearchField extends StatelessWidget {
         onChanged: (value) => di<ChatModel>().setFilteredRoomsQuery(value),
         decoration: InputDecoration(
           hintText: context.l10n.search,
-          label: Text(
-            context.l10n.search,
-          ),
+          label: Text(context.l10n.search),
           suffixIcon: IconButton(
             padding: EdgeInsets.zero,
             style: textFieldSuffixStyle,

@@ -36,22 +36,16 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
       ),
       initialValue: room.getParticipants(membershipFilter),
       preserveState: false,
-    ).data?.sorted(
-          (a, b) => b.powerLevel.compareTo(a.powerLevel),
-        );
+    ).data?.sorted((a, b) => b.powerLevel.compareTo(a.powerLevel));
 
     if (users == null || users.isEmpty) {
       if (!sliver) {
-        return const Center(
-          child: Progress(),
-        );
+        return const Center(child: Progress());
       }
 
       return const SliverFillRemaining(
         hasScrollBody: false,
-        child: Center(
-          child: Progress(),
-        ),
+        child: Center(child: Progress()),
       );
     }
 
@@ -111,44 +105,37 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
       );
     }
 
-    return ListView.builder(
-      itemCount: users.length,
-      itemBuilder: itemBuilder,
-    );
+    return ListView.builder(itemCount: users.length, itemBuilder: itemBuilder);
   }
 }
 
 class _UserTile extends StatelessWidget {
-  const _UserTile({
-    super.key,
-    required this.user,
-    this.trailing,
-  });
+  const _UserTile({super.key, required this.user, this.trailing});
 
   final User user;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => ListTile(
-        key: key,
-        leading: Opacity(
-          opacity: user.membership == Membership.invite ? 0.5 : 1,
-          child: ChatAvatar(
-            avatarUri: user.avatarUrl,
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => ChatProfileDialog(userId: user.id),
-            ),
-          ),
+    key: key,
+    leading: Opacity(
+      opacity: user.membership == Membership.invite ? 0.5 : 1,
+      child: ChatAvatar(
+        avatarUri: user.avatarUrl,
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => ChatProfileDialog(userId: user.id),
         ),
-        title: Text(user.displayName ?? user.id),
-        subtitle: user.membership == Membership.invite
-            ? Text(context.l10n.invited)
-            : Text(
-                user.powerLevel == 0
-                    ? context.l10n.participant
-                    : context.l10n.admin,
-              ),
-        trailing: trailing,
-      );
+      ),
+    ),
+    title: Text(user.displayName ?? user.id),
+    subtitle: user.membership == Membership.invite
+        ? Text(context.l10n.invited)
+        : Text(
+            user.powerLevel == 0
+                ? context.l10n.participant
+                : context.l10n.admin,
+          ),
+    trailing: trailing,
+  );
 }

@@ -16,41 +16,37 @@ class ChatRoomInfoDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Drawer(
-        child: SizedBox(
-          width: kSideBarWith,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (!room.isDirectChat)
-                ChatRoomInfoDrawerGroupHeader(
-                  key: ValueKey('${room.id}_header'),
-                  room: room,
-                )
-              else
-                ChatRoomInfoDrawerDirectChatHeader(
-                  key: ValueKey('${room.id}_header_'),
-                  room: room,
-                ),
-              if (room.isArchived)
-                const Expanded(child: Text(''))
-              else
-                Expanded(
-                  child: room.isDirectChat
-                      ? ChatRoomInfoDrawerDirectChatContent(
-                          room: room,
-                        )
-                      : ChatRoomInfoDrawerGroupContent(
-                          room: room,
-                        ),
-                ),
-              if (room.isArchived) ChatRoomInfoDrawerLeaveButton(room: room),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ChatRoomJoinOrLeaveButton(room: room),
-              ),
-            ],
+    child: SizedBox(
+      width: kSideBarWith,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (!room.isDirectChat)
+            ChatRoomInfoDrawerGroupHeader(
+              key: ValueKey('${room.id}_header'),
+              room: room,
+            )
+          else
+            ChatRoomInfoDrawerDirectChatHeader(
+              key: ValueKey('${room.id}_header_'),
+              room: room,
+            ),
+          if (room.isArchived)
+            const Expanded(child: Text(''))
+          else
+            Expanded(
+              child: room.isDirectChat
+                  ? ChatRoomInfoDrawerDirectChatContent(room: room)
+                  : ChatRoomInfoDrawerGroupContent(room: room),
+            ),
+          if (room.isArchived) ChatRoomInfoDrawerLeaveButton(room: room),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ChatRoomJoinOrLeaveButton(room: room),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

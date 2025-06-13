@@ -12,8 +12,8 @@ class ChatDownloadService {
   ChatDownloadService({
     required Client client,
     required SharedPreferences preferences,
-  })  : _client = client,
-        _preferences = preferences;
+  }) : _client = client,
+       _preferences = preferences;
 
   // ignore: unused_field
   final Client _client;
@@ -48,11 +48,13 @@ class ChatDownloadService {
     } else {
       String? directoryPath;
       if (Platforms.isLinux) {
-        directoryPath =
-            await getDirectoryPath(confirmButtonText: confirmButtonText);
+        directoryPath = await getDirectoryPath(
+          confirmButtonText: confirmButtonText,
+        );
       } else {
-        directoryPath = await FilePicker.platform
-            .getDirectoryPath(dialogTitle: dialogTitle);
+        directoryPath = await FilePicker.platform.getDirectoryPath(
+          dialogTitle: dialogTitle,
+        );
       }
       if (directoryPath != null) {
         file = await event.downloadAndDecryptAttachment();

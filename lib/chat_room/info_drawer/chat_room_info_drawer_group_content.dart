@@ -10,10 +10,7 @@ import 'chat_room_info_media_grid.dart';
 import 'chat_room_media_grid_headline.dart';
 
 class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
-  const ChatRoomInfoDrawerGroupContent({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomInfoDrawerGroupContent({super.key, required this.room});
 
   final Room room;
 
@@ -25,27 +22,15 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
       border: Border.all(color: Colors.transparent),
       placeDividers: false,
       headers: [
-        Text(
-          l10n.chatDescription,
-          style: theme.textTheme.titleSmall,
-        ),
-        Text(
-          l10n.users,
-          style: theme.textTheme.titleSmall,
-        ),
+        Text(l10n.chatDescription, style: theme.textTheme.titleSmall),
+        Text(l10n.users, style: theme.textTheme.titleSmall),
         ChatRoomMediaGridHeadline(room: room),
       ],
       children: [
-        ChatRoomInfoDrawerTopic(
-          key: ValueKey('${room.id}_topic'),
-          room: room,
-        ),
+        ChatRoomInfoDrawerTopic(key: ValueKey('${room.id}_topic'), room: room),
         SizedBox(
           height: context.mediaQuerySize.height - 340,
-          child: ChatRoomUsersList(
-            room: room,
-            sliver: false,
-          ),
+          child: ChatRoomUsersList(room: room, sliver: false),
         ),
         SizedBox(
           height: context.mediaQuerySize.height - 340,

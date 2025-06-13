@@ -15,10 +15,7 @@ import '../../l10n/l10n.dart';
 class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
   final Room room;
 
-  const ChatPermissionsSettingsView({
-    required this.room,
-    super.key,
-  });
+  const ChatPermissionsSettingsView({required this.room, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +23,8 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
     final l10n = context.l10n;
     final chatModel = di<ChatModel>();
 
-    final powerLevelsContent = watchStream(
+    final powerLevelsContent =
+        watchStream(
           (ChatModel m) => m.getPermissionsStream(room),
           initialValue:
               room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
@@ -46,9 +44,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
         yaruInfoType: YaruInfoType.information,
         subtitle: Padding(
           padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
-          child: Text(
-            l10n.chatPermissionsDescription,
-          ),
+          child: Text(l10n.chatPermissionsDescription),
         ),
       ),
     );
@@ -59,14 +55,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
         l10n.chatPermissions,
         l10n.notifications,
         l10n.configureChat,
-      ]
-          .map(
-            (e) => Text(
-              e,
-              style: theme.textTheme.titleLarge,
-            ),
-          )
-          .toList(),
+      ].map((e) => Text(e, style: theme.textTheme.titleLarge)).toList(),
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: kMediumPadding),
@@ -80,10 +69,8 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
                     room: room,
                     key: entry.key,
                     newLevel: level,
-                    onFail: () => showSnackBar(
-                      context,
-                      content: Text(l10n.noPermission),
-                    ),
+                    onFail: () =>
+                        showSnackBar(context, content: Text(l10n.noPermission)),
                     onCustomPermissionsChosen: () => _showPermissionChooser(
                       context,
                       currentLevel: entry.value,
@@ -99,9 +86,9 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
             const key = 'rooms';
             final value = powerLevelsContent.containsKey('notifications')
                 ? powerLevelsContent
-                        .tryGetMap<String, Object?>('notifications')
-                        ?.tryGet<int>('rooms') ??
-                    0
+                          .tryGetMap<String, Object?>('notifications')
+                          ?.tryGet<int>('rooms') ??
+                      0
                 : 0;
             return Padding(
               padding: const EdgeInsets.only(bottom: kMediumPadding),
@@ -113,14 +100,10 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
                 onChanged: (level) => chatModel.editPowerLevel(
                   room: room,
                   key: key,
-                  onFail: () => showSnackBar(
-                    context,
-                    content: Text(l10n.noPermission),
-                  ),
-                  onCustomPermissionsChosen: () => _showPermissionChooser(
-                    context,
-                    currentLevel: value,
-                  ),
+                  onFail: () =>
+                      showSnackBar(context, content: Text(l10n.noPermission)),
+                  onCustomPermissionsChosen: () =>
+                      _showPermissionChooser(context, currentLevel: value),
                   newLevel: level,
                   category: 'notifications',
                 ),
@@ -141,10 +124,8 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
                   canEdit: room.canChangePowerLevel,
                   onChanged: (level) => di<ChatModel>().editPowerLevel(
                     room: room,
-                    onFail: () => showSnackBar(
-                      context,
-                      content: Text(l10n.noPermission),
-                    ),
+                    onFail: () =>
+                        showSnackBar(context, content: Text(l10n.noPermission)),
                     key: entry.key,
                     onCustomPermissionsChosen: () => _showPermissionChooser(
                       context,
@@ -261,12 +242,10 @@ class _ChatRoomPermissionTile extends StatelessWidget {
     final color = permission >= 100
         ? colorScheme.warning
         : permission >= 50
-            ? colorScheme.link
-            : colorScheme.success;
+        ? colorScheme.link
+        : colorScheme.success;
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: kBigPadding,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: kBigPadding),
       title: Text(
         getLocalizedPowerLevelString(context),
         style: theme.textTheme.titleSmall,
@@ -289,9 +268,7 @@ class _ChatRoomPermissionTile extends StatelessWidget {
           items: [
             DropdownMenuItem(
               value: permission < 50 ? permission : 0,
-              child: Text(
-                l10n.userLevel(permission < 50 ? permission : 0),
-              ),
+              child: Text(l10n.userLevel(permission < 50 ? permission : 0)),
             ),
             DropdownMenuItem(
               value: permission < 100 && permission >= 50 ? permission : 50,
@@ -307,10 +284,7 @@ class _ChatRoomPermissionTile extends StatelessWidget {
                 l10n.adminLevel(permission >= 100 ? permission : 100),
               ),
             ),
-            DropdownMenuItem(
-              value: null,
-              child: Text(l10n.custom),
-            ),
+            DropdownMenuItem(value: null, child: Text(l10n.custom)),
           ],
         ),
       ),

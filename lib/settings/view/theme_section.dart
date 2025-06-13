@@ -43,8 +43,9 @@ class ThemeSection extends StatelessWidget with WatchItMixin {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child:
-                              Text(ThemeMode.values[i].localize(context.l10n)),
+                          child: Text(
+                            ThemeMode.values[i].localize(context.l10n),
+                          ),
                         ),
                       ],
                     ),
@@ -60,8 +61,8 @@ class ThemeSection extends StatelessWidget with WatchItMixin {
 
 extension ThemeModeX on ThemeMode {
   String localize(AppLocalizations l10n) => switch (this) {
-        ThemeMode.system => l10n.systemTheme,
-        ThemeMode.dark => l10n.darkTheme,
-        ThemeMode.light => l10n.lightTheme
-      };
+    ThemeMode.system => l10n.systemTheme,
+    ThemeMode.dark => l10n.darkTheme,
+    ThemeMode.light => l10n.lightTheme,
+  };
 }

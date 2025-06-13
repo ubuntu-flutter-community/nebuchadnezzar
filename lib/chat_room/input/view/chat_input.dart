@@ -32,11 +32,13 @@ class _ChatInputState extends State<ChatInput> {
   @override
   void initState() {
     super.initState();
-    _sendController =
-        TextEditingController(text: di<DraftModel>().getDraft(widget.room.id));
+    _sendController = TextEditingController(
+      text: di<DraftModel>().getDraft(widget.room.id),
+    );
     _sendNode = FocusNode(
       onKeyEvent: (node, event) {
-        final enterPressedWithoutShift = event is KeyDownEvent &&
+        final enterPressedWithoutShift =
+            event is KeyDownEvent &&
             event.physicalKey == PhysicalKeyboardKey.enter &&
             !HardwareKeyboard.instance.physicalKeysPressed.any(
               (key) => <PhysicalKeyboardKey>{
@@ -85,18 +87,21 @@ class _ChatInputState extends State<ChatInput> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final draftModel = di<DraftModel>();
-    final draftFiles =
-        watchPropertyValue((DraftModel m) => m.getFilesDraft(widget.room.id));
+    final draftFiles = watchPropertyValue(
+      (DraftModel m) => m.getFilesDraft(widget.room.id),
+    );
     final attaching = watchPropertyValue((DraftModel m) => m.attaching);
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
     final sending = watchPropertyValue((DraftModel m) => m.sending);
 
     final replyEvent = watchPropertyValue((DraftModel m) => m.replyEvent);
-    final editEvent =
-        watchPropertyValue((DraftModel m) => m.getEditEvent(widget.room.id));
+    final editEvent = watchPropertyValue(
+      (DraftModel m) => m.getEditEvent(widget.room.id),
+    );
 
-    final draft =
-        watchPropertyValue((DraftModel m) => m.getDraft(widget.room.id));
+    final draft = watchPropertyValue(
+      (DraftModel m) => m.getDraft(widget.room.id),
+    );
     _sendController.text = draft ?? '';
     _sendNode.requestFocus();
 
@@ -107,10 +112,11 @@ class _ChatInputState extends State<ChatInput> {
         child: Icon(YaruIcons.send_filled),
       ),
     );
-    final unAcceptedDirectChat = widget.room.isDirectChat &&
-        widget.room
-            .getParticipants()
-            .any((e) => e.membership == Membership.invite);
+    final unAcceptedDirectChat =
+        widget.room.isDirectChat &&
+        widget.room.getParticipants().any(
+          (e) => e.membership == Membership.invite,
+        );
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -139,9 +145,7 @@ class _ChatInputState extends State<ChatInput> {
                           draft: '',
                           notify: true,
                         ),
-                      icon: const Icon(
-                        YaruIcons.trash,
-                      ),
+                      icon: const Icon(YaruIcons.trash),
                     ),
                     yaruInfoType: editEvent != null
                         ? YaruInfoType.warning
@@ -191,37 +195,33 @@ class _ChatInputState extends State<ChatInput> {
                             onPressed: attaching || sending || archiveActive
                                 ? null
                                 : () => draftModel.addAttachment(
-                                      widget.room.id,
-                                      onFail: (error) =>
-                                          showErrorSnackBar(context, error),
-                                    ),
+                                    widget.room.id,
+                                    onFail: (error) =>
+                                        showErrorSnackBar(context, error),
+                                  ),
                             icon: attaching
                                 ? const Center(
                                     child: SizedBox.square(
                                       dimension: 15,
-                                      child: Progress(
-                                        strokeWidth: 1,
-                                      ),
+                                      child: Progress(strokeWidth: 1),
                                     ),
                                   )
-                                : const Icon(
-                                    YaruIcons.plus,
-                                  ),
+                                : const Icon(YaruIcons.plus),
                           ),
                           ChatInputEmojiPicker(
                             onEmojiSelected:
                                 attaching || sending || archiveActive
-                                    ? null
-                                    : (cat, emo) {
-                                        _sendController.text =
-                                            _sendController.text + emo.emoji;
-                                        draftModel.setDraft(
-                                          roomId: widget.room.id,
-                                          draft: _sendController.text,
-                                          notify: true,
-                                        );
-                                        _sendNode.requestFocus();
-                                      },
+                                ? null
+                                : (cat, emo) {
+                                    _sendController.text =
+                                        _sendController.text + emo.emoji;
+                                    draftModel.setDraft(
+                                      roomId: widget.room.id,
+                                      draft: _sendController.text,
+                                      notify: true,
+                                    );
+                                    _sendNode.requestFocus();
+                                  },
                           ),
                         ],
                       ),

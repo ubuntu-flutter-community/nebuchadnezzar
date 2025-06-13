@@ -1,16 +1,17 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
+import 'package:universal_html/html.dart' as html;
 
 import '../app/app_config.dart';
 import '../common/logging.dart';
+import '../common/platforms.dart';
 
 class AuthenticationModel extends SafeChangeNotifier {
-  AuthenticationModel({
-    required Client client,
-  }) : _client = client;
+  AuthenticationModel({required Client client}) : _client = client;
 
   final Client _client;
 
@@ -54,11 +55,11 @@ class AuthenticationModel extends SafeChangeNotifier {
             LoginType.mLoginPassword,
             password: password,
             identifier: AuthenticationUserIdentifier(user: username),
-            initialDeviceDisplayName:
-                '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
+            initialDeviceDisplayName: kIsWeb
+                ? '${AppConfig.kAppTitle} Web Browser'
+                : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
           .timeout(const Duration(seconds: 30));
-      await _init();
       await onSuccess();
     } on Exception catch (e, s) {
       await onFail(e.toString());
@@ -68,62 +69,65 @@ class AuthenticationModel extends SafeChangeNotifier {
     }
   }
 
-  Future<LoginResponse?> singleSingOnLogin({
+  Future<void> singleSingOnLogin({
     required String homeServer,
     required Function(String error) onFail,
     required Future Function() onSuccess,
   }) async {
-    final redirectUrl = Platform.isMacOS
-        ? '${AppConfig.appOpenUrlScheme.toLowerCase()}://login'
-        : 'http://localhost:3001//login';
-
-    await _client.checkHomeserver(Uri.https(homeServer, ''));
-    final url = _client.homeserver!.replace(
-      path: '/_matrix/client/v3/login/sso/redirect',
-      queryParameters: {'redirectUrl': redirectUrl},
-    );
-
-    final urlScheme = Platform.isMacOS
-        ? Uri.parse(redirectUrl).scheme
-        : 'http://localhost:3001';
-    final result = await FlutterWebAuth2.authenticate(
-      url: url.toString(),
-      callbackUrlScheme: urlScheme,
-      options: const FlutterWebAuth2Options(),
-    );
-    final token = Uri.parse(result).queryParameters['loginToken'];
-    if (token?.isEmpty ?? false) return null;
-
     _setProcessingAccess(true);
-    LoginResponse? response;
     try {
-      response = await _client
+      final redirectUrl = kIsWeb
+          ? Uri.parse(
+              html.window.location.href,
+            ).resolveUri(Uri(pathSegments: ['auth.html'])).toString()
+          : (Platforms.isMobile || Platforms.isWeb || Platforms.isMacOS)
+          ? '${AppConfig.appOpenUrlScheme.toLowerCase()}://login'
+          : 'http://localhost:3001/login';
+
+      await _client.checkHomeserver(Uri.https(homeServer, ''));
+      final url = _client.homeserver!.replace(
+        path: '/_matrix/client/v3/login/sso/redirect',
+        queryParameters: {'redirectUrl': redirectUrl},
+      );
+      final urlScheme = kIsWeb
+          ? 'http'
+          : (Platforms.isMobile || Platforms.isWeb || Platforms.isMacOS)
+          ? Uri.parse(redirectUrl).scheme
+          : 'http://localhost:3001';
+
+      final result = await FlutterWebAuth2.authenticate(
+        url: url.toString(),
+        callbackUrlScheme: urlScheme,
+        options: const FlutterWebAuth2Options(),
+      );
+
+      final parsedResult = Uri.parse(result);
+      final token = parsedResult.queryParameters['loginToken'];
+      if (token?.isEmpty ?? false) {
+        printMessageInDebugMode('Login token is empty or null: $token');
+        onFail('Login token not received from SSO.');
+        return;
+      }
+
+      await _client
           .login(
             LoginType.mLoginToken,
             token: token,
-            initialDeviceDisplayName:
-                '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
+            initialDeviceDisplayName: kIsWeb
+                ? '${AppConfig.kAppTitle} Web Browser'
+                : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
           .timeout(const Duration(seconds: 55));
-      await _init();
       await onSuccess();
-    } catch (e) {
-      onFail(e.toString());
+    } catch (e, s) {
+      printMessageInDebugMode('Error during client.login with token: $e', s);
+      onFail('Failed to login with SSO token: ${e.toString()}');
     } finally {
       _setProcessingAccess(false);
     }
-
-    return response;
   }
 
-  Future<void> _init() async {
-    await _client.firstSyncReceived;
-    await _client.roomsLoading;
-  }
-
-  Future logout({
-    required Function(String error) onFail,
-  }) async {
+  Future logout({required Function(String error) onFail}) async {
     _setProcessingAccess(true);
     try {
       await _client.logout();

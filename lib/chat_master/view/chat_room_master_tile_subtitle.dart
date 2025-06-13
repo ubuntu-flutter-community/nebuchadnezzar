@@ -13,7 +13,8 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final typingUsers = watchStream(
+    final typingUsers =
+        watchStream(
           (ChatModel m) => m.getTypingUsersStream(room),
           initialValue: room.typingUsers,
         ).data ??
@@ -38,19 +39,16 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
       typingUsers.length > 1
           ? context.l10n.numUsersTyping(typingUsers.length)
           : context.l10n.userIsTyping(typingUsers.first.displayName ?? ''),
-      style: context.textTheme.bodyMedium
-          ?.copyWith(color: context.colorScheme.primary),
+      style: context.textTheme.bodyMedium?.copyWith(
+        color: context.colorScheme.primary,
+      ),
       maxLines: 1,
     );
   }
 }
 
 class _LastEvent extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const _LastEvent({
-    required this.lastEvent,
-    super.key,
-    this.fallbackText,
-  });
+  const _LastEvent({required this.lastEvent, super.key, this.fallbackText});
 
   final Event? lastEvent;
   final String? fallbackText;
@@ -67,18 +65,19 @@ class _LastEventState extends State<_LastEvent> {
   @override
   void initState() {
     super.initState();
-    _future = widget.lastEvent != null &&
+    _future =
+        widget.lastEvent != null &&
             !widget.lastEvent!.redacted &&
             _cache.containsKey(widget.lastEvent!.eventId) &&
             widget.lastEvent?.type != EventTypes.Encrypted
         ? Future.value(_cache[widget.lastEvent!.eventId]!)
         : widget.lastEvent?.calcLocalizedBody(
-              const MatrixDefaultLocalizations(),
-              hideReply: true,
-              hideEdit: false,
-              plaintextBody: true,
-            ) ??
-            Future.value(widget.lastEvent?.body ?? '');
+                const MatrixDefaultLocalizations(),
+                hideReply: true,
+                hideEdit: false,
+                plaintextBody: true,
+              ) ??
+              Future.value(widget.lastEvent?.body ?? '');
   }
 
   @override
@@ -86,10 +85,7 @@ class _LastEventState extends State<_LastEvent> {
     if (widget.lastEvent != null &&
         _cache.containsKey(widget.lastEvent!.eventId) &&
         widget.lastEvent!.redacted == false) {
-      return Text(
-        _cache[widget.lastEvent!.eventId]!,
-        maxLines: 1,
-      );
+      return Text(_cache[widget.lastEvent!.eventId]!, maxLines: 1);
     }
 
     return FutureBuilder(
@@ -97,16 +93,10 @@ class _LastEventState extends State<_LastEvent> {
       builder: (context, snapshot) {
         if (snapshot.hasData && widget.lastEvent != null) {
           _cache[widget.lastEvent!.eventId] = snapshot.data!;
-          return Text(
-            snapshot.data!,
-            maxLines: 1,
-          );
+          return Text(snapshot.data!, maxLines: 1);
         }
 
-        return Text(
-          widget.fallbackText ?? ' ',
-          maxLines: 1,
-        );
+        return Text(widget.fallbackText ?? ' ', maxLines: 1);
       },
     );
   }

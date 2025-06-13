@@ -10,10 +10,7 @@ import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
 
 class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
-  const ChatEventSeenByIndicator({
-    super.key,
-    required this.event,
-  });
+  const ChatEventSeenByIndicator({super.key, required this.event});
 
   final Event event;
 
@@ -21,11 +18,11 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final seenByUsers = watchStream(
-          (ChatModel m) => m.getRoomsReceiptsStream(event),
-          initialValue: event.receipts,
-        )
-            .data
+    final seenByUsers =
+        watchStream(
+              (ChatModel m) => m.getRoomsReceiptsStream(event),
+              initialValue: event.receipts,
+            ).data
             ?.map((e) => e.user)
             .where((e) => e.id != di<ChatModel>().myUserId)
             .toList() ??
@@ -45,17 +42,14 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
           spacing: kSmallPadding,
           children: [
             ...(seenByUsers.length > maxAvatars
-                    ? seenByUsers.sublist(
-                        0,
-                        maxAvatars,
-                      )
+                    ? seenByUsers.sublist(0, maxAvatars)
                     : seenByUsers)
                 .map(
-              (user) => ChatEventSeenByAvatar(
-                key: ValueKey(user.id + user.avatarUrl.toString()),
-                user: user,
-              ),
-            ),
+                  (user) => ChatEventSeenByAvatar(
+                    key: ValueKey(user.id + user.avatarUrl.toString()),
+                    user: user,
+                  ),
+                ),
             if (seenByUsers.length > maxAvatars)
               SizedBox(
                 width: 15,
@@ -79,10 +73,7 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
 }
 
 class ChatEventSeenByAvatar extends StatelessWidget {
-  const ChatEventSeenByAvatar({
-    super.key,
-    required this.user,
-  });
+  const ChatEventSeenByAvatar({super.key, required this.user});
 
   final User user;
 

@@ -1,5 +1,5 @@
 name: nebuchadnezzar
-base: core22
+base: core24
 version: git
 summary: Matrix Client
 description: |

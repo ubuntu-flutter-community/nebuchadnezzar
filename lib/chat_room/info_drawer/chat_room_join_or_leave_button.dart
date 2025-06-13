@@ -12,10 +12,7 @@ import '../../l10n/l10n.dart';
 import '../../common/chat_model.dart';
 
 class ChatRoomJoinOrLeaveButton extends StatelessWidget {
-  const ChatRoomJoinOrLeaveButton({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomJoinOrLeaveButton({super.key, required this.room});
 
   final Room room;
 
@@ -33,8 +30,8 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
     final message = joinedRoom
         ? '${l10n.leave} $roomName'
         : notReJoinable
-            ? roomName
-            : '${l10n.joinRoom} $roomName';
+        ? roomName
+        : '${l10n.joinRoom} $roomName';
 
     return Container(
       padding: const EdgeInsets.all(kBigPadding),
@@ -51,29 +48,29 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
         onPressed: notReJoinable
             ? null
             : () => showDialog(
-                  context: context,
-                  builder: (context) => ConfirmationDialog(
-                    title: Text(message),
-                    onConfirm: () {
-                      void onFail(error) =>
-                          showSnackBar(context, content: Text(error));
+                context: context,
+                builder: (context) => ConfirmationDialog(
+                  title: Text(message),
+                  onConfirm: () {
+                    void onFail(error) =>
+                        showSnackBar(context, content: Text(error));
 
-                      if (joinedRoom) {
-                        chatModel.leaveSelectedRoom(
-                          onFail: onFail,
-                          forget: room.isDirectChat,
-                        );
-                      } else {
-                        chatModel.joinRoom(
-                          room,
-                          onFail: onFail,
-                          clear: true,
-                          select: false,
-                        );
-                      }
-                    },
-                  ),
+                    if (joinedRoom) {
+                      chatModel.leaveSelectedRoom(
+                        onFail: onFail,
+                        forget: room.isDirectChat,
+                      );
+                    } else {
+                      chatModel.joinRoom(
+                        room,
+                        onFail: onFail,
+                        clear: true,
+                        select: false,
+                      );
+                    }
+                  },
                 ),
+              ),
         icon: !room.isArchived
             ? Icon(
                 YaruIcons.log_out,

@@ -7,11 +7,7 @@ import '../../common/view/ui_constants.dart';
 import 'localized_display_event_text.dart';
 
 class ChatMessageBadge extends StatelessWidget {
-  const ChatMessageBadge({
-    super.key,
-    required this.displayEvent,
-    this.leading,
-  });
+  const ChatMessageBadge({super.key, required this.displayEvent, this.leading});
 
   final Event displayEvent;
   final Widget? leading;

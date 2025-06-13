@@ -7,8 +7,8 @@ class SettingsService {
   SettingsService({
     required SharedPreferences sharedPreferences,
     required FlutterSecureStorage secureStorage,
-  })  : _sharedPreferences = sharedPreferences,
-        _secureStorage = secureStorage;
+  }) : _sharedPreferences = sharedPreferences,
+       _secureStorage = secureStorage;
 
   final FlutterSecureStorage _secureStorage;
   final SharedPreferences _sharedPreferences;
@@ -29,8 +29,9 @@ class SettingsService {
       false;
 
   List<String> get defaultReactions {
-    final stringList =
-        _sharedPreferences.getStringList(SettingKeys.defaultReactions);
+    final stringList = _sharedPreferences.getStringList(
+      SettingKeys.defaultReactions,
+    );
     return (stringList == null || stringList.isEmpty
             ? _fallbackReactions
             : stringList)
@@ -53,28 +54,25 @@ class SettingsService {
       .then(notify);
 
   Object? get<T>(String key) => switch (T) {
-        const (String) => _sharedPreferences.getString(key),
-        const (bool) => _sharedPreferences.getBool(key),
-        const (double) => _sharedPreferences.getDouble(key),
-        const (int) => _sharedPreferences.getInt(key),
-        const (List<String>) => _sharedPreferences.getStringList(key),
-        _ => throw Exception('Invalid type'),
-      };
+    const (String) => _sharedPreferences.getString(key),
+    const (bool) => _sharedPreferences.getBool(key),
+    const (double) => _sharedPreferences.getDouble(key),
+    const (int) => _sharedPreferences.getInt(key),
+    const (List<String>) => _sharedPreferences.getStringList(key),
+    _ => throw Exception('Invalid type'),
+  };
 
   void set({required String key, required Object value}) => switch (value) {
-        const (String) =>
-          _sharedPreferences.setString(key, value as String).then(notify),
-        const (bool) =>
-          _sharedPreferences.setBool(key, value as bool).then(notify),
-        const (double) =>
-          _sharedPreferences.setDouble(key, value as double).then(notify),
-        const (int) =>
-          _sharedPreferences.setInt(key, value as int).then(notify),
-        const (List<String>) => _sharedPreferences
-            .setStringList(key, value as List<String>)
-            .then(notify),
-        _ => throw Exception('Invalid type'),
-      };
+    const (String) =>
+      _sharedPreferences.setString(key, value as String).then(notify),
+    const (bool) => _sharedPreferences.setBool(key, value as bool).then(notify),
+    const (double) =>
+      _sharedPreferences.setDouble(key, value as double).then(notify),
+    const (int) => _sharedPreferences.setInt(key, value as int).then(notify),
+    const (List<String>) =>
+      _sharedPreferences.setStringList(key, value as List<String>).then(notify),
+    _ => throw Exception('Invalid type'),
+  };
 
   Future<String?> getSecure<T>(String key) => _secureStorage.read(key: key);
 

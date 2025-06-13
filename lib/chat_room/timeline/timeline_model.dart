@@ -13,10 +13,7 @@ class TimelineModel extends SafeChangeNotifier {
   final Map<String, bool> _timelineSearchActive = {};
   bool getTimelineSearchActive(String roomId) =>
       _timelineSearchActive[roomId] == true;
-  void setTimelineSearchActive({
-    required String roomId,
-    required bool value,
-  }) {
+  void setTimelineSearchActive({required String roomId, required bool value}) {
     if (_timelineSearchActive[roomId] == value) return;
     _timelineSearchActive[roomId] = value;
     notifyListeners();
@@ -33,10 +30,7 @@ class TimelineModel extends SafeChangeNotifier {
 
   final Map<String, bool> _updatingTimeline = {};
   bool getUpdatingTimeline(String? roomId) => _updatingTimeline[roomId] == true;
-  void setUpdatingTimeline({
-    required String roomId,
-    required bool value,
-  }) {
+  void setUpdatingTimeline({required String roomId, required bool value}) {
     if (_updatingTimeline[roomId] == value) return;
     _updatingTimeline[roomId] = value;
     notifyListeners();

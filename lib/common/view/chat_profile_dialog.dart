@@ -20,20 +20,12 @@ class ChatProfileDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
-      children: [
-        ChatProfile(userId: userId),
-      ],
-    );
+    return SimpleDialog(children: [ChatProfile(userId: userId)]);
   }
 }
 
 class ChatProfile extends StatefulWidget {
-  const ChatProfile({
-    super.key,
-    required this.userId,
-    this.showButton = true,
-  });
+  const ChatProfile({super.key, required this.userId, this.showButton = true});
 
   final String userId;
   final bool showButton;
@@ -57,7 +49,8 @@ class _ChatProfileState extends State<ChatProfile> {
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
-        final myProfile = snapshot.hasData &&
+        final myProfile =
+            snapshot.hasData &&
             snapshot.data!.userId == di<ChatModel>().myUserId;
         return SizedBox(
           height: 300,

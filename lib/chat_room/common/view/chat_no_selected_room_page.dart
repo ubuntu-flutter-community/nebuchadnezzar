@@ -13,35 +13,31 @@ class ChatNoSelectedRoomPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: YaruWindowTitleBar(
-          heroTag: '<Right hero tag>',
-          border: BorderSide.none,
-          backgroundColor: Colors.transparent,
-          title: const Text(''),
-          leading: !kIsWeb && !Platform.isMacOS && !context.showSideBar
-              ? const SideBarButton()
-              : null,
-          actions: [
-            if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
-              const SideBarButton(),
+    appBar: YaruWindowTitleBar(
+      heroTag: '<Right hero tag>',
+      border: BorderSide.none,
+      backgroundColor: Colors.transparent,
+      title: const Text(''),
+      leading: !kIsWeb && !Platform.isMacOS && !context.showSideBar
+          ? const SideBarButton()
+          : null,
+      actions: [
+        if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
+          const SideBarButton(),
+      ],
+    ),
+    body: Padding(
+      padding: const EdgeInsets.only(bottom: kYaruTitleBarHeight),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: kBigPadding,
+          children: [
+            Image.asset('assets/nebuchadnezzar.png', width: 100, height: 100),
+            const Text('Please select a chatroom from the side panel.'),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(bottom: kYaruTitleBarHeight),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              spacing: kBigPadding,
-              children: [
-                Image.asset(
-                  'assets/nebuchadnezzar.png',
-                  width: 100,
-                  height: 100,
-                ),
-                const Text('Please select a chatroom from the side panel.'),
-              ],
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }

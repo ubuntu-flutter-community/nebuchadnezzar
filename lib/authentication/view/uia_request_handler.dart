@@ -18,8 +18,10 @@ Future<void> uiaRequestHandler({
   var currentThreepidCreds = di<AuthenticationModel>().currentThreepidCreds;
   var currentClientSecret = di<AuthenticationModel>().currentClientSecret;
   final client = di<Client>();
-  final navigatorContext =
-      Navigator.of(context, rootNavigator: rootNavigator).context;
+  final navigatorContext = Navigator.of(
+    context,
+    rootNavigator: rootNavigator,
+  ).context;
   try {
     if (uiaRequest.state != UiaRequestState.waitForUser ||
         uiaRequest.nextStages.isEmpty) {
@@ -50,9 +52,7 @@ Future<void> uiaRequestHandler({
         );
       case AuthenticationTypes.emailIdentity:
         if (currentThreepidCreds == null) {
-          return uiaRequest.cancel(
-            UiaException(l10n.serverRequiresEmail),
-          );
+          return uiaRequest.cancel(UiaException(l10n.serverRequiresEmail));
         }
         final auth = AuthenticationThreePidCreds(
           session: uiaRequest.session,

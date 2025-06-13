@@ -15,14 +15,12 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final spaceSearch = watchPropertyValue((SearchModel m) => m.spaceSearch);
-    final spaceSearchL =
-        watchPropertyValue((SearchModel m) => m.spaceSearch?.length ?? 0);
+    final spaceSearchL = watchPropertyValue(
+      (SearchModel m) => m.spaceSearch?.length ?? 0,
+    );
     if (spaceSearch == null) {
       return const SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.all(kBigPadding),
-          child: Progress(),
-        ),
+        child: Padding(padding: EdgeInsets.all(kBigPadding), child: Progress()),
       );
     }
 
@@ -38,9 +36,7 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
           padding: const EdgeInsets.only(bottom: 5),
           child: YaruMasterTile(
             key: ValueKey(chunk.roomId),
-            leading: ChatAvatar(
-              avatarUri: chunk.avatarUrl,
-            ),
+            leading: ChatAvatar(avatarUri: chunk.avatarUrl),
             title: Text(chunk.name ?? chunk.roomId),
             subtitle: Tooltip(
               margin: const EdgeInsets.all(kBigPadding),

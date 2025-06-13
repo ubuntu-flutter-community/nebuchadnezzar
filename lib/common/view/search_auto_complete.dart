@@ -30,25 +30,29 @@ class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
     final model = di<ChatModel>();
     final theme = context.theme;
 
-    final processingJoinOrLeave =
-        watchPropertyValue((ChatModel m) => m.processingJoinOrLeave);
+    final processingJoinOrLeave = watchPropertyValue(
+      (ChatModel m) => m.processingJoinOrLeave,
+    );
 
     return Autocomplete<Profile>(
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) =>
               TextField(
-        enabled: !processingJoinOrLeave,
-        decoration: InputDecoration(
-          hintText: labelText ?? '${context.l10n.search} ${context.l10n.users}',
-          label:
-              Text(labelText ?? '${context.l10n.search} ${context.l10n.users}'),
-          suffixIcon: suffix,
-        ),
-        controller: textEditingController,
-        onSubmitted: (value) => onFieldSubmitted(),
-        focusNode: focusNode,
-        autofocus: true,
-      ),
+                enabled: !processingJoinOrLeave,
+                decoration: InputDecoration(
+                  hintText:
+                      labelText ??
+                      '${context.l10n.search} ${context.l10n.users}',
+                  label: Text(
+                    labelText ?? '${context.l10n.search} ${context.l10n.users}',
+                  ),
+                  suffixIcon: suffix,
+                ),
+                controller: textEditingController,
+                onSubmitted: (value) => onFieldSubmitted(),
+                focusNode: focusNode,
+                autofocus: true,
+              ),
       onSelected: (option) {
         if (onProfileSelected != null) {
           onProfileSelected!(option);
@@ -81,10 +85,7 @@ class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
               color: theme.popupMenuTheme.color,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
-                side: BorderSide(
-                  color: theme.dividerColor,
-                  width: 1,
-                ),
+                side: BorderSide(color: theme.dividerColor, width: 1),
               ),
               elevation: 1,
               child: ListView.builder(
@@ -92,17 +93,13 @@ class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
                 itemBuilder: (context, index) {
                   return Builder(
                     builder: (BuildContext context) {
-                      final bool highlight = AutocompleteHighlightedOption.of(
-                            context,
-                          ) ==
-                          index;
+                      final bool highlight =
+                          AutocompleteHighlightedOption.of(context) == index;
                       if (highlight) {
-                        SchedulerBinding.instance
-                            .addPostFrameCallback((Duration timeStamp) {
-                          Scrollable.ensureVisible(
-                            context,
-                            alignment: 0.5,
-                          );
+                        SchedulerBinding.instance.addPostFrameCallback((
+                          Duration timeStamp,
+                        ) {
+                          Scrollable.ensureVisible(context, alignment: 0.5);
                         });
                       }
                       final t = options.elementAt(index);
@@ -111,14 +108,8 @@ class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
                         child: ListTile(
                           key: ValueKey(t.userId),
                           leading: ChatAvatar(avatarUri: t.avatarUrl),
-                          title: Text(
-                            t.displayName ?? t.userId,
-                            maxLines: 1,
-                          ),
-                          subtitle: Text(
-                            t.userId,
-                            maxLines: 1,
-                          ),
+                          title: Text(t.displayName ?? t.userId, maxLines: 1),
+                          subtitle: Text(t.userId, maxLines: 1),
                           onTap: () => onSelected(t),
                         ),
                       );
@@ -144,8 +135,9 @@ class RoomsAutoComplete extends StatelessWidget with WatchItMixin {
     final model = di<ChatModel>();
     final theme = context.theme;
 
-    final processingJoinOrLeave =
-        watchPropertyValue((ChatModel m) => m.processingJoinOrLeave);
+    final processingJoinOrLeave = watchPropertyValue(
+      (ChatModel m) => m.processingJoinOrLeave,
+    );
 
     final searchType = watchPropertyValue((SearchModel m) => m.searchType);
     final label =
@@ -154,19 +146,19 @@ class RoomsAutoComplete extends StatelessWidget with WatchItMixin {
     return Autocomplete<PublicRoomsChunk>(
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) {
-        return TextField(
-          enabled: !processingJoinOrLeave,
-          decoration: InputDecoration(
-            hintText: label,
-            label: Text(label),
-            suffixIcon: suffix,
-          ),
-          controller: textEditingController,
-          onSubmitted: (value) => onFieldSubmitted(),
-          focusNode: focusNode,
-          autofocus: true,
-        );
-      },
+            return TextField(
+              enabled: !processingJoinOrLeave,
+              decoration: InputDecoration(
+                hintText: label,
+                label: Text(label),
+                suffixIcon: suffix,
+              ),
+              controller: textEditingController,
+              onSubmitted: (value) => onFieldSubmitted(),
+              focusNode: focusNode,
+              autofocus: true,
+            );
+          },
       onSelected: (option) => model.joinAndSelectRoomByChunk(
         option,
         onFail: (error) => showSnackBar(context, content: Text(error)),
@@ -174,9 +166,9 @@ class RoomsAutoComplete extends StatelessWidget with WatchItMixin {
       displayStringForOption: (chunk) => chunk.name ?? chunk.roomId,
       optionsBuilder: (textEditingValue) =>
           di<SearchModel>().findPublicRoomChunks(
-        textEditingValue.text,
-        onFail: (error) => showSnackBar(context, content: Text(error)),
-      ),
+            textEditingValue.text,
+            onFail: (error) => showSnackBar(context, content: Text(error)),
+          ),
       optionsViewBuilder: (context, onSelected, options) => Align(
         alignment: Alignment.topLeft,
         child: SizedBox(
@@ -188,10 +180,7 @@ class RoomsAutoComplete extends StatelessWidget with WatchItMixin {
               color: theme.popupMenuTheme.color,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
-                side: BorderSide(
-                  color: theme.dividerColor,
-                  width: 1,
-                ),
+                side: BorderSide(color: theme.dividerColor, width: 1),
               ),
               elevation: 1,
               child: ListView.builder(
@@ -199,17 +188,13 @@ class RoomsAutoComplete extends StatelessWidget with WatchItMixin {
                 itemBuilder: (context, index) {
                   return Builder(
                     builder: (BuildContext context) {
-                      final bool highlight = AutocompleteHighlightedOption.of(
-                            context,
-                          ) ==
-                          index;
+                      final bool highlight =
+                          AutocompleteHighlightedOption.of(context) == index;
                       if (highlight) {
-                        SchedulerBinding.instance
-                            .addPostFrameCallback((Duration timeStamp) {
-                          Scrollable.ensureVisible(
-                            context,
-                            alignment: 0.5,
-                          );
+                        SchedulerBinding.instance.addPostFrameCallback((
+                          Duration timeStamp,
+                        ) {
+                          Scrollable.ensureVisible(context, alignment: 0.5);
                         });
                       }
                       final chunk = options.elementAt(index);
@@ -217,13 +202,8 @@ class RoomsAutoComplete extends StatelessWidget with WatchItMixin {
                         padding: const EdgeInsets.only(bottom: kSmallPadding),
                         child: ListTile(
                           key: ValueKey(chunk.roomId),
-                          leading: ChatAvatar(
-                            avatarUri: chunk.avatarUrl,
-                          ),
-                          title: Text(
-                            chunk.name ?? chunk.roomId,
-                            maxLines: 1,
-                          ),
+                          leading: ChatAvatar(avatarUri: chunk.avatarUrl),
+                          title: Text(chunk.name ?? chunk.roomId, maxLines: 1),
                           subtitle: Text(
                             chunk.canonicalAlias ?? chunk.roomId,
                             maxLines: 1,

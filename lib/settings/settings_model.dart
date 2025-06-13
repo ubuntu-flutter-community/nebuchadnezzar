@@ -17,8 +17,8 @@ class SettingsModel extends SafeChangeNotifier {
   SettingsModel({
     required Client client,
     required SettingsService settingsService,
-  })  : _client = client,
-        _settingsService = settingsService;
+  }) : _client = client,
+       _settingsService = settingsService;
 
   final Client _client;
   final SettingsService _settingsService;
@@ -30,8 +30,9 @@ class SettingsModel extends SafeChangeNotifier {
       await getMyProfile();
     }
 
-    _propertiesChangedSub ??=
-        _settingsService.propertiesChanged.listen((_) => notifyListeners());
+    _propertiesChangedSub ??= _settingsService.propertiesChanged.listen(
+      (_) => notifyListeners(),
+    );
   }
 
   @override
@@ -72,15 +73,11 @@ class SettingsModel extends SafeChangeNotifier {
           statusMsg: text,
         );
 
-  Future<Profile?> getMyProfile({
-    Function(String error)? onFail,
-  }) async {
+  Future<Profile?> getMyProfile({Function(String error)? onFail}) async {
     if (_client.userID == null) return null;
     try {
       _presence = await _client.fetchCurrentPresence(_client.userID!);
-      _myProfile = await _client.getProfileFromUserId(
-        _client.userID!,
-      );
+      _myProfile = await _client.getProfileFromUserId(_client.userID!);
       notifyListeners();
     } on Exception catch (e, s) {
       onFail?.call(e.toString());
@@ -104,27 +101,26 @@ class SettingsModel extends SafeChangeNotifier {
   }
 
   Future<void> deleteDevice(String id) async {
-    await _client.uiaRequestBackground(
-      (auth) async {
-        await _client.deleteDevice(
-          id,
-          auth: auth,
-        );
-      },
-    );
-    await getDevices();
+    try {
+      await _client.uiaRequestBackground((auth) async {
+        await _client.deleteDevice(id, auth: auth);
+      });
+      await getDevices();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+    }
   }
 
-  Future<void> verifyDeviceAction(
-    Device device,
-    BuildContext context,
-  ) async {
+  Future<void> verifyDeviceAction(Device device, BuildContext context) async {
     final keyVerification = await _client
-        .userDeviceKeys[_client.userID!]!.deviceKeys[device.deviceId]!
+        .userDeviceKeys[_client.userID!]!
+        .deviceKeys[device.deviceId]!
         .startVerification();
     keyVerification.onUpdate = () async {
-      if ({KeyVerificationState.error, KeyVerificationState.done}
-          .contains(keyVerification.state)) {
+      if ({
+        KeyVerificationState.error,
+        KeyVerificationState.done,
+      }.contains(keyVerification.state)) {
         await getDevices();
       }
     };
@@ -157,12 +153,7 @@ class SettingsModel extends SafeChangeNotifier {
           type: FileType.any,
         );
         xFile = result?.files
-            .map(
-              (f) => XFile(
-                f.path!,
-                mimeType: lookupMimeType(f.path!),
-              ),
-            )
+            .map((f) => XFile(f.path!, mimeType: lookupMimeType(f.path!)))
             .toList()
             .firstOrNull;
       }

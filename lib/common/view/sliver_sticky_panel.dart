@@ -30,12 +30,8 @@ class SliverStickyPanel extends StatelessWidget {
       toolbarHeight: toolbarHeight,
       actions: [Container()],
       title: Padding(
-        padding: padding ??
-            const EdgeInsets.only(
-              left: 15,
-              right: 15,
-              bottom: 10,
-            ),
+        padding:
+            padding ?? const EdgeInsets.only(left: 15, right: 15, bottom: 10),
         child: child,
       ),
     );

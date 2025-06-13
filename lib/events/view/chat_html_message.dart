@@ -34,11 +34,8 @@ class HtmlMessage extends StatelessWidget {
     final defaultTextColor = context.colorScheme.onSurface;
     final element = _linkifyHtml(HtmlParser.parseHTML(html));
 
-    final theStyle =
-        (style == null ? Style() : Style.fromTextStyle(style!)).copyWith(
-      padding: HtmlPaddings.zero,
-      margin: Margins.zero,
-    );
+    final theStyle = (style == null ? Style() : Style.fromTextStyle(style!))
+        .copyWith(padding: HtmlPaddings.zero, margin: Margins.zero);
     return Html.fromElement(
       documentElement: element as dom.Element,
       style: style == null
@@ -58,11 +55,7 @@ class HtmlMessage extends StatelessWidget {
       ],
       onLinkTap: (url, attributes, element) =>
           chatHtmlMessageLinkHandler(url, attributes, element, context),
-      onlyRenderTheseTags: const {
-        ..._allowedHtmlTags,
-        'body',
-        'html',
-      },
+      onlyRenderTheseTags: const {..._allowedHtmlTags, 'body', 'html'},
       shrinkWrap: true,
     );
   }
@@ -110,11 +103,7 @@ class FontColorExtension extends HtmlExtension {
   bool matches(ExtensionContext context) {
     if (!supportedTags.contains(context.elementName)) return false;
     return context.element?.attributes.keys.any(
-          {
-            colorAttribute,
-            mxColorAttribute,
-            bgColorAttribute,
-          }.contains,
+          {colorAttribute, mxColorAttribute, bgColorAttribute}.contains,
         ) ??
         false;
   }
@@ -128,10 +117,9 @@ class FontColorExtension extends HtmlExtension {
   }
 
   @override
-  InlineSpan build(
-    ExtensionContext context,
-  ) {
-    final colorText = context.element?.attributes[colorAttribute] ??
+  InlineSpan build(ExtensionContext context) {
+    final colorText =
+        context.element?.attributes[colorAttribute] ??
         context.element?.attributes[mxColorAttribute];
     final bgColor = context.element?.attributes[bgColorAttribute];
     return TextSpan(
@@ -225,36 +213,29 @@ class CodeExtension extends HtmlExtension {
   final double fontSize;
   final bool isLight;
 
-  CodeExtension({
-    required this.fontSize,
-    required this.isLight,
-  });
+  CodeExtension({required this.fontSize, required this.isLight});
   @override
   Set<String> get supportedTags => {'code', 'pre'};
 
   @override
   InlineSpan build(ExtensionContext context) => WidgetSpan(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: HighlightView(
-            padding: EdgeInsets.zero,
-            context.element?.text ?? '',
-            language: context.element?.className
-                    .split(' ')
-                    .singleWhereOrNull(
-                      (c) => c.startsWith('language-'),
-                    )
-                    ?.split('language-')
-                    .last ??
-                'md',
-            theme: isLight ? vsTheme : draculaTheme,
-            textStyle: TextStyle(
-              fontSize: fontSize,
-              fontFamily: 'UbuntuMono',
-            ),
-          ),
-        ),
-      );
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(6),
+      child: HighlightView(
+        padding: EdgeInsets.zero,
+        context.element?.text ?? '',
+        language:
+            context.element?.className
+                .split(' ')
+                .singleWhereOrNull((c) => c.startsWith('language-'))
+                ?.split('language-')
+                .last ??
+            'md',
+        theme: isLight ? vsTheme : draculaTheme,
+        textStyle: TextStyle(fontSize: fontSize, fontFamily: 'UbuntuMono'),
+      ),
+    ),
+  );
 }
 
 class FallbackTextExtension extends HtmlExtension {
@@ -265,10 +246,8 @@ class FallbackTextExtension extends HtmlExtension {
   Set<String> get supportedTags => _fallbackTextTags;
 
   @override
-  InlineSpan build(ExtensionContext context) => TextSpan(
-        text: context.element?.text ?? '',
-        style: style,
-      );
+  InlineSpan build(ExtensionContext context) =>
+      TextSpan(text: context.element?.text ?? '', style: style);
 }
 
 const Set<String> _fallbackTextTags = {'tg-forward'};

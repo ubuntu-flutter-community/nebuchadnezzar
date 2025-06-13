@@ -15,11 +15,7 @@ import 'chat_message_menu_reaction_picker.dart';
 import 'chat_text_message.dart';
 
 class ChatMessageMenu extends StatefulWidget {
-  const ChatMessageMenu({
-    super.key,
-    required this.event,
-    required this.child,
-  });
+  const ChatMessageMenu({super.key, required this.event, required this.child});
 
   final Event event;
   final Widget child;
@@ -50,10 +46,7 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                 MenuItemButton(
                   trailingIcon: const Icon(YaruIcons.reply),
                   onPressed: () => di<DraftModel>().setReplyEvent(widget.event),
-                  child: Text(
-                    context.l10n.reply,
-                    style: style,
-                  ),
+                  child: Text(context.l10n.reply, style: style),
                 ),
                 if (widget.event.room.canSendDefaultMessages &&
                     widget.event.isUserEvent)
@@ -71,17 +64,11 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                           notify: true,
                         );
                     },
-                    child: Text(
-                      context.l10n.edit,
-                      style: style,
-                    ),
+                    child: Text(context.l10n.edit, style: style),
                   ),
                 MenuItemButton(
                   trailingIcon: const Icon(YaruIcons.copy),
-                  child: Text(
-                    context.l10n.copyToClipboard,
-                    style: style,
-                  ),
+                  child: Text(context.l10n.copyToClipboard, style: style),
                   onPressed: () => showSnackBar(
                     context,
                     content: CopyClipboardContent(
@@ -115,18 +102,13 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                         ),
                         content: SizedBox(
                           width: 300,
-                          child: Text(
-                            widget.event.body,
-                          ),
+                          child: Text(widget.event.body),
                         ),
                         onConfirm: () =>
                             widget.event.room.redactEvent(widget.event.eventId),
                       ),
                     ),
-                    child: Text(
-                      context.l10n.deleteMessage,
-                      style: style,
-                    ),
+                    child: Text(context.l10n.deleteMessage, style: style),
                   ),
                 if (kDebugMode)
                   MenuItemButton(
@@ -138,10 +120,7 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                         child: widget.child,
                       ),
                     ),
-                    child: Text(
-                      'Inspect',
-                      style: style,
-                    ),
+                    child: Text('Inspect', style: style),
                   ),
               ],
         child: widget.child,

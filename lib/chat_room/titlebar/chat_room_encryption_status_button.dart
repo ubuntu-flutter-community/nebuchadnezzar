@@ -8,10 +8,7 @@ import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
 
 class ChatRoomEncryptionStatusButton extends StatelessWidget with WatchItMixin {
-  const ChatRoomEncryptionStatusButton({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomEncryptionStatusButton({super.key, required this.room});
 
   final Room room;
 
@@ -20,7 +17,8 @@ class ChatRoomEncryptionStatusButton extends StatelessWidget with WatchItMixin {
     final l10n = context.l10n;
     final colorScheme = context.colorScheme;
 
-    final encrypted = watchStream(
+    final encrypted =
+        watchStream(
           (ChatModel m) => m.getJoinedRoomEncryptedStream(room),
           initialValue: room.encrypted,
         ).data ??
@@ -29,10 +27,7 @@ class ChatRoomEncryptionStatusButton extends StatelessWidget with WatchItMixin {
     return IconButton(
       onPressed: null,
       tooltip: encrypted ? l10n.encrypted : l10n.encryptionNotEnabled,
-      icon: Icon(
-        getRoomIcon(encrypted, room),
-        color: colorScheme.onSurface,
-      ),
+      icon: Icon(getRoomIcon(encrypted, room), color: colorScheme.onSurface),
     );
   }
 

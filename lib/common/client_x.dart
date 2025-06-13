@@ -21,16 +21,20 @@ extension ClientX on Client {
       verificationMethods: {KeyVerificationMethod.numbers},
       enableDehydratedDevices: true,
       shareKeysWith: ShareKeysWith.crossVerified,
-      databaseBuilder: (_) async {
-        final dir = await getApplicationSupportDirectory();
-        final db = MatrixSdkDatabase(
-          AppConfig.appId,
-          database:
-              await sqlite.openDatabase(p.join(dir.path, 'database.sqlite')),
-        );
-        await db.open();
-        return db;
-      },
+      databaseBuilder: kIsWeb
+          ? null
+          : (_) async {
+              // This code runs only on mobile/desktop
+              final dir = await getApplicationSupportDirectory();
+              final db = MatrixSdkDatabase(
+                AppConfig.appId,
+                database: await sqlite.openDatabase(
+                  p.join(dir.path, 'database.sqlite'),
+                ),
+              );
+              await db.open();
+              return db;
+            },
     );
     // This reads potential credentials that might exist from previous sessions.
     await client.init().timeout(const Duration(seconds: 55));

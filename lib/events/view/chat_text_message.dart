@@ -35,13 +35,8 @@ class ChatTextMessage extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (context) => ConfirmationDialog(
-                  title: Text(
-                    '${context.l10n.openLinkInBrowser}?',
-                  ),
-                  content: SizedBox(
-                    width: 400,
-                    child: Text(link.url),
-                  ),
+                  title: Text('${context.l10n.openLinkInBrowser}?'),
+                  content: SizedBox(width: 400, child: Text(link.url)),
                   onConfirm: () => launchUrl(maybe),
                 ),
               );

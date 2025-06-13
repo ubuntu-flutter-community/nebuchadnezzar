@@ -19,7 +19,8 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final theme = context.theme;
 
-    final typingUsers = watchStream(
+    final typingUsers =
+        watchStream(
           (ChatModel m) => m.getTypingUsersStream(room),
           initialValue: room.typingUsers,
         ).data ??
@@ -32,9 +33,7 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
       alignment: Alignment.centerLeft,
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(),
-      padding: const EdgeInsets.symmetric(
-        horizontal: kBigPadding,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -50,14 +49,10 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
           ),
           Material(
             color: getMonochromeBg(theme: theme, factor: 6, darkFactor: 15),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(30),
-            ),
+            borderRadius: const BorderRadius.all(Radius.circular(30)),
             elevation: 0.1,
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: kSmallPadding,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
               child: typingUsers.isEmpty ? null : const _TypingDots(),
             ),
           ),
@@ -84,17 +79,14 @@ class __TypingDotsState extends State<_TypingDots> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(
-      animationDuration,
-      (_) {
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _tick = (_tick + 1) % 4;
-        });
-      },
-    );
+    _timer = Timer.periodic(animationDuration, (_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _tick = (_tick + 1) % 4;
+      });
+    });
   }
 
   @override

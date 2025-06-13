@@ -13,7 +13,6 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_model.dart';
 import 'key_verification_dialog.dart';
 
@@ -65,10 +64,6 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
       appBar: const YaruWindowTitleBar(
         border: BorderSide.none,
         backgroundColor: Colors.transparent,
-        actions: [
-          Flexible(child: ChatSettingsLogoutButton()),
-          SizedBox(width: kSmallPadding),
-        ],
       ),
       body: Center(
         child: SizedBox(
@@ -84,9 +79,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                     YaruIcons.information,
                     color: theme.colorScheme.primary,
                   ),
-                  subtitle: Text(
-                    l10n.pleaseEnterRecoveryKeyDescription,
-                  ),
+                  subtitle: Text(l10n.pleaseEnterRecoveryKeyDescription),
                 ),
                 TextField(
                   controller: _recoveryKeyTextEditingController,
@@ -94,8 +87,9 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                   maxLines: 2,
                   autocorrect: false,
                   readOnly: recoveryKeyInputLoading,
-                  autofillHints:
-                      recoveryKeyInputLoading ? null : [AutofillHints.password],
+                  autofillHints: recoveryKeyInputLoading
+                      ? null
+                      : [AutofillHints.password],
                   style: const TextStyle(fontFamily: 'UbuntuMono'),
                   decoration: InputDecoration(
                     prefixIcon: const Icon(YaruIcons.key),
@@ -116,11 +110,13 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                           model.setRecoveryKeyInputError(null);
                           model.setRecoveryKeyInputLoading(true);
                           try {
-                            final newKey =
-                                _recoveryKeyTextEditingController.text.trim();
+                            final newKey = _recoveryKeyTextEditingController
+                                .text
+                                .trim();
                             if (newKey.isEmpty == true) return;
-                            await bootstrap?.newSsssKey
-                                ?.unlock(keyOrPassphrase: newKey);
+                            await bootstrap?.newSsssKey?.unlock(
+                              keyOrPassphrase: newKey,
+                            );
                             await bootstrap?.openExistingSsss();
                             Logs().d('SSSS unlocked');
                             if (bootstrap?.encryption.crossSigning.enabled ==

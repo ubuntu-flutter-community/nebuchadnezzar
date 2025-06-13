@@ -16,13 +16,16 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final defaultReactions =
-        watchPropertyValue((SettingsModel m) => m.defaultReactions);
+    final defaultReactions = watchPropertyValue(
+      (SettingsModel m) => m.defaultReactions,
+    );
     return YaruExpandable(
       expandButtonPosition: YaruExpandableButtonPosition.start,
       gapHeight: 0,
-      expandIconPadding:
-          const EdgeInsets.only(bottom: kSmallPadding, left: kMediumPadding),
+      expandIconPadding: const EdgeInsets.only(
+        bottom: kSmallPadding,
+        left: kMediumPadding,
+      ),
       header: SizedBox(
         width: 220,
         height: 50,
@@ -37,10 +40,7 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
             children: defaultReactions
                 .map(
                   (e) => IconButton(
-                    onPressed: () => event.room.sendReaction(
-                      event.eventId,
-                      e,
-                    ),
+                    onPressed: () => event.room.sendReaction(event.eventId, e),
                     icon: Text(e),
                   ),
                 )
@@ -57,10 +57,8 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
             emojiSizeMax: 15,
             bottom: false,
           ),
-          onEmojiSelected: (category, emoji) => event.room.sendReaction(
-            event.eventId,
-            emoji.emoji,
-          ),
+          onEmojiSelected: (category, emoji) =>
+              event.room.sendReaction(event.eventId, emoji.emoji),
         ),
       ),
     );

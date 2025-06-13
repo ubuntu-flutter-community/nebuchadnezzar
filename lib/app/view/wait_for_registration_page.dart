@@ -37,24 +37,24 @@ class _WaitForRegistrationPageState extends State<WaitForRegistrationPage> {
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
-        future: _registrationReady,
-        builder: (context, snapshot) => snapshot.hasData
-            ? App(
-                lightTheme: widget.lightTheme,
-                darkTheme: widget.darkTheme,
-                highContrastDarkTheme: widget.highContrastDarkTheme,
-                highContrastTheme: widget.highContrastTheme,
-                child: (!di<AuthenticationModel>().isLogged)
-                    ? const ChatLoginPage()
-                    : const CheckEncryptionSetupPage(),
-              )
-            : App(
-                themeMode: ThemeMode.system,
-                lightTheme: widget.lightTheme,
-                darkTheme: widget.darkTheme,
-                highContrastDarkTheme: widget.highContrastDarkTheme,
-                highContrastTheme: widget.highContrastTheme,
-                child: const SplashPage(),
-              ),
-      );
+    future: _registrationReady,
+    builder: (context, snapshot) => snapshot.hasData
+        ? App(
+            lightTheme: widget.lightTheme,
+            darkTheme: widget.darkTheme,
+            highContrastDarkTheme: widget.highContrastDarkTheme,
+            highContrastTheme: widget.highContrastTheme,
+            child: (!di<AuthenticationModel>().isLogged)
+                ? const ChatLoginPage()
+                : const CheckEncryptionSetupPage(),
+          )
+        : App(
+            themeMode: ThemeMode.system,
+            lightTheme: widget.lightTheme,
+            darkTheme: widget.darkTheme,
+            highContrastDarkTheme: widget.highContrastDarkTheme,
+            highContrastTheme: widget.highContrastTheme,
+            child: const SplashPage(),
+          ),
+  );
 }

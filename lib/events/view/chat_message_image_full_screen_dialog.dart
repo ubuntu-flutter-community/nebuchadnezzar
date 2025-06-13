@@ -41,8 +41,10 @@ class _ChatMessageImageFullScreenDialogState
   void initState() {
     super.initState();
     _controller = PhotoViewController();
-    _future = di<LocalImageModel>()
-        .downloadImage(event: widget.event, getThumbnail: widget.getThumbnail);
+    _future = di<LocalImageModel>().downloadImage(
+      event: widget.event,
+      getThumbnail: widget.getThumbnail,
+    );
   }
 
   @override
@@ -86,15 +88,13 @@ class _ChatMessageImageFullScreenDialogState
               ),
             ),
             Text(
-              widget.event.originServerTs
-                  .toLocal()
-                  .formatAndLocalize(context.l10n),
+              widget.event.originServerTs.toLocal().formatAndLocalize(
+                context.l10n,
+              ),
               textAlign: TextAlign.start,
               overflow: TextOverflow.ellipsis,
             ),
-            const AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-            ),
+            const AnimatedSwitcher(duration: Duration(milliseconds: 300)),
           ],
         ),
         border: BorderSide.none,
@@ -165,9 +165,8 @@ class _ChatMessageImageFullScreenDialogState
                         if (snapshot.hasData) {
                           return ClipRRect(
                             child: PhotoView(
-                              loadingBuilder: (context, event) => const Center(
-                                child: Progress(),
-                              ),
+                              loadingBuilder: (context, event) =>
+                                  const Center(child: Progress()),
                               imageProvider: MemoryImage(snapshot.data!),
                               minScale: PhotoViewComputedScale.contained * 0.8,
                               maxScale: PhotoViewComputedScale.covered * 10,
@@ -177,9 +176,7 @@ class _ChatMessageImageFullScreenDialogState
                             ),
                           );
                         } else {
-                          return const Center(
-                            child: Progress(),
-                          );
+                          return const Center(child: Progress());
                         }
                       },
                     ),

@@ -69,13 +69,14 @@ class _ChatSettingsAccountSectionState
                     suffixIcon: IconButton(
                       padding: EdgeInsets.zero,
                       style: textFieldSuffixStyle,
-                      onPressed: profile?.displayName != initialText ||
+                      onPressed:
+                          profile?.displayName != initialText ||
                               profile?.displayName !=
                                   _displayNameController.text
                           ? () => di<SettingsModel>().setDisplayName(
-                                name: _displayNameController.text,
-                                onFail: (e) => showErrorSnackBar(context, e),
-                              )
+                              name: _displayNameController.text,
+                              onFail: (e) => showErrorSnackBar(context, e),
+                            )
                           : null,
                       icon: saved
                           ? YaruAnimatedVectorIcon(
@@ -97,10 +98,7 @@ class _ChatSettingsAccountSectionState
             ),
           ),
           YaruTile(
-            title: TextField(
-              enabled: false,
-              controller: _idController,
-            ),
+            title: TextField(enabled: false, controller: _idController),
             trailing: const ChatSettingsLogoutButton(),
           ),
         ],

@@ -34,10 +34,6 @@ class ChatMessageAttachmentIndicator extends StatelessWidget with WatchItMixin {
               size: iconSize,
             ),
           )
-        : Icon(
-            YaruIcons.download,
-            size: iconSize,
-            color: color,
-          );
+        : Icon(YaruIcons.download, size: iconSize, color: color);
   }
 }

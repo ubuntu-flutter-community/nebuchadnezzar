@@ -7,26 +7,19 @@ import 'chat_room_info_media_grid.dart';
 import 'chat_room_media_grid_headline.dart';
 
 class ChatRoomInfoDrawerDirectChatContent extends StatelessWidget {
-  const ChatRoomInfoDrawerDirectChatContent({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomInfoDrawerDirectChatContent({super.key, required this.room});
 
   final Room room;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: kBigPadding,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: kBigPadding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: kBigPadding,
-            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: kBigPadding),
             title: ChatRoomMediaGridHeadline(room: room),
           ),
           SizedBox(

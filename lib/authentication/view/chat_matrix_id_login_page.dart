@@ -18,8 +18,9 @@ class ChatMatrixIdLoginPage extends StatefulWidget
 }
 
 class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
-  final TextEditingController _homeServerController =
-      TextEditingController(text: 'matrix.org');
+  final TextEditingController _homeServerController = TextEditingController(
+    text: 'matrix.org',
+  );
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -27,10 +28,12 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final authenticationModel = di<AuthenticationModel>();
-    bool processingAccess =
-        watchPropertyValue((AuthenticationModel m) => m.processingAccess);
-    bool showPassword =
-        watchPropertyValue((AuthenticationModel m) => m.showPassword);
+    bool processingAccess = watchPropertyValue(
+      (AuthenticationModel m) => m.processingAccess,
+    );
+    bool showPassword = watchPropertyValue(
+      (AuthenticationModel m) => m.showPassword,
+    );
 
     var onPressed = processingAccess
         ? null
@@ -70,9 +73,7 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
           readOnly: processingAccess,
           autocorrect: false,
           onSubmitted: (value) => onPressed?.call(),
-          decoration: InputDecoration(
-            labelText: l10n.username,
-          ),
+          decoration: InputDecoration(labelText: l10n.username),
         ),
         TextField(
           controller: _passwordController,
@@ -97,9 +98,7 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
                 ),
               ),
               onPressed: authenticationModel.toggleShowPassword,
-              icon: Icon(
-                showPassword ? YaruIcons.eye_filled : YaruIcons.eye,
-              ),
+              icon: Icon(showPassword ? YaruIcons.eye_filled : YaruIcons.eye),
             ),
           ),
         ),
@@ -111,9 +110,7 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
             child: const Text('Login'),
           ),
         ),
-        const SizedBox(
-          height: kYaruTitleBarHeight,
-        ),
+        const SizedBox(height: kYaruTitleBarHeight),
       ],
     );
   }

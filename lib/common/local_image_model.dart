@@ -7,11 +7,10 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'local_image_service.dart';
 
 class LocalImageModel extends SafeChangeNotifier {
-  LocalImageModel({
-    required LocalImageService service,
-  }) : _service = service {
-    _propertiesChangedSub ??=
-        _service.propertiesChanged.listen((_) => notifyListeners());
+  LocalImageModel({required LocalImageService service}) : _service = service {
+    _propertiesChangedSub ??= _service.propertiesChanged.listen(
+      (_) => notifyListeners(),
+    );
   }
 
   final LocalImageService _service;
@@ -23,11 +22,7 @@ class LocalImageModel extends SafeChangeNotifier {
   Future<Uint8List?> downloadImage({
     required Event event,
     bool getThumbnail = true,
-  }) async =>
-      _service.downloadImage(
-        event: event,
-        getThumbnail: getThumbnail,
-      );
+  }) async => _service.downloadImage(event: event, getThumbnail: getThumbnail);
 
   Future<Uint8List?> downloadMxcCached({
     required Uri uri,
@@ -36,15 +31,14 @@ class LocalImageModel extends SafeChangeNotifier {
     ThumbnailMethod? thumbnailMethod,
     bool isThumbnail = false,
     bool? animated,
-  }) async =>
-      _service.downloadMxcCached(
-        uri: uri,
-        width: width,
-        height: height,
-        thumbnailMethod: thumbnailMethod,
-        isThumbnail: isThumbnail,
-        animated: animated,
-      );
+  }) async => _service.downloadMxcCached(
+    uri: uri,
+    width: width,
+    height: height,
+    thumbnailMethod: thumbnailMethod,
+    isThumbnail: isThumbnail,
+    animated: animated,
+  );
 
   @override
   Future<void> dispose() async {

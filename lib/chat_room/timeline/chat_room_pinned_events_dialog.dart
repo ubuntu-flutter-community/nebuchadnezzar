@@ -9,16 +9,14 @@ import '../../common/chat_model.dart';
 import '../../events/view/chat_event_tile.dart';
 
 class ChatRoomPinnedEventsDialog extends StatelessWidget with WatchItMixin {
-  const ChatRoomPinnedEventsDialog({
-    super.key,
-    required this.timeline,
-  });
+  const ChatRoomPinnedEventsDialog({super.key, required this.timeline});
 
   final Timeline timeline;
 
   @override
   Widget build(BuildContext context) {
-    final pinnedEvents = watchStream(
+    final pinnedEvents =
+        watchStream(
           (ChatModel m) => m
               .getJoinedRoomUpdate(timeline.room.id)
               .map((_) => timeline.room.pinnedEventIds),

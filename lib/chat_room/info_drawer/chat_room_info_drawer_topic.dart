@@ -10,16 +10,14 @@ import '../../common/view/ui_constants.dart';
 import '../../events/view/chat_html_message_link_handler.dart';
 
 class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
-  const ChatRoomInfoDrawerTopic({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomInfoDrawerTopic({super.key, required this.room});
 
   final Room room;
 
   @override
   Widget build(BuildContext context) {
-    final topic = watchStream(
+    final topic =
+        watchStream(
           (ChatModel m) =>
               m.getJoinedRoomUpdate(room.id).map((_) => room.topic),
           initialValue: room.topic,
@@ -27,9 +25,7 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
         room.topic;
 
     return Padding(
-      padding: const EdgeInsets.only(
-        bottom: kMediumPadding,
-      ),
+      padding: const EdgeInsets.only(bottom: kMediumPadding),
       child: ListTile(
         dense: true,
         title: Html(
@@ -37,8 +33,9 @@ class ChatRoomInfoDrawerTopic extends StatelessWidget with WatchItMixin {
               chatHtmlMessageLinkHandler(url, attributes, element, context),
           data: topic,
           style: {
-            'a': Style.fromTextStyle(context.textTheme.bodyMedium!)
-                .copyWith(color: context.colorScheme.link),
+            'a': Style.fromTextStyle(
+              context.textTheme.bodyMedium!,
+            ).copyWith(color: context.colorScheme.link),
             'body': Style(
               margin: Margins.zero,
               padding: HtmlPaddings.zero,

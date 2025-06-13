@@ -8,16 +8,14 @@ import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
 
 class ChatRoomNotificationButton extends StatelessWidget with WatchItMixin {
-  const ChatRoomNotificationButton({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomNotificationButton({super.key, required this.room});
 
   final Room room;
 
   @override
   Widget build(BuildContext context) {
-    final pushRuleState = watchStream(
+    final pushRuleState =
+        watchStream(
           (ChatModel m) => m.syncStream.map((_) => room.pushRuleState),
           initialValue: room.pushRuleState,
         ).data ??

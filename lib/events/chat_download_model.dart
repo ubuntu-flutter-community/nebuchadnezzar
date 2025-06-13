@@ -7,9 +7,10 @@ import 'chat_download_service.dart';
 
 class ChatDownloadModel extends SafeChangeNotifier {
   ChatDownloadModel({required ChatDownloadService service})
-      : _service = service {
-    _propertiesChangedSub =
-        _service.propertiesChanged.listen((_) => notifyListeners());
+    : _service = service {
+    _propertiesChangedSub = _service.propertiesChanged.listen(
+      (_) => notifyListeners(),
+    );
   }
 
   final ChatDownloadService _service;
@@ -20,12 +21,11 @@ class ChatDownloadModel extends SafeChangeNotifier {
     required Event event,
     required String confirmButtonText,
     required String dialogTitle,
-  }) async =>
-      _service.safeFile(
-        event: event,
-        confirmButtonText: confirmButtonText,
-        dialogTitle: dialogTitle,
-      );
+  }) async => _service.safeFile(
+    event: event,
+    confirmButtonText: confirmButtonText,
+    dialogTitle: dialogTitle,
+  );
 
   @override
   Future<void> dispose() async {

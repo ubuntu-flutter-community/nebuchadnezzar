@@ -21,17 +21,17 @@ class _CheckEncryptionSetupPageState extends State<CheckEncryptionSetupPage> {
   @override
   void initState() {
     super.initState();
-    _isEncryptionSetupNeeded =
-        di<EncryptionModel>().checkIfEncryptionSetupIsNeeded();
+    _isEncryptionSetupNeeded = di<EncryptionModel>()
+        .checkIfEncryptionSetupIsNeeded();
   }
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
-        future: _isEncryptionSetupNeeded,
-        builder: (context, snapshot) => !snapshot.hasData
-            ? SplashPage(title: Text(context.l10n.synchronizingPleaseWait))
-            : (snapshot.data == true
-                ? const SetupEncryptedChatPage()
-                : const ChatMasterDetailPage()),
-      );
+    future: _isEncryptionSetupNeeded,
+    builder: (context, snapshot) => !snapshot.hasData
+        ? SplashPage(title: Text(context.l10n.loadingPleaseWait))
+        : (snapshot.data == true
+              ? const SetupEncryptedChatPage()
+              : const ChatMasterDetailPage()),
+  );
 }

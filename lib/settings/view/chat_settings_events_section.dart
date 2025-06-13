@@ -7,9 +7,7 @@ import '../../l10n/l10n.dart';
 import '../settings_model.dart';
 
 class ChatSettingsEventsSection extends StatelessWidget with WatchItMixin {
-  const ChatSettingsEventsSection({
-    super.key,
-  });
+  const ChatSettingsEventsSection({super.key});
 
   @override
   Widget build(BuildContext context) {

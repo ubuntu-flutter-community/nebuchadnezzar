@@ -30,25 +30,24 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
     final searchActive = watchPropertyValue((SearchModel m) => m.searchActive);
     final searchType = watchPropertyValue((SearchModel m) => m.searchType);
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
-    final loadingArchive =
-        watchPropertyValue((ChatModel m) => m.loadingArchive);
+    final loadingArchive = watchPropertyValue(
+      (ChatModel m) => m.loadingArchive,
+    );
     final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
     final chatModel = di<ChatModel>();
 
     final suffix = IconButton(
       padding: EdgeInsets.zero,
       style: textFieldSuffixStyle,
-      onPressed: () => searchModel.setSearchType(
-        switch (searchType) {
-          SearchType.profiles => SearchType.rooms,
-          SearchType.rooms => SearchType.spaces,
-          SearchType.spaces => SearchType.profiles,
-        },
-      ),
+      onPressed: () => searchModel.setSearchType(switch (searchType) {
+        SearchType.profiles => SearchType.rooms,
+        SearchType.rooms => SearchType.spaces,
+        SearchType.spaces => SearchType.profiles,
+      }),
       icon: switch (searchType) {
         SearchType.profiles => const Icon(YaruIcons.user),
         SearchType.rooms => const Icon(YaruIcons.users),
-        SearchType.spaces => const Icon(YaruIcons.globe)
+        SearchType.spaces => const Icon(YaruIcons.globe),
       },
     );
 
@@ -68,11 +67,9 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
               ),
               child: switch (searchType) {
                 SearchType.profiles => ChatUserSearchAutoComplete(
-                    suffix: suffix,
-                  ),
-                _ => RoomsAutoComplete(
-                    suffix: suffix,
-                  )
+                  suffix: suffix,
+                ),
+                _ => RoomsAutoComplete(suffix: suffix),
               },
             ),
           const ChatMasterListFilterBar(),
@@ -81,13 +78,9 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
           if (roomsFilter == RoomsFilter.spaces && !archiveActive)
             const ChatSpaceControlPanel(),
           if (loadingArchive)
-            const Expanded(
-              child: Center(child: Progress()),
-            )
+            const Expanded(child: Center(child: Progress()))
           else
-            const Expanded(
-              child: ChatRoomsList(),
-            ),
+            const Expanded(child: ChatRoomsList()),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kMediumPadding),
             child: Stack(

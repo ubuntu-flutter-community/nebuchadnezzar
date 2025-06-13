@@ -22,9 +22,7 @@ final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
 class ChatMasterDetailPage extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const ChatMasterDetailPage({
-    super.key,
-  });
+  const ChatMasterDetailPage({super.key});
 
   @override
   State<ChatMasterDetailPage> createState() => _ChatMasterDetailPageState();
@@ -54,12 +52,12 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
 
     registerStreamHandler(
       select: (AuthenticationModel m) => m.onUiaRequestStream,
-      handler: (context, newValue, cancel) async {
+      handler: (context, newValue, cancel) {
         if (newValue.hasData) {
-          await uiaRequestHandler(
+          uiaRequestHandler(
             uiaRequest: newValue.data!,
             context: context,
-            rootNavigator: false,
+            rootNavigator: true,
           );
         }
       },
@@ -70,9 +68,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
       handler: (context, newValue, cancel) {
         if (newValue.hasData && newValue.data != LoginState.loggedIn) {
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => const ChatLoginPage(),
-            ),
+            MaterialPageRoute(builder: (_) => const ChatLoginPage()),
             (route) => false,
           );
         }
@@ -91,57 +87,51 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
     // );
 
     final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
-    final isArchivedRoom =
-        watchPropertyValue((ChatModel m) => m.selectedRoom?.isArchived == true);
-    final processingJoinOrLeave =
-        watchPropertyValue((ChatModel m) => m.processingJoinOrLeave);
-    final loadingArchive =
-        watchPropertyValue((ChatModel m) => m.loadingArchive);
+    final isArchivedRoom = watchPropertyValue(
+      (ChatModel m) => m.selectedRoom?.isArchived == true,
+    );
+    final processingJoinOrLeave = watchPropertyValue(
+      (ChatModel m) => m.processingJoinOrLeave,
+    );
+    final loadingArchive = watchPropertyValue(
+      (ChatModel m) => m.loadingArchive,
+    );
 
     return Scaffold(
       key: masterScaffoldKey,
-      drawer:
-          !Platform.isMacOS ? const Drawer(child: ChatMasterSidePanel()) : null,
-      endDrawer:
-          Platform.isMacOS ? const Drawer(child: ChatMasterSidePanel()) : null,
+      drawer: !Platform.isMacOS
+          ? const Drawer(child: ChatMasterSidePanel())
+          : null,
+      endDrawer: Platform.isMacOS
+          ? const Drawer(child: ChatMasterSidePanel())
+          : null,
       body: FutureBuilder(
         future: _initAfterEncryptionSetup,
         builder: (context, snapshot) =>
             snapshot.connectionState == ConnectionState.done
-                ? Row(
-                    children: [
-                      if (context.showSideBar)
-                        const SizedBox(
-                          width: kSideBarWith,
-                          child: ChatMasterSidePanel(),
-                        ),
-                      if (context.showSideBar)
-                        const VerticalDivider(
-                          width: 0,
-                          thickness: 0,
-                        ),
-                      if (processingJoinOrLeave || loadingArchive)
-                        const Expanded(
-                          child: Center(
-                            child: Progress(),
-                          ),
-                        )
-                      else if (selectedRoom == null)
-                        const Expanded(child: ChatNoSelectedRoomPage())
-                      else
-                        Expanded(
-                          child: ChatRoomPage(
-                            key: ValueKey(
-                              '${selectedRoom.id} $isArchivedRoom',
-                            ),
-                            room: selectedRoom,
-                          ),
-                        ),
-                    ],
-                  )
-                : const Center(
-                    child: Progress(),
-                  ),
+            ? Row(
+                children: [
+                  if (context.showSideBar)
+                    const SizedBox(
+                      width: kSideBarWith,
+                      child: ChatMasterSidePanel(),
+                    ),
+                  if (context.showSideBar)
+                    const VerticalDivider(width: 0, thickness: 0),
+                  if (processingJoinOrLeave || loadingArchive)
+                    const Expanded(child: Center(child: Progress()))
+                  else if (selectedRoom == null)
+                    const Expanded(child: ChatNoSelectedRoomPage())
+                  else
+                    Expanded(
+                      child: ChatRoomPage(
+                        key: ValueKey('${selectedRoom.id} $isArchivedRoom'),
+                        room: selectedRoom,
+                      ),
+                    ),
+                ],
+              )
+            : const Center(child: Progress()),
       ),
     );
   }

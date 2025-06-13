@@ -31,16 +31,19 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
     final l10n = context.l10n;
-    final roomAvatarError =
-        watchPropertyValue((DraftModel m) => m.roomAvatarError);
+    final roomAvatarError = watchPropertyValue(
+      (DraftModel m) => m.roomAvatarError,
+    );
     final ava = watchStream(
       (ChatModel m) => m.getJoinedRoomAvatarStream(room),
       initialValue: room?.avatar,
     ).data;
-    final foreGroundColor =
-        context.colorScheme.isLight ? Colors.black : Colors.white;
-    final attachingAvatar =
-        watchPropertyValue((DraftModel m) => m.attachingAvatar);
+    final foreGroundColor = context.colorScheme.isLight
+        ? Colors.black
+        : Colors.white;
+    final attachingAvatar = watchPropertyValue(
+      (DraftModel m) => m.attachingAvatar,
+    );
 
     return Column(
       spacing: kMediumPadding,
@@ -67,10 +70,7 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                             darkFactor: 15,
                           ),
                           child: avatarDraftBytes == null
-                              ? const Icon(
-                                  YaruIcons.user,
-                                  size: 40,
-                                )
+                              ? const Icon(YaruIcons.user, size: 40)
                               : Image.memory(
                                   avatarDraftBytes!,
                                   fit: BoxFit.cover,
@@ -96,11 +96,11 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                   onPressed: attachingAvatar
                       ? null
                       : () => di<DraftModel>().setRoomAvatar(
-                            room: room,
-                            wrongFormatString: l10n.notAnImage,
-                            onFail: (error) =>
-                                showSnackBar(context, content: Text(error)),
-                          ),
+                          room: room,
+                          wrongFormatString: l10n.notAnImage,
+                          onFail: (error) =>
+                              showSnackBar(context, content: Text(error)),
+                        ),
                   icon: attachingAvatar
                       ? SizedBox.square(
                           dimension: 15,

@@ -10,10 +10,7 @@ import 'ui_constants.dart';
 
 bool yaru = Platforms.isDesktop;
 
-Color remixColor(
-  Color targetColor, {
-  List<Color> palette = Colors.accents,
-}) {
+Color remixColor(Color targetColor, {List<Color> palette = Colors.accents}) {
   double minDistance = double.infinity;
   Color closestColor = palette[0];
 
@@ -35,10 +32,7 @@ double colorDistance(Color color1, Color color2) {
   return sqrt(rDiff * rDiff + gDiff * gDiff + bDiff * bDiff);
 }
 
-Color getTileColor(
-  bool isUserEvent,
-  ThemeData theme,
-) {
+Color getTileColor(bool isUserEvent, ThemeData theme) {
   final userColor = theme.colorScheme.primary == YaruColors.orange
       ? theme.colorScheme.link.scale(
           saturation: theme.colorScheme.isLight ? -0.5 : -0.7,
@@ -54,18 +48,13 @@ Color getTileColor(
       : getMonochromeBg(theme: theme, factor: 6, darkFactor: 15);
 }
 
-Color getTileIconColor(
-  ThemeData theme,
-) {
+Color getTileIconColor(ThemeData theme) {
   return theme.colorScheme.primary == YaruColors.orange
       ? theme.colorScheme.link
       : theme.colorScheme.primary;
 }
 
-Color getTileOutlineColor(
-  bool isUserEvent,
-  ThemeData theme,
-) {
+Color getTileOutlineColor(bool isUserEvent, ThemeData theme) {
   final userColor = theme.colorScheme.primary == YaruColors.orange
       ? theme.colorScheme.link
       : theme.colorScheme.primary;
@@ -83,13 +72,13 @@ Color getMonochromeBg({
   double factor = 1.0,
   double? darkFactor,
   double? lightFactor,
-}) =>
-    theme.colorScheme.surface.scale(
-      lightness: (theme.colorScheme.isLight ? -0.02 : 0.005) *
-          (theme.colorScheme.isLight
-              ? lightFactor ?? factor
-              : darkFactor ?? factor),
-    );
+}) => theme.colorScheme.surface.scale(
+  lightness:
+      (theme.colorScheme.isLight ? -0.02 : 0.005) *
+      (theme.colorScheme.isLight
+          ? lightFactor ?? factor
+          : darkFactor ?? factor),
+);
 
 Color getEventBadgeColor(ThemeData theme) =>
     theme.colorScheme.onSurface.withValues(alpha: 0.2);
@@ -104,13 +93,13 @@ EdgeInsets tilePadding(bool partOfMessageCohort) {
 }
 
 ButtonStyle get textFieldSuffixStyle => IconButton.styleFrom(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(6),
-          bottomRight: Radius.circular(6),
-        ),
-      ),
-    );
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.only(
+      topRight: Radius.circular(6),
+      bottomRight: Radius.circular(6),
+    ),
+  ),
+);
 
 Color avatarFallbackColor(ColorScheme colorScheme) =>
     colorScheme.primary.withValues(alpha: 0.3);

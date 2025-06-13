@@ -43,26 +43,27 @@ class _ChatRoomInfoMediaGridTabsState extends State<ChatRoomInfoMediaGridTabs>
 
   @override
   Widget build(BuildContext context) => Column(
-        spacing: kMediumPadding,
-        children: [
-          TabBar(
-            controller: _controller,
-            tabs: [
-              const Tab(icon: Icon(YaruIcons.image)),
-              const Tab(icon: Icon(YaruIcons.video)),
-              const Tab(icon: Icon(YaruIcons.music_note)),
-              const Tab(icon: Icon(YaruIcons.document)),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _controller,
-              children: [
-                MessageTypes.Image,
-                MessageTypes.Video,
-                MessageTypes.Audio,
-                MessageTypes.File,
-              ]
+    spacing: kMediumPadding,
+    children: [
+      TabBar(
+        controller: _controller,
+        tabs: [
+          const Tab(icon: Icon(YaruIcons.image)),
+          const Tab(icon: Icon(YaruIcons.video)),
+          const Tab(icon: Icon(YaruIcons.music_note)),
+          const Tab(icon: Icon(YaruIcons.document)),
+        ],
+      ),
+      Expanded(
+        child: TabBarView(
+          controller: _controller,
+          children:
+              [
+                    MessageTypes.Image,
+                    MessageTypes.Video,
+                    MessageTypes.Audio,
+                    MessageTypes.File,
+                  ]
                   .map(
                     (e) => ChatRoomInfoMediaGrid(
                       room: widget.room,
@@ -70,10 +71,10 @@ class _ChatRoomInfoMediaGridTabsState extends State<ChatRoomInfoMediaGridTabs>
                     ),
                   )
                   .toList(),
-            ),
-          ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 }
 
 class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
@@ -95,8 +96,9 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
     watchStream((ChatModel m) => m.getEventStream(room), initialValue: null);
     watchStream((ChatModel m) => m.getHistoryStream(room), initialValue: null);
 
-    final timeline =
-        watchPropertyValue((TimelineModel m) => m.getTimeline(room.id));
+    final timeline = watchPropertyValue(
+      (TimelineModel m) => m.getTimeline(room.id),
+    );
 
     if (timeline == null) {
       return Center(
@@ -106,10 +108,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
             maxRadius: 15,
             child: SizedBox.square(
               dimension: 18,
-              child: Progress(
-                strokeWidth: 2,
-                color: colorScheme.onSurface,
-              ),
+              child: Progress(strokeWidth: 2, color: colorScheme.onSurface),
             ),
           ),
         ),
@@ -140,35 +139,33 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
 
           return switch (messageType) {
             MessageTypes.Image => ChatImage(
-                dimension: 200,
-                event: event,
-                timeline: timeline,
-                onTap: event.isSvgImage
-                    ? null
-                    : () => showDialog(
-                          context: context,
-                          builder: (context) =>
-                              ChatMessageImageFullScreenDialog(
-                            event: event,
-                          ),
-                        ),
-              ),
+              dimension: 200,
+              event: event,
+              timeline: timeline,
+              onTap: event.isSvgImage
+                  ? null
+                  : () => showDialog(
+                      context: context,
+                      builder: (context) =>
+                          ChatMessageImageFullScreenDialog(event: event),
+                    ),
+            ),
             _ => Center(
-                child: IconButton.outlined(
-                  tooltip: context.l10n.downloadFile,
-                  onPressed: () => di<ChatDownloadModel>().safeFile(
-                    event: event,
-                    dialogTitle: l10n.saveFile,
-                    confirmButtonText: l10n.saveFile,
-                  ),
-                  icon: switch (messageType) {
-                    MessageTypes.Audio => const Icon(YaruIcons.music_note),
-                    MessageTypes.File => const Icon(YaruIcons.document),
-                    MessageTypes.Video => const Icon(YaruIcons.video),
-                    _ => const Placeholder(),
-                  },
+              child: IconButton.outlined(
+                tooltip: context.l10n.downloadFile,
+                onPressed: () => di<ChatDownloadModel>().safeFile(
+                  event: event,
+                  dialogTitle: l10n.saveFile,
+                  confirmButtonText: l10n.saveFile,
                 ),
+                icon: switch (messageType) {
+                  MessageTypes.Audio => const Icon(YaruIcons.music_note),
+                  MessageTypes.File => const Icon(YaruIcons.document),
+                  MessageTypes.Video => const Icon(YaruIcons.video),
+                  _ => const Placeholder(),
+                },
               ),
+            ),
           };
         },
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -178,7 +175,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
           },
           mainAxisExtent: switch (messageType) {
             MessageTypes.Audio || MessageTypes.File || MessageTypes.Video => 80,
-            _ => 100
+            _ => 100,
           },
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
@@ -189,10 +186,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
 }
 
 class ChatLoadMoreHistoryButton extends StatelessWidget with WatchItMixin {
-  const ChatLoadMoreHistoryButton({
-    super.key,
-    required this.timeline,
-  });
+  const ChatLoadMoreHistoryButton({super.key, required this.timeline});
 
   final Timeline timeline;
 
@@ -206,16 +200,12 @@ class ChatLoadMoreHistoryButton extends StatelessWidget with WatchItMixin {
       icon: updatingTimeline
           ? const SizedBox.square(
               dimension: 12,
-              child: Progress(
-                strokeWidth: 2,
-              ),
+              child: Progress(strokeWidth: 2),
             )
           : const Icon(YaruIcons.refresh),
       onPressed: () => di<TimelineModel>().requestHistory(
         timeline,
-        filter: StateFilter(
-          types: [EventTypes.Message],
-        ),
+        filter: StateFilter(types: [EventTypes.Message]),
         historyCount: 1000,
       ),
       label: Text(context.l10n.loadMore),

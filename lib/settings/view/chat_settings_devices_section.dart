@@ -32,12 +32,7 @@ class ChatSettingsDevicesSection extends StatelessWidget with WatchItMixin {
             )
           : Column(
               children: devices
-                  .map(
-                    (d) => _DeviceTile(
-                      key: ValueKey(d.deviceId),
-                      device: d,
-                    ),
-                  )
+                  .map((d) => _DeviceTile(key: ValueKey(d.deviceId), device: d))
                   .toList(),
             ),
     );
@@ -45,10 +40,7 @@ class ChatSettingsDevicesSection extends StatelessWidget with WatchItMixin {
 }
 
 class _DeviceTile extends StatelessWidget {
-  const _DeviceTile({
-    super.key,
-    required this.device,
-  });
+  const _DeviceTile({super.key, required this.device});
 
   final Device device;
 
@@ -70,19 +62,16 @@ class _DeviceTile extends StatelessWidget {
           color: keys == null
               ? theme.disabledColor
               : keys.blocked
-                  ? colorScheme.error
-                  : keys.verified
-                      ? colorScheme.success
-                      : colorScheme.warning,
+              ? colorScheme.error
+              : keys.verified
+              ? colorScheme.success
+              : colorScheme.warning,
         ),
       ),
       trailing: !isOwnDevice
           ? IconButton(
               onPressed: () => settingsModel.deleteDevice(device.deviceId),
-              icon: Icon(
-                YaruIcons.trash,
-                color: context.colorScheme.error,
-              ),
+              icon: Icon(YaruIcons.trash, color: context.colorScheme.error),
             )
           : null,
       subtitle: Text(

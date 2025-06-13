@@ -29,8 +29,9 @@ class ChatEventInspectDialog extends StatelessWidget {
     final originalSource = event.originalSource;
     return ConfirmationDialog(
       contentPadding: EdgeInsets.zero,
-      title:
-          Text(event.senderFromMemoryOrFallback.displayName ?? event.eventId),
+      title: Text(
+        event.senderFromMemoryOrFallback.displayName ?? event.eventId,
+      ),
       content: SizedBox(
         height: 500,
         width: 400,
@@ -47,8 +48,9 @@ class ChatEventInspectDialog extends StatelessWidget {
             ),
             ListTile(
               title: Text('${l10n.time}:'),
-              subtitle:
-                  Text(event.originServerTs.formatAndLocalize(context.l10n)),
+              subtitle: Text(
+                event.originServerTs.formatAndLocalize(context.l10n),
+              ),
             ),
             ListTile(
               title: Text('${l10n.status}:'),
@@ -65,9 +67,7 @@ class ChatEventInspectDialog extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: SelectableText(
                     improveJson(MatrixEvent.fromJson(event.toJson())),
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface,
-                    ),
+                    style: TextStyle(color: theme.colorScheme.onSurface),
                   ),
                 ),
               ),
@@ -84,9 +84,7 @@ class ChatEventInspectDialog extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     child: SelectableText(
                       improveJson(originalSource),
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface,
-                      ),
+                      style: TextStyle(color: theme.colorScheme.onSurface),
                     ),
                   ),
                 ),
@@ -98,6 +96,7 @@ class ChatEventInspectDialog extends StatelessWidget {
     );
   }
 
-  String improveJson(MatrixEvent event) => const JsonEncoder.withIndent('    ')
-      .convert(const JsonDecoder().convert(jsonEncode(event.toJson())));
+  String improveJson(MatrixEvent event) => const JsonEncoder.withIndent(
+    '    ',
+  ).convert(const JsonDecoder().convert(jsonEncode(event.toJson())));
 }

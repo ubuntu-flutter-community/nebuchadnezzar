@@ -17,10 +17,7 @@ import 'chat_master_detail_page.dart';
 import 'chat_room_master_tile_subtitle.dart';
 
 class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
-  const ChatRoomMasterTile({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomMasterTile({super.key, required this.room});
 
   final Room room;
 
@@ -29,12 +26,15 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
     final chatModel = di<ChatModel>();
 
     final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
-    final processingJoinOrLeave =
-        watchPropertyValue((ChatModel m) => m.processingJoinOrLeave);
-    final loadingArchive =
-        watchPropertyValue((ChatModel m) => m.loadingArchive);
+    final processingJoinOrLeave = watchPropertyValue(
+      (ChatModel m) => m.processingJoinOrLeave,
+    );
+    final loadingArchive = watchPropertyValue(
+      (ChatModel m) => m.loadingArchive,
+    );
 
-    final pushRuleState = watchStream(
+    final pushRuleState =
+        watchStream(
           (ChatModel m) => m.syncStream.map((_) => room.pushRuleState),
           initialValue: room.pushRuleState,
         ).data ??
@@ -56,10 +56,10 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                     : room.avatar,
                 fallBackIcon: room.membership != Membership.invite
                     ? pushRuleState == PushRuleState.dontNotify
-                        ? pushRuleState.getIconData()
-                        : room.isDirectChat
-                            ? YaruIcons.user
-                            : YaruIcons.users
+                          ? pushRuleState.getIconData()
+                          : room.isDirectChat
+                          ? YaruIcons.user
+                          : YaruIcons.users
                     : YaruIcons.mail_unread,
               ),
               title: Text(
@@ -86,10 +86,8 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                         } else {
                           await chatModel.joinRoom(
                             room,
-                            onFail: (e) => showSnackBar(
-                              context,
-                              content: Text(e),
-                            ),
+                            onFail: (e) =>
+                                showSnackBar(context, content: Text(e)),
                           );
                         }
                       }
@@ -105,18 +103,13 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                   child: Badge(
                     largeSize: 11,
                     smallSize: 11,
-                    label: Text(
-                      room.notificationCount.toString(),
-                    ),
+                    label: Text(room.notificationCount.toString()),
                   ),
                 )
               else if (room.isFavourite)
                 Positioned(
                   right: kBigPadding,
-                  child: ChatRoomPinButton(
-                    room: room,
-                    small: true,
-                  ),
+                  child: ChatRoomPinButton(room: room, small: true),
                 ),
             ],
           ],

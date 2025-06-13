@@ -15,8 +15,9 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
     final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
     watchPropertyValue((ChatModel m) => m.filteredRooms.length);
-    final spaceSearchVisible =
-        watchPropertyValue((SearchModel m) => m.spaceSearchVisible);
+    final spaceSearchVisible = watchPropertyValue(
+      (SearchModel m) => m.spaceSearchVisible,
+    );
 
     return StreamBuilder(
       stream: di<ChatModel>().syncStream,
@@ -34,10 +35,7 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
               itemBuilder: (context, i) {
                 final room = filteredRooms[i];
 
-                return ChatRoomMasterTile(
-                  key: ValueKey(room.id),
-                  room: room,
-                );
+                return ChatRoomMasterTile(key: ValueKey(room.id), room: room);
               },
             ),
           ],

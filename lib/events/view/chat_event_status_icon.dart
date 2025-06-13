@@ -31,44 +31,39 @@ class ChatEventStatusIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final userEvent = event.isUserEvent;
     final icon = event.messageType == MessageTypes.BadEncrypted
-        ? Icon(
-            YaruIcons.lock,
-            size: iconSize,
-            color: foregroundColor,
-          )
+        ? Icon(YaruIcons.lock, size: iconSize, color: foregroundColor)
         : userEvent
-            ? switch (event.status) {
-                EventStatus.sending => Icon(
-                    key: ValueKey(event.status.index),
-                    YaruIcons.sync,
-                    size: iconSize,
-                    color: foregroundColor,
-                  ),
-                EventStatus.error => Icon(
-                    key: ValueKey(event.status.index),
-                    YaruIcons.sync_error,
-                    size: iconSize,
-                    color: foregroundColor,
-                  ),
-                EventStatus.sent => Icon(
-                    key: ValueKey(event.status.index),
-                    YaruIcons.checkmark,
-                    size: iconSize,
-                    color: foregroundColor,
-                  ),
-                EventStatus.synced => Icon(
-                    key: ValueKey(event.status.index),
-                    YaruIcons.checkmark,
-                    size: iconSize,
-                    color: getTileIconColor(context.theme),
-                  ),
-              }
-            : const SizedBox.shrink();
+        ? switch (event.status) {
+            EventStatus.sending => Icon(
+              key: ValueKey(event.status.index),
+              YaruIcons.sync,
+              size: iconSize,
+              color: foregroundColor,
+            ),
+            EventStatus.error => Icon(
+              key: ValueKey(event.status.index),
+              YaruIcons.sync_error,
+              size: iconSize,
+              color: foregroundColor,
+            ),
+            EventStatus.sent => Icon(
+              key: ValueKey(event.status.index),
+              YaruIcons.checkmark,
+              size: iconSize,
+              color: foregroundColor,
+            ),
+            EventStatus.synced => Icon(
+              key: ValueKey(event.status.index),
+              YaruIcons.checkmark,
+              size: iconSize,
+              color: getTileIconColor(context.theme),
+            ),
+          }
+        : const SizedBox.shrink();
 
-    final style = textStyle ??
-        context.textTheme.labelSmall?.copyWith(
-          color: foregroundColor,
-        );
+    final style =
+        textStyle ??
+        context.textTheme.labelSmall?.copyWith(color: foregroundColor);
 
     return Padding(
       padding: padding ?? const EdgeInsets.all(kSmallPadding),
@@ -79,10 +74,7 @@ class ChatEventStatusIcon extends StatelessWidget {
           spacing: kSmallPadding,
           children: [
             if (event.hasAggregatedEvents(timeline, RelationshipTypes.edit))
-              const Icon(
-                YaruIcons.pen,
-                size: iconSize,
-              ),
+              const Icon(YaruIcons.pen, size: iconSize),
             if (!userEvent && event.isImage)
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 100),
@@ -94,9 +86,9 @@ class ChatEventStatusIcon extends StatelessWidget {
                 ),
               ),
             Text(
-              event.originServerTs
-                  .toLocal()
-                  .formatAndLocalizeTime(context.l10n),
+              event.originServerTs.toLocal().formatAndLocalizeTime(
+                context.l10n,
+              ),
               textAlign: TextAlign.start,
               style: style,
               overflow: TextOverflow.ellipsis,
