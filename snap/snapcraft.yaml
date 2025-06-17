@@ -16,6 +16,11 @@ platforms:
   amd64:
   arm64:
 
+plugs:
+  shmem:
+    interface: shared-memory
+    private: true
+
 apps:
   nebuchadnezzar:
     command: nebuchadnezzar
@@ -23,6 +28,7 @@ apps:
     plugs:
       - home
       - network
+      - shmem
 
 parts:
   flutter-git:
@@ -64,6 +70,5 @@ parts:
       - libsecret-1-0
       - libjsoncpp25
       - libolm3
-      - libwebkit2gtk-4.1-dev
     prime:
       - usr/lib/*/*.so*
