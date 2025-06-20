@@ -18,6 +18,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../input/draft_model.dart';
 import 'chat_room_create_or_edit_avatar.dart';
+import 'chat_room_dialog_history_visibility_drop_down.dart';
 import 'chat_room_permissions.dart';
 import '../common/view/chat_room_users_list.dart';
 
@@ -291,6 +292,10 @@ class _ChatCreateOrEditRoomDialogState
                                         },
                                 ),
                                 title: Text(l10n.encrypted),
+                              ),
+                            if (widget.room != null)
+                              ChatRoomDialogHistoryVisibilityDropDown(
+                                room: widget.room!,
                               ),
                             if (!_existingGroup)
                               YaruTile(

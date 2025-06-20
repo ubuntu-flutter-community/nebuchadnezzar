@@ -30,13 +30,18 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
       mainAxisSize: MainAxisSize.min,
       spacing: kSmallPadding,
       children: [
-        ChatRoomEncryptionStatusButton(
-          key: ValueKey('${room.id}_${room.encrypted}'),
-          room: room,
-        ),
+        if (room.isArchived)
+          const Icon(YaruIcons.trash)
+        else
+          ChatRoomEncryptionStatusButton(
+            key: ValueKey('${room.id}_${room.encrypted}'),
+            room: room,
+          ),
         Flexible(
           child: room.isArchived
-              ? Text(context.l10n.archive)
+              ? Text(
+                  '${context.l10n.archive}: ${room.getLocalizedDisplayname()}',
+                )
               : ChatRoomDisplayName(
                   key: ValueKey('${room.id}_displayname'),
                   room: room,

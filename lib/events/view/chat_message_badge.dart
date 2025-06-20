@@ -27,7 +27,7 @@ class ChatMessageBadge extends StatelessWidget {
               backgroundColor: getEventBadgeColor(theme),
               label: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  maxWidth: 200,
+                  maxWidth: 400,
                   minWidth: 30,
                   minHeight: 16,
                   maxHeight: 16,
