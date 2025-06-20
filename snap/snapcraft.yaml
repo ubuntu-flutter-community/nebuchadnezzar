@@ -16,11 +16,6 @@ platforms:
   amd64:
   arm64:
 
-plugs:
-  shmem:
-    interface: shared-memory
-    private: true
-
 apps:
   nebuchadnezzar:
     command: bin/nebuchadnezzar
@@ -28,7 +23,7 @@ apps:
     plugs:
       - home
       - network
-      - shmem
+      - network-status
 
 parts:
   flutter-git:
