@@ -23,7 +23,7 @@ plugs:
 
 apps:
   nebuchadnezzar:
-    command: nebuchadnezzar
+    command: bin/nebuchadnezzar
     extensions: [gnome]
     plugs:
       - home
