@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
@@ -55,7 +54,7 @@ class AuthenticationModel extends SafeChangeNotifier {
             LoginType.mLoginPassword,
             password: password,
             identifier: AuthenticationUserIdentifier(user: username),
-            initialDeviceDisplayName: kIsWeb
+            initialDeviceDisplayName: Platforms.isWeb
                 ? '${AppConfig.kAppTitle} Web Browser'
                 : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
@@ -76,11 +75,11 @@ class AuthenticationModel extends SafeChangeNotifier {
   }) async {
     _setProcessingAccess(true);
     try {
-      final redirectUrl = kIsWeb
+      final redirectUrl = Platforms.isWeb
           ? Uri.parse(
               html.window.location.href,
             ).resolveUri(Uri(pathSegments: ['auth.html'])).toString()
-          : (Platforms.isMobile || Platforms.isWeb || Platforms.isMacOS)
+          : (Platforms.isMobile || Platforms.isMacOS)
           ? '${AppConfig.appOpenUrlScheme.toLowerCase()}://login'
           : 'http://localhost:3001/login';
 
@@ -89,16 +88,17 @@ class AuthenticationModel extends SafeChangeNotifier {
         path: '/_matrix/client/v3/login/sso/redirect',
         queryParameters: {'redirectUrl': redirectUrl},
       );
-      final urlScheme = kIsWeb
-          ? 'http'
-          : (Platforms.isMobile || Platforms.isWeb || Platforms.isMacOS)
+      final urlScheme =
+          (Platforms.isWeb || Platforms.isMobile || Platforms.isMacOS)
           ? Uri.parse(redirectUrl).scheme
           : 'http://localhost:3001';
 
       final result = await FlutterWebAuth2.authenticate(
         url: url.toString(),
         callbackUrlScheme: urlScheme,
-        options: const FlutterWebAuth2Options(),
+        options: FlutterWebAuth2Options(
+          useWebview: Platforms.isMobile || Platforms.isMacOS,
+        ),
       );
 
       final parsedResult = Uri.parse(result);
@@ -113,7 +113,7 @@ class AuthenticationModel extends SafeChangeNotifier {
           .login(
             LoginType.mLoginToken,
             token: token,
-            initialDeviceDisplayName: kIsWeb
+            initialDeviceDisplayName: Platforms.isWeb
                 ? '${AppConfig.kAppTitle} Web Browser'
                 : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
