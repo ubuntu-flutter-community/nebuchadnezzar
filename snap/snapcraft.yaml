@@ -18,23 +18,46 @@ platforms:
 
 apps:
   nebuchadnezzar:
-    command: nebuchadnezzar
+    command: bin/nebuchadnezzar
     extensions: [gnome]
     plugs:
       - home
       - network
+      - network-status
 
 parts:
-  nebuchadnezzar:
+  flutter-git:
+    plugin: nil
     source: .
-    plugin: flutter
-    flutter-target: lib/main.dart
+    override-build: |
+      bash $CRAFT_PART_SRC/scripts/install-fvm.sh
+      fvm install
+      fvm flutter doctor
     build-packages:
+      - clang
+      - cmake
+      - curl
       - git
+      - libgtk-3-dev
+      - ninja-build
+      - unzip
+      - xz-utils
+      - zip
+    override-prime: ""
+
+  nebuchadnezzar:
+    after: [flutter-git]
+    source: .
+    plugin: nil
     override-build: |
       set -eux
       curl https://sh.rustup.rs -sSf | sh -s -- -y
       craftctl default
+      fvm install
+      fvm dart pub get
+      fvm flutter build linux --release -v
+      mkdir -p $CRAFT_PART_INSTALL/bin/
+      cp -r build/linux/*/release/bundle/* $CRAFT_PART_INSTALL/bin/
 
   deps:
     plugin: nil

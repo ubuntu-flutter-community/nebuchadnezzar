@@ -11,10 +11,7 @@ import '../../l10n/l10n.dart';
 import '../chat_download_model.dart';
 
 class ChatMessageMediaAvatar extends StatelessWidget {
-  const ChatMessageMediaAvatar({
-    super.key,
-    required this.event,
-  });
+  const ChatMessageMediaAvatar({super.key, required this.event});
 
   final Event event;
 
@@ -29,28 +26,27 @@ class ChatMessageMediaAvatar extends StatelessWidget {
         onTap: event.messageType == MessageTypes.Notice
             ? null
             : () => showDialog(
-                  context: context,
-                  builder: (context) => ConfirmationDialog(
-                    title: switch (event.messageType) {
-                      MessageTypes.File ||
-                      MessageTypes.Audio ||
-                      MessageTypes.Video =>
-                        Text(context.l10n.saveFile),
-                      _ => const Text('')
-                    },
-                    onConfirm: switch (event.messageType) {
-                      MessageTypes.File ||
-                      MessageTypes.Audio ||
-                      MessageTypes.Video =>
-                        () => di<ChatDownloadModel>().safeFile(
-                              event: event,
-                              dialogTitle: l10n.saveFile,
-                              confirmButtonText: l10n.saveFile,
-                            ),
-                      _ => () {}
-                    },
-                  ),
+                context: context,
+                builder: (context) => ConfirmationDialog(
+                  title: switch (event.messageType) {
+                    MessageTypes.File ||
+                    MessageTypes.Audio ||
+                    MessageTypes.Video => Text(context.l10n.saveFile),
+                    _ => const Text(''),
+                  },
+                  onConfirm: switch (event.messageType) {
+                    MessageTypes.File ||
+                    MessageTypes.Audio ||
+                    MessageTypes.Video =>
+                      () => di<ChatDownloadModel>().safeFile(
+                        event: event,
+                        dialogTitle: l10n.saveFile,
+                        confirmButtonText: l10n.saveFile,
+                      ),
+                    _ => () {},
+                  },
                 ),
+              ),
         child: CircleAvatar(
           backgroundColor: avatarFallbackColor(context.colorScheme),
           radius: kAvatarDefaultSize / 2,

@@ -7,11 +7,7 @@ import '../../common/view/ui_constants.dart';
 import 'localized_display_event_text.dart';
 
 class ChatMessageBadge extends StatelessWidget {
-  const ChatMessageBadge({
-    super.key,
-    required this.displayEvent,
-    this.leading,
-  });
+  const ChatMessageBadge({super.key, required this.displayEvent, this.leading});
 
   final Event displayEvent;
   final Widget? leading;
@@ -31,7 +27,7 @@ class ChatMessageBadge extends StatelessWidget {
               backgroundColor: getEventBadgeColor(theme),
               label: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  maxWidth: 200,
+                  maxWidth: 400,
                   minWidth: 30,
                   minHeight: 16,
                   maxHeight: 16,

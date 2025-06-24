@@ -16,31 +16,28 @@ class ChatSettingsDialog extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        titlePadding: EdgeInsets.zero,
-        title: YaruDialogTitleBar(
-          title: Text(context.l10n.settings),
-          border: BorderSide.none,
-          backgroundColor: Colors.transparent,
-        ),
-        scrollable: true,
-        content: const SizedBox(
-          width: 450,
-          child: Column(
-            spacing: kBigPadding,
-            children: [
-              ChatSettingsAvatar(
-                dimension: 100,
-                iconSize: 70,
-              ),
-              // TODO: check which servers support presence
-              // const ChatPresenceButton(),
-              ChatSettingsAccountSection(),
-              ChatSettingsCustomizationSection(),
-              ThemeSection(),
-              ChatSettingsEventsSection(),
-              ChatSettingsDevicesSection(),
-            ],
-          ),
-        ),
-      );
+    titlePadding: EdgeInsets.zero,
+    title: YaruDialogTitleBar(
+      title: Text(context.l10n.settings),
+      border: BorderSide.none,
+      backgroundColor: Colors.transparent,
+    ),
+    scrollable: true,
+    content: const SizedBox(
+      width: 450,
+      child: Column(
+        spacing: kBigPadding,
+        children: [
+          ChatSettingsAvatar(dimension: 100, iconSize: 70),
+          // TODO: check which servers support presence
+          // const ChatPresenceButton(),
+          ChatSettingsAccountSection(),
+          ChatSettingsCustomizationSection(),
+          ThemeSection(),
+          ChatSettingsEventsSection(),
+          ChatSettingsDevicesSection(),
+        ],
+      ),
+    ),
+  );
 }

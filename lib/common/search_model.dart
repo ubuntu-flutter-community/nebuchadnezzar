@@ -82,8 +82,9 @@ class SearchModel extends SafeChangeNotifier {
   }) async {
     SearchUserDirectoryResponse? searchUserDirectoryResponse;
     try {
-      searchUserDirectoryResponse =
-          await _client.searchUserDirectory(searchQuery);
+      searchUserDirectoryResponse = await _client.searchUserDirectory(
+        searchQuery,
+      );
     } on Exception catch (e, s) {
       onFail();
       printMessageInDebugMode(e, s);
@@ -99,18 +100,16 @@ class SearchModel extends SafeChangeNotifier {
     QueryPublicRoomsResponse? roomSearchResult;
     try {
       roomSearchResult = await _client.queryPublicRooms(
-        filter: PublicRoomQueryFilter(
-          genericSearchTerm: searchQuery,
-        ),
+        filter: PublicRoomQueryFilter(genericSearchTerm: searchQuery),
         limit: 200,
       );
 
       if (searchQuery.isValidMatrixId &&
           roomSearchResult.chunk.any(
                 (room) =>
-                    room.canonicalAlias
-                        ?.toLowerCase()
-                        .contains(searchQuery.toLowerCase()) ==
+                    room.canonicalAlias?.toLowerCase().contains(
+                      searchQuery.toLowerCase(),
+                    ) ==
                     true,
               ) ==
               false) {
@@ -142,8 +141,4 @@ class SearchModel extends SafeChangeNotifier {
   }
 }
 
-enum SearchType {
-  profiles,
-  rooms,
-  spaces;
-}
+enum SearchType { profiles, rooms, spaces }

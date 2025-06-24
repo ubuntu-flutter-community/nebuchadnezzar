@@ -6,10 +6,7 @@ import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
 
 class ChatInputEmojiPicker extends StatefulWidget {
-  const ChatInputEmojiPicker({
-    super.key,
-    required this.onEmojiSelected,
-  });
+  const ChatInputEmojiPicker({super.key, required this.onEmojiSelected});
 
   final void Function(Category?, Emoji)? onEmojiSelected;
 

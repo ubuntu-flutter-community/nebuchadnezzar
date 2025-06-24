@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
@@ -27,9 +28,7 @@ void registerDependencies() => di
     dispose: (s) => s.dispose(),
   )
   ..registerSingletonWithDependencies<AuthenticationModel>(
-    () => AuthenticationModel(
-      client: di<Client>(),
-    ),
+    () => AuthenticationModel(client: di<Client>()),
     dispose: (s) => s.dispose(),
     dependsOn: [Client],
   )
@@ -105,9 +104,7 @@ void registerDependencies() => di
     dependsOn: [ChatDownloadService],
   )
   ..registerSingletonWithDependencies<LocalImageModel>(
-    () => LocalImageModel(
-      service: di<LocalImageService>(),
-    ),
+    () => LocalImageModel(service: di<LocalImageService>()),
     dispose: (s) => s.dispose(),
     dependsOn: [LocalImageService],
   )
@@ -117,9 +114,7 @@ void registerDependencies() => di
     dependsOn: [Client],
   )
   ..registerSingletonWithDependencies<RemoteImageModel>(
-    () => RemoteImageModel(
-      service: di<RemoteImageService>(),
-    ),
+    () => RemoteImageModel(service: di<RemoteImageService>()),
     dependsOn: [RemoteImageService],
     dispose: (s) => s.dispose(),
   )
@@ -132,10 +127,10 @@ void registerDependencies() => di
     () => TimelineModel(),
     dispose: (s) => s.dispose(),
   )
-  ..registerSingletonAsync<LocalNotifier>(
-    () async {
+  ..registerSingletonAsync<LocalNotifier>(() async {
+    if (!kIsWeb) {
       await localNotifier.setup(appName: AppConfig.appId);
+    }
 
-      return localNotifier;
-    },
-  );
+    return localNotifier;
+  });

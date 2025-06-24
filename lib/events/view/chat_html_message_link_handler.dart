@@ -29,21 +29,14 @@ void chatHtmlMessageLinkHandler(
   } else if (url.startsWith('https://matrix.to/#/#')) {
     showDialog(
       context: context,
-      builder: (context) => ChatRoomSearchDialog(
-        url: url,
-      ),
+      builder: (context) => ChatRoomSearchDialog(url: url),
     );
   } else if (Uri.tryParse(url) != null) {
     showDialog(
       context: context,
       builder: (context) => ConfirmationDialog(
-        title: Text(
-          '${context.l10n.openLinkInBrowser}?',
-        ),
-        content: SizedBox(
-          width: 400,
-          child: Text(url),
-        ),
+        title: Text('${context.l10n.openLinkInBrowser}?'),
+        content: SizedBox(width: 400, child: Text(url)),
         onConfirm: () => launchUrl(Uri.parse(url)),
       ),
     );
@@ -51,10 +44,7 @@ void chatHtmlMessageLinkHandler(
 }
 
 class ChatRoomSearchDialog extends StatefulWidget {
-  const ChatRoomSearchDialog({
-    super.key,
-    required this.url,
-  });
+  const ChatRoomSearchDialog({super.key, required this.url});
 
   final String url;
 
@@ -84,18 +74,16 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
           confirmEnabled: snapshot.hasData,
           onConfirm: snapshot.hasData
               ? () => di<ChatModel>().joinAndSelectRoomByChunk(
-                    snapshot.data!.first,
-                    onFail: (e) => showSnackBar(
-                      context,
-                      content: Text(e),
-                    ),
-                  )
+                  snapshot.data!.first,
+                  onFail: (e) => showSnackBar(context, content: Text(e)),
+                )
               : null,
           title: Text(snapshot.hasData ? l10n.joinRoom : l10n.search),
           content: SizedBox(
             height: 50,
             width: 200,
-            child: (snapshot.hasData &&
+            child:
+                (snapshot.hasData &&
                     snapshot.data!.isNotEmpty &&
                     context.mounted)
                 ? Center(

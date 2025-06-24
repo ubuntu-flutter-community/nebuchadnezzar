@@ -30,17 +30,17 @@ extension EventX on Event {
 
   // TODO: #6
   IconData get callIconData => switch (type) {
-        'm.call.invite' => YaruIcons.call_outgoing,
-        'm.call.answer' => YaruIcons.call_start,
-        'm.call.candidates' => YaruIcons.call_start,
-        'm.call.hangup' => YaruIcons.call_stop,
-        'm.call.select_answer' => YaruIcons.call_start,
-        'm.call.reject' => YaruIcons.call_stop,
-        'm.call.negotiate' => YaruIcons.call_start,
-        'm.call.replaces' => YaruIcons.call_start,
-        'm.call.asserted_identity' => YaruIcons.call_start,
-        _ => YaruIcons.error,
-      };
+    'm.call.invite' => YaruIcons.call_outgoing,
+    'm.call.answer' => YaruIcons.call_start,
+    'm.call.candidates' => YaruIcons.call_start,
+    'm.call.hangup' => YaruIcons.call_stop,
+    'm.call.select_answer' => YaruIcons.call_start,
+    'm.call.reject' => YaruIcons.call_stop,
+    'm.call.negotiate' => YaruIcons.call_start,
+    'm.call.replaces' => YaruIcons.call_start,
+    'm.call.asserted_identity' => YaruIcons.call_start,
+    _ => YaruIcons.error,
+  };
 
   bool hideInTimeline({
     required bool showAvatarChanges,
@@ -63,15 +63,14 @@ extension EventX on Event {
       return true;
     }
 
-    if ({RelationshipTypes.edit, RelationshipTypes.reaction}
-        .contains(relationshipType)) {
+    if ({
+      RelationshipTypes.edit,
+      RelationshipTypes.reaction,
+    }.contains(relationshipType)) {
       return true;
     }
 
-    return {
-      EventTypes.Redaction,
-      EventTypes.Reaction,
-    }.contains(type);
+    return {EventTypes.Redaction, EventTypes.Reaction}.contains(type);
   }
 
   bool partOfMessageCohort(Event? maybePreviousEvent) {
@@ -97,12 +96,7 @@ extension EventX on Event {
       newPinned.remove(eventId);
       room.setPinnedEvents(newPinned);
     } else {
-      room.setPinnedEvents(
-        [
-          ...room.pinnedEventIds,
-          eventId,
-        ],
-      );
+      room.setPinnedEvents([...room.pinnedEventIds, eventId]);
     }
   }
 }

@@ -18,6 +18,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../input/draft_model.dart';
 import 'chat_room_create_or_edit_avatar.dart';
+import 'chat_room_dialog_history_visibility_drop_down.dart';
 import 'chat_room_permissions.dart';
 import '../common/view/chat_room_users_list.dart';
 
@@ -25,11 +26,7 @@ const _maxWidth = 500.0;
 
 class ChatCreateOrEditRoomDialog extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const ChatCreateOrEditRoomDialog({
-    super.key,
-    this.room,
-    this.space = false,
-  });
+  const ChatCreateOrEditRoomDialog({super.key, this.room, this.space = false});
 
   final Room? room;
   final bool space;
@@ -71,15 +68,14 @@ class _ChatCreateOrEditRoomDialogState
     _visibility = (widget.room?.joinRules == JoinRules.public
         ? Visibility.public
         : Visibility.private);
-    _profiles = widget.room
+    _profiles =
+        widget.room
             ?.getParticipants()
-            .where(
-              (e) {
-                final id = e.id.split(':').firstOrNull?.replaceAll('@', '');
+            .where((e) {
+              final id = e.id.split(':').firstOrNull?.replaceAll('@', '');
 
-                return id?.isNotEmpty == true;
-              },
-            )
+              return id?.isNotEmpty == true;
+            })
             .map(
               (e) => Profile(
                 userId: e.id.split(':').firstOrNull!.replaceAll('@', ''),
@@ -102,8 +98,9 @@ class _ChatCreateOrEditRoomDialogState
     final mediaQueryWidth = context.mediaQuerySize.width;
 
     final usedWidth = mediaQueryWidth > 520.0 ? _maxWidth : 280.0;
-    final avatarDraftFile =
-        watchPropertyValue((DraftModel m) => m.avatarDraftFile);
+    final avatarDraftFile = watchPropertyValue(
+      (DraftModel m) => m.avatarDraftFile,
+    );
 
     final profileListView = ListView.builder(
       padding: const EdgeInsets.symmetric(
@@ -118,14 +115,8 @@ class _ChatCreateOrEditRoomDialogState
           contentPadding: EdgeInsets.zero,
           key: ValueKey(t.userId),
           leading: ChatAvatar(avatarUri: t.avatarUrl),
-          title: Text(
-            t.displayName ?? t.userId,
-            maxLines: 1,
-          ),
-          subtitle: Text(
-            t.userId,
-            maxLines: 1,
-          ),
+          title: Text(t.displayName ?? t.userId, maxLines: 1),
+          subtitle: Text(t.userId, maxLines: 1),
           trailing: t.userId == di<ChatModel>().myUserId
               ? null
               : IconButton(
@@ -133,9 +124,7 @@ class _ChatCreateOrEditRoomDialogState
                     _profiles.remove(t);
                     if (_existingGroup) widget.room!.kick(t.userId);
                   }),
-                  icon: const Icon(
-                    YaruIcons.trash,
-                  ),
+                  icon: const Icon(YaruIcons.trash),
                 ),
         );
       },
@@ -170,8 +159,8 @@ class _ChatCreateOrEditRoomDialogState
                       _existingGroup
                           ? '${l10n.edit} ${_isSpace ? l10n.space : l10n.group}'
                           : _isSpace
-                              ? l10n.createNewSpace
-                              : l10n.createGroup,
+                          ? l10n.createNewSpace
+                          : l10n.createGroup,
                     ),
                   ),
                 ),
@@ -188,9 +177,7 @@ class _ChatCreateOrEditRoomDialogState
                     ),
                   ),
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kBigPadding,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
                   sliver: SliverToBoxAdapter(
                     child: YaruSection(
                       headline: Text(l10n.group),
@@ -201,7 +188,8 @@ class _ChatCreateOrEditRoomDialogState
                           children: [
                             TextField(
                               autofocus: true,
-                              enabled: widget.room == null ||
+                              enabled:
+                                  widget.room == null ||
                                   widget.room?.canChangeStateEvent(
                                         EventTypes.RoomName,
                                       ) ==
@@ -215,7 +203,8 @@ class _ChatCreateOrEditRoomDialogState
                                 label: Text(
                                   _isSpace ? l10n.spaceName : l10n.groupName,
                                 ),
-                                suffixIcon: (_existingGroup &&
+                                suffixIcon:
+                                    (_existingGroup &&
                                         widget.room!.canChangeStateEvent(
                                           EventTypes.RoomName,
                                         ))
@@ -224,9 +213,10 @@ class _ChatCreateOrEditRoomDialogState
                                         style: textFieldSuffixStyle,
                                         onPressed:
                                             _groupName != widget.room!.name
-                                                ? () => widget.room!
-                                                    .setName(_groupName!)
-                                                : null,
+                                            ? () => widget.room!.setName(
+                                                _groupName!,
+                                              )
+                                            : null,
                                         icon: SaveTextIcon(
                                           room: widget.room,
                                           textEditingController:
@@ -239,7 +229,8 @@ class _ChatCreateOrEditRoomDialogState
                               ),
                             ),
                             TextField(
-                              enabled: widget.room == null ||
+                              enabled:
+                                  widget.room == null ||
                                   widget.room?.canChangeStateEvent(
                                         EventTypes.RoomTopic,
                                       ) ==
@@ -251,7 +242,8 @@ class _ChatCreateOrEditRoomDialogState
                               decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.all(12),
                                 label: Text(l10n.chatDescription),
-                                suffixIcon: (_existingGroup &&
+                                suffixIcon:
+                                    (_existingGroup &&
                                         widget.room!.canChangeStateEvent(
                                           EventTypes.RoomTopic,
                                         ))
@@ -259,8 +251,9 @@ class _ChatCreateOrEditRoomDialogState
                                         padding: EdgeInsets.zero,
                                         style: textFieldSuffixStyle,
                                         onPressed: _topic != widget.room!.topic
-                                            ? () => widget.room!
-                                                .setDescription(_topic!)
+                                            ? () => widget.room!.setDescription(
+                                                _topic!,
+                                              )
                                             : null,
                                         icon: SaveTextIcon(
                                           textEditingController:
@@ -282,7 +275,8 @@ class _ChatCreateOrEditRoomDialogState
                                 ),
                                 trailing: CommonSwitch(
                                   value: _enableEncryption,
-                                  onChanged: widget.room?.encrypted == true ||
+                                  onChanged:
+                                      widget.room?.encrypted == true ||
                                           widget.room?.canChangeStateEvent(
                                                 EventTypes.Encryption,
                                               ) ==
@@ -299,6 +293,10 @@ class _ChatCreateOrEditRoomDialogState
                                 ),
                                 title: Text(l10n.encrypted),
                               ),
+                            if (widget.room != null)
+                              ChatRoomDialogHistoryVisibilityDropDown(
+                                room: widget.room!,
+                              ),
                             if (!_existingGroup)
                               YaruTile(
                                 leading: _visibility == Visibility.private
@@ -312,7 +310,8 @@ class _ChatCreateOrEditRoomDialogState
                                     : Text(l10n.anyoneCanJoin),
                                 trailing: CommonSwitch(
                                   value: _visibility == Visibility.private,
-                                  onChanged: widget.room?.canChangeStateEvent(
+                                  onChanged:
+                                      widget.room?.canChangeStateEvent(
                                             EventTypes.RoomJoinRules,
                                           ) ==
                                           false
@@ -347,15 +346,11 @@ class _ChatCreateOrEditRoomDialogState
                       horizontal: kBigPadding,
                     ),
                     sliver: SliverToBoxAdapter(
-                      child: ChatPermissionsSettingsView(
-                        room: widget.room!,
-                      ),
+                      child: ChatPermissionsSettingsView(room: widget.room!),
                     ),
                   ),
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kBigPadding,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
                   sliver: SliverToBoxAdapter(
                     child: YaruSection(
                       headline: Text(l10n.users),
@@ -388,11 +383,11 @@ class _ChatCreateOrEditRoomDialogState
                             width: _maxWidth,
                             child: _existingGroup
                                 ? widget.room?.canInvite == true
-                                    ? ChatRoomUsersList(
-                                        room: widget.room!,
-                                        sliver: false,
-                                      )
-                                    : const SizedBox.shrink()
+                                      ? ChatRoomUsersList(
+                                          room: widget.room!,
+                                          sliver: false,
+                                        )
+                                      : const SizedBox.shrink()
                                 : profileListView,
                           ),
                         ],
@@ -419,8 +414,8 @@ class _ChatCreateOrEditRoomDialogState
                       child: Text(l10n.cancel),
                     ),
                     ImportantButton(
-                      onPressed: _groupName == null ||
-                              _groupName!.trim().isEmpty
+                      onPressed:
+                          _groupName == null || _groupName!.trim().isEmpty
                           ? null
                           : () {
                               if (context.mounted &&
@@ -431,8 +426,9 @@ class _ChatCreateOrEditRoomDialogState
                                 di<ChatModel>().createSpace(
                                   name: _groupName!,
                                   topic: _groupTopicController.text,
-                                  invite:
-                                      _profiles.map((p) => p.userId).toList(),
+                                  invite: _profiles
+                                      .map((p) => p.userId)
+                                      .toList(),
                                   visibility: _visibility,
                                   onFail: (error) => showSnackBar(
                                     context,
@@ -447,8 +443,9 @@ class _ChatCreateOrEditRoomDialogState
                                   avatarFile: avatarDraftFile,
                                   enableEncryption: _enableEncryption,
                                   preset: CreateRoomPreset.publicChat,
-                                  invite:
-                                      _profiles.map((p) => p.userId).toList(),
+                                  invite: _profiles
+                                      .map((p) => p.userId)
+                                      .toList(),
                                   groupName: _groupName,
                                   visibility: _visibility,
                                   onFail: (error) => showSnackBar(

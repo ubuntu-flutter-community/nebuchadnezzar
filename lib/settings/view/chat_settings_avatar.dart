@@ -23,11 +23,13 @@ class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final foreGroundColor =
-        context.colorScheme.isLight ? Colors.black : Colors.white;
+    final foreGroundColor = context.colorScheme.isLight
+        ? Colors.black
+        : Colors.white;
     final l10n = context.l10n;
-    final attachingAvatar =
-        watchPropertyValue((SettingsModel m) => m.attachingAvatar);
+    final attachingAvatar = watchPropertyValue(
+      (SettingsModel m) => m.attachingAvatar,
+    );
     final uri = watchStream(
       (SettingsModel m) => m.myProfileStream,
       initialValue: di<SettingsModel>().myProfile,
@@ -53,24 +55,16 @@ class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
               onPressed: attachingAvatar
                   ? null
                   : () => di<SettingsModel>().setMyProfilAvatar(
-                        onFail: (e) => showErrorSnackBar(context, e),
-                        onWrongFileFormat: () => showSnackBar(
-                          context,
-                          content: Text(l10n.notAnImage),
-                        ),
-                      ),
+                      onFail: (e) => showErrorSnackBar(context, e),
+                      onWrongFileFormat: () =>
+                          showSnackBar(context, content: Text(l10n.notAnImage)),
+                    ),
               icon: attachingAvatar
                   ? SizedBox.square(
                       dimension: 15,
-                      child: Progress(
-                        strokeWidth: 2,
-                        color: foreGroundColor,
-                      ),
+                      child: Progress(strokeWidth: 2, color: foreGroundColor),
                     )
-                  : const Icon(
-                      YaruIcons.pen,
-                      color: Colors.white,
-                    ),
+                  : const Icon(YaruIcons.pen, color: Colors.white),
             ),
           ),
       ],

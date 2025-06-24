@@ -8,7 +8,9 @@ import 'package:yaru/yaru.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
+import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
+import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_model.dart';
@@ -37,83 +39,80 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         title: Text(l10n.recoveryKey),
-        actions: [
-          const Flexible(child: ChatSettingsLogoutButton()),
-          const SizedBox(width: kSmallPadding),
-        ],
       ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 400),
           child: ListView(
             padding: const EdgeInsets.all(16.0),
-            children: [
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                trailing: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  child: Icon(
-                    YaruIcons.information,
-                    color: theme.colorScheme.primary,
+            children: space(
+              heightGap: kMediumPadding,
+              children: [
+                ...[
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    trailing: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      child: Icon(
+                        YaruIcons.information,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    subtitle: Text(l10n.chatBackupDescription),
                   ),
+                  const Divider(height: 32, thickness: 1),
+                  TextField(
+                    minLines: 2,
+                    maxLines: 4,
+                    readOnly: true,
+                    style: const TextStyle(fontFamily: 'UbuntuMono'),
+                    controller: TextEditingController(text: encryptionKey),
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(16),
+                      suffixIcon: Icon(YaruIcons.key),
+                    ),
+                  ),
+                ],
+                YaruCheckboxListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  value: storeInSecureStorage,
+                  onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
+                  title: Text(getSecureStorageLocalizedName(context.l10n)),
+                  subtitle: Text(l10n.storeInSecureStorageDescription),
                 ),
-                subtitle: Text(l10n.chatBackupDescription),
-              ),
-              const Divider(
-                height: 32,
-                thickness: 1,
-              ),
-              TextField(
-                minLines: 2,
-                maxLines: 4,
-                readOnly: true,
-                style: const TextStyle(fontFamily: 'UbuntuMono'),
-                controller: TextEditingController(text: encryptionKey),
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(16),
-                  suffixIcon: Icon(YaruIcons.key),
+                YaruCheckboxListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  value: recoveryKeyCopied,
+                  onChanged: (b) {
+                    Clipboard.setData(ClipboardData(text: encryptionKey));
+                    showSnackBar(
+                      context,
+                      content: Text(l10n.copiedToClipboard),
+                    );
+                    model.setRecoveryKeyCopied(true);
+                  },
+                  title: Text(l10n.copyToClipboard),
+                  subtitle: Text(l10n.saveKeyManuallyDescription),
                 ),
-              ),
-              const SizedBox(height: 16),
-              YaruCheckboxListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                value: storeInSecureStorage,
-                onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
-                title: Text(getSecureStorageLocalizedName(context.l10n)),
-                subtitle: Text(l10n.storeInSecureStorageDescription),
-              ),
-              const SizedBox(height: 16),
-              YaruCheckboxListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                value: recoveryKeyCopied,
-                onChanged: (b) {
-                  Clipboard.setData(ClipboardData(text: encryptionKey));
-                  showSnackBar(
-                    context,
-                    content: Text(l10n.copiedToClipboard),
-                  );
-                  model.setRecoveryKeyCopied(true);
-                },
-                title: Text(l10n.copyToClipboard),
-                subtitle: Text(l10n.saveKeyManuallyDescription),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                icon: const Icon(YaruIcons.checkmark),
-                label: Text(l10n.next),
-                onPressed: (recoveryKeyCopied || storeInSecureStorage)
-                    ? () {
-                        model.storeRecoveryKey();
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const ChatMasterDetailPage(),
-                          ),
-                          (route) => false,
-                        );
-                      }
-                    : null,
-              ),
-            ],
+                ElevatedButton.icon(
+                  icon: const Icon(YaruIcons.checkmark),
+                  label: Text(l10n.next),
+                  onPressed: (recoveryKeyCopied || storeInSecureStorage)
+                      ? () {
+                          model.storeRecoveryKey();
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ChatMasterDetailPage(),
+                            ),
+                            (route) => false,
+                          );
+                        }
+                      : null,
+                ),
+                const ChatSettingsLogoutButton(),
+              ],
+            ),
           ),
         ),
       ),

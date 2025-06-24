@@ -23,58 +23,62 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) => YaruWindowTitleBar(
-        heroTag: '<Right hero tag>',
-        border: BorderSide.none,
-        backgroundColor: Colors.transparent,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          spacing: kSmallPadding,
-          children: [
-            ChatRoomEncryptionStatusButton(
-              key: ValueKey('${room.id}_${room.encrypted}'),
-              room: room,
-            ),
-            Flexible(
-              child: room.isArchived
-                  ? Text(context.l10n.archive)
-                  : ChatRoomDisplayName(
-                      key: ValueKey('${room.id}_displayname'),
-                      room: room,
-                    ),
-            ),
-          ],
+    heroTag: '<Right hero tag>',
+    border: BorderSide.none,
+    backgroundColor: Colors.transparent,
+    title: Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: kSmallPadding,
+      children: [
+        if (room.isArchived)
+          const Icon(YaruIcons.trash)
+        else
+          ChatRoomEncryptionStatusButton(
+            key: ValueKey('${room.id}_${room.encrypted}'),
+            room: room,
+          ),
+        Flexible(
+          child: room.isArchived
+              ? Text(
+                  '${context.l10n.archive}: ${room.getLocalizedDisplayname()}',
+                )
+              : ChatRoomDisplayName(
+                  key: ValueKey('${room.id}_displayname'),
+                  room: room,
+                ),
         ),
-        leading: !Platform.isMacOS && !context.showSideBar
-            ? const SideBarButton()
-            : null,
-        actions: space(
-          widthGap: kSmallPadding,
-          children: [
-            if (!room.isArchived)
-              ChatRoomPinButton(
-                key: ValueKey('${room.id}_${room.isFavourite}'),
-                room: room,
-              ),
-            if (!room.isArchived)
-              ChatRoomNotificationButton(
-                key: ValueKey('${room.id}_${room.pushRuleState.hashCode}'),
-                room: room,
-              ),
-            IconButton(
-              key: ValueKey('${room.id}_${room.isDirectChat}'),
-              tooltip: context.l10n.chatDetails,
-              onPressed: () =>
-                  chatRoomScaffoldKey.currentState?.openEndDrawer(),
-              icon: room.isDirectChat
-                  ? const Icon(YaruIcons.user)
-                  : const Icon(YaruIcons.information),
-            ),
-            if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
-              const SideBarButton(),
-            const SizedBox(width: kSmallPadding),
-          ].map((e) => Flexible(child: e)).toList(),
+      ],
+    ),
+    leading: !Platform.isMacOS && !context.showSideBar
+        ? const SideBarButton()
+        : null,
+    actions: space(
+      widthGap: kSmallPadding,
+      children: [
+        if (!room.isArchived)
+          ChatRoomPinButton(
+            key: ValueKey('${room.id}_${room.isFavourite}'),
+            room: room,
+          ),
+        if (!room.isArchived)
+          ChatRoomNotificationButton(
+            key: ValueKey('${room.id}_${room.pushRuleState.hashCode}'),
+            room: room,
+          ),
+        IconButton(
+          key: ValueKey('${room.id}_${room.isDirectChat}'),
+          tooltip: context.l10n.chatDetails,
+          onPressed: () => chatRoomScaffoldKey.currentState?.openEndDrawer(),
+          icon: room.isDirectChat
+              ? const Icon(YaruIcons.user)
+              : const Icon(YaruIcons.information),
         ),
-      );
+        if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
+          const SideBarButton(),
+        const SizedBox(width: kSmallPadding),
+      ].map((e) => Flexible(child: e)).toList(),
+    ),
+  );
 
   @override
   Size get preferredSize => const Size(0, kYaruTitleBarHeight);

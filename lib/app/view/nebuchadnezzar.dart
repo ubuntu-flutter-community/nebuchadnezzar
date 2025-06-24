@@ -1,17 +1,15 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:system_theme/system_theme_builder.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/platforms.dart';
 import 'wait_for_registration_page.dart';
 
 class Nebuchadnezzar extends StatelessWidget {
   const Nebuchadnezzar({super.key});
 
   @override
-  Widget build(BuildContext context) => !kIsWeb && Platform.isLinux
+  Widget build(BuildContext context) => Platforms.isLinux
       ? YaruTheme(
           builder: (context, yaru, child) => WaitForRegistrationPage(
             lightTheme: yaru.theme,

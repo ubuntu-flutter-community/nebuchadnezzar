@@ -16,7 +16,8 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
     final chatModel = di<ChatModel>();
     final activeSpaceId = watchPropertyValue((ChatModel m) => m.activeSpace);
 
-    final spaces = watchStream(
+    final spaces =
+        watchStream(
           (ChatModel m) => m.spacesStream,
           initialValue: chatModel.spaces,
         ).data ??
@@ -27,9 +28,8 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
       child: SizedBox(
         height: 46,
         child: ListView.separated(
-          separatorBuilder: (context, index) => const SizedBox(
-            width: kSmallPadding,
-          ),
+          separatorBuilder: (context, index) =>
+              const SizedBox(width: kSmallPadding),
           scrollDirection: Axis.horizontal,
           itemCount: spaces.length,
           itemBuilder: (context, index) {

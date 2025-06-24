@@ -3,12 +3,11 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../../settings/view/chat_settings_logout_button.dart';
 import 'check_encryption_setup_page.dart';
 
 class EncryptionSetupErrorPage extends StatelessWidget {
-  const EncryptionSetupErrorPage({
-    super.key,
-  });
+  const EncryptionSetupErrorPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +36,7 @@ class EncryptionSetupErrorPage extends StatelessWidget {
               },
               label: Text(l10n.tryAgain),
             ),
+            const ChatSettingsLogoutButton(),
           ],
         ),
       ),

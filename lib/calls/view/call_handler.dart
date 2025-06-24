@@ -17,12 +17,7 @@ void callHandler(
         content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Center(
-              child: ChatAvatar(
-                dimension: 80,
-                fallBackIconSize: 40,
-              ),
-            ),
+            Center(child: ChatAvatar(dimension: 80, fallBackIconSize: 40)),
           ],
         ),
       ),

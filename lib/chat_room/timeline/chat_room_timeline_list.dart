@@ -43,8 +43,10 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => di<TimelineModel>()
-          .requestHistory(widget.timeline, historyCount: 500),
+      (_) => di<TimelineModel>().requestHistory(
+        widget.timeline,
+        historyCount: 500,
+      ),
     );
   }
 
@@ -57,11 +59,14 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final showAvatarChanges =
-        watchPropertyValue((SettingsModel m) => m.showChatAvatarChanges);
-    final showDisplayNameChanges =
-        watchPropertyValue((SettingsModel m) => m.showChatDisplaynameChanges);
-    final pinnedEvents = watchStream(
+    final showAvatarChanges = watchPropertyValue(
+      (SettingsModel m) => m.showChatAvatarChanges,
+    );
+    final showDisplayNameChanges = watchPropertyValue(
+      (SettingsModel m) => m.showChatDisplaynameChanges,
+    );
+    final pinnedEvents =
+        watchStream(
           (ChatModel m) => m
               .getJoinedRoomUpdate(widget.timeline.room.id)
               .map((_) => widget.timeline.room.pinnedEventIds),
@@ -121,8 +126,9 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         child: ChatEventTile(
                           key: ValueKey('${event.eventId}column'),
                           event: event,
-                          partOfMessageCohort:
-                              event.partOfMessageCohort(previous),
+                          partOfMessageCohort: event.partOfMessageCohort(
+                            previous,
+                          ),
                           onReplyOriginClick: (event) => _jump(event),
                           timeline: widget.timeline,
                         ),
@@ -154,10 +160,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                   builder: (context) =>
                       ChatRoomPinnedEventsDialog(timeline: widget.timeline),
                 ),
-                child: Icon(
-                  YaruIcons.pin,
-                  color: theme.colorScheme.onSurface,
-                ),
+                child: Icon(YaruIcons.pin, color: theme.colorScheme.onSurface),
               ),
             ),
           ),
@@ -166,19 +169,14 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             right: kBigPadding,
             bottom: kBigPadding,
             child: FloatingActionButton.small(
-              backgroundColor: getMonochromeBg(
-                theme: theme,
-                darkFactor: 5,
-              ),
+              backgroundColor: getMonochromeBg(theme: theme, darkFactor: 5),
               child: Icon(
                 YaruIcons.go_down,
                 color: theme.colorScheme.onSurface,
               ),
               onPressed: () => _maybeScrollTo(
                 0,
-                duration: const Duration(
-                  milliseconds: 100,
-                ),
+                duration: const Duration(milliseconds: 100),
               ),
             ),
           ),
@@ -186,15 +184,12 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     );
   }
 
-  bool onScroll(scrollEnd) {
+  bool onScroll(ScrollEndNotification scrollEnd) {
     final metrics = scrollEnd.metrics;
     if (metrics.atEdge) {
       final isAtBottom = metrics.pixels != 0;
       if (isAtBottom) {
-        di<TimelineModel>().requestHistory(
-          widget.timeline,
-          historyCount: 150,
-        );
+        di<TimelineModel>().requestHistory(widget.timeline, historyCount: 150);
       } else {
         setState(() => _showScrollButton = false);
       }
@@ -220,10 +215,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     }
   }
 
-  Future<dynamic> _maybeScrollTo(
-    int index, {
-    Duration? duration,
-  }) async {
+  Future<dynamic> _maybeScrollTo(int index, {Duration? duration}) async {
     if (index == -1) {
       return;
     }

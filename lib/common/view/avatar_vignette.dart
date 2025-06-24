@@ -24,12 +24,9 @@ class AvatarVignette extends StatelessWidget {
       child: ClipRRect(
         borderRadius: borderRadius,
         child: ColoredBox(
-          color: fallBackColor ??
-              getMonochromeBg(
-                theme: context.theme,
-                factor: 6,
-                darkFactor: 20,
-              ),
+          color:
+              fallBackColor ??
+              getMonochromeBg(theme: context.theme, factor: 6, darkFactor: 20),
           child: child,
         ),
       ),

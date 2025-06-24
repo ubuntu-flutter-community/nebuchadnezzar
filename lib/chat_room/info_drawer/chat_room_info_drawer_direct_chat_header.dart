@@ -8,10 +8,7 @@ import '../../common/view/ui_constants.dart';
 import 'chat_room_info_drawer_avatar.dart';
 
 class ChatRoomInfoDrawerDirectChatHeader extends StatelessWidget {
-  const ChatRoomInfoDrawerDirectChatHeader({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomInfoDrawerDirectChatHeader({super.key, required this.room});
 
   final Room room;
 
@@ -58,9 +55,7 @@ class ChatRoomInfoDrawerDirectChatHeader extends StatelessWidget {
                           text: room.directChatMatrixID ?? '',
                         ),
                       ),
-                      icon: const Icon(
-                        YaruIcons.copy,
-                      ),
+                      icon: const Icon(YaruIcons.copy),
                     ),
                   ],
                 ),

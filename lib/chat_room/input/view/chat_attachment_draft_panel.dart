@@ -12,8 +12,9 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final draftFiles =
-        watchPropertyValue((DraftModel m) => m.getFilesDraft(roomId));
+    final draftFiles = watchPropertyValue(
+      (DraftModel m) => m.getFilesDraft(roomId),
+    );
 
     final attaching = watchPropertyValue((DraftModel m) => m.attaching);
 
@@ -39,9 +40,7 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
               ),
               reverse: true,
               shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(
-                horizontal: kSmallPadding,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
               scrollDirection: Axis.horizontal,
               itemCount: draftFilesL,
               itemBuilder: (context, index) {
@@ -50,14 +49,16 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
                   duration: const Duration(seconds: 1),
                   child: ChatPendingAttachment(
                     roomId: roomId,
-                    onToggleCompress: () => di<DraftModel>()
-                        .toggleCompress(roomId: roomId, file: file),
+                    onToggleCompress: () => di<DraftModel>().toggleCompress(
+                      roomId: roomId,
+                      file: file,
+                    ),
                     onTap: sending
                         ? null
                         : () => di<DraftModel>().removeFileFromDraft(
-                              roomId: roomId,
-                              file: file,
-                            ),
+                            roomId: roomId,
+                            file: file,
+                          ),
                     file: file,
                   ),
                 );

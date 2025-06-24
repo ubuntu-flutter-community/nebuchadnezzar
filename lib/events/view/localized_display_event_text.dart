@@ -28,42 +28,43 @@ class _LocalizedDisplayEventTextState extends State<LocalizedDisplayEventText> {
   @override
   void initState() {
     super.initState();
-    _future = widget.displayEvent
-        .calcLocalizedBody(const MatrixDefaultLocalizations());
+    _future = widget.displayEvent.calcLocalizedBody(
+      const MatrixDefaultLocalizations(),
+    );
   }
 
   @override
   Widget build(BuildContext context) =>
       _cache.containsKey(widget.displayEvent.eventId)
-          ? _Content(
-              text: _cache[widget.displayEvent.eventId]!,
-              style: widget.style,
-              textAlign: widget.textAlign,
-              badge: widget.displayEvent.showAsBadge,
-            )
-          : FutureBuilder(
-              future: _future,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  _cache.update(
-                    widget.displayEvent.eventId,
-                    (_) => snapshot.data!,
-                    ifAbsent: () => snapshot.data!,
-                  );
-                }
+      ? _Content(
+          text: _cache[widget.displayEvent.eventId]!,
+          style: widget.style,
+          textAlign: widget.textAlign,
+          badge: widget.displayEvent.showAsBadge,
+        )
+      : FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              _cache.update(
+                widget.displayEvent.eventId,
+                (_) => snapshot.data!,
+                ifAbsent: () => snapshot.data!,
+              );
+            }
 
-                return AnimatedOpacity(
-                  opacity: snapshot.hasData ? 1 : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: _Content(
-                    text: snapshot.data ?? widget.displayEvent.body,
-                    style: widget.style,
-                    textAlign: widget.textAlign,
-                    badge: widget.displayEvent.showAsBadge,
-                  ),
-                );
-              },
+            return AnimatedOpacity(
+              opacity: snapshot.hasData ? 1 : 0,
+              duration: const Duration(milliseconds: 300),
+              child: _Content(
+                text: snapshot.data ?? widget.displayEvent.body,
+                style: widget.style,
+                textAlign: widget.textAlign,
+                badge: widget.displayEvent.showAsBadge,
+              ),
             );
+          },
+        );
 }
 
 class _Content extends StatelessWidget {
@@ -81,8 +82,9 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theStyle = (style ?? context.textTheme.labelSmall)
-        ?.copyWith(overflow: TextOverflow.ellipsis);
+    final theStyle = (style ?? context.textTheme.labelSmall)?.copyWith(
+      overflow: TextOverflow.ellipsis,
+    );
     final align = textAlign;
 
     if (badge) {

@@ -22,8 +22,13 @@ IconData _getIconFromName(String displayname) {
   }.any((s) => name.contains(s))) {
     return YaruIcons.globe;
   }
-  if ({'desktop', 'windows', 'macos', 'linux', 'ubuntu'}
-      .any((s) => name.contains(s))) {
+  if ({
+    'desktop',
+    'windows',
+    'macos',
+    'linux',
+    'ubuntu',
+  }.any((s) => name.contains(s))) {
     return YaruIcons.computer;
   }
   return YaruIcons.phone;

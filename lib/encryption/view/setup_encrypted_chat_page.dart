@@ -42,8 +42,9 @@ class _SetupEncryptedChatPageState extends State<SetupEncryptedChatPage> {
       },
     );
 
-    final recoveryKeyStored =
-        watchPropertyValue((EncryptionModel m) => m.recoveryKeyStored);
+    final recoveryKeyStored = watchPropertyValue(
+      (EncryptionModel m) => m.recoveryKeyStored,
+    );
 
     final key = watchPropertyValue((EncryptionModel m) => m.key);
 
@@ -51,14 +52,15 @@ class _SetupEncryptedChatPageState extends State<SetupEncryptedChatPage> {
       return NewKeyCreatedPage(encryptionKey: key);
     }
 
-    final bootstrapState =
-        watchPropertyValue((EncryptionModel m) => m.bootstrap?.state);
+    final bootstrapState = watchPropertyValue(
+      (EncryptionModel m) => m.bootstrap?.state,
+    );
 
     return switch (bootstrapState) {
       BootstrapState.openExistingSsss => const UnlockChatPage(),
       BootstrapState.done => const ChatMasterDetailPage(),
       BootstrapState.error => const EncryptionSetupErrorPage(),
-      _ => SplashPage(title: Text(context.l10n.synchronizingPleaseWait))
+      _ => SplashPage(title: Text(context.l10n.loadingPleaseWait)),
     };
   }
 }

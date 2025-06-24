@@ -22,66 +22,61 @@ class ChatLoginPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: YaruWindowTitleBar(
-          leading: processingAccess || !canPop
-              ? null
-              : YaruBackButton(
-                  onPressed: () => Navigator.of(context).maybePop(),
-                ),
-          title: Text(titleLabel),
-          backgroundColor: Colors.transparent,
-          border: BorderSide.none,
+    appBar: YaruWindowTitleBar(
+      leading: processingAccess || !canPop
+          ? null
+          : YaruBackButton(onPressed: () => Navigator.of(context).maybePop()),
+      title: Text(titleLabel),
+      backgroundColor: Colors.transparent,
+      border: BorderSide.none,
+    ),
+    body: Stack(
+      children: [
+        Center(
+          child: SizedBox(
+            width: kLoginFormWidth,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: kYaruTitleBarHeight),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: space(heightGap: kMediumPadding, children: content),
+              ),
+            ),
+          ),
         ),
-        body: Stack(
-          children: [
-            Center(
-              child: SizedBox(
-                width: kLoginFormWidth,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: kYaruTitleBarHeight),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: space(
-                      heightGap: kMediumPadding,
-                      children: content,
-                    ),
-                  ),
-                ),
+        Positioned(
+          bottom: 0,
+          child: AnimatedContainer(
+            duration: const Duration(seconds: 5),
+            height: processingAccess ? 350 : 120,
+            width: context.mediaQuerySize.width,
+            child: LiquidLinearProgressIndicator(
+              borderColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              borderWidth: 0,
+              direction: Axis.vertical,
+              valueColor: AlwaysStoppedAnimation(
+                context.colorScheme.primary.withValues(alpha: 0.8),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              child: AnimatedContainer(
-                duration: const Duration(seconds: 5),
-                height: processingAccess ? 350 : 120,
-                width: context.mediaQuerySize.width,
-                child: LiquidLinearProgressIndicator(
-                  borderColor: Colors.transparent,
-                  backgroundColor: Colors.transparent,
-                  borderWidth: 0,
-                  direction: Axis.vertical,
-                  valueColor: AlwaysStoppedAnimation(
-                    context.colorScheme.primary.withValues(alpha: 0.8),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: SizedBox(
-                height: 280,
-                width: context.mediaQuerySize.width,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 80),
-                  child: Icon(
-                    YaruIcons.ubuntu_logo_simple,
-                    size: 60,
-                    color: context.theme.scaffoldBackgroundColor,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+        Positioned(
+          bottom: 0,
+          child: SizedBox(
+            height: 280,
+            width: context.mediaQuerySize.width,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 80),
+              child: Icon(
+                YaruIcons.ubuntu_logo_simple,
+                size: 60,
+                color: context.theme.scaffoldBackgroundColor,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }

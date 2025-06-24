@@ -8,18 +8,15 @@ import '../../common/chat_model.dart';
 import '../../l10n/l10n.dart';
 
 class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
-  const ChatRoomPinButton({
-    super.key,
-    required this.room,
-    this.small = false,
-  });
+  const ChatRoomPinButton({super.key, required this.room, this.small = false});
 
   final Room room;
   final bool small;
 
   @override
   Widget build(BuildContext context) {
-    final isFavourite = watchStream(
+    final isFavourite =
+        watchStream(
           (ChatModel m) =>
               m.getJoinedRoomUpdate(room.id).map((e) => room.isFavourite),
           initialValue: room.isFavourite,
@@ -27,8 +24,9 @@ class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
         false;
 
     return IconButton(
-      constraints:
-          small ? const BoxConstraints(maxHeight: 20, maxWidth: 20) : null,
+      constraints: small
+          ? const BoxConstraints(maxHeight: 20, maxWidth: 20)
+          : null,
       padding: small ? EdgeInsets.zero : null,
       tooltip: context.l10n.toggleFavorite,
       onPressed: () => room.setFavourite(!room.isFavourite),

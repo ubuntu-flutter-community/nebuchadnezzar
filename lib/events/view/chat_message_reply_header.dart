@@ -75,10 +75,7 @@ class _ChatMessageReplyHeaderState extends State<ChatMessageReplyHeader> {
 }
 
 class _Message extends StatelessWidget {
-  const _Message({
-    required this.onReplyOriginClick,
-    required this.replyEvent,
-  });
+  const _Message({required this.onReplyOriginClick, required this.replyEvent});
 
   final Future<void> Function(Event) onReplyOriginClick;
   final Event? replyEvent;
@@ -88,8 +85,9 @@ class _Message extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: kSmallPadding),
       child: InkWell(
-        onTap:
-            replyEvent == null ? null : () => onReplyOriginClick(replyEvent!),
+        onTap: replyEvent == null
+            ? null
+            : () => onReplyOriginClick(replyEvent!),
         child: Text(
           '> (${replyEvent?.senderFromMemoryOrFallback.calcDisplayname()}): ${replyEvent?.body}',
           maxLines: 1,

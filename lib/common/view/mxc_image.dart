@@ -21,8 +21,9 @@ class MxcImage extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final maybeImage =
-        watchPropertyValue((LocalImageModel m) => m.get(uri.toString()));
+    final maybeImage = watchPropertyValue(
+      (LocalImageModel m) => m.get(uri.toString()),
+    );
 
     final theHeight = dimension ?? height;
     final theWidth = dimension ?? width;
@@ -73,21 +74,19 @@ class _MxcImageFutureState extends State<MxcImageFuture> {
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final data = snapshot.data;
-            return Image.memory(
-              data!,
-              fit: widget.fit,
-              height: widget.height,
-              width: widget.width,
-            );
-          }
+    future: _future,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        final data = snapshot.data;
+        return Image.memory(
+          data!,
+          fit: widget.fit,
+          height: widget.height,
+          width: widget.width,
+        );
+      }
 
-          return const Center(
-            child: Progress(),
-          );
-        },
-      );
+      return const Center(child: Progress());
+    },
+  );
 }

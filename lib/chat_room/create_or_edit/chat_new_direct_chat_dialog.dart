@@ -57,10 +57,7 @@ class _ChatNewDirectChatDialogState extends State<ChatNewDirectChatDialog> {
             onProfileSelected: (p) => _searchController.text = p.userId,
           ),
           if (_error?.isNotEmpty ?? false)
-            Text(
-              _error!,
-              style: TextStyle(color: context.colorScheme.error),
-            ),
+            Text(_error!, style: TextStyle(color: context.colorScheme.error)),
         ],
       ),
     );

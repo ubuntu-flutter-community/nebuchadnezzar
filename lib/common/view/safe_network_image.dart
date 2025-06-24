@@ -1,14 +1,17 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cached_network_svg_image/cached_network_svg_image.dart';
 import 'package:file/file.dart' hide FileSystem;
 import 'package:file/local.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path/path.dart' as p;
 import 'package:xdg_directories/xdg_directories.dart';
 import 'package:yaru/yaru.dart';
+
+import '../platforms.dart';
 
 class SafeNetworkImage extends StatelessWidget {
   const SafeNetworkImage({
@@ -37,30 +40,41 @@ class SafeNetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fallBack = Center(
-      child: fallBackIcon ??
-          Icon(
-            YaruIcons.user,
-            size: height != null ? height! * 0.7 : null,
-          ),
+      child:
+          fallBackIcon ??
+          Icon(YaruIcons.user, size: height != null ? height! * 0.7 : null),
     );
 
     if (url == null) return fallBack;
 
     try {
       if (url!.endsWith('.svg')) {
-        return CachedNetworkSVGImage(
+        return SvgPicture.network(
           url!,
           fit: fit,
           height: height,
           width: width,
-          errorWidget: fallBack,
-          placeholder: fallBack,
+          errorBuilder: (context, error, stackTrace) => errorIcon ?? fallBack,
+          placeholderBuilder: (context) => fallBack,
+          headers: httpHeaders,
+        );
+      }
+
+      if (kIsWeb) {
+        return Image.network(
+          url!,
+          headers: httpHeaders,
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
+              frame != null
+              ? child
+              : const Center(child: YaruCircularProgressIndicator()),
+          errorBuilder: (context, url, _) => errorIcon ?? fallBack,
         );
       }
 
       return CachedNetworkImage(
         httpHeaders: httpHeaders,
-        cacheManager: Platform.isLinux ? XdgCacheManager() : null,
+        cacheManager: Platforms.isLinux ? XdgCacheManager() : null,
         imageUrl: url!,
         imageBuilder: (context, imageProvider) => Image(
           image: imageProvider,
@@ -106,7 +120,11 @@ class _XdgFileSystem implements FileSystem {
 }
 
 class XdgCacheManager extends CacheManager with ImageCacheManager {
-  static final key = p.basename(Platform.resolvedExecutable);
+  static final key = p.basename(
+    Platform.resolvedExecutable.isNotEmpty
+        ? Platform.resolvedExecutable
+        : 'flutter_app_cache',
+  );
 
   static final XdgCacheManager _instance = XdgCacheManager._();
 

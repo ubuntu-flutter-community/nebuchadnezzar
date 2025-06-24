@@ -52,9 +52,7 @@ class ChatMap extends StatelessWidget {
                     launchUrl(maybeUri);
                   }
                 },
-                label: Text(
-                  context.l10n.openInMaps,
-                ),
+                label: Text(context.l10n.openInMaps),
               ),
             ),
           ],

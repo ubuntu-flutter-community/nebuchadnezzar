@@ -5,16 +5,14 @@ import 'package:watch_it/watch_it.dart';
 import '../../../common/chat_model.dart';
 
 class ChatRoomDisplayName extends StatelessWidget with WatchItMixin {
-  const ChatRoomDisplayName({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomDisplayName({super.key, required this.room});
 
   final Room room;
 
   @override
   Widget build(BuildContext context) {
-    final displayName = watchStream(
+    final displayName =
+        watchStream(
           (ChatModel m) => m
               .getJoinedRoomUpdate(room.id)
               .map((_) => room.getLocalizedDisplayname()),
@@ -22,8 +20,6 @@ class ChatRoomDisplayName extends StatelessWidget with WatchItMixin {
         ).data ??
         room.getLocalizedDisplayname();
 
-    return Text(
-      displayName,
-    );
+    return Text(displayName);
   }
 }

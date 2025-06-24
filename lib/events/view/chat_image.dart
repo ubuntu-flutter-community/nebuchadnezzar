@@ -42,16 +42,12 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     final theHeight = dimension ?? height ?? imageHeight;
     final theWidth = dimension ?? width;
     final theFit = fit ?? BoxFit.cover;
-    final maybeImage =
-        watchPropertyValue((LocalImageModel m) => m.get(event.eventId));
+    final maybeImage = watchPropertyValue(
+      (LocalImageModel m) => m.get(event.eventId),
+    );
 
     if (event.status == EventStatus.error) {
-      return const Center(
-        child: Icon(
-          YaruIcons.image_missing,
-          size: 45,
-        ),
-      );
+      return const Center(child: Icon(YaruIcons.image_missing, size: 45));
     }
 
     return Padding(
@@ -66,18 +62,18 @@ class ChatImage extends StatelessWidget with WatchItMixin {
             width: theWidth,
             child: maybeImage != null
                 ? event.isSvgImage
-                    ? SvgPicture.memory(
-                        maybeImage,
-                        fit: theFit,
-                        height: theHeight,
-                        width: theWidth,
-                      )
-                    : Image.memory(
-                        maybeImage,
-                        fit: theFit,
-                        height: theHeight,
-                        width: theWidth,
-                      )
+                      ? SvgPicture.memory(
+                          maybeImage,
+                          fit: theFit,
+                          height: theHeight,
+                          width: theWidth,
+                        )
+                      : Image.memory(
+                          maybeImage,
+                          fit: theFit,
+                          height: theHeight,
+                          width: theWidth,
+                        )
                 : ChatImageFuture(
                     event: event,
                     width: theWidth,
@@ -130,27 +126,25 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
 
   @override
   Widget build(BuildContext context) => FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) => snapshot.hasData
-            ? AnimatedOpacity(
-                opacity: snapshot.hasData ? 1 : 0,
-                duration: const Duration(milliseconds: 300),
-                child: (widget.event.isSvgImage)
-                    ? SvgPicture.memory(
-                        snapshot.data!,
-                        fit: widget.fit ?? BoxFit.contain,
-                        height: widget.height,
-                        width: widget.width,
-                      )
-                    : Image.memory(
-                        snapshot.data!,
-                        fit: widget.fit,
-                        height: widget.height,
-                        width: widget.width,
-                      ),
-              )
-            : const Center(
-                child: Progress(),
-              ),
-      );
+    future: _future,
+    builder: (context, snapshot) => snapshot.hasData
+        ? AnimatedOpacity(
+            opacity: snapshot.hasData ? 1 : 0,
+            duration: const Duration(milliseconds: 300),
+            child: (widget.event.isSvgImage)
+                ? SvgPicture.memory(
+                    snapshot.data!,
+                    fit: widget.fit ?? BoxFit.contain,
+                    height: widget.height,
+                    width: widget.width,
+                  )
+                : Image.memory(
+                    snapshot.data!,
+                    fit: widget.fit,
+                    height: widget.height,
+                    width: widget.width,
+                  ),
+          )
+        : const Center(child: Progress()),
+  );
 }

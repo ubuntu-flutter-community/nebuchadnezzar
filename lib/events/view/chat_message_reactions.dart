@@ -29,8 +29,10 @@ class ChatMessageReactions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allReactionEvents =
-        event.aggregatedEvents(timeline, RelationshipTypes.reaction);
+    final allReactionEvents = event.aggregatedEvents(
+      timeline,
+      RelationshipTypes.reaction,
+    );
     final reactionMap = <String, ReactionEntry>{};
 
     for (final e in allReactionEvents) {
@@ -84,9 +86,7 @@ class ChatMessageReactions extends StatelessWidget {
             },
             onLongPress: () => showDialog(
               context: context,
-              builder: (context) => ReactionsModal(
-                reactionEntry: r,
-              ),
+              builder: (context) => ReactionsModal(reactionEntry: r),
             ),
           ),
         ),
@@ -122,8 +122,9 @@ class _Reaction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final textColor =
-        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    final textColor = theme.brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
     final color = theme.colorScheme.surface;
     Widget content;
     if (reactionKey.startsWith('mxc://')) {
@@ -206,21 +207,21 @@ class ReactionsModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SimpleDialog(
-        title: YaruDialogTitleBar(
-          title: Text(reactionEntry!.key),
-          border: BorderSide.none,
-          backgroundColor: Colors.transparent,
-        ),
-        titlePadding: EdgeInsets.zero,
-        children: space(
-          heightGap: kSmallPadding,
-          children: [
-            for (final reactor in reactionEntry!.reactors!)
-              Chip(
-                avatar: ChatAvatar(avatarUri: reactor.avatarUrl),
-                label: Text(reactor.displayName ?? ''),
-              ),
-          ],
-        ),
-      );
+    title: YaruDialogTitleBar(
+      title: Text(reactionEntry!.key),
+      border: BorderSide.none,
+      backgroundColor: Colors.transparent,
+    ),
+    titlePadding: EdgeInsets.zero,
+    children: space(
+      heightGap: kSmallPadding,
+      children: [
+        for (final reactor in reactionEntry!.reactors!)
+          Chip(
+            avatar: ChatAvatar(avatarUri: reactor.avatarUrl),
+            label: Text(reactor.displayName ?? ''),
+          ),
+      ],
+    ),
+  );
 }

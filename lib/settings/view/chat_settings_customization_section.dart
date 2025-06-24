@@ -122,9 +122,7 @@ class _ChatSettingsCustomizationSectionState
         .map((e) => e)
         .where((e) => stringContainsEmoji(e))
         .toList();
-    di<SettingsModel>().setDefaultReactions(
-      list,
-    );
+    di<SettingsModel>().setDefaultReactions(list);
   }
 }
 

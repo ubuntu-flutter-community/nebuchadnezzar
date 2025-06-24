@@ -8,8 +8,8 @@ class EncryptionModel extends SafeChangeNotifier {
   EncryptionModel({
     required Client client,
     required FlutterSecureStorage secureStorage,
-  })  : _client = client,
-        _secureStorage = secureStorage;
+  }) : _client = client,
+       _secureStorage = secureStorage;
 
   final Client _client;
   final FlutterSecureStorage _secureStorage;
@@ -29,8 +29,8 @@ class EncryptionModel extends SafeChangeNotifier {
         await _client.encryption?.crossSigning.isCached() ?? false;
     final needsBootstrap =
         await _client.encryption?.keyManager.isCached() == false ||
-            _client.encryption?.crossSigning.enabled == false ||
-            crossSigning == false;
+        _client.encryption?.crossSigning.enabled == false ||
+        crossSigning == false;
 
     return needsBootstrap || _client.isUnknownSession;
   }
@@ -79,10 +79,7 @@ class EncryptionModel extends SafeChangeNotifier {
 
   void storeRecoveryKey() {
     if (storeInSecureStorage) {
-      _secureStorage.write(
-        key: secureStorageKey,
-        value: key,
-      );
+      _secureStorage.write(key: secureStorageKey, value: key);
     }
     setRecoveryKeyStored(true);
   }
@@ -97,8 +94,8 @@ class EncryptionModel extends SafeChangeNotifier {
   void _setBootsTrap(Bootstrap bootstrap) {
     switch (bootstrap.state) {
       case BootstrapState.loading ||
-            BootstrapState.done ||
-            BootstrapState.error:
+          BootstrapState.done ||
+          BootstrapState.error:
         return;
       case BootstrapState.openExistingSsss:
         setRecoveryKeyStored(true);
@@ -138,8 +135,9 @@ class EncryptionModel extends SafeChangeNotifier {
   Future<void> startBootstrap({required bool wipe}) async {
     _wipe = wipe;
     _recoveryKeyStored = false;
-    _bootstrap =
-        _client.encryption?.bootstrap(onUpdate: (v) => _setBootsTrap(v));
+    _bootstrap = _client.encryption?.bootstrap(
+      onUpdate: (v) => _setBootsTrap(v),
+    );
     final theKey = await _loadKeyFromSecureStorage();
     if (key != null) {
       _key = theKey;

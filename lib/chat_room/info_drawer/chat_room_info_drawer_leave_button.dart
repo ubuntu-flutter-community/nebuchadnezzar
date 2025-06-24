@@ -11,10 +11,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
 class ChatRoomInfoDrawerLeaveButton extends StatelessWidget {
-  const ChatRoomInfoDrawerLeaveButton({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomInfoDrawerLeaveButton({super.key, required this.room});
 
   final Room room;
 

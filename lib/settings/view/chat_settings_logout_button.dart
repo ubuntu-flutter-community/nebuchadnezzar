@@ -22,17 +22,13 @@ class ChatSettingsLogoutButton extends StatelessWidget {
           onConfirm: () {
             di<ChatModel>().setSelectedRoom(null);
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => const ChatLoginPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const ChatLoginPage()),
               (route) => false,
             );
             di<AuthenticationModel>().logout(
-              onFail: (e) => ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(e.toString()),
-                ),
-              ),
+              onFail: (e) => ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(e.toString()))),
             );
           },
         ),

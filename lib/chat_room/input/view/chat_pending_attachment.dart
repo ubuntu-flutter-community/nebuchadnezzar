@@ -55,10 +55,7 @@ class ChatPendingAttachment extends StatelessWidget {
                   shape: const CircleBorder(),
                 ),
                 onPressed: onTap,
-                icon: const Icon(
-                  YaruIcons.window_close,
-                  color: Colors.white,
-                ),
+                icon: const Icon(YaruIcons.window_close, color: Colors.white),
               ),
             ),
           if (file is MatrixImageFile)
@@ -118,29 +115,29 @@ class ChatPendingFile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        height: height,
-        width: width,
-        color: context.colorScheme.outline,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            spacing: kSmallPadding,
-            children: [
-              Icon(
-                file.isVideo
-                    ? YaruIcons.video_filled
-                    : file.isAudio
-                        ? YaruIcons.media_play
-                        : YaruIcons.document_filled,
-                color: Colors.white,
-                size: 100,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(kMediumPadding),
-                child: Text(file.name),
-              ),
-            ],
+    height: height,
+    width: width,
+    color: context.colorScheme.outline,
+    child: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: kSmallPadding,
+        children: [
+          Icon(
+            file.isVideo
+                ? YaruIcons.video_filled
+                : file.isAudio
+                ? YaruIcons.media_play
+                : YaruIcons.document_filled,
+            color: Colors.white,
+            size: 100,
           ),
-        ),
-      );
+          Padding(
+            padding: const EdgeInsets.all(kMediumPadding),
+            child: Text(file.name),
+          ),
+        ],
+      ),
+    ),
+  );
 }

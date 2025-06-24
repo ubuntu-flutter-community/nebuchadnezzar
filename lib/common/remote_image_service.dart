@@ -11,8 +11,8 @@ class RemoteImageService {
   Stream<bool> get propertiesChanged => _propertiesChangedController.stream;
 
   Map<String, String> get httpHeaders => {
-        'authorization': 'Bearer ${_client.accessToken}',
-      };
+    'authorization': 'Bearer ${_client.accessToken}',
+  };
 
   Future<Uri?> fetchAvatarUri({
     required Uri uri,

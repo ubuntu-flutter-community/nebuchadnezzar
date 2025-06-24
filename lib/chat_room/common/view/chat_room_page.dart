@@ -46,7 +46,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       onChange: (i) => _roomListKey.currentState?.setState(() {}),
       onInsert: (i) => _roomListKey.currentState?.insertItem(i),
       onRemove: (i) =>
-          _roomListKey.currentState?.removeItem(i, (_, __) => const ListTile()),
+          _roomListKey.currentState?.removeItem(i, (_, _) => const ListTile()),
     );
   }
 
@@ -66,10 +66,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             !di<ChatModel>().loadingArchive &&
             leftRoomUpdate.hasData) {
           di<ChatModel>().leaveSelectedRoom(
-            onFail: (error) => showSnackBar(
-              context,
-              content: Text(error),
-            ),
+            onFail: (error) => showSnackBar(context, content: Text(error)),
           );
           showDialog(
             context: context,
@@ -139,9 +136,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     ),
                   );
                 } else {
-                  return const Center(
-                    child: Progress(),
-                  );
+                  return const Center(child: Progress());
                 }
               },
             ),

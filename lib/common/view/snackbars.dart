@@ -17,8 +17,9 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason>? showErrorSnackBar(
   String error,
 ) {
   if (!context.mounted) return null;
-  return ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text(error)));
+  return ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(error)));
 }
 
 class CopyClipboardContent extends StatefulWidget {
@@ -49,8 +50,9 @@ class _CopyClipboardContentState extends State<CopyClipboardContent> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final textColor =
-        theme.snackBarTheme.contentTextStyle?.color?.withValues(alpha: 0.8);
+    final textColor = theme.snackBarTheme.contentTextStyle?.color?.withValues(
+      alpha: 0.8,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
@@ -64,9 +66,7 @@ class _CopyClipboardContentState extends State<CopyClipboardContent> {
               children: [
                 Text(
                   context.l10n.copiedToClipboard,
-                  style: TextStyle(
-                    color: textColor,
-                  ),
+                  style: TextStyle(color: textColor),
                 ),
                 widget.child ??
                     Text(

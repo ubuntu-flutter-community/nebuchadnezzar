@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/rooms_filter.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
@@ -14,19 +15,25 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
+    final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
+    final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
+    final spaceSearchVisible = watchPropertyValue(
+      (SearchModel m) => m.spaceSearchVisible,
+    );
     final spaceSearch = watchPropertyValue((SearchModel m) => m.spaceSearch);
-    final spaceSearchL =
-        watchPropertyValue((SearchModel m) => m.spaceSearch?.length ?? 0);
+    final spaceSearchL = watchPropertyValue(
+      (SearchModel m) => m.spaceSearch?.length ?? 0,
+    );
     if (spaceSearch == null) {
       return const SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.all(kBigPadding),
-          child: Progress(),
-        ),
+        child: Padding(padding: EdgeInsets.all(kBigPadding), child: Progress()),
       );
     }
 
-    if (spaceSearch.isEmpty) {
+    if (!spaceSearchVisible ||
+        archiveActive ||
+        roomsFilter != RoomsFilter.spaces ||
+        spaceSearchL == 0) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
 
@@ -38,9 +45,7 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
           padding: const EdgeInsets.only(bottom: 5),
           child: YaruMasterTile(
             key: ValueKey(chunk.roomId),
-            leading: ChatAvatar(
-              avatarUri: chunk.avatarUrl,
-            ),
+            leading: ChatAvatar(avatarUri: chunk.avatarUrl),
             title: Text(chunk.name ?? chunk.roomId),
             subtitle: Tooltip(
               margin: const EdgeInsets.all(kBigPadding),

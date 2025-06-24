@@ -4,6 +4,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
+import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../settings_model.dart';
 import 'theme_tile.dart';
@@ -42,8 +43,9 @@ class ThemeSection extends StatelessWidget with WatchItMixin {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child:
-                              Text(ThemeMode.values[i].localize(context.l10n)),
+                          child: Text(
+                            ThemeMode.values[i].localize(context.l10n),
+                          ),
                         ),
                       ],
                     ),
@@ -59,8 +61,8 @@ class ThemeSection extends StatelessWidget with WatchItMixin {
 
 extension ThemeModeX on ThemeMode {
   String localize(AppLocalizations l10n) => switch (this) {
-        ThemeMode.system => l10n.systemTheme,
-        ThemeMode.dark => l10n.darkTheme,
-        ThemeMode.light => l10n.lightTheme
-      };
+    ThemeMode.system => l10n.systemTheme,
+    ThemeMode.dark => l10n.darkTheme,
+    ThemeMode.light => l10n.lightTheme,
+  };
 }

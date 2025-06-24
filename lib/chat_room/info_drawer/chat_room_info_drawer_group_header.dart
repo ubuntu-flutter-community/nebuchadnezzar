@@ -12,10 +12,7 @@ import '../create_or_edit/chat_create_or_edit_room_dialog.dart';
 import 'chat_room_info_drawer_avatar.dart';
 
 class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {
-  const ChatRoomInfoDrawerGroupHeader({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomInfoDrawerGroupHeader({super.key, required this.room});
 
   final Room room;
 
@@ -28,9 +25,7 @@ class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {
       leadingWidth: 80,
       leading: Center(
         child: ChatRoomInfoDrawerAvatar(
-          key: ValueKey(
-            '${room.id}${room.avatar} ',
-          ),
+          key: ValueKey('${room.id}${room.avatar} '),
           room: room,
         ),
       ),
@@ -41,9 +36,7 @@ class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {
             room.isArchived
                 ? Text(room.getLocalizedDisplayname())
                 : ChatRoomDisplayName(
-                    key: ValueKey(
-                      '${room.id}_name_,',
-                    ),
+                    key: ValueKey('${room.id}_name_,'),
                     room: room,
                   ),
             if (room.canonicalAlias.isNotEmpty)
@@ -51,14 +44,13 @@ class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {
                 borderRadius: BorderRadius.circular(kSmallPadding),
                 onTap: () => showSnackBar(
                   context,
-                  content: CopyClipboardContent(
-                    text: room.canonicalAlias,
-                  ),
+                  content: CopyClipboardContent(text: room.canonicalAlias),
                 ),
                 child: Text(
                   room.canonicalAlias,
-                  style: textTheme.labelSmall
-                      ?.copyWith(color: theme.colorScheme.link),
+                  style: textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.link,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -72,8 +64,9 @@ class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {
           ],
         ),
       ),
-      titleTextStyle:
-          textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
+      titleTextStyle: textTheme.bodyMedium?.copyWith(
+        fontWeight: FontWeight.w500,
+      ),
       automaticallyImplyLeading: false,
       actions: [
         Flexible(
@@ -86,10 +79,10 @@ class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {
             child: IconButton(
               onPressed: !room.isArchived && room.canEditAtleastSomething
                   ? () => showDialog(
-                        context: context,
-                        builder: (context) =>
-                            ChatCreateOrEditRoomDialog(room: room),
-                      )
+                      context: context,
+                      builder: (context) =>
+                          ChatCreateOrEditRoomDialog(room: room),
+                    )
                   : null,
               icon: const Icon(YaruIcons.pen),
             ),

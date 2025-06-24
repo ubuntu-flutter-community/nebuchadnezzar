@@ -55,9 +55,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
           child: hideAvatar && event.messageType == MessageTypes.Text
-              ? const SizedBox.square(
-                  dimension: kAvatarDefaultSize,
-                )
+              ? const SizedBox.square(dimension: kAvatarDefaultSize)
               : ChatAvatar(
                   avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
                   onTap: () => showDialog(
@@ -65,8 +63,9 @@ class ChatMessageBubbleContent extends StatelessWidget {
                     builder: (context) =>
                         ChatProfileDialog(userId: event.senderId),
                   ),
-                  fallBackColor: avatarFallbackColor(context.colorScheme)
-                      .scale(saturation: -1),
+                  fallBackColor: avatarFallbackColor(
+                    context.colorScheme,
+                  ).scale(saturation: -1),
                 ),
         ),
         Flexible(
@@ -75,23 +74,20 @@ class ChatMessageBubbleContent extends StatelessWidget {
             child: Stack(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: kMediumPadding),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kMediumPadding,
+                  ),
                   decoration: BoxDecoration(
-                    color: getTileColor(
-                      event.isUserEvent,
-                      context.theme,
+                    color: getTileColor(event.isUserEvent, context.theme),
+                    borderRadius: messageBubbleShape.getBorderRadius(
+                      partOfMessageCohort,
                     ),
-                    borderRadius:
-                        messageBubbleShape.getBorderRadius(partOfMessageCohort),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(
-                        height: kSmallPadding,
-                      ),
+                      const SizedBox(height: kSmallPadding),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -121,49 +117,50 @@ class ChatMessageBubbleContent extends StatelessWidget {
                             )
                           : switch ((event.messageType, event.hasThumbnail)) {
                               (MessageTypes.Image, _) => ChatImage(
-                                  fit: BoxFit.contain,
-                                  timeline: timeline,
-                                  event: event,
-                                  onTap: event.isSvgImage
-                                      ? null
-                                      : () => showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                ChatMessageImageFullScreenDialog(
+                                fit: BoxFit.contain,
+                                timeline: timeline,
+                                event: event,
+                                onTap: event.isSvgImage
+                                    ? null
+                                    : () => showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            ChatMessageImageFullScreenDialog(
                                               event: event,
                                             ),
-                                          ),
-                                ),
+                                      ),
+                              ),
                               // TODO: #5
                               (MessageTypes.Video, true) => ChatImage(
-                                  fit: BoxFit.contain,
-                                  timeline: timeline,
-                                  event: event,
-                                  onTap: () => showDialog(
-                                    context: context,
-                                    builder: (context) =>
-                                        ChatMessageImageFullScreenDialog(
-                                      event: event,
-                                      getThumbnail: true,
-                                    ),
-                                  ),
+                                fit: BoxFit.contain,
+                                timeline: timeline,
+                                event: event,
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (context) =>
+                                      ChatMessageImageFullScreenDialog(
+                                        event: event,
+                                        getThumbnail: true,
+                                      ),
                                 ),
+                              ),
                               (MessageTypes.Location, _) => ChatMap(
-                                  event: event,
-                                  partOfMessageCohort: partOfMessageCohort,
-                                  timeline: timeline,
-                                  onReplyOriginClick: onReplyOriginClick,
-                                ),
+                                event: event,
+                                partOfMessageCohort: partOfMessageCohort,
+                                timeline: timeline,
+                                onReplyOriginClick: onReplyOriginClick,
+                              ),
                               // TODO: #5
                               (
                                 MessageTypes.Audio ||
                                     MessageTypes.File ||
                                     MessageTypes.Video,
-                                _
+                                _,
                               ) =>
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: kSmallPadding),
+                                  padding: const EdgeInsets.only(
+                                    top: kSmallPadding,
+                                  ),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -180,24 +177,22 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                         tooltip: l10n.downloadFile,
                                         onPressed: () =>
                                             di<ChatDownloadModel>().safeFile(
-                                          event: event,
-                                          dialogTitle: l10n.saveFile,
-                                          confirmButtonText: l10n.saveFile,
-                                        ),
+                                              event: event,
+                                              dialogTitle: l10n.saveFile,
+                                              confirmButtonText: l10n.saveFile,
+                                            ),
                                         icon: const Icon(YaruIcons.download),
                                       ),
                                     ],
                                   ),
                                 ),
                               _ => ChatTextMessage(
-                                  event: event,
-                                  displayEvent: displayEvent,
-                                  messageStyle: messageStyle,
-                                ),
+                                event: event,
+                                displayEvent: displayEvent,
+                                messageStyle: messageStyle,
+                              ),
                             },
-                      const SizedBox(
-                        height: kBigPadding,
-                      ),
+                      const SizedBox(height: kBigPadding),
                     ],
                   ),
                 ),
@@ -207,19 +202,13 @@ class ChatMessageBubbleContent extends StatelessWidget {
                     right: kSmallPadding,
                     child: GestureDetector(
                       onTap: () => event.togglePinned(),
-                      child: const Icon(
-                        YaruIcons.pin,
-                        size: 15,
-                      ),
+                      child: const Icon(YaruIcons.pin, size: 15),
                     ),
                   ),
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: ChatEventStatusIcon(
-                    event: event,
-                    timeline: timeline,
-                  ),
+                  child: ChatEventStatusIcon(event: event, timeline: timeline),
                 ),
               ],
             ),

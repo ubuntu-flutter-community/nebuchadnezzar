@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
@@ -15,8 +13,8 @@ class DraftModel extends SafeChangeNotifier {
   DraftModel({
     required Client client,
     required LocalImageService localImageService,
-  })  : _client = client,
-        _localImageService = localImageService;
+  }) : _client = client,
+       _localImageService = localImageService;
 
   final Client _client;
   final LocalImageService _localImageService;
@@ -149,19 +147,12 @@ class DraftModel extends SafeChangeNotifier {
   int get filesDraftLength => _filesDrafts.length;
   Map<String, List<MatrixFile>> get filesDrafts => _filesDrafts;
   List<MatrixFile> getFilesDraft(String roomId) => _filesDrafts[roomId] ?? [];
-  void addFileToDraft({
-    required String roomId,
-    required MatrixFile file,
-  }) {
+  void addFileToDraft({required String roomId, required MatrixFile file}) {
     final files = _filesDrafts[roomId] ?? [];
     if (!files.contains(file)) {
       files.add(file);
       _localImageService.put(id: file.name, data: file.bytes);
-      _filesDrafts.update(
-        roomId,
-        (value) => files,
-        ifAbsent: () => files,
-      );
+      _filesDrafts.update(roomId, (value) => files, ifAbsent: () => files);
     }
     notifyListeners();
   }
@@ -170,10 +161,7 @@ class DraftModel extends SafeChangeNotifier {
     final files = _filesDrafts[roomId] ?? [];
     if (files.contains(file)) {
       files.remove(file);
-      _filesDrafts.update(
-        roomId,
-        (value) => files,
-      );
+      _filesDrafts.update(roomId, (value) => files);
       notifyListeners();
     }
     if (getFilesDraft(roomId).isEmpty) {
@@ -197,11 +185,7 @@ class DraftModel extends SafeChangeNotifier {
     } else {
       files.add(file);
     }
-    _toCompressFiles.update(
-      roomId,
-      (value) => files,
-      ifAbsent: () => files,
-    );
+    _toCompressFiles.update(roomId, (value) => files, ifAbsent: () => files);
     notifyListeners();
   }
 
@@ -233,7 +217,7 @@ class DraftModel extends SafeChangeNotifier {
     List<XFile>? xFiles = existingFiles;
 
     if (xFiles == null) {
-      if (Platform.isLinux) {
+      if (Platforms.isLinux) {
         xFiles = await openFiles();
       } else {
         final result = await FilePicker.platform.pickFiles(
@@ -241,12 +225,7 @@ class DraftModel extends SafeChangeNotifier {
           type: FileType.any,
         );
         xFiles = result?.files
-            .map(
-              (f) => XFile(
-                f.path!,
-                mimeType: lookupMimeType(f.path!),
-              ),
-            )
+            .map((f) => XFile(f.path!, mimeType: lookupMimeType(f.path!)))
             .toList();
       }
     }
@@ -268,8 +247,11 @@ class DraftModel extends SafeChangeNotifier {
           mimeType: mime,
         );
       } else if (mime?.startsWith('video') == true) {
-        matrixFile =
-            MatrixVideoFile(bytes: bytes, name: xFile.name, mimeType: mime);
+        matrixFile = MatrixVideoFile(
+          bytes: bytes,
+          name: xFile.name,
+          mimeType: mime,
+        );
         _matrixFilesToXFile.update(
           matrixFile,
           (v) => xFile,
@@ -283,10 +265,7 @@ class DraftModel extends SafeChangeNotifier {
         );
       }
 
-      addFileToDraft(
-        roomId: roomId,
-        file: matrixFile,
-      );
+      addFileToDraft(roomId: roomId, file: matrixFile);
     }
 
     setAttaching(false);
@@ -324,10 +303,7 @@ class DraftModel extends SafeChangeNotifier {
     try {
       final bytes = await VideoCompress.getByteThumbnail(xFile.path);
       if (bytes == null) return null;
-      return MatrixImageFile(
-        bytes: bytes,
-        name: xFile.name,
-      );
+      return MatrixImageFile(bytes: bytes, name: xFile.name);
     } catch (e, s) {
       Logs().w('Error while compressing video', e, s);
     }
@@ -367,7 +343,7 @@ class DraftModel extends SafeChangeNotifier {
 
     try {
       XFile? xFile;
-      if (Platform.isLinux) {
+      if (Platforms.isLinux) {
         xFile = await openFile();
       } else {
         final result = await FilePicker.platform.pickFiles(
@@ -375,12 +351,7 @@ class DraftModel extends SafeChangeNotifier {
           type: FileType.image,
         );
         xFile = result?.files
-            .map(
-              (f) => XFile(
-                f.path!,
-                mimeType: lookupMimeType(f.path!),
-              ),
-            )
+            .map((f) => XFile(f.path!, mimeType: lookupMimeType(f.path!)))
             .toList()
             .firstOrNull;
       }

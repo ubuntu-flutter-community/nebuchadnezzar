@@ -13,10 +13,7 @@ class CommonSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return yaru
-        ? YaruSwitch(
-            value: value,
-            onChanged: onChanged,
-          )
+        ? YaruSwitch(value: value, onChanged: onChanged)
         : Switch(value: value, onChanged: onChanged);
   }
 }
@@ -30,10 +27,7 @@ class CommonCheckBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return yaru
-        ? YaruCheckbox(
-            value: value,
-            onChanged: onChanged,
-          )
+        ? YaruCheckbox(value: value, onChanged: onChanged)
         : Checkbox(value: value, onChanged: onChanged);
   }
 }
@@ -51,10 +45,7 @@ class ImportantButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return yaru
-        ? ElevatedButton(
-            onPressed: onPressed,
-            child: child,
-          )
+        ? ElevatedButton(onPressed: onPressed, child: child)
         : FilledButton(onPressed: onPressed, child: child);
   }
 }
@@ -74,16 +65,8 @@ class ImportantButtonWithIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return yaru
-        ? ElevatedButton.icon(
-            onPressed: onPressed,
-            icon: icon,
-            label: label,
-          )
-        : FilledButton.icon(
-            onPressed: onPressed,
-            icon: icon,
-            label: label,
-          );
+        ? ElevatedButton.icon(onPressed: onPressed, icon: icon, label: label)
+        : FilledButton.icon(onPressed: onPressed, icon: icon, label: label);
   }
 }
 
@@ -127,7 +110,7 @@ class Progress extends StatelessWidget {
             backgroundColor: value == null
                 ? null
                 : (backgroundColor ??
-                    context.theme.colorScheme.primary.withValues(alpha: 0.3)),
+                      context.theme.colorScheme.primary.withValues(alpha: 0.3)),
           );
   }
 }
