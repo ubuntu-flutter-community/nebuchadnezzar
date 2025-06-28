@@ -26,13 +26,7 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
     ).data;
 
     if (typingUsers.isEmpty) {
-      return _LastEvent(
-        key: ValueKey(
-          '${lastEvent?.eventId}_${lastEvent?.type}_${lastEvent?.redacted}',
-        ),
-        lastEvent: room.lastEvent,
-        fallbackText: room.membership == Membership.invite ? room.name : null,
-      );
+      return ChatRoomLastEvent(lastEvent: lastEvent);
     }
 
     return Text(
@@ -47,56 +41,35 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
   }
 }
 
-class _LastEvent extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const _LastEvent({required this.lastEvent, super.key, this.fallbackText});
+class ChatRoomLastEvent extends StatelessWidget {
+  const ChatRoomLastEvent({required this.lastEvent, super.key});
 
   final Event? lastEvent;
-  final String? fallbackText;
-
-  @override
-  State<_LastEvent> createState() => _LastEventState();
-}
-
-class _LastEventState extends State<_LastEvent> {
-  late Future<String> _future;
-
-  static final Map<String, String> _cache = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _future =
-        widget.lastEvent != null &&
-            !widget.lastEvent!.redacted &&
-            _cache.containsKey(widget.lastEvent!.eventId) &&
-            widget.lastEvent?.type != EventTypes.Encrypted
-        ? Future.value(_cache[widget.lastEvent!.eventId]!)
-        : widget.lastEvent?.calcLocalizedBody(
-                const MatrixDefaultLocalizations(),
-                hideReply: true,
-                hideEdit: false,
-                plaintextBody: true,
-              ) ??
-              Future.value(widget.lastEvent?.body ?? '');
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.lastEvent != null &&
-        _cache.containsKey(widget.lastEvent!.eventId) &&
-        widget.lastEvent!.redacted == false) {
-      return Text(_cache[widget.lastEvent!.eventId]!, maxLines: 1);
-    }
-
-    return FutureBuilder(
-      future: _future,
+    return FutureBuilder<String>(
+      key: ValueKey(
+        '${lastEvent?.eventId}_${lastEvent?.type}_${lastEvent?.redacted}}',
+      ),
+      future: lastEvent?.calcLocalizedBody(
+        const MatrixDefaultLocalizations(),
+        hideReply: true,
+        plaintextBody: true,
+        withSenderNamePrefix: true,
+      ),
+      initialData: lastEvent?.calcLocalizedBodyFallback(
+        const MatrixDefaultLocalizations(),
+        hideReply: true,
+        plaintextBody: true,
+        withSenderNamePrefix: true,
+      ),
       builder: (context, snapshot) {
-        if (snapshot.hasData && widget.lastEvent != null) {
-          _cache[widget.lastEvent!.eventId] = snapshot.data!;
+        if (snapshot.hasData && lastEvent != null) {
           return Text(snapshot.data!, maxLines: 1);
         }
 
-        return Text(widget.fallbackText ?? ' ', maxLines: 1);
+        return Text(context.l10n.emptyChat, maxLines: 1);
       },
     );
   }

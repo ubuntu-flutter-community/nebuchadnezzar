@@ -7,12 +7,9 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
 
-class ChatRoomDialogHistoryVisibilityDropDown extends StatelessWidget
+class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
     with WatchItMixin {
-  const ChatRoomDialogHistoryVisibilityDropDown({
-    super.key,
-    required this.room,
-  });
+  const ChatRoomHistoryVisibilityDropDown({super.key, required this.room});
 
   final Room room;
 
@@ -51,6 +48,35 @@ class ChatRoomDialogHistoryVisibilityDropDown extends StatelessWidget
             .map((e) => PopupMenuItem(value: e, child: Text(e.localize(l10n))))
             .toList(),
         child: Text(room.historyVisibility?.localize(l10n) ?? ''),
+      ),
+    );
+  }
+}
+
+class ChatCreateRoomHistoryVisibilityDropDown extends StatelessWidget {
+  const ChatCreateRoomHistoryVisibilityDropDown({
+    super.key,
+    required this.initialValue,
+    required this.onSelected,
+  });
+
+  final HistoryVisibility initialValue;
+  final void Function(HistoryVisibility historyVisibility) onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return YaruTile(
+      leading: const Icon(YaruIcons.private_mask),
+      padding: const EdgeInsets.symmetric(horizontal: kMediumPadding),
+      title: Text(l10n.visibilityOfTheChatHistory),
+      trailing: YaruPopupMenuButton<HistoryVisibility>(
+        initialValue: initialValue,
+        onSelected: onSelected,
+        itemBuilder: (context) => HistoryVisibility.values
+            .map((e) => PopupMenuItem(value: e, child: Text(e.localize(l10n))))
+            .toList(),
+        child: Text(initialValue.localize(l10n)),
       ),
     );
   }

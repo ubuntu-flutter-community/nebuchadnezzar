@@ -109,10 +109,15 @@ class ChatMessageBubbleContent extends StatelessWidget {
                         ],
                       ),
                       event.redacted
-                          ? LocalizedDisplayEventText(
-                              displayEvent: displayEvent,
-                              style: messageStyle?.copyWith(
-                                decoration: TextDecoration.lineThrough,
+                          ? AnimatedOpacity(
+                              opacity: event.redacted ? 0.5 : 1.0,
+                              duration: const Duration(milliseconds: 500),
+
+                              child: LocalizedDisplayEventText(
+                                displayEvent: displayEvent,
+                                style: messageStyle?.copyWith(
+                                  decoration: TextDecoration.lineThrough,
+                                ),
                               ),
                             )
                           : switch ((event.messageType, event.hasThumbnail)) {

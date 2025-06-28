@@ -18,7 +18,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../input/draft_model.dart';
 import 'chat_room_create_or_edit_avatar.dart';
-import 'chat_room_dialog_history_visibility_drop_down.dart';
+import 'chat_room_history_visibility_drop_down.dart';
 import 'chat_room_permissions.dart';
 import '../common/view/chat_room_users_list.dart';
 
@@ -39,6 +39,7 @@ class ChatCreateOrEditRoomDialog extends StatefulWidget
 class _ChatCreateOrEditRoomDialogState
     extends State<ChatCreateOrEditRoomDialog> {
   late Visibility _visibility;
+  late HistoryVisibility _historyVisibility;
   Set<Profile> _profiles = {};
   late final bool _isSpace;
   String? _groupName;
@@ -68,6 +69,8 @@ class _ChatCreateOrEditRoomDialogState
     _visibility = (widget.room?.joinRules == JoinRules.public
         ? Visibility.public
         : Visibility.private);
+    _historyVisibility =
+        widget.room?.historyVisibility ?? HistoryVisibility.shared;
     _profiles =
         widget.room
             ?.getParticipants()
@@ -89,6 +92,7 @@ class _ChatCreateOrEditRoomDialogState
   @override
   void dispose() {
     _groupNameController.dispose();
+    _groupTopicController.dispose();
     super.dispose();
   }
 
@@ -289,13 +293,26 @@ class _ChatCreateOrEditRoomDialogState
                                               widget.room?.encrypted == false) {
                                             widget.room?.enableEncryption();
                                           }
+
+                                          if (!_enableEncryption &&
+                                              widget.room == null) {
+                                            setState(() {
+                                              _visibility = Visibility.public;
+                                            });
+                                          }
                                         },
                                 ),
                                 title: Text(l10n.encrypted),
                               ),
                             if (widget.room != null)
-                              ChatRoomDialogHistoryVisibilityDropDown(
+                              ChatRoomHistoryVisibilityDropDown(
                                 room: widget.room!,
+                              )
+                            else if (!_isSpace)
+                              ChatCreateRoomHistoryVisibilityDropDown(
+                                initialValue: _historyVisibility,
+                                onSelected: (v) =>
+                                    setState(() => _historyVisibility = v),
                               ),
                             if (!_existingGroup)
                               YaruTile(
@@ -448,6 +465,7 @@ class _ChatCreateOrEditRoomDialogState
                                       .toList(),
                                   groupName: _groupName,
                                   visibility: _visibility,
+                                  historyVisibility: _historyVisibility,
                                   onFail: (error) => showSnackBar(
                                     context,
                                     content: Text(error),

@@ -3,6 +3,7 @@ import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../common/view/chat_room_users_list.dart';
 import 'chat_room_info_drawer_topic.dart';
@@ -21,11 +22,31 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
     return YaruExpansionPanel(
       border: Border.all(color: Colors.transparent),
       placeDividers: false,
-      headers: [
-        Text(l10n.chatDescription, style: theme.textTheme.titleSmall),
-        Text(l10n.users, style: theme.textTheme.titleSmall),
-        ChatRoomMediaGridHeadline(room: room),
-      ],
+      headers:
+          [
+                Row(
+                  spacing: kSmallPadding,
+                  children: [
+                    const Icon(YaruIcons.chat_text),
+                    Text(
+                      l10n.chatDescription,
+                      style: theme.textTheme.titleSmall,
+                    ),
+                  ],
+                ),
+                Row(
+                  spacing: kSmallPadding,
+                  children: [
+                    const Icon(YaruIcons.users),
+                    Text(l10n.users, style: theme.textTheme.titleSmall),
+                  ],
+                ),
+                ChatRoomMediaGridHeadline(room: room),
+              ]
+              .map(
+                (e) => MouseRegion(cursor: SystemMouseCursors.click, child: e),
+              )
+              .toList(),
       children: [
         ChatRoomInfoDrawerTopic(key: ValueKey('${room.id}_topic'), room: room),
         SizedBox(
