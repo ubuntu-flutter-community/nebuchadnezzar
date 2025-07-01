@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
@@ -292,9 +294,8 @@ class ChatModel extends SafeChangeNotifier {
     String? groupName,
     bool enableEncryption = true,
     List<String>? invite,
-    CreateRoomPreset preset = CreateRoomPreset.trustedPrivateChat,
     List<StateEvent>? initialState,
-    Visibility? visibility,
+    required JoinRules joinRules,
     HistoryVisibility? historyVisibility,
     bool waitForSync = true,
     bool groupCall = false,
@@ -311,9 +312,11 @@ class ChatModel extends SafeChangeNotifier {
         groupName: groupName,
         enableEncryption: enableEncryption,
         invite: invite,
-        preset: preset,
         initialState: initialState,
-        visibility: visibility,
+        visibility: joinRules == JoinRules.private
+            ? Visibility.private
+            : Visibility.public,
+
         historyVisibility: historyVisibility,
         waitForSync: waitForSync,
         groupCall: groupCall,
@@ -344,7 +347,7 @@ class ChatModel extends SafeChangeNotifier {
 
   Future<String?> createSpace({
     required String name,
-    Visibility visibility = Visibility.public,
+    required JoinRules joinRules,
     List<String>? invite,
     List<Invite3pid>? invite3pid,
     String? roomVersion,
@@ -360,7 +363,9 @@ class ChatModel extends SafeChangeNotifier {
       printMessageInDebugMode('Creating space...');
       spaceRoomId = await _client.createSpace(
         name: name,
-        visibility: visibility,
+        visibility: joinRules == JoinRules.private
+            ? Visibility.private
+            : Visibility.public,
         invite: invite,
         invite3pid: invite3pid,
         roomVersion: roomVersion,

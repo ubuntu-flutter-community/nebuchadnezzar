@@ -10,7 +10,6 @@ import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/common_widgets.dart';
-import '../../common/view/mxc_image.dart';
 import '../../common/view/space.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
@@ -121,47 +120,29 @@ class _Reaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (reactionKey.startsWith('mxc://')) {
+      return const SizedBox.shrink();
+    }
+
     final theme = context.theme;
     final textColor = theme.brightness == Brightness.dark
         ? Colors.white
         : Colors.black;
     final color = theme.colorScheme.surface;
-    Widget content;
-    if (reactionKey.startsWith('mxc://')) {
-      content = Row(
-        spacing: kSmallPadding,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MxcImage(
-            uri: Uri.parse(reactionKey),
-            width: kBigPadding,
-            height: kBigPadding,
-          ),
-          if (count > 1) ...[
-            Text(
-              count.toString(),
-              style: TextStyle(
-                color: textColor,
-                fontSize: DefaultTextStyle.of(context).style.fontSize,
-              ),
-            ),
-          ],
-        ],
-      );
-    } else {
-      var renderKey = Characters(reactionKey);
-      if (renderKey.length > 10) {
-        renderKey = renderKey.getRange(0, 9) + Characters('…');
-      }
-      content = Text(
-        renderKey.toString() + (count > 1 ? ' $count' : ''),
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: textColor,
-          fontSize: DefaultTextStyle.of(context).style.fontSize,
-        ),
-      );
+
+    var renderKey = Characters(reactionKey);
+    if (renderKey.length > 10) {
+      renderKey = renderKey.getRange(0, 9) + Characters('…');
     }
+    final content = Text(
+      renderKey.toString() + (count > 1 ? ' $count' : ''),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: textColor,
+        fontSize: DefaultTextStyle.of(context).style.fontSize,
+      ),
+    );
+
     return InkWell(
       onTap: () => onTap != null ? onTap!() : null,
       onLongPress: () => onLongPress != null ? onLongPress!() : null,

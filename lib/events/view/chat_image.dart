@@ -15,7 +15,6 @@ class ChatImage extends StatelessWidget with WatchItMixin {
   const ChatImage({
     super.key,
     required this.event,
-    required this.timeline,
     this.dimension,
     this.height,
     this.fit,
@@ -25,7 +24,6 @@ class ChatImage extends StatelessWidget with WatchItMixin {
   });
 
   final Event event;
-  final Timeline timeline;
   final double? dimension;
   final double? height;
   final double width;

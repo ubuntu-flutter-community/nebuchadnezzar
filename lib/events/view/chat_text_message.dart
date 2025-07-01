@@ -21,11 +21,7 @@ class ChatTextMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => event.isRichMessage
-      ? HtmlMessage(
-          html: event.formattedText,
-          room: event.room,
-          style: messageStyle,
-        )
+      ? HtmlMessage(event: event, style: messageStyle)
       : Linkify(
           text: displayEvent.body,
           style: messageStyle,

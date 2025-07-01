@@ -123,7 +123,6 @@ class ChatMessageBubbleContent extends StatelessWidget {
                           : switch ((event.messageType, event.hasThumbnail)) {
                               (MessageTypes.Image, _) => ChatImage(
                                 fit: BoxFit.contain,
-                                timeline: timeline,
                                 event: event,
                                 onTap: event.isSvgImage
                                     ? null
@@ -138,7 +137,6 @@ class ChatMessageBubbleContent extends StatelessWidget {
                               // TODO: #5
                               (MessageTypes.Video, true) => ChatImage(
                                 fit: BoxFit.contain,
-                                timeline: timeline,
                                 event: event,
                                 onTap: () => showDialog(
                                   context: context,
