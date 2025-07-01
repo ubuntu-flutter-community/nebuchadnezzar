@@ -141,7 +141,6 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
             MessageTypes.Image => ChatImage(
               dimension: 200,
               event: event,
-              timeline: timeline,
               onTap: event.isSvgImage
                   ? null
                   : () => showDialog(

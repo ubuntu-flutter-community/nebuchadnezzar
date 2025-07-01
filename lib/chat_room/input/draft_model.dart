@@ -79,6 +79,8 @@ class DraftModel extends SafeChangeNotifier {
 
           eventId = await room.sendFileEvent(
             compressedFile ?? matrixFile,
+            inReplyTo: replyEvent,
+            editEventId: _editEvents[room.id]?.eventId,
             thumbnail: matrixFile.mimeType.startsWith('video') && xFile != null
                 ? await getVideoThumbnail(xFile)
                 : null,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -41,8 +42,12 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
       title: Text(l10n.visibilityOfTheChatHistory),
       trailing: YaruPopupMenuButton<HistoryVisibility>(
         initialValue: vis,
+        enabled: canChangeHistoryVisibility,
         onSelected: canChangeHistoryVisibility
-            ? (v) => room.setHistoryVisibility(v)
+            ? (v) => showFutureLoadingDialog(
+                context: context,
+                future: () => room.setHistoryVisibility(v),
+              )
             : null,
         itemBuilder: (context) => HistoryVisibility.values
             .map((e) => PopupMenuItem(value: e, child: Text(e.localize(l10n))))

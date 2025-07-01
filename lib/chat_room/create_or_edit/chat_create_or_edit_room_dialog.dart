@@ -19,6 +19,7 @@ import '../../l10n/l10n.dart';
 import '../input/draft_model.dart';
 import 'chat_room_create_or_edit_avatar.dart';
 import 'chat_room_history_visibility_drop_down.dart';
+import 'chat_room_join_rules_drop_down.dart';
 import 'chat_room_permissions.dart';
 import '../common/view/chat_room_users_list.dart';
 
@@ -38,7 +39,7 @@ class ChatCreateOrEditRoomDialog extends StatefulWidget
 
 class _ChatCreateOrEditRoomDialogState
     extends State<ChatCreateOrEditRoomDialog> {
-  late Visibility _visibility;
+  late JoinRules _joinRules;
   late HistoryVisibility _historyVisibility;
   Set<Profile> _profiles = {};
   late final bool _isSpace;
@@ -66,9 +67,7 @@ class _ChatCreateOrEditRoomDialogState
     _groupCall = widget.room?.hasActiveGroupCall ?? false;
     _groupNameController = TextEditingController(text: _groupName);
     _groupTopicController = TextEditingController(text: _topic);
-    _visibility = (widget.room?.joinRules == JoinRules.public
-        ? Visibility.public
-        : Visibility.private);
+    _joinRules = widget.room?.joinRules ?? JoinRules.private;
     _historyVisibility =
         widget.room?.historyVisibility ?? HistoryVisibility.shared;
     _profiles =
@@ -293,13 +292,6 @@ class _ChatCreateOrEditRoomDialogState
                                               widget.room?.encrypted == false) {
                                             widget.room?.enableEncryption();
                                           }
-
-                                          if (!_enableEncryption &&
-                                              widget.room == null) {
-                                            setState(() {
-                                              _visibility = Visibility.public;
-                                            });
-                                          }
                                         },
                                 ),
                                 title: Text(l10n.encrypted),
@@ -314,42 +306,13 @@ class _ChatCreateOrEditRoomDialogState
                                 onSelected: (v) =>
                                     setState(() => _historyVisibility = v),
                               ),
-                            if (!_existingGroup)
-                              YaruTile(
-                                leading: _visibility == Visibility.private
-                                    ? const Icon(YaruIcons.private_mask_filled)
-                                    : const Icon(YaruIcons.private_mask),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: kMediumPadding,
-                                ),
-                                title: _visibility == Visibility.private
-                                    ? Text(l10n.guestsCanJoin)
-                                    : Text(l10n.anyoneCanJoin),
-                                trailing: CommonSwitch(
-                                  value: _visibility == Visibility.private,
-                                  onChanged:
-                                      widget.room?.canChangeStateEvent(
-                                            EventTypes.RoomJoinRules,
-                                          ) ==
-                                          false
-                                      ? null
-                                      : (v) {
-                                          if (v) {
-                                            widget.room?.setJoinRules(
-                                              JoinRules.public,
-                                            );
-                                          } else {
-                                            widget.room?.setJoinRules(
-                                              JoinRules.private,
-                                            );
-                                          }
-                                          setState(
-                                            () => _visibility = v
-                                                ? Visibility.private
-                                                : Visibility.public,
-                                          );
-                                        },
-                                ),
+                            if (widget.room != null)
+                              ChatRoomJoinRulesDropDown(room: widget.room!)
+                            else
+                              ChatCreateRoomJoinRulesDropDown(
+                                joinRules: _joinRules,
+                                onSelected: (v) =>
+                                    setState(() => _joinRules = v),
                               ),
                           ],
                         ),
@@ -446,7 +409,7 @@ class _ChatCreateOrEditRoomDialogState
                                   invite: _profiles
                                       .map((p) => p.userId)
                                       .toList(),
-                                  visibility: _visibility,
+                                  joinRules: _joinRules,
                                   onFail: (error) => showSnackBar(
                                     context,
                                     content: Text(error),
@@ -459,12 +422,11 @@ class _ChatCreateOrEditRoomDialogState
                                 di<ChatModel>().createRoom(
                                   avatarFile: avatarDraftFile,
                                   enableEncryption: _enableEncryption,
-                                  preset: CreateRoomPreset.publicChat,
                                   invite: _profiles
                                       .map((p) => p.userId)
                                       .toList(),
                                   groupName: _groupName,
-                                  visibility: _visibility,
+                                  joinRules: _joinRules,
                                   historyVisibility: _historyVisibility,
                                   onFail: (error) => showSnackBar(
                                     context,
