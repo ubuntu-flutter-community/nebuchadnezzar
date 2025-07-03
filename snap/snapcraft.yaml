@@ -58,6 +58,9 @@ parts:
       fvm flutter build linux --release -v
       mkdir -p $CRAFT_PART_INSTALL/bin/
       cp -r build/linux/*/release/bundle/* $CRAFT_PART_INSTALL/bin/
+    build-packages:
+      - libssl-dev
+      - libpciaccess-dev
 
   deps:
     plugin: nil
@@ -65,5 +68,6 @@ parts:
       - libsecret-1-0
       - libjsoncpp25
       - libpciaccess0
+      - libssl
     prime:
       - usr/lib/*/*.so*

@@ -17,7 +17,7 @@
 #### Install system dev libraries for persistence, encryption and notifications
 
 ```
-sudo apt install libcrypto++-dev libsecret-1-dev libjsoncpp-dev libnotify-dev  libjsoncpp1 libsecret-1-0 librhash0 libwebkit2gtk-4.0-dev
+sudo apt install libcrypto++-dev libsecret-1-dev libjsoncpp-dev libnotify-dev  libjsoncpp1 libsecret-1-0 librhash0 libwebkit2gtk-4.0-dev libssl-dev libpciaccess-dev
 ```
 
 #### Run
