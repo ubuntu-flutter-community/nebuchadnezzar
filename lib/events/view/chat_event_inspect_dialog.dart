@@ -48,9 +48,7 @@ class ChatEventInspectDialog extends StatelessWidget {
             ),
             ListTile(
               title: Text('${l10n.time}:'),
-              subtitle: Text(
-                event.originServerTs.formatAndLocalize(context.l10n),
-              ),
+              subtitle: Text(event.originServerTs.formatAndLocalize(context)),
             ),
             ListTile(
               title: Text('${l10n.status}:'),

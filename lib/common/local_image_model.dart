@@ -24,22 +24,6 @@ class LocalImageModel extends SafeChangeNotifier {
     bool getThumbnail = true,
   }) async => _service.downloadImage(event: event, getThumbnail: getThumbnail);
 
-  Future<Uint8List?> downloadMxcCached({
-    required Uri uri,
-    num? width,
-    num? height,
-    ThumbnailMethod? thumbnailMethod,
-    bool isThumbnail = false,
-    bool? animated,
-  }) async => _service.downloadMxcCached(
-    uri: uri,
-    width: width,
-    height: height,
-    thumbnailMethod: thumbnailMethod,
-    isThumbnail: isThumbnail,
-    animated: animated,
-  );
-
   @override
   Future<void> dispose() async {
     await _propertiesChangedSub?.cancel();

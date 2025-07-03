@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
@@ -49,7 +48,7 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
     ),
-    leading: !Platform.isMacOS && !context.showSideBar
+    leading: !Platforms.isMacOS && !context.showSideBar
         ? const SideBarButton()
         : null,
     actions: space(
@@ -73,7 +72,7 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
               ? const Icon(YaruIcons.user)
               : const Icon(YaruIcons.information),
         ),
-        if (!context.showSideBar && !kIsWeb && Platform.isMacOS)
+        if (!context.showSideBar && !kIsWeb && Platforms.isMacOS)
           const SideBarButton(),
         const SizedBox(width: kSmallPadding),
       ].map((e) => Flexible(child: e)).toList(),

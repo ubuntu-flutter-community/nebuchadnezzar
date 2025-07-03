@@ -1,18 +1,18 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
+import '../l10n/l10n.dart';
 
 extension DateTimeX on DateTime {
-  String formatAndLocalize(AppLocalizations l10n, {bool simple = false}) {
+  String formatAndLocalize(BuildContext context, {bool simple = false}) {
     final now = DateTime.now();
+    final l10n = context.l10n;
 
-    final countryCode =
-        Platform.localeName == 'und' || Platform.localeName == 'US'
-        ? 'en'
-        : Platform.localeName;
+    var localeName = WidgetsBinding.instance.platformDispatcher.locale
+        .toString();
+    var bool = localeName == 'und' || localeName == 'US';
+    final countryCode = bool ? 'en' : localeName;
 
     if (!simple && year == now.year && month == now.month) {
       if (day == now.day - 1) {
