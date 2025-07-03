@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file/file.dart' hide FileSystem;
 import 'package:file/local.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -60,7 +59,7 @@ class SafeNetworkImage extends StatelessWidget {
         );
       }
 
-      if (kIsWeb) {
+      if (Platforms.isWeb) {
         return Image.network(
           url!,
           headers: httpHeaders,

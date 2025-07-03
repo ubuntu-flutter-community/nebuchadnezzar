@@ -30,10 +30,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_map: ^8.1.0
-  flutter_olm: ^2.0.0
   flutter_openssl_crypto: ^0.5.0
   flutter_secure_storage: ^9.2.2
   flutter_svg: ^2.0.16
+  flutter_vodozemac: ^0.2.2
   flutter_web_auth_2: ^4.1.0
   future_loading_dialog: ^0.3.0
   handy_window: ^0.4.0
@@ -43,7 +43,7 @@ dependencies:
   linkify: ^5.0.0
   liquid_progress_indicator_v2: ^0.5.0
   local_notifier: ^0.1.6
-  matrix: ^0.40.0
+  matrix: ^1.0.1
   mesh: ^0.5.0
   mime: ^2.0.0
   path: ^1.9.0
@@ -58,6 +58,7 @@ dependencies:
   shared_preferences: ^2.3.3
   sqflite: ^2.4.1
   sqflite_common_ffi: ^2.3.4
+  sqlcipher_flutter_libs: ^0.6.7
   super_drag_and_drop: ^0.9.1
   system_theme: ^3.1.2
   tabler_icons: ^2.5.0+1
@@ -88,6 +89,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/vodozemac/
 
 flutter_launcher_icons:
   android: false

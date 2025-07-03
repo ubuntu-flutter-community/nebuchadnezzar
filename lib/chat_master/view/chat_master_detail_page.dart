@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
@@ -10,6 +8,7 @@ import '../../authentication/view/uia_request_handler.dart';
 import '../../chat_room/common/view/chat_no_selected_room_page.dart';
 import '../../chat_room/common/view/chat_room_page.dart';
 import '../../common/chat_model.dart';
+import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
@@ -99,10 +98,10 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
 
     return Scaffold(
       key: masterScaffoldKey,
-      drawer: !Platform.isMacOS
+      drawer: !Platforms.isMacOS
           ? const Drawer(child: ChatMasterSidePanel())
           : null,
-      endDrawer: Platform.isMacOS
+      endDrawer: Platforms.isMacOS
           ? const Drawer(child: ChatMasterSidePanel())
           : null,
       body: FutureBuilder(

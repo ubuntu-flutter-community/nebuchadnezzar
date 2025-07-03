@@ -40,17 +40,6 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   String? scrolledToId;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => di<TimelineModel>().requestHistory(
-        widget.timeline,
-        historyCount: 500,
-      ),
-    );
-  }
-
-  @override
   void dispose() {
     _controller.dispose();
     super.dispose();

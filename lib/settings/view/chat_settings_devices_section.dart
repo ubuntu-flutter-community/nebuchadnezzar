@@ -46,7 +46,6 @@ class _DeviceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final settingsModel = di<SettingsModel>();
@@ -77,7 +76,7 @@ class _DeviceTile extends StatelessWidget {
       subtitle: Text(
         DateTime.fromMillisecondsSinceEpoch(
           device.lastSeenTs ?? 0,
-        ).formatAndLocalize(l10n, simple: true),
+        ).formatAndLocalize(context, simple: true),
       ),
       title: SelectableText(device.displayName ?? device.deviceId),
     );

@@ -17,7 +17,7 @@
 #### Install system dev libraries for persistence, encryption and notifications
 
 ```
-sudo apt install libsqlite3-dev libolm-dev libolm3 libcrypto++-dev libsecret-1-dev libjsoncpp-dev libnotify-dev
+sudo apt install libcrypto++-dev libsecret-1-dev libjsoncpp-dev libnotify-dev  libjsoncpp1 libsecret-1-0 librhash0 libwebkit2gtk-4.0-dev
 ```
 
 #### Run
@@ -33,19 +33,10 @@ or
 [vscode dart extension](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code)
 
 
-### macos setup (for development)
+### web setup (for development)
 
-Assuming your project lies in "~/Projects/nebuchadnezzar"
+Run scripts/prepare-web.sh
 
-This needs a better building, but it works for now :P
-
-```
-brew install libolm
-cp /opt/homebrew/Cellar/libolm/3.2.16/lib/libolm.3.2.16.dylib ~/Projects/nebuchadnezzar/build/macos/Build/Products/Debug/nebuchadnezzar.app/Contents/Frameworks
-cp /opt/homebrew/Cellar/libolm/3.2.16/lib/libolm.dylib ~/Projects/nebuchadnezzar/build/macos/Build/Products/Debug/nebuchadnezzar.app/Contents/Frameworks
-cp /opt/homebrew/Cellar/libolm/3.2.16/lib/libolm.3.dylib ~/Projects/nebuchadnezzar/build/macos/Build/Products/Debug/nebuchadnezzar.app/Contents/Frameworks
-cp /Users/frederik/Downloads/libcrypto.1.1.dylib ~/Projects/nebuchadnezzar/build/macos/Build/Products/Debug/nebuchadnezzar.app/Contents/Frameworks
-```
 
 ## Credits: Fluffy-Chat
 

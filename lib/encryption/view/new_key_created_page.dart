@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../chat_master/view/chat_master_detail_page.dart';
+import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
@@ -120,10 +119,10 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
   }
 
   String getSecureStorageLocalizedName(AppLocalizations l10n) {
-    if (Platform.isAndroid) {
+    if (Platforms.isAndroid) {
       return l10n.storeInAndroidKeystore;
     }
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (Platforms.isIOS || Platforms.isMacOS) {
       return l10n.storeInAppleKeyChain;
     }
     return l10n.storeSecurlyOnThisDevice;

@@ -47,6 +47,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       onInsert: (i) => _roomListKey.currentState?.insertItem(i),
       onRemove: (i) =>
           _roomListKey.currentState?.removeItem(i, (_, _) => const ListTile()),
+      limit: 500,
     );
   }
 

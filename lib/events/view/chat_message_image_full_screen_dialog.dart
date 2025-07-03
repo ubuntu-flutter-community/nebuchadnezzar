@@ -88,9 +88,7 @@ class _ChatMessageImageFullScreenDialogState
               ),
             ),
             Text(
-              widget.event.originServerTs.toLocal().formatAndLocalize(
-                context.l10n,
-              ),
+              widget.event.originServerTs.toLocal().formatAndLocalize(context),
               textAlign: TextAlign.start,
               overflow: TextOverflow.ellipsis,
             ),
