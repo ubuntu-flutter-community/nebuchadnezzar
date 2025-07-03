@@ -19,6 +19,7 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
         di<ChatModel>().filteredRooms;
     watchPropertyValue((ChatModel m) => m.roomsFilter);
     watchPropertyValue((ChatModel m) => m.archiveActive);
+    watchPropertyValue((ChatModel m) => m.activeSpace);
 
     return CustomScrollView(
       slivers: [
