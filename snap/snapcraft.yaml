@@ -68,6 +68,6 @@ parts:
       - libsecret-1-0
       - libjsoncpp25
       - libpciaccess0
-      - libssl
+
     prime:
       - usr/lib/*/*.so*
