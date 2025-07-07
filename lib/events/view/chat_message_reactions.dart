@@ -9,7 +9,6 @@ import 'package:yaru/yaru.dart';
 import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
-import '../../common/view/common_widgets.dart';
 import '../../common/view/space.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
@@ -89,15 +88,6 @@ class ChatMessageReactions extends StatelessWidget {
             ),
           ),
         ),
-        if (allReactionEvents.any((e) => e.status.isSending))
-          const SizedBox(
-            width: 24,
-            height: 24,
-            child: Padding(
-              padding: EdgeInsets.all(4.0),
-              child: Progress(strokeWidth: 1),
-            ),
-          ),
       ],
     );
   }

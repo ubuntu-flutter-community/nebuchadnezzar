@@ -91,9 +91,15 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
               final event = widget.timeline.events[i];
 
               if (event.hideInTimeline(
-                showAvatarChanges: showAvatarChanges,
-                showDisplayNameChanges: showDisplayNameChanges,
-              )) {
+                    showAvatarChanges: showAvatarChanges,
+                    showDisplayNameChanges: showDisplayNameChanges,
+                  ) ||
+                  event
+                      .getDisplayEvent(widget.timeline)
+                      .hideInTimeline(
+                        showAvatarChanges: showAvatarChanges,
+                        showDisplayNameChanges: showDisplayNameChanges,
+                      )) {
                 return const SizedBox.shrink();
               }
 

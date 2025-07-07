@@ -58,7 +58,7 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                           roomId: widget.event.room.id,
                           event: widget.event,
                         )
-                        ..setDraft(
+                        ..setTextDraft(
                           roomId: widget.event.room.id,
                           draft: widget.event.plaintextBody,
                           notify: true,
@@ -73,10 +73,7 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                     context,
                     content: CopyClipboardContent(
                       text: widget.event.body,
-                      child: ChatTextMessage(
-                        event: widget.event,
-                        displayEvent: widget.event,
-                      ),
+                      child: ChatTextMessage(displayEvent: widget.event),
                     ),
                   ),
                 ),

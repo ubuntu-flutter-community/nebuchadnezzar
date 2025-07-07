@@ -34,17 +34,17 @@ class _ChatMessageReplyHeaderState extends State<ChatMessageReplyHeader> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: cache
-    // final fromCache = _cache[widget.event.eventId];
+    final fromCache = _cache[widget.event.eventId];
 
-    // if (fromCache != null) {
-    //   return fromCache.redacted
-    //       ? Container()
-    //       : _Message(
-    //           replyEvent: fromCache,
-    //           onReplyOriginClick: widget.onReplyOriginClick,
-    //         );
-    // }
+    if (fromCache != null) {
+      return fromCache.redacted
+          ? Container()
+          : _Message(
+              replyEvent: fromCache,
+              onReplyOriginClick: widget.onReplyOriginClick,
+              timeline: widget.timeline,
+            );
+    }
 
     return FutureBuilder(
       future: _future,
@@ -65,6 +65,7 @@ class _ChatMessageReplyHeaderState extends State<ChatMessageReplyHeader> {
           return _Message(
             replyEvent: replyEvent,
             onReplyOriginClick: widget.onReplyOriginClick,
+            timeline: widget.timeline,
           );
         }
 
@@ -75,22 +76,32 @@ class _ChatMessageReplyHeaderState extends State<ChatMessageReplyHeader> {
 }
 
 class _Message extends StatelessWidget {
-  const _Message({required this.onReplyOriginClick, required this.replyEvent});
+  const _Message({
+    required this.onReplyOriginClick,
+    required this.replyEvent,
+    required this.timeline,
+  });
 
   final Future<void> Function(Event) onReplyOriginClick;
   final Event? replyEvent;
+  final Timeline timeline;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          left: BorderSide(color: context.colorScheme.link, width: 2),
+        ),
+      ),
       padding: const EdgeInsets.only(left: kSmallPadding),
+      margin: const EdgeInsets.only(top: kSmallPadding, bottom: kSmallPadding),
       child: InkWell(
         onTap: replyEvent == null
             ? null
             : () => onReplyOriginClick(replyEvent!),
         child: Text(
-          '> (${replyEvent?.senderFromMemoryOrFallback.calcDisplayname()}): ${replyEvent?.body}',
-          maxLines: 1,
+          '${replyEvent?.senderFromMemoryOrFallback.calcDisplayname()}: ${replyEvent?.getDisplayEvent(timeline).body}',
           style: context.textTheme.labelSmall?.copyWith(
             fontStyle: FontStyle.italic,
             overflow: TextOverflow.ellipsis,

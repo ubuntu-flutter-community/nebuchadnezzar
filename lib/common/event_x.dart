@@ -6,6 +6,19 @@ extension EventX on Event {
   bool get isImage => messageType == MessageTypes.Image;
   bool get isSvgImage => attachmentMimetype == 'image/svg+xml';
 
+  String? get fileDescription {
+    if (!{MessageTypes.File, MessageTypes.Image}.contains(messageType)) {
+      return null;
+    }
+    final formattedBody = content.tryGet<String>('formatted_body');
+    if (formattedBody != null) return formattedBody;
+
+    final filename = content.tryGet<String>('filename');
+    final body = content.tryGet<String>('body');
+    if (filename != body && body != null && filename != null) return body;
+    return null;
+  }
+
   bool get showAsBadge =>
       type.contains('m.call.') ||
       messageType == MessageTypes.Emote ||

@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 import '../../common/chat_model.dart';
+import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
@@ -46,7 +47,12 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
         onSelected: canChangeHistoryVisibility
             ? (v) => showFutureLoadingDialog(
                 context: context,
-                future: () => room.setHistoryVisibility(v),
+                future: () =>
+                    di<ChatModel>().setHistoryVisibility(room: room, value: v),
+                onError: (e) {
+                  showSnackBar(context, content: Text(e.toString()));
+                  return e;
+                },
               )
             : null,
         itemBuilder: (context) => HistoryVisibility.values

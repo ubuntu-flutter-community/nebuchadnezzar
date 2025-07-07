@@ -16,17 +16,23 @@ import 'chat_image.dart';
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan
 class HtmlMessage extends StatelessWidget {
-  final Event event;
+  final Event displayEvent;
   final TextStyle? style;
 
-  const HtmlMessage({super.key, required this.event, required this.style});
+  const HtmlMessage({
+    super.key,
+    required this.displayEvent,
+    required this.style,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
     final fontSize = style?.fontSize ?? 12;
     final defaultTextColor = context.colorScheme.onSurface;
-    final element = _linkifyHtml(HtmlParser.parseHTML(event.formattedText));
+    final element = _linkifyHtml(
+      HtmlParser.parseHTML(displayEvent.formattedText),
+    );
 
     final theStyle = (style == null ? Style() : Style.fromTextStyle(style!))
         .copyWith(padding: HtmlPaddings.zero, margin: Margins.zero);
@@ -43,7 +49,7 @@ class HtmlMessage extends StatelessWidget {
       extensions: [
         CodeExtension(fontSize: fontSize, isLight: theme.colorScheme.isLight),
         SpoilerExtension(textColor: defaultTextColor),
-        ImageExtension(event),
+        ImageExtension(displayEvent),
         FontColorExtension(),
         FallbackTextExtension(style: style),
       ],

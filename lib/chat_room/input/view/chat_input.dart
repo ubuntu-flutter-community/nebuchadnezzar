@@ -33,7 +33,7 @@ class _ChatInputState extends State<ChatInput> {
   void initState() {
     super.initState();
     _sendController = TextEditingController(
-      text: di<DraftModel>().getDraft(widget.room.id),
+      text: di<DraftModel>().getTextDraft(widget.room.id),
     );
     _sendNode = FocusNode(
       onKeyEvent: (node, event) {
@@ -100,7 +100,7 @@ class _ChatInputState extends State<ChatInput> {
     );
 
     final draft = watchPropertyValue(
-      (DraftModel m) => m.getDraft(widget.room.id),
+      (DraftModel m) => m.getTextDraft(widget.room.id),
     );
     _sendController.text = draft ?? '';
     _sendNode.requestFocus();
@@ -140,7 +140,7 @@ class _ChatInputState extends State<ChatInput> {
                       onPressed: () => di<DraftModel>()
                         ..setReplyEvent(null)
                         ..setEditEvent(roomId: widget.room.id, event: null)
-                        ..setDraft(
+                        ..setTextDraft(
                           roomId: widget.room.id,
                           draft: '',
                           notify: true,
@@ -174,7 +174,7 @@ class _ChatInputState extends State<ChatInput> {
                   enabled: !archiveActive && !unAcceptedDirectChat,
                   autofocus: true,
                   onChanged: (v) {
-                    draftModel.setDraft(
+                    draftModel.setTextDraft(
                       roomId: widget.room.id,
                       draft: v,
                       notify: false,
@@ -215,7 +215,7 @@ class _ChatInputState extends State<ChatInput> {
                                 : (cat, emo) {
                                     _sendController.text =
                                         _sendController.text + emo.emoji;
-                                    draftModel.setDraft(
+                                    draftModel.setTextDraft(
                                       roomId: widget.room.id,
                                       draft: _sendController.text,
                                       notify: true,

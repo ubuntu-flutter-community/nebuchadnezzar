@@ -52,12 +52,14 @@ class DraftModel extends SafeChangeNotifier {
     _setSending(true);
 
     try {
-      room.setTyping(false);
+      await room.setTyping(false);
     } on Exception catch (e, s) {
       onFail(e.toString());
       printMessageInDebugMode(e, s);
     }
 
+    final textDraft = '${getTextDraft(room.id)}';
+    removeTextDraft(room.id);
     final matrixFiles = List<MatrixFile>.from(getFilesDraft(room.id));
     if (matrixFiles.isNotEmpty) {
       for (var matrixFile in matrixFiles) {
@@ -84,6 +86,7 @@ class DraftModel extends SafeChangeNotifier {
             thumbnail: matrixFile.mimeType.startsWith('video') && xFile != null
                 ? await getVideoThumbnail(xFile)
                 : null,
+            extraContent: textDraft.isNotEmpty ? {'body': textDraft} : null,
           );
           if (eventId != null) {
             _matrixFilesToXFile.remove(matrixFile);
@@ -95,15 +98,11 @@ class DraftModel extends SafeChangeNotifier {
           printMessageInDebugMode(e, s);
         }
       }
-    }
-
-    if (getDraft(room.id)?.isNotEmpty == true) {
-      final draft = '${getDraft(room.id)}';
-      removeDraft(room.id);
+    } else if (textDraft.isNotEmpty == true) {
       String? eventId;
       try {
         eventId = await room.sendTextEvent(
-          draft.trim(),
+          textDraft.trim(),
           inReplyTo: replyEvent,
           editEventId: _editEvents[room.id]?.eventId,
         );
@@ -112,7 +111,7 @@ class DraftModel extends SafeChangeNotifier {
         printMessageInDebugMode(e, s);
       }
       if (eventId == null) {
-        setDraft(roomId: room.id, draft: draft, notify: true);
+        setTextDraft(roomId: room.id, draft: textDraft, notify: true);
       }
     }
 
@@ -123,25 +122,24 @@ class DraftModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  final Map<String, String> _drafts = {};
-  int get draftLength => _drafts.length;
-  Map<String, String?> get drafts => _drafts;
-  String? getDraft(String roomId) => _drafts[roomId];
-  void setDraft({
+  final Map<String, String> _textDrafts = {};
+  int get draftLength => _textDrafts.length;
+  String? getTextDraft(String roomId) => _textDrafts[roomId];
+  void setTextDraft({
     required String roomId,
     required String draft,
     required bool notify,
   }) {
-    _drafts[roomId] = draft;
+    _textDrafts[roomId] = draft;
     if (notify) {
       notifyListeners();
     }
   }
 
-  void removeDraft(String roomId) {
-    final oldDraft = _drafts[roomId];
+  void removeTextDraft(String roomId) {
+    final oldDraft = _textDrafts[roomId];
     if (oldDraft == null) return;
-    _drafts.remove(roomId);
+    _textDrafts.remove(roomId);
     notifyListeners();
   }
 

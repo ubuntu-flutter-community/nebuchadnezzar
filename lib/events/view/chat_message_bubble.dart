@@ -6,7 +6,6 @@ import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import 'chat_message_bubble_content.dart';
 import 'chat_message_bubble_shape.dart';
-import 'chat_message_reactions.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   const ChatMessageBubble({
@@ -30,37 +29,26 @@ class ChatMessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Align(
     alignment: event.isUserEvent ? Alignment.centerRight : Alignment.centerLeft,
-    child: Stack(
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: ChatMessageBubble.maxWidth,
-            minWidth: ChatMessageBubble.minWidth,
-          ),
-          child: Container(
-            margin: tilePadding(partOfMessageCohort),
-            padding: const EdgeInsets.only(
-              top: kSmallPadding,
-              bottom: kSmallPadding,
-            ),
-            child: ChatMessageBubbleContent(
-              partOfMessageCohort: partOfMessageCohort,
-              messageBubbleShape: messageBubbleShape,
-              event: event,
-              timeline: timeline,
-              onReplyOriginClick: onReplyOriginClick,
-              hideAvatar: partOfMessageCohort,
-            ),
-          ),
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: ChatMessageBubble.maxWidth,
+        minWidth: ChatMessageBubble.minWidth,
+      ),
+      child: Container(
+        margin: tilePadding(partOfMessageCohort),
+        padding: const EdgeInsets.only(
+          top: kSmallPadding,
+          bottom: kSmallPadding,
         ),
-        if (!event.redacted)
-          Positioned(
-            key: ValueKey('${event.eventId}reactions'),
-            left: kMediumPlusPadding + 38,
-            bottom: kTinyPadding,
-            child: ChatMessageReactions(event: event, timeline: timeline),
-          ),
-      ],
+        child: ChatMessageBubbleContent(
+          partOfMessageCohort: partOfMessageCohort,
+          messageBubbleShape: messageBubbleShape,
+          event: event,
+          timeline: timeline,
+          onReplyOriginClick: onReplyOriginClick,
+          hideAvatar: partOfMessageCohort,
+        ),
+      ),
     ),
   );
 }
