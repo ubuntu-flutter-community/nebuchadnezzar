@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/ui_constants.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
 import '../../common/view/chat_avatar.dart';
+import '../../common/view/ui_constants.dart';
 
 class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
   const ChatSpaceFilter({super.key});
@@ -20,8 +19,9 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
         watchStream(
           (ChatModel m) => m.spacesStream,
           initialValue: chatModel.spaces,
+          preserveState: false,
         ).data ??
-        <Room>[];
+        chatModel.spaces;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kMediumPlusPadding),

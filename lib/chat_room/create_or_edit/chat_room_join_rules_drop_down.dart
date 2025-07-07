@@ -5,6 +5,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_model.dart';
+import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
@@ -47,7 +48,12 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
         onSelected: canChangeJoinRules
             ? (v) => showFutureLoadingDialog(
                 context: context,
-                future: () => room.setJoinRules(v),
+                onError: (e) {
+                  showErrorSnackBar(context, e);
+                  return e;
+                },
+                future: () =>
+                    di<ChatModel>().setJoinRules(room: room, value: v),
               )
             : null,
         itemBuilder: (context) => JoinRules.values

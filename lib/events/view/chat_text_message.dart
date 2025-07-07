@@ -10,18 +10,16 @@ import 'chat_html_message.dart';
 class ChatTextMessage extends StatelessWidget {
   const ChatTextMessage({
     super.key,
-    required this.event,
     required this.displayEvent,
     this.messageStyle,
   });
 
-  final Event event;
   final Event displayEvent;
   final TextStyle? messageStyle;
 
   @override
-  Widget build(BuildContext context) => event.isRichMessage
-      ? HtmlMessage(event: event, style: messageStyle)
+  Widget build(BuildContext context) => displayEvent.isRichMessage
+      ? HtmlMessage(displayEvent: displayEvent, style: messageStyle)
       : Linkify(
           text: displayEvent.body,
           style: messageStyle,

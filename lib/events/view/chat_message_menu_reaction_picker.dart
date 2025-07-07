@@ -1,10 +1,12 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../settings/settings_model.dart';
@@ -40,7 +42,14 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
             children: defaultReactions
                 .map(
                   (e) => IconButton(
-                    onPressed: () => event.room.sendReaction(event.eventId, e),
+                    onPressed: () => showFutureLoadingDialog(
+                      context: context,
+                      onError: (error) {
+                        showErrorSnackBar(context, error);
+                        return error;
+                      },
+                      future: () => event.room.sendReaction(event.eventId, e),
+                    ),
                     icon: Text(e),
                   ),
                 )

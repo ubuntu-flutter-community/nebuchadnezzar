@@ -145,38 +145,59 @@ class ChatModel extends SafeChangeNotifier {
   Stream<Event> getHistoryStream(Room room) =>
       _client.onHistoryEvent.stream.where((e) => e.room.id == room.id);
 
-  void editPowerLevel({
+  Future<void> editPowerLevel({
     required Room room,
     required String key,
     int? newLevel,
     String? category,
-    required Function() onFail,
-    required Future<int?> Function() onCustomPermissionsChosen,
   }) async {
-    if (!room.canSendEvent(EventTypes.RoomPowerLevels)) {
-      onFail();
-      return;
-    }
-    newLevel ??= await onCustomPermissionsChosen();
-
-    if (newLevel == null) return;
-    final content = Map<String, dynamic>.from(
-      room.getState(EventTypes.RoomPowerLevels)!.content,
-    );
-    if (category != null) {
-      if (!content.containsKey(category)) {
-        content[category] = <String, dynamic>{};
+    try {
+      if (newLevel == null) return;
+      final content = Map<String, dynamic>.from(
+        room.getState(EventTypes.RoomPowerLevels)!.content,
+      );
+      if (category != null) {
+        if (!content.containsKey(category)) {
+          content[category] = <String, dynamic>{};
+        }
+        content[category][key] = newLevel;
+      } else {
+        content[key] = newLevel;
       }
-      content[category][key] = newLevel;
-    } else {
-      content[key] = newLevel;
+      await room.client.setRoomStateWithKey(
+        room.id,
+        EventTypes.RoomPowerLevels,
+        '',
+        content,
+      );
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
     }
-    await room.client.setRoomStateWithKey(
-      room.id,
-      EventTypes.RoomPowerLevels,
-      '',
-      content,
-    );
+  }
+
+  Future<void> setHistoryVisibility({
+    required Room room,
+    required HistoryVisibility value,
+  }) async {
+    try {
+      await room.setHistoryVisibility(value);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<void> setJoinRules({
+    required Room room,
+    required JoinRules value,
+  }) async {
+    try {
+      await room.setJoinRules(value);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
   }
 
   List<Room> get spaces => _rooms.where((e) => e.isSpace).toList();
@@ -243,6 +264,12 @@ class ChatModel extends SafeChangeNotifier {
 
   bool _archiveActive = false;
   bool get archiveActive => _archiveActive;
+  void setArchiveActive(bool value) {
+    if (value == _archiveActive) return;
+    _archiveActive = value;
+    notifyListeners();
+  }
+
   void toggleArchive() {
     setSelectedRoom(null);
     _archiveActive = !_archiveActive;
@@ -330,15 +357,27 @@ class ChatModel extends SafeChangeNotifier {
       _setProcessingJoinOrLeave(false);
     }
     if (roomId != null) {
-      await _client.waitForRoomInSync(roomId, join: true);
       final maybeRoom = _client.getRoomById(roomId);
       if (maybeRoom != null) {
         setSelectedRoom(maybeRoom);
         if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
             avatarFile?.bytes != null) {
-          await maybeRoom.setAvatar(avatarFile);
+          try {
+            await maybeRoom.setAvatar(avatarFile);
+          } on Exception catch (e, s) {
+            printMessageInDebugMode(e, s);
+            onFail(e.toString());
+          }
         }
-        _archiveActive = false;
+        if (maybeRoom.isDirectChat && !maybeRoom.encrypted) {
+          try {
+            await maybeRoom.enableEncryption();
+            printMessageInDebugMode('Room encrypted: ${maybeRoom.encrypted}');
+          } on Exception catch (e, s) {
+            printMessageInDebugMode(e, s);
+            onFail(e.toString());
+          }
+        }
 
         onSuccess();
       }

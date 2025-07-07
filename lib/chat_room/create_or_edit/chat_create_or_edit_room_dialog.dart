@@ -320,7 +320,7 @@ class _ChatCreateOrEditRoomDialogState
                     ),
                   ),
                 ),
-                if (_existingGroup && widget.room!.canChangePowerLevel)
+                if (_existingGroup)
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: kBigPadding,
