@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
-import 'package:yaru/yaru.dart';
 
 import '../../../common/chat_model.dart';
 import '../../../common/room_x.dart';
@@ -22,6 +21,7 @@ import '../../input/view/chat_input.dart';
 import '../../timeline/chat_room_timeline_list.dart';
 import '../../timeline/timeline_model.dart';
 import '../../titlebar/chat_room_title_bar.dart';
+import 'chat_room_unaccepted_direct_chat_body.dart';
 
 final GlobalKey<ScaffoldState> chatRoomScaffoldKey = GlobalKey();
 
@@ -180,33 +180,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class ChatRoomUnacceptedDirectChatBody extends StatelessWidget {
-  const ChatRoomUnacceptedDirectChatBody({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final colorScheme = context.colorScheme;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(kMediumPadding),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: kMediumPadding,
-          children: [
-            Icon(YaruIcons.send, size: 48, color: colorScheme.error),
-            Text(
-              l10n.waitingPartnerAcceptRequest,
-              textAlign: TextAlign.center,
-              style: context.theme.textTheme.bodyLarge,
-            ),
-          ],
-        ),
       ),
     );
   }

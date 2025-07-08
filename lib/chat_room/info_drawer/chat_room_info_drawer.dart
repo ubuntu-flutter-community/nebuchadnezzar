@@ -5,7 +5,6 @@ import 'package:watch_it/watch_it.dart';
 import '../../common/chat_model.dart';
 import '../../common/room_x.dart';
 import '../../common/view/ui_constants.dart';
-import '../common/view/chat_room_page.dart';
 import 'chat_room_info_drawer_direct_chat_content.dart';
 import 'chat_room_info_drawer_direct_chat_header.dart';
 import 'chat_room_info_drawer_group_content.dart';
@@ -51,7 +50,7 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
                 child: room.isDirectChat
                     ? unAcceptedDirectChat != true
                           ? ChatRoomInfoDrawerDirectChatContent(room: room)
-                          : const ChatRoomUnacceptedDirectChatBody()
+                          : const SizedBox.shrink()
                     : ChatRoomInfoDrawerGroupContent(room: room),
               ),
             if (room.isArchived) ChatRoomInfoDrawerForgetButton(room: room),
