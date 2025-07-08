@@ -29,10 +29,6 @@ class TimelineModel extends SafeChangeNotifier {
 
     if (!timeline.room.isArchived) {
       try {
-        await timeline.getRoomEvents(
-          filter: filter,
-          historyCount: historyCount,
-        );
         await timeline.requestHistory(
           filter: filter,
           historyCount: historyCount,
