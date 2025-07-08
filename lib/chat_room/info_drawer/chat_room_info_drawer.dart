@@ -24,6 +24,7 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
           .getJoinedRoomUpdate(room.id)
           .map((_) => room.isUnacceptedDirectChat),
       initialValue: room.isUnacceptedDirectChat,
+      preserveState: false,
     ).data;
 
     return Drawer(
