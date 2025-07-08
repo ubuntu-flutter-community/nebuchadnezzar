@@ -433,14 +433,11 @@ class ChatModel extends SafeChangeNotifier {
   }) async {
     _setProcessingJoinOrLeave(true);
 
-    Room? maybeRoom = _rooms
-        .where((e) => !e.isArchived)
-        .firstWhereOrNull(
-          (e) =>
-              e.isDirectChat &&
-              e.getParticipants().any((e) => e.id == myUserId) &&
-              e.getParticipants().any((e) => e.id == userId),
-        );
+    final maybeDirectChatId = _client.getDirectChatFromUserId(userId);
+    Room? maybeRoom;
+    if (maybeDirectChatId != null) {
+      maybeRoom = _client.getRoomById(maybeDirectChatId);
+    }
 
     if (maybeRoom == null) {
       String? maybeId;
@@ -518,6 +515,7 @@ class ChatModel extends SafeChangeNotifier {
       if (room == activeSpace) {
         setActiveSpace(null);
       }
+      await _client.oneShotSync();
     } on Exception catch (e) {
       onFail(e.toString());
     } finally {

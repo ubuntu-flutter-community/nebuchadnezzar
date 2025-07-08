@@ -1,30 +1,13 @@
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
+import '../../common/logging.dart';
+
 class TimelineModel extends SafeChangeNotifier {
-  final Map<String, String> _timelineQuery = {};
-  String? getTimelineQuery(String roomId) => _timelineQuery[roomId];
-  void setTimelineQuery({required String roomId, required String query}) {
-    if (query == _timelineQuery[roomId]) return;
-    _timelineQuery[roomId] = query;
-    notifyListeners();
-  }
-
-  final Map<String, bool> _timelineSearchActive = {};
-  bool getTimelineSearchActive(String roomId) =>
-      _timelineSearchActive[roomId] == true;
-  void setTimelineSearchActive({required String roomId, required bool value}) {
-    if (_timelineSearchActive[roomId] == value) return;
-    _timelineSearchActive[roomId] = value;
-    notifyListeners();
-  }
-
   final Map<String, Timeline> _timelines = {};
   Timeline? getTimeline(String roomId) => _timelines[roomId];
-  void addTimeline({required Timeline timeline}) {
-    if (_timelines[timeline.room.id] == null) {
-      _timelines[timeline.room.id] = timeline;
-    }
+  void _setTimeline({required Timeline timeline}) {
+    _timelines[timeline.room.id] = timeline;
     notifyListeners();
   }
 
@@ -41,25 +24,35 @@ class TimelineModel extends SafeChangeNotifier {
     int historyCount = 50,
     StateFilter? filter,
   }) async {
-    addTimeline(timeline: timeline);
-    if (!timeline.room.isArchived) {
-      await timeline.setReadMarker();
-    }
-
-    if (!timeline.canRequestHistory) {
-      setUpdatingTimeline(roomId: timeline.room.id, value: false);
-      return;
-    }
-
-    if (timeline.isRequestingHistory) {
-      setUpdatingTimeline(roomId: timeline.room.id, value: true);
-      return;
-    }
-
     setUpdatingTimeline(roomId: timeline.room.id, value: true);
+    _setTimeline(timeline: timeline);
 
-    await timeline.requestHistory(filter: filter, historyCount: historyCount);
-    await timeline.room.requestParticipants();
+    if (!timeline.room.isArchived) {
+      try {
+        await timeline.requestHistory(
+          filter: filter,
+          historyCount: historyCount,
+        );
+        await timeline.room.requestParticipants();
+      } on Exception catch (e, s) {
+        printMessageInDebugMode(e, s);
+      }
+    }
+
     setUpdatingTimeline(roomId: timeline.room.id, value: false);
+  }
+
+  Future<void> trySetReadMarker(Timeline timeline) async {
+    try {
+      if (!timeline.room.isArchived && timeline.room.isUnread) {
+        await timeline.setReadMarker();
+      } else {
+        printMessageInDebugMode(
+          'Skipping setReadMarker() for "${timeline.room.getLocalizedDisplayname()}" as it is ${timeline.room.isArchived ? 'archived' : 'not unread'}.',
+        );
+      }
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+    }
   }
 }

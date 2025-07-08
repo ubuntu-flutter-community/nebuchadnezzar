@@ -139,7 +139,9 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
 
           return switch (messageType) {
             MessageTypes.Image => ChatImage(
-              dimension: 200,
+              height: 90,
+              fit: BoxFit.cover,
+              showDescription: false,
               event: event,
               onTap: event.isSvgImage
                   ? null

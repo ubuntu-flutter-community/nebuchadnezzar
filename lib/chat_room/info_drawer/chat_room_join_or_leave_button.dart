@@ -45,32 +45,31 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
                     : context.colorScheme.primary,
               )
             : null,
-        onPressed: notReJoinable
-            ? null
-            : () => showDialog(
-                context: context,
-                builder: (context) => ConfirmationDialog(
-                  title: Text(message),
-                  onConfirm: () {
-                    void onFail(error) =>
-                        showSnackBar(context, content: Text(error));
+        onPressed: () => showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => ConfirmationDialog(
+            showCloseIcon: false,
+            title: Text(message),
+            onConfirm: () async {
+              void onFail(error) => showSnackBar(context, content: Text(error));
 
-                    if (joinedRoom) {
-                      chatModel.leaveSelectedRoom(
-                        onFail: onFail,
-                        forget: room.isDirectChat,
-                      );
-                    } else {
-                      chatModel.joinRoom(
-                        room,
-                        onFail: onFail,
-                        clear: true,
-                        select: false,
-                      );
-                    }
-                  },
-                ),
-              ),
+              if (joinedRoom) {
+                await chatModel.leaveSelectedRoom(
+                  onFail: onFail,
+                  forget: room.isDirectChat,
+                );
+              } else if (!notReJoinable) {
+                await chatModel.joinRoom(
+                  room,
+                  onFail: onFail,
+                  clear: true,
+                  select: false,
+                );
+              }
+            },
+          ),
+        ),
         icon: !room.isArchived
             ? Icon(
                 YaruIcons.log_out,

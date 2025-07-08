@@ -2,26 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../common/event_x.dart';
-import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import 'chat_message_bubble_content.dart';
-import 'chat_message_bubble_shape.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   const ChatMessageBubble({
     super.key,
     required this.event,
     required this.timeline,
-    this.messageBubbleShape = ChatMessageBubbleShape.allRound,
     required this.onReplyOriginClick,
-    this.partOfMessageCohort = false,
+    required this.eventPosition,
   });
 
   final Event event;
   final Timeline timeline;
-  final ChatMessageBubbleShape messageBubbleShape;
   final Future<void> Function(Event event) onReplyOriginClick;
-  final bool partOfMessageCohort;
+  final EventPosition eventPosition;
 
   static const maxWidth = 450.0;
   static const minWidth = 205.0;
@@ -35,18 +31,22 @@ class ChatMessageBubble extends StatelessWidget {
         minWidth: ChatMessageBubble.minWidth,
       ),
       child: Container(
-        margin: tilePadding(partOfMessageCohort),
+        margin:
+            const EdgeInsets.symmetric(
+              horizontal: kSmallPadding,
+              vertical: kTinyPadding,
+            ).copyWith(
+              top: eventPosition == EventPosition.top ? kMediumPadding : null,
+            ),
         padding: const EdgeInsets.only(
           top: kSmallPadding,
           bottom: kSmallPadding,
         ),
         child: ChatMessageBubbleContent(
-          partOfMessageCohort: partOfMessageCohort,
-          messageBubbleShape: messageBubbleShape,
+          eventPosition: eventPosition,
           event: event,
           timeline: timeline,
           onReplyOriginClick: onReplyOriginClick,
-          hideAvatar: partOfMessageCohort,
         ),
       ),
     ),

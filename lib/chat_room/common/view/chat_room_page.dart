@@ -7,6 +7,7 @@ import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../common/chat_model.dart';
+import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
@@ -20,6 +21,7 @@ import '../../input/view/chat_input.dart';
 import '../../timeline/chat_room_timeline_list.dart';
 import '../../timeline/timeline_model.dart';
 import '../../titlebar/chat_room_title_bar.dart';
+import 'chat_room_unaccepted_direct_chat_body.dart';
 
 final GlobalKey<ScaffoldState> chatRoomScaffoldKey = GlobalKey();
 
@@ -82,6 +84,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       },
     );
 
+    final unAcceptedDirectChat = watchStream(
+      (ChatModel m) => m
+          .getJoinedRoomUpdate(widget.room.id)
+          .map((room) => widget.room.isUnacceptedDirectChat),
+      initialValue: widget.room.isUnacceptedDirectChat,
+      preserveState: false,
+    ).data;
+
     return DropRegion(
       formats: Formats.standardFormats,
       hitTestBehavior: HitTestBehavior.opaque,
@@ -117,29 +127,36 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             key: chatRoomScaffoldKey,
             endDrawer: ChatRoomInfoDrawer(room: widget.room),
             appBar: ChatRoomTitleBar(room: widget.room),
-            bottomNavigationBar: widget.room.isArchived
+            bottomNavigationBar:
+                widget.room.isArchived || unAcceptedDirectChat != false
                 ? null
                 : ChatInput(
                     key: ValueKey('${widget.room.id}input'),
                     room: widget.room,
                   ),
-            body: FutureBuilder<Timeline>(
-              key: ValueKey(widget.room.id),
-              future: _timelineFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: kMediumPadding),
-                    child: ChatRoomTimelineList(
-                      timeline: snapshot.data!,
-                      listKey: _roomListKey,
-                    ),
-                  );
-                } else {
-                  return const Center(child: Progress());
-                }
-              },
-            ),
+            body: unAcceptedDirectChat == null
+                ? const Center(child: Progress())
+                : unAcceptedDirectChat == true
+                ? const ChatRoomUnacceptedDirectChatBody()
+                : FutureBuilder<Timeline>(
+                    key: ValueKey(widget.room.id),
+                    future: _timelineFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: kMediumPadding,
+                          ),
+                          child: ChatRoomTimelineList(
+                            timeline: snapshot.data!,
+                            listKey: _roomListKey,
+                          ),
+                        );
+                      } else {
+                        return const Center(child: Progress());
+                      }
+                    },
+                  ),
           ),
           if (updating &&
               chatRoomScaffoldKey.currentState?.isEndDrawerOpen != true)

@@ -3,6 +3,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/event_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../common/chat_model.dart';
@@ -80,6 +81,7 @@ class _ChatRoomPinnedEventTileState extends State<ChatRoomPinnedEventTile> {
               event: s.data!,
               timeline: widget.timeline,
               onReplyOriginClick: (p0) async {},
+              eventPosition: EventPosition.top,
             )
           : const Text(''),
     );

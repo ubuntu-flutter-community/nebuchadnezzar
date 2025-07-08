@@ -86,11 +86,41 @@ extension EventX on Event {
     return {EventTypes.Redaction, EventTypes.Reaction}.contains(type);
   }
 
-  bool partOfMessageCohort(Event? maybePreviousEvent) {
-    return maybePreviousEvent != null &&
-        !maybePreviousEvent.showAsBadge &&
-        !maybePreviousEvent.isImage &&
-        maybePreviousEvent.senderId == senderId;
+  EventPosition getEventPosition({
+    required Event? prev,
+    required Event? next,
+    required bool showAvatarChanges,
+    required bool showDisplayNameChanges,
+  }) {
+    if (prev == null && next == null) {
+      return EventPosition.top;
+    }
+    if (prev == null ||
+        prev.hideInTimeline(
+          showAvatarChanges: showAvatarChanges,
+          showDisplayNameChanges: showDisplayNameChanges,
+        ) ||
+        prev.showAsBadge) {
+      return EventPosition.top;
+    }
+
+    if (prev.senderId != senderId) {
+      return EventPosition.top;
+    }
+    if (prev.originServerTs.toLocal().day != originServerTs.toLocal().day) {
+      return EventPosition.top;
+    }
+
+    if (next == null ||
+        next.hideInTimeline(
+          showAvatarChanges: showAvatarChanges,
+          showDisplayNameChanges: showDisplayNameChanges,
+        ) ||
+        next.showAsBadge) {
+      return EventPosition.bottom;
+    }
+
+    return EventPosition.middle;
   }
 
   Uri? get geoUri {
@@ -113,3 +143,5 @@ extension EventX on Event {
     }
   }
 }
+
+enum EventPosition { top, bottom, middle }

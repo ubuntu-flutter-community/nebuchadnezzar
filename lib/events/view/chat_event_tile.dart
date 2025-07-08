@@ -14,11 +14,11 @@ class ChatEventTile extends StatelessWidget {
     required this.event,
     required this.timeline,
     required this.onReplyOriginClick,
-    this.partOfMessageCohort = false,
+    required this.eventPosition,
   });
 
   final Event event;
-  final bool partOfMessageCohort;
+  final EventPosition eventPosition;
   final Timeline timeline;
   final Future<void> Function(Event) onReplyOriginClick;
 
@@ -54,7 +54,7 @@ class ChatEventTile extends StatelessWidget {
       event: event,
       timeline: timeline,
       onReplyOriginClick: onReplyOriginClick,
-      partOfMessageCohort: partOfMessageCohort,
+      eventPosition: eventPosition,
     );
   }
 }

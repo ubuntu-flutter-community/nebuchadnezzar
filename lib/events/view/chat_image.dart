@@ -21,6 +21,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     this.width = imageWidth,
     this.onlyThumbnail = true,
     this.onTap,
+    this.showDescription = true,
   });
 
   final Event event;
@@ -30,6 +31,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
   final BoxFit? fit;
   final bool onlyThumbnail;
   final VoidCallback? onTap;
+  final bool showDescription;
 
   static const double imageWidth = 370.0;
   static const double imageHeight = 270.0;
@@ -86,7 +88,8 @@ class ChatImage extends StatelessWidget with WatchItMixin {
                             : false,
                       ),
               ),
-              if (event.fileDescription != null &&
+              if (showDescription &&
+                  event.fileDescription != null &&
                   event.fileDescription!.isNotEmpty)
                 Text(event.fileDescription!),
             ],
