@@ -4,10 +4,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../l10n/l10n.dart';
+import 'common_widgets.dart';
 import 'space.dart';
 import 'ui_constants.dart';
 
-class ConfirmationDialog extends StatelessWidget {
+class ConfirmationDialog extends StatefulWidget {
   const ConfirmationDialog({
     super.key,
     this.onConfirm,
@@ -37,19 +38,31 @@ class ConfirmationDialog extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
 
   @override
+  State<ConfirmationDialog> createState() => _ConfirmationDialogState();
+}
+
+class _ConfirmationDialogState extends State<ConfirmationDialog> {
+  bool _loading = false;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AlertDialog(
       title: YaruDialogTitleBar(
-        title: title,
+        title: widget.title,
         backgroundColor: Colors.transparent,
         border: BorderSide.none,
-        isClosable: showCloseIcon,
+        isClosable: widget.showCloseIcon,
       ),
-      scrollable: scrollable,
+      scrollable: widget.scrollable,
       titlePadding: EdgeInsets.zero,
-      content: content,
-      contentPadding: contentPadding,
+      content: _loading
+          ? const SizedBox.square(
+              dimension: kBigPadding,
+              child: Progress(strokeWidth: 2),
+            )
+          : widget.content,
+      contentPadding: widget.contentPadding,
       actionsAlignment: MainAxisAlignment.start,
       actionsOverflowAlignment: OverflowBarAlignment.center,
       actionsPadding: const EdgeInsets.all(kMediumPadding),
@@ -59,28 +72,49 @@ class ConfirmationDialog extends StatelessWidget {
             expand: true,
             widthGap: kMediumPadding,
             children: [
-              ...?additionalActions,
-              if (showCancel)
+              ...?widget.additionalActions,
+              if (widget.showCancel)
                 OutlinedButton(
-                  onPressed: () {
-                    onCancel?.call();
-                    if (context.mounted && Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: Text(cancelLabel ?? l10n.cancel),
+                  onPressed: _loading
+                      ? null
+                      : () {
+                          widget.onCancel?.call();
+                          if (context.mounted &&
+                              Navigator.of(context).canPop()) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                  child: Text(widget.cancelLabel ?? l10n.cancel),
                 ),
               ElevatedButton(
-                onPressed: confirmEnabled
+                onPressed: _loading
+                    ? null
+                    : widget.confirmEnabled
                     ? () {
-                        onConfirm?.call();
-
-                        if (context.mounted && Navigator.of(context).canPop()) {
+                        if (widget.onConfirm != null) {
+                          if (widget.onConfirm is Future Function()) {
+                            setState(() => _loading = true);
+                            widget.onConfirm!()
+                                .then((_) {
+                                  if (context.mounted &&
+                                      Navigator.of(context).canPop()) {
+                                    Navigator.of(context).pop();
+                                  }
+                                })
+                                .catchError((error) {
+                                  setState(() => _loading = false);
+                                });
+                          } else {
+                            widget.onConfirm!();
+                            setState(() => _loading = false);
+                          }
+                        } else if (context.mounted &&
+                            Navigator.of(context).canPop()) {
                           Navigator.of(context).pop();
                         }
                       }
                     : null,
-                child: Text(confirmLabel ?? l10n.ok),
+                child: Text(widget.confirmLabel ?? l10n.ok),
               ),
             ],
           ),

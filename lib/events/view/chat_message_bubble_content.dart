@@ -14,7 +14,6 @@ import '../chat_download_model.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_image.dart';
 import 'chat_map.dart';
-import 'chat_message_bubble_shape.dart';
 import 'chat_message_image_full_screen_dialog.dart';
 import 'chat_message_media_avatar.dart';
 import 'chat_message_menu.dart';
@@ -29,17 +28,13 @@ class ChatMessageBubbleContent extends StatelessWidget {
     required this.event,
     required this.timeline,
     required this.onReplyOriginClick,
-    required this.hideAvatar,
-    required this.messageBubbleShape,
-    required this.partOfMessageCohort,
+    required this.eventPosition,
   });
 
   final Event event;
   final Timeline timeline;
   final Future<void> Function(Event event) onReplyOriginClick;
-  final bool hideAvatar;
-  final ChatMessageBubbleShape messageBubbleShape;
-  final bool partOfMessageCohort;
+  final EventPosition eventPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +53,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
-          child: hideAvatar && event.messageType == MessageTypes.Text
+          child: eventPosition != EventPosition.top
               ? const SizedBox.square(dimension: kAvatarDefaultSize)
               : ChatAvatar(
                   avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
@@ -80,7 +75,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
                 crossAxisAlignment: event.isUserEvent
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
-                spacing: kSmallPadding,
+
                 children: [
                   Flexible(
                     child: ChatMessageMenu(
@@ -96,8 +91,8 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                 event.isUserEvent,
                                 context.theme,
                               ),
-                              borderRadius: messageBubbleShape.getBorderRadius(
-                                partOfMessageCohort,
+                              borderRadius: const BorderRadius.all(
+                                kBigBubbleRadius,
                               ),
                             ),
                             child: Column(
@@ -167,8 +162,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                         ),
                                         (MessageTypes.Location, _) => ChatMap(
                                           event: event,
-                                          partOfMessageCohort:
-                                              partOfMessageCohort,
+                                          eventPosition: eventPosition,
                                           timeline: timeline,
                                           onReplyOriginClick:
                                               onReplyOriginClick,
@@ -224,7 +218,17 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                           messageStyle: messageStyle,
                                         ),
                                       },
-                                const SizedBox(height: kBigPadding),
+                                if (!event.redacted)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: kSmallPadding,
+                                    ),
+                                    child: ChatMessageReactions(
+                                      event: event,
+                                      timeline: timeline,
+                                    ),
+                                  ),
+                                const SizedBox(height: kSmallPadding),
                               ],
                             ),
                           ),
@@ -241,17 +245,12 @@ class ChatMessageBubbleContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  ChatEventStatusIcon(event: event, timeline: timeline),
+                  if ((event.isUserEvent ||
+                          event.status == EventStatus.error) &&
+                      eventPosition == EventPosition.bottom)
+                    ChatEventStatusIcon(event: event, timeline: timeline),
                 ],
               ),
-              if (!event.redacted)
-                Positioned(
-                  key: ValueKey('${event.eventId}reactions'),
-                  left: event.isUserEvent ? null : kTinyPadding,
-                  right: event.isUserEvent ? kTinyPadding : null,
-                  bottom: 20,
-                  child: ChatMessageReactions(event: event, timeline: timeline),
-                ),
             ],
           ),
         ),

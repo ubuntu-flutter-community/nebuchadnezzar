@@ -117,6 +117,7 @@ class _ChatInputState extends State<ChatInput> {
         widget.room.getParticipants().any(
           (e) => e.membership == Membership.invite,
         );
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -192,7 +193,11 @@ class _ChatInputState extends State<ChatInput> {
                         children: [
                           IconButton(
                             padding: EdgeInsets.zero,
-                            onPressed: attaching || sending || archiveActive
+                            onPressed:
+                                attaching ||
+                                    sending ||
+                                    archiveActive ||
+                                    unAcceptedDirectChat
                                 ? null
                                 : () => draftModel.addAttachment(
                                     widget.room.id,
@@ -210,7 +215,10 @@ class _ChatInputState extends State<ChatInput> {
                           ),
                           ChatInputEmojiPicker(
                             onEmojiSelected:
-                                attaching || sending || archiveActive
+                                attaching ||
+                                    sending ||
+                                    archiveActive ||
+                                    unAcceptedDirectChat
                                 ? null
                                 : (cat, emo) {
                                     _sendController.text =
@@ -233,7 +241,11 @@ class _ChatInputState extends State<ChatInput> {
                           tooltip: l10n.send,
                           padding: EdgeInsets.zero,
                           icon: transform,
-                          onPressed: attaching || sending || archiveActive
+                          onPressed:
+                              attaching ||
+                                  sending ||
+                                  archiveActive ||
+                                  unAcceptedDirectChat
                               ? null
                               : send,
                         ),

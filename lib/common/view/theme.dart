@@ -85,13 +85,6 @@ Color getEventBadgeColor(ThemeData theme) =>
 
 Color getEventBadgeTextColor(ThemeData theme) => theme.colorScheme.onSurface;
 
-EdgeInsets tilePadding(bool partOfMessageCohort) {
-  return const EdgeInsets.symmetric(
-    horizontal: kSmallPadding,
-    vertical: kTinyPadding,
-  );
-}
-
 ButtonStyle get textFieldSuffixStyle => IconButton.styleFrom(
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.only(

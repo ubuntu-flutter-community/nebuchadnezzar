@@ -103,10 +103,10 @@ class Progress extends StatelessWidget {
             color: color,
             trackColor: backgroundColor,
           )
-        : CircularProgressIndicator(
+        : CircularProgressIndicator.adaptive(
             strokeWidth: strokeWidth ?? 4.0,
             value: value,
-            color: color,
+            valueColor: valueColor,
             backgroundColor: value == null
                 ? null
                 : (backgroundColor ??

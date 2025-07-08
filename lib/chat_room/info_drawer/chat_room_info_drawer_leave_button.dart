@@ -10,8 +10,8 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
-class ChatRoomInfoDrawerLeaveButton extends StatelessWidget {
-  const ChatRoomInfoDrawerLeaveButton({super.key, required this.room});
+class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
+  const ChatRoomInfoDrawerForgetButton({super.key, required this.room});
 
   final Room room;
 
@@ -37,8 +37,10 @@ class ChatRoomInfoDrawerLeaveButton extends StatelessWidget {
               )
             : null,
         onPressed: () => showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (context) => ConfirmationDialog(
+            showCloseIcon: false,
             onConfirm: () async => di<ChatModel>().leaveSelectedRoom(
               onFail: (error) => showSnackBar(context, content: Text(error)),
               forget: true,

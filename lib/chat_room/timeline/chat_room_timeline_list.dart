@@ -43,10 +43,9 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => di<TimelineModel>().requestHistory(
-        widget.timeline,
-        historyCount: 500,
-      ),
+      (_) => di<TimelineModel>()
+        ..trySetReadMarker(widget.timeline)
+        ..requestHistory(widget.timeline, historyCount: 500),
     );
   }
 
@@ -104,9 +103,12 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
               }
 
               final previous = widget.timeline.events.elementAtOrNull(i + 1);
+              final next = i == 0
+                  ? null
+                  : widget.timeline.events.elementAtOrNull(i - 1);
 
-              if (i == 0 && !widget.timeline.room.isArchived) {
-                widget.timeline.setReadMarker();
+              if (i == 0) {
+                di<TimelineModel>().trySetReadMarker(widget.timeline);
               }
 
               return AutoScrollTag(
@@ -132,8 +134,11 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         child: ChatEventTile(
                           key: ValueKey('${event.eventId}column'),
                           event: event,
-                          partOfMessageCohort: event.partOfMessageCohort(
-                            previous,
+                          eventPosition: event.getEventPosition(
+                            prev: previous,
+                            next: next,
+                            showAvatarChanges: showAvatarChanges,
+                            showDisplayNameChanges: showDisplayNameChanges,
                           ),
                           onReplyOriginClick: (event) => _jump(event),
                           timeline: widget.timeline,

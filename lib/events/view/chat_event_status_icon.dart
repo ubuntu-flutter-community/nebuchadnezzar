@@ -61,10 +61,6 @@ class ChatEventStatusIcon extends StatelessWidget {
           }
         : const SizedBox.shrink();
 
-    final style =
-        textStyle ??
-        context.textTheme.labelSmall?.copyWith(color: foregroundColor);
-
     return Padding(
       padding: padding ?? const EdgeInsets.all(kSmallPadding),
       child: SizedBox(
@@ -75,22 +71,15 @@ class ChatEventStatusIcon extends StatelessWidget {
           children: [
             if (event.hasAggregatedEvents(timeline, RelationshipTypes.edit))
               const Icon(YaruIcons.pen, size: iconSize),
-            if (!userEvent && event.isImage)
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 100),
-                child: Text(
-                  '${event.senderFromMemoryOrFallback.calcDisplayname()}, ',
-                  style: style,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+
             Text(
               event.originServerTs.toLocal().formatAndLocalizeTime(
                 context.l10n,
               ),
               textAlign: TextAlign.start,
-              style: style,
+              style: context.textTheme.labelSmall?.copyWith(
+                color: foregroundColor,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
             AnimatedSwitcher(

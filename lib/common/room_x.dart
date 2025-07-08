@@ -14,4 +14,13 @@ extension RoomX on Room {
       canChangeStateEvent(EventTypes.RoomAliases) ||
       canChangeStateEvent(EventTypes.RoomJoinRules) ||
       canChangeStateEvent(EventTypes.RoomPowerLevels);
+
+  bool get isUnacceptedDirectChat {
+    final directChatMatrixID = this.directChatMatrixID;
+    if (directChatMatrixID != null) {
+      return unsafeGetUserFromMemoryOrFallback(directChatMatrixID).membership ==
+          Membership.invite;
+    }
+    return false;
+  }
 }

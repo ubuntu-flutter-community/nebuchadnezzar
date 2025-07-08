@@ -17,13 +17,13 @@ class ChatMap extends StatelessWidget {
   const ChatMap({
     super.key,
     required this.event,
-    required this.partOfMessageCohort,
+    required this.eventPosition,
     required this.timeline,
     required this.onReplyOriginClick,
   });
 
   final Event event;
-  final bool partOfMessageCohort;
+  final EventPosition eventPosition;
   final Timeline timeline;
   final Future<void> Function(Event) onReplyOriginClick;
 

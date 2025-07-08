@@ -48,20 +48,22 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
         onPressed: notReJoinable
             ? null
             : () => showDialog(
+                barrierDismissible: false,
                 context: context,
                 builder: (context) => ConfirmationDialog(
+                  showCloseIcon: false,
                   title: Text(message),
-                  onConfirm: () {
+                  onConfirm: () async {
                     void onFail(error) =>
                         showSnackBar(context, content: Text(error));
 
                     if (joinedRoom) {
-                      chatModel.leaveSelectedRoom(
+                      await chatModel.leaveSelectedRoom(
                         onFail: onFail,
                         forget: room.isDirectChat,
                       );
                     } else {
-                      chatModel.joinRoom(
+                      await chatModel.joinRoom(
                         room,
                         onFail: onFail,
                         clear: true,

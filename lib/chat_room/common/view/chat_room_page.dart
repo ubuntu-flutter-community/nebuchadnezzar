@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../../common/chat_model.dart';
+import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
@@ -82,6 +84,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       },
     );
 
+    final unAcceptedDirectChat = watchStream(
+      (ChatModel m) => m
+          .getJoinedRoomUpdate(widget.room.id)
+          .map((room) => widget.room.isUnacceptedDirectChat),
+      initialValue: widget.room.isUnacceptedDirectChat,
+      preserveState: false,
+    ).data;
+
     return DropRegion(
       formats: Formats.standardFormats,
       hitTestBehavior: HitTestBehavior.opaque,
@@ -123,23 +133,29 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     key: ValueKey('${widget.room.id}input'),
                     room: widget.room,
                   ),
-            body: FutureBuilder<Timeline>(
-              key: ValueKey(widget.room.id),
-              future: _timelineFuture,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: kMediumPadding),
-                    child: ChatRoomTimelineList(
-                      timeline: snapshot.data!,
-                      listKey: _roomListKey,
-                    ),
-                  );
-                } else {
-                  return const Center(child: Progress());
-                }
-              },
-            ),
+            body: unAcceptedDirectChat == null
+                ? const Center(child: Progress())
+                : unAcceptedDirectChat == true
+                ? const ChatRoomUnacceptedDirectChatBody()
+                : FutureBuilder<Timeline>(
+                    key: ValueKey(widget.room.id),
+                    future: _timelineFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: kMediumPadding,
+                          ),
+                          child: ChatRoomTimelineList(
+                            timeline: snapshot.data!,
+                            listKey: _roomListKey,
+                          ),
+                        );
+                      } else {
+                        return const Center(child: Progress());
+                      }
+                    },
+                  ),
           ),
           if (updating &&
               chatRoomScaffoldKey.currentState?.isEndDrawerOpen != true)
@@ -164,6 +180,33 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class ChatRoomUnacceptedDirectChatBody extends StatelessWidget {
+  const ChatRoomUnacceptedDirectChatBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final colorScheme = context.colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(kMediumPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: kMediumPadding,
+          children: [
+            Icon(YaruIcons.send, size: 48, color: colorScheme.error),
+            Text(
+              l10n.waitingPartnerAcceptRequest,
+              textAlign: TextAlign.center,
+              style: context.theme.textTheme.bodyLarge,
+            ),
+          ],
+        ),
       ),
     );
   }
