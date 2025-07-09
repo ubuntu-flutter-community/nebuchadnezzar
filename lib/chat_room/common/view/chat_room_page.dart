@@ -86,8 +86,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
     final unAcceptedDirectChat = watchStream(
       (ChatModel m) => m
-          .getJoinedRoomUpdate(widget.room.id)
-          .map((room) => widget.room.isUnacceptedDirectChat),
+          .getUsersStreamOfJoinedRoom(
+            widget.room,
+            membershipFilter: [Membership.invite],
+          )
+          .map(
+            (invitedUsers) =>
+                widget.room.isDirectChat && invitedUsers.isNotEmpty,
+          ),
       initialValue: widget.room.isUnacceptedDirectChat,
       preserveState: false,
     ).data;

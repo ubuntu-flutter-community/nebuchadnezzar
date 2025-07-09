@@ -16,10 +16,10 @@ extension RoomX on Room {
       canChangeStateEvent(EventTypes.RoomPowerLevels);
 
   bool get isUnacceptedDirectChat {
-    final directChatMatrixID = this.directChatMatrixID;
-    if (directChatMatrixID != null) {
-      return unsafeGetUserFromMemoryOrFallback(directChatMatrixID).membership ==
-          Membership.invite;
+    if (isDirectChat) {
+      return getParticipants()
+          .where((p) => p.membership == Membership.invite)
+          .isNotEmpty;
     }
     return false;
   }
