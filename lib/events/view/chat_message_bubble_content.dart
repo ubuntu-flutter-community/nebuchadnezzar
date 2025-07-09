@@ -91,9 +91,25 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                 event.isUserEvent,
                                 context.theme,
                               ),
-                              borderRadius: const BorderRadius.all(
-                                kBigBubbleRadius,
-                              ),
+                              borderRadius: switch (eventPosition) {
+                                EventPosition.middle => BorderRadius.circular(
+                                  kBubbleRadiusValue,
+                                ),
+                                EventPosition.top => const BorderRadius.only(
+                                  topLeft: kBubbleRadius,
+                                  topRight: kBigBubbleRadius,
+                                  bottomLeft: kBubbleRadius,
+                                  bottomRight: kBubbleRadius,
+                                ),
+                                EventPosition.bottom => const BorderRadius.only(
+                                  topLeft: kBubbleRadius,
+                                  topRight: kBubbleRadius,
+                                  bottomLeft: kBigBubbleRadius,
+                                  bottomRight: kBigBubbleRadius,
+                                ),
+                                EventPosition.semanticSingle =>
+                                  const BorderRadius.all(kBigBubbleRadius),
+                              },
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

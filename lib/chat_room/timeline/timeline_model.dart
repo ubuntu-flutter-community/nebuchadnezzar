@@ -13,7 +13,7 @@ class TimelineModel extends SafeChangeNotifier {
 
   final Map<String, bool> _updatingTimeline = {};
   bool getUpdatingTimeline(String? roomId) => _updatingTimeline[roomId] == true;
-  void setUpdatingTimeline({required String roomId, required bool value}) {
+  void _setUpdatingTimeline({required String roomId, required bool value}) {
     if (_updatingTimeline[roomId] == value) return;
     _updatingTimeline[roomId] = value;
     notifyListeners();
@@ -24,7 +24,7 @@ class TimelineModel extends SafeChangeNotifier {
     int historyCount = 50,
     StateFilter? filter,
   }) async {
-    setUpdatingTimeline(roomId: timeline.room.id, value: true);
+    _setUpdatingTimeline(roomId: timeline.room.id, value: true);
     _setTimeline(timeline: timeline);
 
     if (!timeline.room.isArchived) {
@@ -39,7 +39,7 @@ class TimelineModel extends SafeChangeNotifier {
       }
     }
 
-    setUpdatingTimeline(roomId: timeline.room.id, value: false);
+    _setUpdatingTimeline(roomId: timeline.room.id, value: false);
   }
 
   Future<void> trySetReadMarker(Timeline timeline) async {

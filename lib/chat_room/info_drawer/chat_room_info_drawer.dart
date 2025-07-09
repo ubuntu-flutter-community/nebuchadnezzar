@@ -21,8 +21,11 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final unAcceptedDirectChat = watchStream(
       (ChatModel m) => m
-          .getJoinedRoomUpdate(room.id)
-          .map((_) => room.isUnacceptedDirectChat),
+          .getUsersStreamOfJoinedRoom(
+            room,
+            membershipFilter: [Membership.invite],
+          )
+          .map((invitedUsers) => room.isDirectChat && invitedUsers.isNotEmpty),
       initialValue: room.isUnacceptedDirectChat,
       preserveState: false,
     ).data;

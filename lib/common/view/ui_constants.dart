@@ -26,8 +26,10 @@ const Curve kAvatarAnimationCurve = Curves.easeInOut;
 const kTypingAvatarSize = 20.0;
 const kAvatarDefaultSize = 38.0;
 
-const kBubbleRadius = Radius.circular(4.0);
-const kBigBubbleRadius = Radius.circular(8.0);
+const kBubbleRadiusValue = 4.0;
+const kBigBubbleRadiusValue = 12.0;
+const kBubbleRadius = Radius.circular(kBubbleRadiusValue);
+const kBigBubbleRadius = Radius.circular(kBigBubbleRadiusValue);
 
 const windowOptions = WindowOptions(
   size: Size(1024, 800),

@@ -144,4 +144,4 @@ extension EventX on Event {
   }
 }
 
-enum EventPosition { top, bottom, middle }
+enum EventPosition { top, bottom, middle, semanticSingle }
