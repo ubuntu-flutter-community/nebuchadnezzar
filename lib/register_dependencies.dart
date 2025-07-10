@@ -10,6 +10,7 @@ import 'package:window_manager/window_manager.dart';
 
 import 'app/app_config.dart';
 import 'authentication/authentication_model.dart';
+import 'chat_room/create_or_edit/create_or_edit_room_model.dart';
 import 'chat_room/input/draft_model.dart';
 import 'chat_room/timeline/timeline_model.dart';
 import 'common/chat_model.dart';
@@ -149,5 +150,6 @@ void registerDependencies() {
       }
 
       return localNotifier;
-    });
+    })
+    ..registerLazySingleton<CreateOrEditRoomModel>(CreateOrEditRoomModel.new);
 }

@@ -9,6 +9,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import 'create_or_edit_room_model.dart';
 
 // Credit: this code has been inspired by https://github.com/krille-chan/fluffychat permissions
 // Thank you @krille-chan
@@ -21,7 +22,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final l10n = context.l10n;
-    final chatModel = di<ChatModel>();
+    final model = di<CreateOrEditRoomModel>();
 
     final canChangePowerLevel =
         watchStream(
@@ -82,7 +83,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
                       showSnackBar(context, content: Text(e.toString()));
                       return e;
                     },
-                    future: () => chatModel.editPowerLevel(
+                    future: () => model.editPowerLevel(
                       room: room,
                       key: entry.key,
                       newLevel: level,
@@ -114,7 +115,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
                     showSnackBar(context, content: Text(e.toString()));
                     return e;
                   },
-                  future: () => chatModel.editPowerLevel(
+                  future: () => model.editPowerLevel(
                     room: room,
                     key: key,
                     newLevel: level,
@@ -143,7 +144,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
                       showSnackBar(context, content: Text(e.toString()));
                       return e;
                     },
-                    future: () => di<ChatModel>().editPowerLevel(
+                    future: () => model.editPowerLevel(
                       room: room,
                       key: entry.key,
                       newLevel: level,

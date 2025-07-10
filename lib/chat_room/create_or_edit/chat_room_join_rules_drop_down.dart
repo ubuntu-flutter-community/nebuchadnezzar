@@ -9,6 +9,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
+import 'create_or_edit_room_model.dart';
 
 class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
   const ChatRoomJoinRulesDropDown({super.key, required this.room});
@@ -52,8 +53,10 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
                   showErrorSnackBar(context, e);
                   return e;
                 },
-                future: () =>
-                    di<ChatModel>().setJoinRules(room: room, value: v),
+                future: () => di<CreateOrEditRoomModel>().setJoinRulesForRoom(
+                  room: room,
+                  value: v,
+                ),
               )
             : null,
         itemBuilder: (context) => JoinRules.values

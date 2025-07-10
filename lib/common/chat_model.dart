@@ -145,61 +145,6 @@ class ChatModel extends SafeChangeNotifier {
   Stream<Event> getHistoryStream(Room room) =>
       _client.onHistoryEvent.stream.where((e) => e.room.id == room.id);
 
-  Future<void> editPowerLevel({
-    required Room room,
-    required String key,
-    int? newLevel,
-    String? category,
-  }) async {
-    try {
-      if (newLevel == null) return;
-      final content = Map<String, dynamic>.from(
-        room.getState(EventTypes.RoomPowerLevels)!.content,
-      );
-      if (category != null) {
-        if (!content.containsKey(category)) {
-          content[category] = <String, dynamic>{};
-        }
-        content[category][key] = newLevel;
-      } else {
-        content[key] = newLevel;
-      }
-      await room.client.setRoomStateWithKey(
-        room.id,
-        EventTypes.RoomPowerLevels,
-        '',
-        content,
-      );
-    } on Exception catch (e, s) {
-      printMessageInDebugMode(e, s);
-      rethrow;
-    }
-  }
-
-  Future<void> setHistoryVisibility({
-    required Room room,
-    required HistoryVisibility value,
-  }) async {
-    try {
-      await room.setHistoryVisibility(value);
-    } catch (e, s) {
-      printMessageInDebugMode(e, s);
-      rethrow;
-    }
-  }
-
-  Future<void> setJoinRules({
-    required Room room,
-    required JoinRules value,
-  }) async {
-    try {
-      await room.setJoinRules(value);
-    } catch (e, s) {
-      printMessageInDebugMode(e, s);
-      rethrow;
-    }
-  }
-
   List<Room> get spaces => _rooms.where((e) => e.isSpace).toList();
 
   RoomsFilter? _roomsFilter;

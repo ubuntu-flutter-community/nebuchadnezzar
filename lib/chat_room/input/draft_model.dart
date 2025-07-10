@@ -46,6 +46,7 @@ class DraftModel extends SafeChangeNotifier {
 
   Future<void> send({
     required Room room,
+    String? text,
     required Function(String error) onFail,
     required Function() onSuccess,
   }) async {
