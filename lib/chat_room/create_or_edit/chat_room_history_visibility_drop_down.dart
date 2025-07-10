@@ -8,6 +8,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
+import 'create_or_edit_room_model.dart';
 
 class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
     with WatchItMixin {
@@ -47,8 +48,8 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
         onSelected: canChangeHistoryVisibility
             ? (v) => showFutureLoadingDialog(
                 context: context,
-                future: () =>
-                    di<ChatModel>().setHistoryVisibility(room: room, value: v),
+                future: () => di<CreateOrEditRoomModel>()
+                    .setHistoryVisibilityForRoom(room: room, value: v),
                 onError: (e) {
                   showSnackBar(context, content: Text(e.toString()));
                   return e;

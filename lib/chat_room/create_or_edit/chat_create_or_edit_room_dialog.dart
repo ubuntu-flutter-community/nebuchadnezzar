@@ -1,27 +1,24 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide Visibility;
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
-import '../../common/view/chat_avatar.dart';
-import '../../common/view/common_widgets.dart';
-import '../../common/view/save_text_icon.dart';
 import '../../common/view/search_auto_complete.dart';
 import '../../common/view/sliver_sticky_panel.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
-import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../common/view/chat_room_users_list.dart';
 import '../input/draft_model.dart';
 import 'chat_room_create_or_edit_avatar.dart';
-import 'chat_room_history_visibility_drop_down.dart';
-import 'chat_room_join_rules_drop_down.dart';
 import 'chat_room_permissions.dart';
-import '../common/view/chat_room_users_list.dart';
+import 'create_or_edit_room_button.dart';
+import 'create_or_edit_room_header.dart';
+import 'create_or_edit_room_model.dart';
+import 'profiles_list_view.dart';
 
 const _maxWidth = 500.0;
 
@@ -39,60 +36,13 @@ class ChatCreateOrEditRoomDialog extends StatefulWidget
 
 class _ChatCreateOrEditRoomDialogState
     extends State<ChatCreateOrEditRoomDialog> {
-  late JoinRules _joinRules;
-  late HistoryVisibility _historyVisibility;
-  Set<Profile> _profiles = {};
-  late final bool _isSpace;
-  String? _groupName;
-  String? _topic;
-  late bool _enableEncryption;
-  late bool _federated;
-  late bool _groupCall;
-
-  late final bool _existingGroup;
-
-  late final TextEditingController _groupNameController;
-  late final TextEditingController _groupTopicController;
-
   @override
   void initState() {
     super.initState();
-    _groupName = widget.room?.name;
-    _isSpace = widget.room?.isSpace ?? widget.space;
-    _topic = widget.room?.topic;
-    _existingGroup = widget.room != null;
-
-    _enableEncryption = widget.room?.encrypted ?? false;
-    _federated = widget.room?.isFederated ?? true;
-    _groupCall = widget.room?.hasActiveGroupCall ?? false;
-    _groupNameController = TextEditingController(text: _groupName);
-    _groupTopicController = TextEditingController(text: _topic);
-    _joinRules = widget.room?.joinRules ?? JoinRules.private;
-    _historyVisibility =
-        widget.room?.historyVisibility ?? HistoryVisibility.shared;
-    _profiles =
-        widget.room
-            ?.getParticipants()
-            .where((e) {
-              final id = e.id.split(':').firstOrNull?.replaceAll('@', '');
-
-              return id?.isNotEmpty == true;
-            })
-            .map(
-              (e) => Profile(
-                userId: e.id.split(':').firstOrNull!.replaceAll('@', ''),
-                avatarUrl: e.avatarUrl,
-              ),
-            )
-            .toSet() ??
-        <Profile>{};
-  }
-
-  @override
-  void dispose() {
-    _groupNameController.dispose();
-    _groupTopicController.dispose();
-    super.dispose();
+    di<CreateOrEditRoomModel>().loadFromDialog(
+      room: widget.room,
+      isSpace: widget.space,
+    );
   }
 
   @override
@@ -105,33 +55,7 @@ class _ChatCreateOrEditRoomDialogState
       (DraftModel m) => m.avatarDraftFile,
     );
 
-    final profileListView = ListView.builder(
-      padding: const EdgeInsets.symmetric(
-        horizontal: kMediumPadding,
-        vertical: kBigPadding,
-      ),
-      itemCount: _profiles.length,
-      itemBuilder: (context, index) {
-        final t = _profiles.elementAt(index);
-        return ListTile(
-          shape: const RoundedRectangleBorder(),
-          contentPadding: EdgeInsets.zero,
-          key: ValueKey(t.userId),
-          leading: ChatAvatar(avatarUri: t.avatarUrl),
-          title: Text(t.displayName ?? t.userId, maxLines: 1),
-          subtitle: Text(t.userId, maxLines: 1),
-          trailing: t.userId == di<ChatModel>().myUserId
-              ? null
-              : IconButton(
-                  onPressed: () => setState(() {
-                    _profiles.remove(t);
-                    if (_existingGroup) widget.room!.kick(t.userId);
-                  }),
-                  icon: const Icon(YaruIcons.trash),
-                ),
-        );
-      },
-    );
+    final isSpace = widget.room?.isSpace ?? widget.space;
 
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
@@ -159,15 +83,15 @@ class _ChatCreateOrEditRoomDialogState
                     backgroundColor: Colors.transparent,
                     border: BorderSide.none,
                     title: Text(
-                      _existingGroup
-                          ? '${l10n.edit} ${_isSpace ? l10n.space : l10n.group}'
-                          : _isSpace
+                      widget.room != null
+                          ? '${l10n.edit} ${isSpace ? l10n.space : l10n.group}'
+                          : isSpace
                           ? l10n.createNewSpace
                           : l10n.createGroup,
                     ),
                   ),
                 ),
-                if (!_isSpace)
+                if (!isSpace)
                   SliverPadding(
                     padding: const EdgeInsets.only(bottom: kBigPadding),
                     sliver: SliverToBoxAdapter(
@@ -182,145 +106,10 @@ class _ChatCreateOrEditRoomDialogState
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
                   sliver: SliverToBoxAdapter(
-                    child: YaruSection(
-                      headline: Text(l10n.group),
-                      child: Padding(
-                        padding: const EdgeInsets.all(kMediumPadding),
-                        child: Column(
-                          spacing: kBigPadding,
-                          children: [
-                            TextField(
-                              autofocus: true,
-                              enabled:
-                                  widget.room == null ||
-                                  widget.room?.canChangeStateEvent(
-                                        EventTypes.RoomName,
-                                      ) ==
-                                      true,
-                              controller: _groupNameController,
-                              onChanged: (v) => setState(() {
-                                _groupName = v;
-                              }),
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.all(12),
-                                label: Text(
-                                  _isSpace ? l10n.spaceName : l10n.groupName,
-                                ),
-                                suffixIcon:
-                                    (_existingGroup &&
-                                        widget.room!.canChangeStateEvent(
-                                          EventTypes.RoomName,
-                                        ))
-                                    ? IconButton(
-                                        padding: EdgeInsets.zero,
-                                        style: textFieldSuffixStyle,
-                                        onPressed:
-                                            _groupName != widget.room!.name
-                                            ? () => widget.room!.setName(
-                                                _groupName!,
-                                              )
-                                            : null,
-                                        icon: SaveTextIcon(
-                                          room: widget.room,
-                                          textEditingController:
-                                              _groupNameController,
-                                          isSaved: () =>
-                                              _groupName == widget.room?.name,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                            ),
-                            TextField(
-                              enabled:
-                                  widget.room == null ||
-                                  widget.room?.canChangeStateEvent(
-                                        EventTypes.RoomTopic,
-                                      ) ==
-                                      true,
-                              controller: _groupTopicController,
-                              onChanged: (v) => setState(() {
-                                _topic = v;
-                              }),
-                              decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.all(12),
-                                label: Text(l10n.chatDescription),
-                                suffixIcon:
-                                    (_existingGroup &&
-                                        widget.room!.canChangeStateEvent(
-                                          EventTypes.RoomTopic,
-                                        ))
-                                    ? IconButton(
-                                        padding: EdgeInsets.zero,
-                                        style: textFieldSuffixStyle,
-                                        onPressed: _topic != widget.room!.topic
-                                            ? () => widget.room!.setDescription(
-                                                _topic!,
-                                              )
-                                            : null,
-                                        icon: SaveTextIcon(
-                                          textEditingController:
-                                              _groupTopicController,
-                                          isSaved: () =>
-                                              _topic == widget.room?.topic,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                            ),
-                            if (!_isSpace)
-                              YaruTile(
-                                leading: _enableEncryption
-                                    ? const Icon(YaruIcons.shield_filled)
-                                    : const Icon(YaruIcons.shield),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: kMediumPadding,
-                                ),
-                                trailing: CommonSwitch(
-                                  value: _enableEncryption,
-                                  onChanged:
-                                      widget.room?.encrypted == true ||
-                                          widget.room?.canChangeStateEvent(
-                                                EventTypes.Encryption,
-                                              ) ==
-                                              false
-                                      ? null
-                                      : (v) {
-                                          setState(() => _enableEncryption = v);
-
-                                          if (_enableEncryption &&
-                                              widget.room?.encrypted == false) {
-                                            widget.room?.enableEncryption();
-                                          }
-                                        },
-                                ),
-                                title: Text(l10n.encrypted),
-                              ),
-                            if (widget.room != null)
-                              ChatRoomHistoryVisibilityDropDown(
-                                room: widget.room!,
-                              )
-                            else if (!_isSpace)
-                              ChatCreateRoomHistoryVisibilityDropDown(
-                                initialValue: _historyVisibility,
-                                onSelected: (v) =>
-                                    setState(() => _historyVisibility = v),
-                              ),
-                            if (widget.room != null)
-                              ChatRoomJoinRulesDropDown(room: widget.room!)
-                            else
-                              ChatCreateRoomJoinRulesDropDown(
-                                joinRules: _joinRules,
-                                onSelected: (v) =>
-                                    setState(() => _joinRules = v),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    child: CreateOrEditRoomHeader(room: widget.room),
                   ),
                 ),
-                if (_existingGroup)
+                if (widget.room != null)
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: kBigPadding,
@@ -336,7 +125,8 @@ class _ChatCreateOrEditRoomDialogState
                       headline: Text(l10n.users),
                       child: Column(
                         children: [
-                          if (!_existingGroup || widget.room?.canInvite == true)
+                          if (widget.room == null ||
+                              widget.room?.canInvite == true)
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: kMediumPadding,
@@ -349,10 +139,22 @@ class _ChatCreateOrEditRoomDialogState
                                   width: usedWidth - 2 * kMediumPadding,
                                   suffix: const Icon(YaruIcons.user),
                                   onProfileSelected: (p) {
-                                    if (_existingGroup) {
-                                      widget.room!.invite(p.userId);
+                                    if (widget.room != null) {
+                                      showFutureLoadingDialog(
+                                        context: context,
+                                        future: () =>
+                                            di<CreateOrEditRoomModel>()
+                                                .inviteUserToRoom(
+                                                  room: widget.room!,
+                                                  userId: p.userId,
+                                                ),
+                                        onError: (e) {
+                                          showErrorSnackBar(context, e);
+                                          return e;
+                                        },
+                                      );
                                     } else {
-                                      setState(() => _profiles.add(p));
+                                      di<CreateOrEditRoomModel>().addProfile(p);
                                     }
                                   },
                                 ),
@@ -361,14 +163,14 @@ class _ChatCreateOrEditRoomDialogState
                           SizedBox(
                             height: 200,
                             width: _maxWidth,
-                            child: _existingGroup
+                            child: widget.room != null
                                 ? widget.room?.canInvite == true
                                       ? ChatRoomUsersList(
                                           room: widget.room!,
                                           sliver: false,
                                         )
                                       : const SizedBox.shrink()
-                                : profileListView,
+                                : const ProfilesListView(),
                           ),
                         ],
                       ),
@@ -380,7 +182,7 @@ class _ChatCreateOrEditRoomDialogState
           ),
         ),
       ),
-      actions: _existingGroup
+      actions: widget.room != null
           ? null
           : [
               Row(
@@ -393,57 +195,7 @@ class _ChatCreateOrEditRoomDialogState
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(l10n.cancel),
                     ),
-                    ImportantButton(
-                      onPressed:
-                          _groupName == null || _groupName!.trim().isEmpty
-                          ? null
-                          : () {
-                              if (context.mounted &&
-                                  Navigator.of(context).canPop()) {
-                                Navigator.of(context).pop();
-                              }
-                              if (_isSpace) {
-                                di<ChatModel>().createSpace(
-                                  name: _groupName!,
-                                  topic: _groupTopicController.text,
-                                  invite: _profiles
-                                      .map((p) => p.userId)
-                                      .toList(),
-                                  joinRules: _joinRules,
-                                  onFail: (error) => showSnackBar(
-                                    context,
-                                    content: Text(error),
-                                  ),
-                                  onSuccess: () {
-                                    di<DraftModel>().resetAvatar();
-                                  },
-                                );
-                              } else {
-                                di<ChatModel>().createRoom(
-                                  avatarFile: avatarDraftFile,
-                                  enableEncryption: _enableEncryption,
-                                  invite: _profiles
-                                      .map((p) => p.userId)
-                                      .toList(),
-                                  groupName: _groupName,
-                                  joinRules: _joinRules,
-                                  historyVisibility: _historyVisibility,
-                                  onFail: (error) => showSnackBar(
-                                    context,
-                                    content: Text(error),
-                                  ),
-                                  onSuccess: () {
-                                    di<DraftModel>().resetAvatar();
-                                  },
-                                  groupCall: _groupCall,
-                                  federated: _federated,
-                                );
-                              }
-                            },
-                      child: Text(
-                        _isSpace ? l10n.createNewSpace : l10n.createGroup,
-                      ),
-                    ),
+                    const CreateOrEditRoomButton(),
                   ],
                 ),
               ),
