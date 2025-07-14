@@ -20,6 +20,7 @@ import 'platforms.dart';
 
 extension ClientX on Client {
   static Future<Client> registerAsync() async {
+    await vod.init(wasmPath: './assets/assets/vodozemac/');
     final client = Client(
       AppConfig.appId,
       nativeImplementations: kIsWeb

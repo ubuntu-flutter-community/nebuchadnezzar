@@ -8,6 +8,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../app/view/error_page.dart';
 import '../../common/date_time_x.dart';
 import '../../common/local_image_model.dart';
 import '../../common/view/build_context_x.dart';
@@ -160,6 +161,9 @@ class _ChatMessageImageFullScreenDialogState
                     child: FutureBuilder(
                       future: _future,
                       builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return ErrorBody(error: snapshot.error.toString());
+                        }
                         if (snapshot.hasData) {
                           return ClipRRect(
                             child: PhotoView(

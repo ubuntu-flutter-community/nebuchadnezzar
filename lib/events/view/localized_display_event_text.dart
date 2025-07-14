@@ -45,6 +45,14 @@ class _LocalizedDisplayEventTextState extends State<LocalizedDisplayEventText> {
       : FutureBuilder(
           future: _future,
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return _Content(
+                text: snapshot.error.toString(),
+                style: widget.style,
+                textAlign: widget.textAlign,
+                badge: widget.displayEvent.showAsBadge,
+              );
+            }
             if (snapshot.hasData) {
               _cache.update(
                 widget.displayEvent.eventId,

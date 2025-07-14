@@ -4,6 +4,7 @@ import 'package:matrix/matrix_api_lite/generated/model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../app/view/error_page.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
 import '../../common/view/chat_profile_dialog.dart';
@@ -70,6 +71,11 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return AlertDialog(
+            content: ErrorBody(error: snapshot.error.toString()),
+          );
+        }
         return ConfirmationDialog(
           confirmEnabled: snapshot.hasData,
           onConfirm: snapshot.hasData

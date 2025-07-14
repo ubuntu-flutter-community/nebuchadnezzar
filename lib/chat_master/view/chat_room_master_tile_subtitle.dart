@@ -65,6 +65,9 @@ class ChatRoomLastEvent extends StatelessWidget {
         withSenderNamePrefix: true,
       ),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Text('?', maxLines: 1);
+        }
         if (snapshot.hasData && lastEvent != null) {
           return Text(snapshot.data!, maxLines: 1);
         }
