@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../../app/view/error_page.dart';
 import '../../../common/chat_model.dart';
 import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
@@ -148,6 +149,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     key: ValueKey(widget.room.id),
                     future: _timelineFuture,
                     builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return ErrorBody(error: snapshot.error.toString());
+                      }
                       if (snapshot.hasData) {
                         return Padding(
                           padding: const EdgeInsets.only(

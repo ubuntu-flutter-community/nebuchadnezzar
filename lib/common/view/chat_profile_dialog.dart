@@ -3,6 +3,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../app/view/error_page.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_dialog.dart';
 import '../chat_model.dart';
@@ -49,6 +50,10 @@ class _ChatProfileState extends State<ChatProfile> {
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return ErrorBody(error: snapshot.error.toString());
+        }
+
         final myProfile =
             snapshot.hasData &&
             snapshot.data!.userId == di<ChatModel>().myUserId;

@@ -139,7 +139,12 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
   @override
   Widget build(BuildContext context) => FutureBuilder(
     future: _future,
-    builder: (context, snapshot) => snapshot.hasData
+    builder: (context, snapshot) => snapshot.hasError
+        ? Icon(
+            YaruIcons.image_missing,
+            size: widget.height == null ? 45 : widget.height! / 2,
+          )
+        : snapshot.hasData
         ? AnimatedOpacity(
             opacity: snapshot.hasData ? 1 : 0,
             duration: const Duration(milliseconds: 300),

@@ -5,6 +5,7 @@ import '../../authentication/authentication_model.dart';
 import '../../authentication/view/chat_login_page.dart';
 import '../../encryption/view/check_encryption_setup_page.dart';
 import 'app.dart';
+import 'error_page.dart';
 import 'splash_page.dart';
 
 class WaitForRegistrationPage extends StatefulWidget {
@@ -38,7 +39,16 @@ class _WaitForRegistrationPageState extends State<WaitForRegistrationPage> {
   @override
   Widget build(BuildContext context) => FutureBuilder(
     future: _registrationReady,
-    builder: (context, snapshot) => snapshot.hasData
+    builder: (context, snapshot) => snapshot.hasError
+        ? App(
+            themeMode: ThemeMode.system,
+            lightTheme: widget.lightTheme,
+            darkTheme: widget.darkTheme,
+            highContrastDarkTheme: widget.highContrastDarkTheme,
+            highContrastTheme: widget.highContrastTheme,
+            child: ErrorPage(error: snapshot.error.toString()),
+          )
+        : snapshot.hasData
         ? App(
             lightTheme: widget.lightTheme,
             darkTheme: widget.darkTheme,

@@ -49,6 +49,9 @@ class _ChatMessageReplyHeaderState extends State<ChatMessageReplyHeader> {
     return FutureBuilder(
       future: _future,
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text(snapshot.error.toString());
+        }
         if (snapshot.hasData) {
           final replyEvent = snapshot.data;
 
