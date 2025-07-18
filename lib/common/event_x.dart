@@ -142,6 +142,10 @@ extension EventX on Event {
       room.setPinnedEvents([...room.pinnedEventIds, eventId]);
     }
   }
+
+  bool get isEncryptedAndCouldDecrypt =>
+      (type == EventTypes.Encrypted && type != MessageTypes.BadEncrypted) &&
+      content['can_request_session'] == true;
 }
 
 enum EventPosition { top, bottom, middle, semanticSingle }

@@ -99,65 +99,78 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                     errorMaxLines: 2,
                   ),
                 ),
-                ElevatedButton.icon(
-                  icon: recoveryKeyInputLoading
-                      ? const CircularProgressIndicator.adaptive()
-                      : const Icon(Icons.lock_open_outlined),
-                  label: Text(l10n.unlockOldMessages),
-                  onPressed: recoveryKeyInputLoading
-                      ? null
-                      : () async {
-                          model.setRecoveryKeyInputError(null);
-                          model.setRecoveryKeyInputLoading(true);
-                          try {
-                            final newKey = _recoveryKeyTextEditingController
-                                .text
-                                .trim();
-                            if (newKey.isEmpty == true) return;
-                            await bootstrap?.newSsssKey?.unlock(
-                              keyOrPassphrase: newKey,
-                            );
-                            await bootstrap?.openExistingSsss();
-                            Logs().d('SSSS unlocked');
-                            if (bootstrap?.encryption.crossSigning.enabled ==
-                                true) {
-                              Logs().v(
-                                'Cross signing is already enabled. Try to self-sign',
-                              );
+                ListenableBuilder(
+                  listenable: _recoveryKeyTextEditingController,
+                  builder: (context, child) {
+                    return ElevatedButton.icon(
+                      icon: recoveryKeyInputLoading
+                          ? const CircularProgressIndicator.adaptive()
+                          : const Icon(Icons.lock_open_outlined),
+                      label: Text(l10n.unlockOldMessages),
+                      onPressed:
+                          recoveryKeyInputLoading ||
+                              _recoveryKeyTextEditingController.text.isEmpty
+                          ? null
+                          : () async {
+                              model.setRecoveryKeyInputError(null);
+                              model.setRecoveryKeyInputLoading(true);
                               try {
-                                await bootstrap?.client.encryption!.crossSigning
-                                    .selfSign(recoveryKey: newKey);
-                                Logs().d('Successful selfsigned');
-                              } catch (e, s) {
-                                Logs().e(
-                                  'Unable to self sign with recovery key after successfully open existing SSSS',
-                                  e,
-                                  s,
+                                final newKey = _recoveryKeyTextEditingController
+                                    .text
+                                    .trim();
+                                if (newKey.isEmpty == true) return;
+                                await bootstrap?.newSsssKey?.unlock(
+                                  keyOrPassphrase: newKey,
                                 );
+                                await bootstrap?.openExistingSsss();
+                                Logs().d('SSSS unlocked');
+                                if (bootstrap
+                                        ?.encryption
+                                        .crossSigning
+                                        .enabled ==
+                                    true) {
+                                  Logs().v(
+                                    'Cross signing is already enabled. Try to self-sign',
+                                  );
+                                  try {
+                                    await bootstrap
+                                        ?.client
+                                        .encryption!
+                                        .crossSigning
+                                        .selfSign(recoveryKey: newKey);
+                                    Logs().d('Successful selfsigned');
+                                  } catch (e, s) {
+                                    Logs().e(
+                                      'Unable to self sign with recovery key after successfully open existing SSSS',
+                                      e,
+                                      s,
+                                    );
+                                  }
+                                }
+                              } on InvalidPassphraseException catch (e) {
+                                if (context.mounted) {
+                                  showSnackBar(
+                                    context,
+                                    content: Text(e.toString()),
+                                  );
+                                }
+                              } on FormatException catch (_) {
+                                model.setRecoveryKeyInputError(
+                                  l10n.wrongRecoveryKey,
+                                );
+                              } catch (e, _) {
+                                if (context.mounted) {
+                                  showSnackBar(
+                                    context,
+                                    content: Text(e.toString()),
+                                  );
+                                }
+                              } finally {
+                                model.setRecoveryKeyInputLoading(false);
                               }
-                            }
-                          } on InvalidPassphraseException catch (e) {
-                            if (context.mounted) {
-                              showSnackBar(
-                                context,
-                                content: Text(e.toString()),
-                              );
-                            }
-                          } on FormatException catch (_) {
-                            model.setRecoveryKeyInputError(
-                              l10n.wrongRecoveryKey,
-                            );
-                          } catch (e, _) {
-                            if (context.mounted) {
-                              showSnackBar(
-                                context,
-                                content: Text(e.toString()),
-                              );
-                            }
-                          } finally {
-                            model.setRecoveryKeyInputLoading(false);
-                          }
-                        },
+                            },
+                    );
+                  },
                 ),
                 Row(
                   children: [

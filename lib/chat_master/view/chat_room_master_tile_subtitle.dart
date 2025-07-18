@@ -3,6 +3,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/chat_model.dart';
+import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
 
@@ -67,6 +68,12 @@ class ChatRoomLastEvent extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text('?', maxLines: 1);
+        }
+        if (lastEvent!.hideInTimeline(
+          showAvatarChanges: false,
+          showDisplayNameChanges: false,
+        )) {
+          return const Text('...', maxLines: 1);
         }
         if (snapshot.hasData && lastEvent != null) {
           return Text(snapshot.data!, maxLines: 1);

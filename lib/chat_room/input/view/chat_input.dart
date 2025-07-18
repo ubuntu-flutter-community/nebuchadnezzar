@@ -7,6 +7,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../../common/chat_model.dart';
+import '../../../common/logging.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
@@ -37,6 +38,13 @@ class _ChatInputState extends State<ChatInput> {
     );
     _sendNode = FocusNode(
       onKeyEvent: (node, event) {
+        // Check if the "@"-Key has been pressed
+        if (_sendController.text.contains('@')) {
+          printMessageInDebugMode('@ key pressed');
+
+          return KeyEventResult.handled;
+        }
+
         final enterPressedWithoutShift =
             event is KeyDownEvent &&
             event.physicalKey == PhysicalKeyboardKey.enter &&

@@ -14,7 +14,10 @@ class ChatInvitationDialog extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) => ConfirmationDialog(
     title: Text(room.getLocalizedDisplayname()),
-    onCancel: () => room.leave(),
+    onCancel: () => di<ChatModel>().leaveRoom(
+      onFail: (error) => showSnackBar(context, content: Text(error)),
+      room: room,
+    ),
     onConfirm: () => di<ChatModel>().joinRoom(
       room,
       onFail: (error) => showSnackBar(context, content: Text(error)),

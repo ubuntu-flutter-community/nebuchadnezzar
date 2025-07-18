@@ -68,7 +68,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         if (!di<ChatModel>().archiveActive &&
             !di<ChatModel>().loadingArchive &&
             leftRoomUpdate.hasData) {
-          di<ChatModel>().leaveSelectedRoom(
+          di<ChatModel>().leaveRoom(
+            room: widget.room,
             onFail: (error) => showSnackBar(context, content: Text(error)),
           );
           showDialog(
@@ -85,19 +86,21 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       },
     );
 
-    final unAcceptedDirectChat = watchStream(
-      (ChatModel m) => m
-          .getUsersStreamOfJoinedRoom(
-            widget.room,
-            membershipFilter: [Membership.invite],
-          )
-          .map(
-            (invitedUsers) =>
-                widget.room.isDirectChat && invitedUsers.isNotEmpty,
-          ),
-      initialValue: widget.room.isUnacceptedDirectChat,
-      preserveState: false,
-    ).data;
+    final unAcceptedDirectChat = !widget.room.isUnacceptedDirectChat
+        ? false
+        : watchStream(
+            (ChatModel m) => m
+                .getUsersStreamOfJoinedRoom(
+                  widget.room,
+                  membershipFilter: [Membership.invite],
+                )
+                .map(
+                  (invitedUsers) =>
+                      widget.room.isDirectChat && invitedUsers.isNotEmpty,
+                ),
+            initialValue: widget.room.isUnacceptedDirectChat,
+            preserveState: false,
+          ).data;
 
     return DropRegion(
       formats: Formats.standardFormats,

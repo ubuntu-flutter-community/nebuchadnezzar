@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
@@ -38,6 +39,7 @@ class AuthenticationModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
+  final int _timeoutSeconds = 65;
   Future<void> login({
     required String homeServer,
     required String username,
@@ -117,8 +119,14 @@ class AuthenticationModel extends SafeChangeNotifier {
                 ? '${AppConfig.kAppTitle} Web Browser'
                 : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
-          .timeout(const Duration(seconds: 55));
+          .timeout(Duration(seconds: _timeoutSeconds));
       await onSuccess();
+    } on TimeoutException catch (e, s) {
+      printMessageInDebugMode(
+        'Login timed out after $_timeoutSeconds seconds: $e',
+        s,
+      );
+      onFail('Failed to login with SSO token: ${e.toString()}');
     } catch (e, s) {
       printMessageInDebugMode('Error during client.login with token: $e', s);
       onFail('Failed to login with SSO token: ${e.toString()}');

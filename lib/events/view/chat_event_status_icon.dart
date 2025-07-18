@@ -7,7 +7,6 @@ import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../l10n/l10n.dart';
 
 class ChatEventStatusIcon extends StatelessWidget {
   const ChatEventStatusIcon({
@@ -73,9 +72,7 @@ class ChatEventStatusIcon extends StatelessWidget {
               const Icon(YaruIcons.pen, size: iconSize),
 
             Text(
-              event.originServerTs.toLocal().formatAndLocalizeTime(
-                context.l10n,
-              ),
+              event.originServerTs.toLocal().formatAndLocalizeTime(context),
               textAlign: TextAlign.start,
               style: context.textTheme.labelSmall?.copyWith(
                 color: foregroundColor,
