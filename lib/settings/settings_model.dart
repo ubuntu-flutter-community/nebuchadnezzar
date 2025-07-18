@@ -125,7 +125,10 @@ class SettingsModel extends SafeChangeNotifier {
       }
     };
     if (!context.mounted) return;
-    await KeyVerificationDialog(request: keyVerification).show(context);
+    await KeyVerificationDialog(
+      request: keyVerification,
+      verifyOther: true,
+    ).show(context);
   }
 
   bool _attachingAvatar = false;
