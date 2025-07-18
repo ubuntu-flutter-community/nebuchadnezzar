@@ -123,7 +123,7 @@ class ChatModel extends SafeChangeNotifier {
   Stream<Event> get notificationStream => _client.onNotification.stream;
 
   Stream<Event?> getLastEventStream(Room room) =>
-      getJoinedRoomUpdate(room.id).map((update) => room.lastEvent);
+      getJoinedRoomUpdate(room.id).map((joinedRoomUpdate) => room.lastEvent);
 
   Stream<List<Room>> get spacesStream =>
       syncStream.map((e) => _rooms.where((e) => e.isSpace).toList());
@@ -446,16 +446,24 @@ class ChatModel extends SafeChangeNotifier {
     }
   }
 
-  Future<void> leaveSelectedRoom({
+  bool _forget = false;
+  bool get forget => _forget;
+  void setForget(bool value) {
+    if (value == _forget) return;
+    _forget = value;
+    notifyListeners();
+  }
+
+  Future<void> leaveRoom({
     required Function(String error) onFail,
-    Room? room,
+    required Room room,
     bool forget = false,
   }) async {
     _setProcessingJoinOrLeave(true);
     try {
-      await (room ?? _selectedRoom)?.leave();
+      await room.leave();
       if (forget) {
-        await (room ?? _selectedRoom)?.forget();
+        await room.forget();
       }
       if (room == activeSpace) {
         setActiveSpace(null);
@@ -467,6 +475,7 @@ class ChatModel extends SafeChangeNotifier {
       setSelectedRoom(null);
       _setProcessingJoinOrLeave(false);
     }
+    setForget(false);
   }
 
   Future initAfterEncryptionSetup() async => Future.wait<Future<dynamic>?>(

@@ -63,7 +63,7 @@ class EncryptionModel extends SafeChangeNotifier {
 
   bool _recoveryKeyStored = false;
   bool get recoveryKeyStored => _recoveryKeyStored;
-  void setRecoveryKeyStored(bool value) {
+  void _setRecoveryKeyStored(bool value) {
     if (_recoveryKeyStored == value) return;
     _recoveryKeyStored = value;
     notifyListeners();
@@ -79,9 +79,12 @@ class EncryptionModel extends SafeChangeNotifier {
 
   void storeRecoveryKey() {
     if (storeInSecureStorage) {
-      _secureStorage.write(key: secureStorageKey, value: key);
+      _secureStorage.write(key: secureStorageKey, value: key).then((value) {
+        _setRecoveryKeyStored(true);
+      });
+    } else {
+      _setRecoveryKeyStored(true);
     }
-    setRecoveryKeyStored(true);
   }
 
   Future<String?> _loadKeyFromSecureStorage() async =>
@@ -91,14 +94,14 @@ class EncryptionModel extends SafeChangeNotifier {
   String? get key => _key;
   Bootstrap? _bootstrap;
   Bootstrap? get bootstrap => _bootstrap;
-  void _setBootsTrap(Bootstrap bootstrap) {
+  void _setBootsTrap({required Bootstrap bootstrap, required bool wipe}) {
     switch (bootstrap.state) {
       case BootstrapState.loading ||
           BootstrapState.done ||
           BootstrapState.error:
         return;
       case BootstrapState.openExistingSsss:
-        setRecoveryKeyStored(true);
+        _setRecoveryKeyStored(true);
       case BootstrapState.askWipeSsss:
         bootstrap.wipeSsss(wipe);
       case BootstrapState.askBadSsss:
@@ -130,13 +133,10 @@ class EncryptionModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  bool _wipe = false;
-  bool get wipe => _wipe;
   Future<void> startBootstrap({required bool wipe}) async {
-    _wipe = wipe;
     _recoveryKeyStored = false;
     _bootstrap = _client.encryption?.bootstrap(
-      onUpdate: (v) => _setBootsTrap(v),
+      onUpdate: (v) => _setBootsTrap(bootstrap: v, wipe: wipe),
     );
     final theKey = await _loadKeyFromSecureStorage();
     if (key != null) {

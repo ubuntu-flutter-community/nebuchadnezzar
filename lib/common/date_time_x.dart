@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../l10n/app_localizations.dart';
 import '../l10n/l10n.dart';
 
 extension DateTimeX on DateTime {
@@ -24,21 +23,21 @@ extension DateTimeX on DateTime {
     return DateFormat.yMd(countryCode).add_Hm().format(this);
   }
 
-  String formatAndLocalizeDay(AppLocalizations l10n) {
+  String formatAndLocalizeTime(BuildContext context) =>
+      DateFormat.Hm(context.l10n.localeName).format(this);
+
+  String formatAndLocalizeDay(BuildContext context) {
     final now = DateTime.now();
-    final locale = WidgetsBinding.instance.platformDispatcher.locale;
+    final locale = context.l10n.localeName;
 
     if (year == now.year && month == now.month) {
       if (day == now.day - 1) {
-        return l10n.yesterday;
+        return context.l10n.yesterday;
       }
     }
-    return DateFormat.yMd(locale.toString()).format(this);
+    return DateFormat.yMd(locale).format(this);
   }
 
-  String formatAndLocalizeTime(AppLocalizations l10n) {
-    final locale = WidgetsBinding.instance.platformDispatcher.locale;
-
-    return DateFormat.Hm(locale.toString()).format(this);
-  }
+  String formatAndLocalizeDateTime(BuildContext context) =>
+      '${formatAndLocalizeDay(context)}, ${formatAndLocalizeTime(context)}';
 }

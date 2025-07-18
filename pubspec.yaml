@@ -43,7 +43,7 @@ dependencies:
   linkify: ^5.0.0
   liquid_progress_indicator_v2: ^0.5.0
   local_notifier: ^0.1.6
-  matrix: ^1.0.1
+  matrix: ^1.1.0
   mesh: ^0.5.0
   mime: ^2.0.0
   path: ^1.9.0

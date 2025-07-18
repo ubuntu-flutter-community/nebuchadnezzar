@@ -45,30 +45,27 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
                     : context.colorScheme.primary,
               )
             : null,
-        onPressed: () => showDialog(
-          barrierDismissible: false,
+        onPressed: () => ConfirmationDialog.show(
           context: context,
-          builder: (context) => ConfirmationDialog(
-            showCloseIcon: false,
-            title: Text(message),
-            onConfirm: () async {
-              void onFail(error) => showSnackBar(context, content: Text(error));
-
-              if (joinedRoom) {
-                await chatModel.leaveSelectedRoom(
-                  onFail: onFail,
-                  forget: room.isDirectChat,
-                );
-              } else if (!notReJoinable) {
-                await chatModel.joinRoom(
-                  room,
-                  onFail: onFail,
-                  clear: true,
-                  select: false,
-                );
-              }
-            },
-          ),
+          title: Text(message),
+          content: const ForgetCheckBox(),
+          onConfirm: () async {
+            void onFail(error) => showSnackBar(context, content: Text(error));
+            if (joinedRoom) {
+              await chatModel.leaveRoom(
+                room: room,
+                onFail: onFail,
+                forget: di<ChatModel>().forget,
+              );
+            } else if (!notReJoinable) {
+              await chatModel.joinRoom(
+                room,
+                onFail: onFail,
+                clear: true,
+                select: false,
+              );
+            }
+          },
         ),
         icon: !room.isArchived
             ? Icon(
@@ -79,6 +76,19 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
               )
             : const Icon(YaruIcons.log_in),
       ),
+    );
+  }
+}
+
+class ForgetCheckBox extends StatelessWidget with WatchItMixin {
+  const ForgetCheckBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CheckboxListTile.adaptive(
+      title: Text(context.l10n.delete),
+      value: watchPropertyValue((ChatModel m) => m.forget),
+      onChanged: (v) => di<ChatModel>().setForget(v ?? false),
     );
   }
 }

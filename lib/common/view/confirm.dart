@@ -37,6 +37,39 @@ class ConfirmationDialog extends StatefulWidget {
   final String? confirmLabel, cancelLabel;
   final EdgeInsetsGeometry? contentPadding;
 
+  static Future<void> show({
+    required BuildContext context,
+    Widget? title,
+    Widget? content,
+    required Function() onConfirm,
+    String? confirmLabel,
+    String? cancelLabel,
+    bool barrierDismissible = false,
+    bool confirmEnabled = true,
+    bool scrollable = false,
+    List<Widget>? additionalActions,
+    EdgeInsetsGeometry? contentPadding,
+    dynamic Function()? onCancel,
+    bool showCancel = true,
+  }) => showDialog(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    builder: (context) => ConfirmationDialog(
+      title: title,
+      content: content,
+      onConfirm: onConfirm,
+      confirmLabel: confirmLabel,
+      cancelLabel: cancelLabel,
+      showCloseIcon: barrierDismissible,
+      confirmEnabled: confirmEnabled,
+      scrollable: scrollable,
+      additionalActions: additionalActions,
+      contentPadding: contentPadding,
+      onCancel: onCancel,
+      showCancel: showCancel,
+    ),
+  );
+
   @override
   State<ConfirmationDialog> createState() => _ConfirmationDialogState();
 }
@@ -72,7 +105,6 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
             expand: true,
             widthGap: kMediumPadding,
             children: [
-              ...?widget.additionalActions,
               if (widget.showCancel)
                 OutlinedButton(
                   onPressed: _loading
@@ -86,6 +118,7 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                         },
                   child: Text(widget.cancelLabel ?? l10n.cancel),
                 ),
+              ...?widget.additionalActions,
               ElevatedButton(
                 onPressed: _loading
                     ? null

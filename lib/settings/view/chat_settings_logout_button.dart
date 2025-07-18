@@ -19,13 +19,13 @@ class ChatSettingsLogoutButton extends StatelessWidget {
         builder: (context) => ConfirmationDialog(
           title: Text(l10n.logout),
           content: Text(l10n.areYouSureYouWantToLogout),
-          onConfirm: () {
+          onConfirm: () async {
             di<ChatModel>().setSelectedRoom(null);
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const ChatLoginPage()),
               (route) => false,
             );
-            di<AuthenticationModel>().logout(
+            await di<AuthenticationModel>().logout(
               onFail: (e) => ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(e.toString()))),

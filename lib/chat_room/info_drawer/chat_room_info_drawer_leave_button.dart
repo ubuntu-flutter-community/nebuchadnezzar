@@ -41,7 +41,8 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
           context: context,
           builder: (context) => ConfirmationDialog(
             showCloseIcon: false,
-            onConfirm: () async => di<ChatModel>().leaveSelectedRoom(
+            onConfirm: () async => di<ChatModel>().leaveRoom(
+              room: room,
               onFail: (error) => showSnackBar(context, content: Text(error)),
               forget: true,
             ),

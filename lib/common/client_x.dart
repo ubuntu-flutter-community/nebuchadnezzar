@@ -23,7 +23,7 @@ extension ClientX on Client {
     await vod.init(wasmPath: './assets/assets/vodozemac/');
     final client = Client(
       AppConfig.appId,
-      nativeImplementations: kIsWeb
+      nativeImplementations: Platforms.isWeb
           ? const NativeImplementationsDummy()
           : NativeImplementationsIsolate(
               compute,
@@ -66,7 +66,7 @@ extension ClientX on Client {
         ),
       );
 
-      if (database == null && !kIsWeb) {
+      if (database == null && !Platforms.isWeb) {
         final dbFile = File(await _getDatabasePath(clientName));
         if (await dbFile.exists()) await dbFile.delete();
       }
@@ -117,7 +117,7 @@ extension ClientX on Client {
     required String clientName,
     required FlutterSecureStorage secureStorage,
   }) async {
-    if (kIsWeb) {
+    if (Platforms.isWeb) {
       html.window.navigator.storage?.persist();
       return MatrixSdkDatabase.init(clientName);
     }

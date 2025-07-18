@@ -59,10 +59,12 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
                   borderRadius: BorderRadius.circular(kYaruButtonRadius),
                 ),
               ),
-              onPressed: () => di<ChatModel>().leaveSelectedRoom(
-                room: activeSpace,
-                onFail: (e) => showSnackBar(context, content: Text(e)),
-              ),
+              onPressed: activeSpace == null
+                  ? null
+                  : () => di<ChatModel>().leaveRoom(
+                      room: activeSpace,
+                      onFail: (e) => showSnackBar(context, content: Text(e)),
+                    ),
               icon: const Icon(YaruIcons.log_out),
             ),
           ),

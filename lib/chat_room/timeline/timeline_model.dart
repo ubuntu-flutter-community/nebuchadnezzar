@@ -1,6 +1,7 @@
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
+import '../../common/event_x.dart';
 import '../../common/logging.dart';
 
 class TimelineModel extends SafeChangeNotifier {
@@ -33,7 +34,11 @@ class TimelineModel extends SafeChangeNotifier {
           filter: filter,
           historyCount: historyCount,
         );
-        await timeline.room.requestParticipants();
+        await timeline.room.requestParticipants(
+          [Membership.join, Membership.invite, Membership.knock],
+          true,
+          null,
+        );
       } on Exception catch (e, s) {
         printMessageInDebugMode(e, s);
       }
@@ -51,6 +56,34 @@ class TimelineModel extends SafeChangeNotifier {
           'Skipping setReadMarker() for "${timeline.room.getLocalizedDisplayname()}" as it is ${timeline.room.isArchived ? 'archived' : 'not unread'}.',
         );
       }
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+    }
+  }
+
+  Future<void> loadSingleKeyForLastEvent(Timeline timeline) async {
+    final lastEvent = timeline.room.lastEvent;
+    if (lastEvent == null || !lastEvent.isEncryptedAndCouldDecrypt) return;
+
+    try {
+      await lastEvent.requestKey();
+
+      printMessageInDebugMode(
+        'Decrypted last event ${lastEvent.eventId} in room ${timeline.room.getLocalizedDisplayname()}',
+      );
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+    }
+  }
+
+  Future<void> loadSingleKeyForEvent(Event event) async {
+    if (!event.isEncryptedAndCouldDecrypt) return;
+    try {
+      await event.requestKey();
+
+      printMessageInDebugMode(
+        'Decrypted event ${event.eventId} in room ${event.room.getLocalizedDisplayname()}',
+      );
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
     }
