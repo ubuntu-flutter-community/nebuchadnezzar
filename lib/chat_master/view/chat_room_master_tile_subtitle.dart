@@ -3,9 +3,9 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/chat_model.dart';
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
+import 'chat_room_last_event.dart';
 
 class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
   const ChatRoomMasterTileSubTitle({super.key, required this.room});
@@ -38,49 +38,6 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
         color: context.colorScheme.primary,
       ),
       maxLines: 1,
-    );
-  }
-}
-
-class ChatRoomLastEvent extends StatelessWidget {
-  const ChatRoomLastEvent({required this.lastEvent, super.key});
-
-  final Event? lastEvent;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-      key: ValueKey(
-        '${lastEvent?.eventId}_${lastEvent?.type}_${lastEvent?.redacted}}',
-      ),
-      future: lastEvent?.calcLocalizedBody(
-        const MatrixDefaultLocalizations(),
-        hideReply: true,
-        plaintextBody: true,
-        withSenderNamePrefix: true,
-      ),
-      initialData: lastEvent?.calcLocalizedBodyFallback(
-        const MatrixDefaultLocalizations(),
-        hideReply: true,
-        plaintextBody: true,
-        withSenderNamePrefix: true,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('?', maxLines: 1);
-        }
-        if (lastEvent!.hideInTimeline(
-          showAvatarChanges: false,
-          showDisplayNameChanges: false,
-        )) {
-          return const Text('...', maxLines: 1);
-        }
-        if (snapshot.hasData && lastEvent != null) {
-          return Text(snapshot.data!, maxLines: 1);
-        }
-
-        return Text(context.l10n.emptyChat, maxLines: 1);
-      },
     );
   }
 }

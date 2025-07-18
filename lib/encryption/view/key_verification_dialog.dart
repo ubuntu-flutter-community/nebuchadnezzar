@@ -335,12 +335,14 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
             child: Text(l10n.close),
             onPressed: () {
               Navigator.of(context, rootNavigator: false).pop();
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const CheckEncryptionSetupPage(),
-                ),
-                (route) => false,
-              );
+              if (!widget.verifyOther) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const CheckEncryptionSetupPage(),
+                  ),
+                  (route) => false,
+                );
+              }
             },
           ),
         );
