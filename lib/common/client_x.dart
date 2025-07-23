@@ -15,6 +15,7 @@ import 'package:universal_html/html.dart' as html;
 import 'package:watch_it/watch_it.dart';
 
 import '../app/app_config.dart';
+import '../settings/settings_service.dart';
 import 'logging.dart';
 import 'platforms.dart';
 
@@ -32,7 +33,8 @@ extension ClientX on Client {
             ),
       verificationMethods: {KeyVerificationMethod.numbers},
       enableDehydratedDevices: true,
-      shareKeysWith: ShareKeysWith.crossVerified,
+      shareKeysWith:
+          ShareKeysWith.values[di<SettingsService>().shareKeysWithIndex],
       database: await flutterMatrixSdkDatabaseBuilder(
         AppConfig.appId,
         di<FlutterSecureStorage>(),

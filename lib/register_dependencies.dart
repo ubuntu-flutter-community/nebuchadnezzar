@@ -40,9 +40,26 @@ void registerDependencies() {
   }
 
   di
+    ..registerSingletonAsync<SharedPreferences>(
+      () async => SharedPreferences.getInstance(),
+    )
+    ..registerLazySingleton<FlutterSecureStorage>(
+      () => const FlutterSecureStorage(
+        aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      ),
+    )
+    ..registerSingletonWithDependencies<SettingsService>(
+      () => SettingsService(
+        sharedPreferences: di<SharedPreferences>(),
+        secureStorage: di<FlutterSecureStorage>(),
+      ),
+      dispose: (s) => s.dispose(),
+      dependsOn: [SharedPreferences],
+    )
     ..registerSingletonAsync<Client>(
       ClientX.registerAsync,
       dispose: (s) => s.dispose(),
+      dependsOn: [SettingsService],
     )
     ..registerSingletonWithDependencies<AuthenticationModel>(
       () => AuthenticationModel(client: di<Client>()),
@@ -56,22 +73,6 @@ void registerDependencies() {
       ),
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
-    )
-    ..registerLazySingleton<FlutterSecureStorage>(
-      () => const FlutterSecureStorage(
-        aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      ),
-    )
-    ..registerSingletonAsync<SharedPreferences>(
-      () async => SharedPreferences.getInstance(),
-    )
-    ..registerSingletonWithDependencies<SettingsService>(
-      () => SettingsService(
-        sharedPreferences: di<SharedPreferences>(),
-        secureStorage: di<FlutterSecureStorage>(),
-      ),
-      dispose: (s) => s.dispose(),
-      dependsOn: [SharedPreferences],
     )
     ..registerSingletonWithDependencies<LocalImageService>(
       () => LocalImageService(client: di<Client>()),

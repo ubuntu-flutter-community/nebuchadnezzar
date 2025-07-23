@@ -208,4 +208,25 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> toggleFavorite(Room room) async {
+    try {
+      await room.setFavourite(!room.isFavourite);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<void> setPushRuleState(
+    Room room, {
+    required PushRuleState value,
+  }) async {
+    try {
+      await room.setPushRuleState(value);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
 }

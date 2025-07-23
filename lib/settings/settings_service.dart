@@ -1,6 +1,9 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsService {
@@ -53,31 +56,15 @@ class SettingsService {
       .setBool(SettingKeys.showChatDisplaynameChanges, value)
       .then(notify);
 
-  Object? get<T>(String key) => switch (T) {
-    const (String) => _sharedPreferences.getString(key),
-    const (bool) => _sharedPreferences.getBool(key),
-    const (double) => _sharedPreferences.getDouble(key),
-    const (int) => _sharedPreferences.getInt(key),
-    const (List<String>) => _sharedPreferences.getStringList(key),
-    _ => throw Exception('Invalid type'),
-  };
-
-  void set({required String key, required Object value}) => switch (value) {
-    const (String) =>
-      _sharedPreferences.setString(key, value as String).then(notify),
-    const (bool) => _sharedPreferences.setBool(key, value as bool).then(notify),
-    const (double) =>
-      _sharedPreferences.setDouble(key, value as double).then(notify),
-    const (int) => _sharedPreferences.setInt(key, value as int).then(notify),
-    const (List<String>) =>
-      _sharedPreferences.setStringList(key, value as List<String>).then(notify),
-    _ => throw Exception('Invalid type'),
-  };
-
-  Future<String?> getSecure<T>(String key) => _secureStorage.read(key: key);
-
-  void setSecure({required String key, required String value}) =>
-      _secureStorage.write(key: key, value: value).then((_) => notify(true));
+  int get shareKeysWithIndex =>
+      _sharedPreferences.getInt(SettingKeys.shareKeysWith) ??
+      ShareKeysWith.all.index;
+  void setShareKeysWithIndex(int value) {
+    if (value < 0 || value > ShareKeysWith.values.length - 1) {
+      return;
+    }
+    _sharedPreferences.setInt(SettingKeys.shareKeysWith, value).then(notify);
+  }
 
   Future<void> dispose() async => _propertiesChangedController.close();
 }
@@ -87,4 +74,5 @@ class SettingKeys {
   static const showChatDisplaynameChanges = 'showChatDisplaynameChanges';
   static const String defaultReactions = 'defaultReactions';
   static const String themeModeIndex = 'themeModeIndex';
+  static const String shareKeysWith = 'shareKeysWith';
 }

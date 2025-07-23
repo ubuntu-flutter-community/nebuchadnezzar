@@ -1,27 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:watch_it/watch_it.dart';
 
+import '../../chat_room/timeline/timeline_model.dart';
 import '../../common/event_x.dart';
 import '../../l10n/l10n.dart';
 
-class ChatRoomLastEvent extends StatelessWidget {
+class ChatRoomLastEvent extends StatefulWidget {
   const ChatRoomLastEvent({required this.lastEvent, super.key});
 
   final Event? lastEvent;
 
   @override
+  State<ChatRoomLastEvent> createState() => _ChatRoomLastEventState();
+}
+
+class _ChatRoomLastEventState extends State<ChatRoomLastEvent> {
+  @override
+  void initState() {
+    super.initState();
+    di<TimelineModel>().loadSingleKeyForEvent(widget.lastEvent);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
       key: ValueKey(
-        '${lastEvent?.eventId}_${lastEvent?.type}_${lastEvent?.redacted}}',
+        '${widget.lastEvent?.eventId}_${widget.lastEvent?.type}_${widget.lastEvent?.redacted}}',
       ),
-      future: lastEvent?.calcLocalizedBody(
+      future: widget.lastEvent?.calcLocalizedBody(
         const MatrixDefaultLocalizations(),
         hideReply: true,
         plaintextBody: true,
         withSenderNamePrefix: true,
       ),
-      initialData: lastEvent?.calcLocalizedBodyFallback(
+      initialData: widget.lastEvent?.calcLocalizedBodyFallback(
         const MatrixDefaultLocalizations(),
         hideReply: true,
         plaintextBody: true,
@@ -31,8 +44,8 @@ class ChatRoomLastEvent extends StatelessWidget {
         if (snapshot.hasError) {
           return const Text('?', maxLines: 1);
         }
-        if (lastEvent != null) {
-          if (lastEvent!.hideInTimeline(
+        if (widget.lastEvent != null) {
+          if (widget.lastEvent!.hideInTimeline(
             showAvatarChanges: false,
             showDisplayNameChanges: false,
           )) {
