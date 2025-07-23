@@ -12,6 +12,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../events/view/chat_event_tile.dart';
+import '../../l10n/l10n.dart';
 import '../../settings/settings_model.dart';
 import 'chat_room_pinned_events_dialog.dart';
 import 'chat_seen_by_indicator.dart';
@@ -43,7 +44,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => di<TimelineModel>()
-        ..loadSingleKeyForLastEvent(widget.timeline)
+        ..loadAllKeysFromRoom(widget.timeline)
         ..trySetReadMarker(widget.timeline)
         ..requestHistory(widget.timeline, historyCount: 500),
     );
@@ -99,7 +100,18 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         showAvatarChanges: showAvatarChanges,
                         showDisplayNameChanges: showDisplayNameChanges,
                       )) {
-                return const SizedBox.shrink();
+                return Column(
+                  children: [
+                    const SizedBox.shrink(),
+                    if (i == 0)
+                      ChatEventSeenByIndicator(
+                        key: ValueKey(
+                          '${event.eventId}${widget.timeline.events.length}',
+                        ),
+                        event: event,
+                      ),
+                  ],
+                );
               }
 
               final previous = widget.timeline.events.elementAtOrNull(i + 1);
@@ -172,6 +184,24 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                       ChatRoomPinnedEventsDialog(timeline: widget.timeline),
                 ),
                 child: Icon(YaruIcons.pin, color: theme.colorScheme.onSurface),
+              ),
+            ),
+          ),
+        if (widget.timeline.canRequestHistory)
+          Positioned(
+            right: kBigPadding,
+            top: pinnedEvents.isNotEmpty ? 4 * kBigPadding : kBigPadding,
+            child: FloatingActionButton.small(
+              heroTag: 'historyRequestButtonTag',
+              tooltip: context.l10n.loadMore,
+              backgroundColor: theme.colorScheme.surface,
+              child: Icon(
+                YaruIcons.history,
+                color: theme.colorScheme.onSurface,
+              ),
+              onPressed: () => di<TimelineModel>().requestHistory(
+                widget.timeline,
+                historyCount: 50,
               ),
             ),
           ),

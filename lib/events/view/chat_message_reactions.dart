@@ -10,7 +10,6 @@ import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/space.dart';
-import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
@@ -150,7 +149,6 @@ class _Reaction extends StatelessWidget {
           ),
           borderRadius: const BorderRadius.all(kBigBubbleRadius),
         ),
-        padding: EdgeInsets.only(left: yaru ? 3 : 0),
         child: Center(child: content),
       ),
     );

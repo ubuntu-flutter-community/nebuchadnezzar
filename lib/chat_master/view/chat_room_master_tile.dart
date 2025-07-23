@@ -7,14 +7,13 @@ import '../../chat_room/common/view/chat_invitation_dialog.dart';
 import '../../chat_room/input/draft_model.dart';
 import '../../chat_room/titlebar/chat_room_pin_button.dart';
 import '../../common/chat_model.dart';
-import '../../common/push_rule_state_x.dart';
-import '../../common/view/chat_avatar.dart';
 import '../../common/view/scaffold_state_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import 'chat_master_detail_page.dart';
 import 'chat_master_tile_menu.dart';
+import 'chat_room_master_tile_avatar.dart';
 import 'chat_room_master_tile_subtitle.dart';
 
 class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
@@ -34,38 +33,20 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
       (ChatModel m) => m.loadingArchive,
     );
 
-    final pushRuleState =
-        watchStream(
-          (ChatModel m) => m.syncStream.map((_) => room.pushRuleState),
-          initialValue: room.pushRuleState,
-        ).data ??
-        room.pushRuleState;
-
     return ChatMasterTileMenu(
       room: room,
       child: Opacity(
         opacity: processingJoinOrLeave || loadingArchive ? 0.3 : 1,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 5),
+          padding: const EdgeInsets.only(bottom: kSmallPadding),
           child: Stack(
             alignment: Alignment.center,
             children: [
               YaruMasterTile(
+                key: ValueKey('${room.id}_master_tile'),
                 selected:
                     selectedRoom?.id != null && selectedRoom?.id == room.id,
-                leading: ChatAvatar(
-                  key: ValueKey(room.avatar?.toString()),
-                  avatarUri: pushRuleState == PushRuleState.dontNotify
-                      ? null
-                      : room.avatar,
-                  fallBackIcon: room.membership != Membership.invite
-                      ? pushRuleState == PushRuleState.dontNotify
-                            ? pushRuleState.getIconData()
-                            : room.isDirectChat
-                            ? YaruIcons.user
-                            : YaruIcons.users
-                      : YaruIcons.mail_unread,
-                ),
+                leading: ChatRoomMasterTileAvatar(room: room),
                 title: Text(
                   room.membership == Membership.invite
                       ? context.l10n.invite
@@ -112,7 +93,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                   )
                 else if (room.isFavourite)
                   Positioned(
-                    right: kBigPadding,
+                    right: kBigPadding - 3,
                     child: ChatRoomPinButton(room: room, small: true),
                   ),
               ],

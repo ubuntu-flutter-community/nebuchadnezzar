@@ -57,6 +57,10 @@ class SettingsModel extends SafeChangeNotifier {
   int get themModeIndex => _settingsService.themModeIndex;
   void setThemModeIndex(int i) => _settingsService.setThemModeIndex(i);
 
+  int get shareKeysWithIndex => _settingsService.shareKeysWithIndex;
+  void setShareKeysWithIndex(int value) =>
+      _settingsService.setShareKeysWithIndex(value);
+
   Profile? _myProfile;
   Profile? get myProfile => _myProfile;
   CachedPresence? get presence => _presence;

@@ -28,23 +28,31 @@ class TimelineModel extends SafeChangeNotifier {
     _setUpdatingTimeline(roomId: timeline.room.id, value: true);
     _setTimeline(timeline: timeline);
 
-    if (!timeline.room.isArchived) {
-      try {
-        await timeline.requestHistory(
-          filter: filter,
-          historyCount: historyCount,
-        );
-        await timeline.room.requestParticipants(
-          [Membership.join, Membership.invite, Membership.knock],
-          true,
-          null,
-        );
-      } on Exception catch (e, s) {
-        printMessageInDebugMode(e, s);
-      }
+    try {
+      await timeline.requestHistory(filter: filter, historyCount: historyCount);
+      await timeline.room.requestParticipants(
+        [
+          Membership.join,
+          Membership.invite,
+          Membership.knock,
+          if (timeline.room.isArchived) Membership.leave,
+        ],
+        true,
+        null,
+      );
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
     }
 
     _setUpdatingTimeline(roomId: timeline.room.id, value: false);
+  }
+
+  Future<void> loadRoomStates(Room room) async {
+    try {
+      await room.postLoad();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+    }
   }
 
   Future<void> trySetReadMarker(Timeline timeline) async {
@@ -61,23 +69,27 @@ class TimelineModel extends SafeChangeNotifier {
     }
   }
 
-  Future<void> loadSingleKeyForLastEvent(Timeline timeline) async {
-    final lastEvent = timeline.room.lastEvent;
-    if (lastEvent == null || !lastEvent.isEncryptedAndCouldDecrypt) return;
-
+  Future<void> loadAllKeysFromRoom(Timeline timeline) async {
     try {
-      await lastEvent.requestKey();
-
-      printMessageInDebugMode(
-        'Decrypted last event ${lastEvent.eventId} in room ${timeline.room.getLocalizedDisplayname()}',
-      );
+      for (final event in timeline.events.where(
+        (e) => e.isEncryptedAndCouldDecrypt,
+      )) {
+        await event.requestKey();
+        await timeline.room.client.encryption?.decryptRoomEvent(
+          event,
+          store: event.stateKey != null,
+        );
+        printMessageInDebugMode(
+          'Decrypted event ${event.eventId} in room ${timeline.room.getLocalizedDisplayname()}',
+        );
+      }
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
     }
   }
 
-  Future<void> loadSingleKeyForEvent(Event event) async {
-    if (!event.isEncryptedAndCouldDecrypt) return;
+  Future<void> loadSingleKeyForEvent(Event? event) async {
+    if (event == null || !event.isEncryptedAndCouldDecrypt) return;
     try {
       await event.requestKey();
 

@@ -9,6 +9,7 @@ import 'chat_settings_avatar.dart';
 import 'chat_settings_customization_section.dart';
 import 'chat_settings_devices_section.dart';
 import 'chat_settings_events_section.dart';
+import 'chat_settings_security_section.dart';
 import 'theme_section.dart';
 
 class ChatSettingsDialog extends StatelessWidget with WatchItMixin {
@@ -35,6 +36,7 @@ class ChatSettingsDialog extends StatelessWidget with WatchItMixin {
           ChatSettingsCustomizationSection(),
           ThemeSection(),
           ChatSettingsEventsSection(),
+          ChatSettingsSecuritySection(),
           ChatSettingsDevicesSection(),
         ],
       ),

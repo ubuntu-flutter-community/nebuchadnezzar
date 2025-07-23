@@ -10,6 +10,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../app/view/error_page.dart';
 import '../../common/date_time_x.dart';
+import '../../common/event_x.dart';
 import '../../common/local_image_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
@@ -82,11 +83,15 @@ class _ChatMessageImageFullScreenDialogState
           children: [
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 100),
-              child: Text(
-                '${widget.event.senderFromMemoryOrFallback.calcDisplayname()}, ',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child:
+                  (widget.event.fileDescription != null &&
+                      widget.event.fileDescription!.isNotEmpty)
+                  ? Text('${widget.event.fileDescription!}, ')
+                  : Text(
+                      '${widget.event.senderFromMemoryOrFallback.calcDisplayname()}, ',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
             ),
             Text(
               widget.event.originServerTs.toLocal().formatAndLocalize(context),
