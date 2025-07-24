@@ -71,14 +71,20 @@ class TimelineModel extends SafeChangeNotifier {
 
   Future<void> loadAllKeysFromRoom(Timeline timeline) async {
     try {
-      for (final event in timeline.events.where(
-        (e) => e.isEncryptedAndCouldDecrypt,
-      )) {
+      for (final event
+          in timeline.events
+              .toList(growable: false)
+              .where(
+                (e) =>
+                    e.isEncryptedAndCouldDecrypt &&
+                    !_hasLoadedKeys.contains(e.eventId),
+              )) {
         await event.requestKey();
         await timeline.room.client.encryption?.decryptRoomEvent(
           event,
           store: event.stateKey != null,
         );
+        _hasLoadedKeys.add(event.eventId);
         printMessageInDebugMode(
           'Decrypted event ${event.eventId} in room ${timeline.room.getLocalizedDisplayname()}',
         );
@@ -88,10 +94,16 @@ class TimelineModel extends SafeChangeNotifier {
     }
   }
 
+  final Set<String> _hasLoadedKeys = {};
   Future<void> loadSingleKeyForEvent(Event? event) async {
-    if (event == null || !event.isEncryptedAndCouldDecrypt) return;
+    if (event == null ||
+        !event.isEncryptedAndCouldDecrypt ||
+        _hasLoadedKeys.contains(event.eventId)) {
+      return;
+    }
     try {
       await event.requestKey();
+      _hasLoadedKeys.add(event.eventId);
 
       printMessageInDebugMode(
         'Decrypted event ${event.eventId} in room ${event.room.getLocalizedDisplayname()}',

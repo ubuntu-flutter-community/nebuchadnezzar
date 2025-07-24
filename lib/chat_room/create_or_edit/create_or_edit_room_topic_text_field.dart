@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
-import '../../common/view/save_text_icon.dart';
+import '../../common/room_x.dart';
+import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
 import '../../l10n/l10n.dart';
@@ -23,12 +24,14 @@ class CreateOrEditRoomTopicTextField extends StatefulWidget
 
 class _CreateOrEditRoomTopicTextFieldState
     extends State<CreateOrEditRoomTopicTextField> {
-  late final TextEditingController _groupTopicController;
+  late final TextEditingController _topicController;
+  late final String _initialText;
 
   @override
   void initState() {
     super.initState();
-    _groupTopicController = TextEditingController(text: widget.room?.topic);
+    _topicController = TextEditingController(text: widget.room?.topic);
+    _initialText = _topicController.text;
   }
 
   @override
@@ -36,27 +39,35 @@ class _CreateOrEditRoomTopicTextFieldState
     final enabledTopicField = widget.room == null
         ? true
         : watchStream(
-                (ChatModel m) => m
-                    .getJoinedRoomUpdate(widget.room!.id)
-                    .map(
-                      (_) => widget.room!.canChangeStateEvent(
-                        EventTypes.RoomTopic,
-                      ),
-                    ),
-                initialValue: widget.room!.canChangeStateEvent(
-                  EventTypes.RoomTopic,
-                ),
+                (CreateOrEditRoomModel m) =>
+                    m.getJoinedRoomCanChangeTopicStream(widget.room!),
+                initialValue: widget.room!.canChangeTopic,
                 preserveState: false,
               ).data ??
               false;
 
     final l10n = context.l10n;
-    final topic = watchPropertyValue((CreateOrEditRoomModel m) => m.topic);
+    final topicDraft = watchPropertyValue(
+      (CreateOrEditRoomModel m) => m.topicDraft,
+    );
+    final roomTopic = widget.room == null
+        ? null
+        : watchStream(
+                (CreateOrEditRoomModel m) =>
+                    m.getJoinedRoomTopicStream(widget.room!),
+                initialValue: widget.room!.topic,
+                preserveState: false,
+              ).data ??
+              widget.room!.topic;
+
+    final topicIsSynced = topicDraft == roomTopic;
+    final draftWasChanged = _initialText != topicDraft;
 
     return TextField(
-      controller: _groupTopicController,
+      controller: _topicController,
+      autofocus: true,
       enabled: enabledTopicField,
-      onChanged: di<CreateOrEditRoomModel>().setTopic,
+      onChanged: di<CreateOrEditRoomModel>().setTopicDraft,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.all(12),
         label: Text(l10n.chatDescription),
@@ -64,22 +75,25 @@ class _CreateOrEditRoomTopicTextFieldState
             ? IconButton(
                 padding: EdgeInsets.zero,
                 style: textFieldSuffixStyle,
-                onPressed: topic != widget.room!.topic
-                    ? () => showFutureLoadingDialog(
+                onPressed: topicIsSynced
+                    ? null
+                    : () => showFutureLoadingDialog(
                         context: context,
                         future: () => di<CreateOrEditRoomModel>()
-                            .changeRoomTopic(widget.room!),
+                            .changeRoomTopic(widget.room!, topicDraft),
                         onError: (e) {
                           showErrorSnackBar(context, e);
                           return e;
                         },
+                      ),
+                icon: topicIsSynced
+                    ? YaruAnimatedVectorIcon(
+                        YaruAnimatedIcons.ok_filled,
+                        color: draftWasChanged
+                            ? context.colorScheme.success
+                            : null,
                       )
-                    : null,
-                icon: SaveTextIcon(
-                  room: widget.room,
-                  textEditingController: _groupTopicController,
-                  isSaved: () => topic == widget.room?.topic,
-                ),
+                    : const Icon(YaruIcons.save),
               )
             : null,
       ),

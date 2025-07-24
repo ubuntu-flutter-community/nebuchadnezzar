@@ -88,9 +88,6 @@ class ChatModel extends SafeChangeNotifier {
   Stream<SyncUpdate> get joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
 
-  Stream<SyncUpdate> get inviteUpdateStream =>
-      _client.onSync.stream.where((e) => e.rooms?.invite?.isNotEmpty ?? false);
-
   Stream<JoinedRoomUpdate?> getJoinedRoomUpdate(String? roomId) =>
       joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
 
@@ -127,17 +124,6 @@ class ChatModel extends SafeChangeNotifier {
 
   Stream<List<Room>> get spacesStream =>
       syncStream.map((e) => _rooms.where((e) => e.isSpace).toList());
-
-  Stream<Map<String, Object?>> getPermissionsStream(Room room) => syncStream
-      .where(
-        (e) =>
-            (e.rooms?.join?.containsKey(room.id) ?? false) &&
-            (e.rooms!.join![room.id]?.timeline?.events?.any(
-                  (s) => s.type == EventTypes.RoomPowerLevels,
-                ) ??
-                false),
-      )
-      .map((event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {});
 
   Stream<Event> getEventStream(Room room) =>
       _client.onTimelineEvent.stream.where((e) => e.room.id == room.id);
@@ -261,9 +247,11 @@ class ChatModel extends SafeChangeNotifier {
   }
 
   Future<void> createRoom({
+    required bool space,
     required Function(String error) onFail,
     required Function() onSuccess,
     String? groupName,
+    String? topic,
     bool enableEncryption = true,
     List<String>? invite,
     List<StateEvent>? initialState,
@@ -275,6 +263,18 @@ class ChatModel extends SafeChangeNotifier {
     Map<String, dynamic>? powerLevelContentOverride,
     MatrixFile? avatarFile,
   }) async {
+    if (space) {
+      await _createSpace(
+        name: groupName,
+        topic: topic,
+        invite: invite,
+        joinRules: joinRules,
+        onFail: onFail,
+        onSuccess: onSuccess,
+      );
+      return;
+    }
+
     setSelectedRoom(null);
     _setProcessingJoinOrLeave(true);
     String? roomId;
@@ -329,9 +329,9 @@ class ChatModel extends SafeChangeNotifier {
     }
   }
 
-  Future<String?> createSpace({
-    required String name,
-    required JoinRules joinRules,
+  Future<String?> _createSpace({
+    String? name,
+    JoinRules? joinRules,
     List<String>? invite,
     List<Invite3pid>? invite3pid,
     String? roomVersion,

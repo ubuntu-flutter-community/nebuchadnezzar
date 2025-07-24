@@ -4,7 +4,6 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
@@ -13,10 +12,10 @@ import 'create_or_edit_room_model.dart';
 
 // Credit: this code has been inspired by https://github.com/krille-chan/fluffychat permissions
 // Thank you @krille-chan
-class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
+class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
   final Room room;
 
-  const ChatPermissionsSettingsView({required this.room, super.key});
+  const ChatRoomPermissions({required this.room, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
 
     final canChangePowerLevel =
         watchStream(
-          (ChatModel m) => m
+          (CreateOrEditRoomModel m) => m
               .getJoinedRoomUpdate(room.id)
               .map((_) => room.canChangePowerLevel),
           initialValue: room.canChangePowerLevel,
@@ -36,7 +35,7 @@ class ChatPermissionsSettingsView extends StatelessWidget with WatchItMixin {
 
     final powerLevelsContent =
         watchStream(
-          (ChatModel m) => m.getPermissionsStream(room),
+          (CreateOrEditRoomModel m) => m.getPermissionsStream(room),
           initialValue:
               room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
         ).data ??
@@ -233,7 +232,9 @@ class _ChatRoomPermissionTile extends StatelessWidget with WatchItMixin {
         ? theme.textTheme.bodyMedium
         : theme.textTheme.bodyMedium?.copyWith(color: theme.disabledColor);
 
-    final color = permission >= 100
+    final color = !canEdit
+        ? theme.disabledColor
+        : permission >= 100
         ? colorScheme.warning
         : permission >= 50
         ? colorScheme.link
@@ -244,51 +245,41 @@ class _ChatRoomPermissionTile extends StatelessWidget with WatchItMixin {
         getLocalizedPowerLevelString(context),
         style: theme.textTheme.titleSmall,
       ),
-      trailing: Material(
-        color: canEdit ? color.withAlpha(32) : null,
-        borderRadius: BorderRadius.circular(kYaruContainerRadius),
-        child: DropdownButton<int>(
-          isDense: true,
-          style: style,
-          icon: const SizedBox.shrink(),
-          padding: const EdgeInsets.symmetric(
-            horizontal: kMediumPadding,
-            vertical: kSmallPadding,
-          ),
-          borderRadius: BorderRadius.circular(kYaruContainerRadius),
-          underline: const SizedBox.shrink(),
-          onChanged: onChanged,
-          value: permission,
-          items: [
-            DropdownMenuItem(
-              value: permission < 50 ? permission : 0,
-              child: Text(
-                l10n.userLevel(permission < 50 ? permission : 0),
-                style: style,
-              ),
-            ),
-            DropdownMenuItem(
-              value: permission < 100 && permission >= 50 ? permission : 50,
-              child: Text(
-                l10n.moderatorLevel(
-                  permission < 100 && permission >= 50 ? permission : 50,
-                ),
-                style: style,
-              ),
-            ),
-            DropdownMenuItem(
-              value: permission >= 100 ? permission : 100,
-              child: Text(
-                l10n.adminLevel(permission >= 100 ? permission : 100),
-                style: style,
-              ),
-            ),
-            DropdownMenuItem(
-              value: null,
-              child: Text(l10n.custom, style: style),
-            ),
-          ],
+      trailing: YaruPopupMenuButton<int>(
+        onSelected: onChanged,
+        initialValue: permission,
+        child: Text(
+          permission.toString(),
+          style: style?.copyWith(color: color),
         ),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            enabled: canEdit,
+            value: permission < 50 ? permission : 0,
+            child: Text(
+              l10n.userLevel(permission < 50 ? permission : 0),
+              style: style,
+            ),
+          ),
+          PopupMenuItem(
+            enabled: canEdit,
+            value: permission < 100 && permission >= 50 ? permission : 50,
+            child: Text(
+              l10n.moderatorLevel(
+                permission < 100 && permission >= 50 ? permission : 50,
+              ),
+              style: style,
+            ),
+          ),
+          PopupMenuItem(
+            enabled: canEdit,
+            value: permission >= 100 ? permission : 100,
+            child: Text(
+              l10n.adminLevel(permission >= 100 ? permission : 100),
+              style: style,
+            ),
+          ),
+        ],
       ),
     );
   }

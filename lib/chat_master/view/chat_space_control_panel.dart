@@ -5,7 +5,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../chat_room/create_or_edit/chat_create_or_edit_room_dialog.dart';
+import '../../chat_room/create_or_edit/create_or_edit_room_dialog.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
 
@@ -32,8 +32,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
               style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
               onPressed: () => showDialog(
                 context: context,
-                builder: (context) =>
-                    ChatCreateOrEditRoomDialog(room: activeSpace),
+                builder: (context) => CreateOrEditRoomDialog(room: activeSpace),
               ),
               child: const Icon(YaruIcons.pen),
             ),

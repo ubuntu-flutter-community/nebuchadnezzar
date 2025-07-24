@@ -1,17 +1,27 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
+import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
+import '../../common/platforms.dart';
 import '../../common/room_x.dart';
 
 class CreateOrEditRoomModel extends SafeChangeNotifier {
-  CreateOrEditRoomModel loadFromDialog({
-    required Room? room,
-    required bool isSpace,
-  }) {
+  CreateOrEditRoomModel({required Client client}) : _client = client;
+
+  final Client _client;
+  Stream<SyncUpdate> get joinedUpdateStream =>
+      _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
+
+  Stream<JoinedRoomUpdate?> getJoinedRoomUpdate(String? roomId) =>
+      joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
+
+  void init({required Room? room, required bool isSpace}) {
     if (room == null) {
-      _name = '';
-      _topic = '';
+      _nameDraft = '';
+      _topicDraft = '';
       _isSpace = isSpace;
       _enableEncryption = false;
       _federated = false;
@@ -20,8 +30,8 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       _historyVisibility = HistoryVisibility.shared;
       _profiles = {};
     } else {
-      _name = room.name;
-      _topic = room.topic;
+      _nameDraft = room.name;
+      _topicDraft = room.topic;
       _isSpace = room.isSpace;
       _enableEncryption = room.encrypted;
       _federated = room.isFederated;
@@ -30,38 +40,52 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       _historyVisibility = room.historyVisibility ?? HistoryVisibility.shared;
       _profiles = room.getProfiles();
     }
-
-    return this;
   }
 
-  String _name = '';
-  String get name => _name;
-  void setName(String name) {
-    if (name == _name) return;
-    _name = name;
+  // ROOM NAME DRAFT
+
+  String _nameDraft = '';
+  String get nameDraft => _nameDraft;
+  void setNameDraft(String name) {
+    if (name == _nameDraft) return;
+    _nameDraft = name;
     notifyListeners();
   }
 
-  Future<void> changeRoomName(Room room) async {
+  Stream<String> getJoinedRoomNameStream(Room room) =>
+      getJoinedRoomUpdate(room.id).map((_) => room.name).distinct();
+
+  Stream<bool> getJoinedRoomCanChangeNameStream(Room room) =>
+      getJoinedRoomUpdate(room.id).map((_) => room.canChangeName).distinct();
+
+  Future<void> changeRoomName(Room room, String name) async {
     try {
-      await room.setName(_name);
+      await room.setName(name);
     } catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
     }
   }
 
-  String _topic = '';
-  String get topic => _topic;
-  void setTopic(String topic) {
-    if (topic == _topic) return;
-    _topic = topic;
+  // ROOM TOPIC DRAFT
+
+  String _topicDraft = '';
+  String get topicDraft => _topicDraft;
+  void setTopicDraft(String topic) {
+    if (topic == _topicDraft) return;
+    _topicDraft = topic;
     notifyListeners();
   }
 
-  Future<void> changeRoomTopic(Room room) async {
+  Stream<String> getJoinedRoomTopicStream(Room room) =>
+      getJoinedRoomUpdate(room.id).map((_) => room.topic).distinct();
+
+  Stream<bool> getJoinedRoomCanChangeTopicStream(Room room) =>
+      getJoinedRoomUpdate(room.id).map((_) => room.canChangeTopic).distinct();
+
+  Future<void> changeRoomTopic(Room room, String topic) async {
     try {
-      await room.setDescription(_topic);
+      await room.setDescription(topic);
     } catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
@@ -149,6 +173,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
   }
 
   Set<Profile> _profiles = {};
+
   Set<Profile> get profiles => _profiles;
   void setProfiles(Set<Profile> profiles) {
     _profiles = profiles;
@@ -177,6 +202,19 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     _profiles.remove(profile);
     notifyListeners();
   }
+
+  Stream<Map<String, Object?>> getPermissionsStream(Room room) => _client
+      .onSync
+      .stream
+      .where(
+        (e) =>
+            (e.rooms?.join?.containsKey(room.id) ?? false) &&
+            (e.rooms!.join![room.id]?.timeline?.events?.any(
+                  (s) => s.type == EventTypes.RoomPowerLevels,
+                ) ??
+                false),
+      )
+      .map((event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {});
 
   Future<void> editPowerLevel({
     required Room room,
@@ -228,5 +266,85 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       printMessageInDebugMode(e, s);
       rethrow;
     }
+  }
+
+  bool _attachingAvatar = false;
+  bool get attachingAvatar => _attachingAvatar;
+  void setAttachingAvatar(bool value) {
+    if (value == _attachingAvatar) return;
+    _attachingAvatar = value;
+
+    notifyListeners();
+  }
+
+  MatrixFile? _avatarDraftFile;
+  MatrixFile? get avatarDraftFile => _avatarDraftFile;
+  void resetAvatar() {
+    _avatarDraftFile = null;
+    notifyListeners();
+  }
+
+  String? _roomAvatarError;
+  String? get roomAvatarError => _roomAvatarError;
+  void setRoomAvatarError(String? value) {
+    _roomAvatarError = value;
+    notifyListeners();
+  }
+
+  Future<void> setRoomAvatar({
+    required Room? room,
+    required Function(String error) onFail,
+    required String wrongFormatString,
+  }) async {
+    setRoomAvatarError(null);
+    setAttachingAvatar(true);
+
+    try {
+      XFile? xFile;
+      if (Platforms.isLinux) {
+        xFile = await openFile();
+      } else {
+        final result = await FilePicker.platform.pickFiles(
+          allowMultiple: false,
+          type: FileType.image,
+        );
+        xFile = result?.files
+            .map((f) => XFile(f.path!, mimeType: lookupMimeType(f.path!)))
+            .toList()
+            .firstOrNull;
+      }
+
+      if (xFile == null) {
+        setAttachingAvatar(false);
+        return;
+      }
+
+      final mime = lookupMimeType(xFile.path);
+      final bytes = await xFile.readAsBytes();
+
+      if (mime?.startsWith('image') != true) {
+        setRoomAvatarError(wrongFormatString);
+        setAttachingAvatar(false);
+        return;
+      }
+
+      _avatarDraftFile = await MatrixImageFile.shrink(
+        bytes: bytes,
+        name: xFile.name,
+        mimeType: mime,
+        maxDimension: 1000,
+        nativeImplementations: _client.nativeImplementations,
+      );
+
+      if (room != null) {
+        await room.setAvatar(_avatarDraftFile);
+        _avatarDraftFile = null;
+      }
+    } on Exception catch (e, s) {
+      onFail(e.toString());
+      printMessageInDebugMode(e, s);
+    }
+
+    setAttachingAvatar(false);
   }
 }

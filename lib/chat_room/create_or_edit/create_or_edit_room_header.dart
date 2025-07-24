@@ -52,7 +52,8 @@ class CreateOrEditRoomHeader extends StatelessWidget with WatchItMixin {
           spacing: kBigPadding,
           children: [
             CreateOrEditRoomNameTextField(room: room),
-            CreateOrEditRoomTopicTextField(room: room),
+            if (isSpace || room != null)
+              CreateOrEditRoomTopicTextField(room: room),
             if (!isSpace)
               YaruTile(
                 leading: encrypted

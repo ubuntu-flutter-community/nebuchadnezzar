@@ -1,48 +1,40 @@
 import 'package:flutter/material.dart' hide Visibility;
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
-import '../../common/view/search_auto_complete.dart';
 import '../../common/view/sliver_sticky_panel.dart';
-import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../common/view/chat_room_users_list.dart';
-import '../input/draft_model.dart';
-import 'chat_room_create_or_edit_avatar.dart';
 import 'chat_room_permissions.dart';
-import 'create_or_edit_room_button.dart';
+import 'create_or_edit_room_avatar.dart';
 import 'create_or_edit_room_header.dart';
 import 'create_or_edit_room_model.dart';
-import 'profiles_list_view.dart';
+import 'create_or_edit_room_user_search_auto_complete.dart';
+import 'create_room_button.dart';
+import 'create_room_profiles_list_view.dart';
 
 const _maxWidth = 500.0;
 
-class ChatCreateOrEditRoomDialog extends StatefulWidget
+class CreateOrEditRoomDialog extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const ChatCreateOrEditRoomDialog({super.key, this.room, this.space = false});
+  const CreateOrEditRoomDialog({super.key, this.room, this.space = false});
 
   final Room? room;
   final bool space;
 
   @override
-  State<ChatCreateOrEditRoomDialog> createState() =>
-      _ChatCreateOrEditRoomDialogState();
+  State<CreateOrEditRoomDialog> createState() => _CreateOrEditRoomDialogState();
 }
 
-class _ChatCreateOrEditRoomDialogState
-    extends State<ChatCreateOrEditRoomDialog> {
+class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
   @override
   void initState() {
     super.initState();
-    di<CreateOrEditRoomModel>().loadFromDialog(
-      room: widget.room,
-      isSpace: widget.space,
-    );
+    di<CreateOrEditRoomModel>().init(room: widget.room, isSpace: widget.space);
   }
 
   @override
@@ -51,9 +43,6 @@ class _ChatCreateOrEditRoomDialogState
     final mediaQueryWidth = context.mediaQuerySize.width;
 
     final usedWidth = mediaQueryWidth > 520.0 ? _maxWidth : 280.0;
-    final avatarDraftFile = watchPropertyValue(
-      (DraftModel m) => m.avatarDraftFile,
-    );
 
     final isSpace = widget.room?.isSpace ?? widget.space;
 
@@ -96,10 +85,7 @@ class _ChatCreateOrEditRoomDialogState
                     padding: const EdgeInsets.only(bottom: kBigPadding),
                     sliver: SliverToBoxAdapter(
                       child: Center(
-                        child: ChatRoomCreateOrEditAvatar(
-                          avatarDraftBytes: avatarDraftFile?.bytes,
-                          room: widget.room,
-                        ),
+                        child: CreateOrEditRoomAvatar(room: widget.room),
                       ),
                     ),
                   ),
@@ -115,7 +101,7 @@ class _ChatCreateOrEditRoomDialogState
                       horizontal: kBigPadding,
                     ),
                     sliver: SliverToBoxAdapter(
-                      child: ChatPermissionsSettingsView(room: widget.room!),
+                      child: ChatRoomPermissions(room: widget.room!),
                     ),
                   ),
                 SliverPadding(
@@ -127,38 +113,9 @@ class _ChatCreateOrEditRoomDialogState
                         children: [
                           if (widget.room == null ||
                               widget.room?.canInvite == true)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: kMediumPadding,
-                                vertical: kSmallPadding,
-                              ),
-                              child: SizedBox(
-                                height: 38,
-                                child: ChatUserSearchAutoComplete(
-                                  labelText: l10n.inviteOtherUsers,
-                                  width: usedWidth - 2 * kMediumPadding,
-                                  suffix: const Icon(YaruIcons.user),
-                                  onProfileSelected: (p) {
-                                    if (widget.room != null) {
-                                      showFutureLoadingDialog(
-                                        context: context,
-                                        future: () =>
-                                            di<CreateOrEditRoomModel>()
-                                                .inviteUserToRoom(
-                                                  room: widget.room!,
-                                                  userId: p.userId,
-                                                ),
-                                        onError: (e) {
-                                          showErrorSnackBar(context, e);
-                                          return e;
-                                        },
-                                      );
-                                    } else {
-                                      di<CreateOrEditRoomModel>().addProfile(p);
-                                    }
-                                  },
-                                ),
-                              ),
+                            CreateOrEditRoomUserSearchAutoComplete(
+                              room: widget.room,
+                              useWidth: usedWidth,
                             ),
                           SizedBox(
                             height: 200,
@@ -170,7 +127,7 @@ class _ChatCreateOrEditRoomDialogState
                                           sliver: false,
                                         )
                                       : const SizedBox.shrink()
-                                : const ProfilesListView(),
+                                : const CreateRoomProfilesListView(),
                           ),
                         ],
                       ),
@@ -192,10 +149,10 @@ class _ChatCreateOrEditRoomDialogState
                   widthGap: kMediumPadding,
                   children: [
                     OutlinedButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: Navigator.of(context).pop,
                       child: Text(l10n.cancel),
                     ),
-                    const CreateOrEditRoomButton(),
+                    const CreateRoomButton(),
                   ],
                 ),
               ),
