@@ -28,7 +28,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
           preserveState: false,
           initialValue: room.canChangeJoinRules,
         ).data ??
-        false;
+        room.canChangeJoinRules;
 
     final joinRules =
         watchStream(
@@ -46,6 +46,8 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
       title: const Text('Join Rules'),
       enabled: canChangeJoinRules,
       trailing: YaruPopupMenuButton<JoinRules>(
+        enabled: canChangeJoinRules,
+        initialValue: joinRules,
         onSelected: canChangeJoinRules
             ? (v) => showFutureLoadingDialog(
                 context: context,

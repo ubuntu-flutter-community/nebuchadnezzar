@@ -88,9 +88,6 @@ class ChatModel extends SafeChangeNotifier {
   Stream<SyncUpdate> get joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
 
-  Stream<SyncUpdate> get inviteUpdateStream =>
-      _client.onSync.stream.where((e) => e.rooms?.invite?.isNotEmpty ?? false);
-
   Stream<JoinedRoomUpdate?> getJoinedRoomUpdate(String? roomId) =>
       joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
 
@@ -127,17 +124,6 @@ class ChatModel extends SafeChangeNotifier {
 
   Stream<List<Room>> get spacesStream =>
       syncStream.map((e) => _rooms.where((e) => e.isSpace).toList());
-
-  Stream<Map<String, Object?>> getPermissionsStream(Room room) => syncStream
-      .where(
-        (e) =>
-            (e.rooms?.join?.containsKey(room.id) ?? false) &&
-            (e.rooms!.join![room.id]?.timeline?.events?.any(
-                  (s) => s.type == EventTypes.RoomPowerLevels,
-                ) ??
-                false),
-      )
-      .map((event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {});
 
   Stream<Event> getEventStream(Room room) =>
       _client.onTimelineEvent.stream.where((e) => e.room.id == room.id);

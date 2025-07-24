@@ -10,10 +10,15 @@ extension RoomX on Room {
       canChangeJoinRules ||
       canInvite ||
       canRedact ||
-      canChangeStateEvent(EventTypes.RoomName) ||
+      canChangeName ||
+      canChangeTopic ||
       canChangeStateEvent(EventTypes.RoomAliases) ||
       canChangeStateEvent(EventTypes.RoomJoinRules) ||
       canChangeStateEvent(EventTypes.RoomPowerLevels);
+
+  bool get canChangeName => canChangeStateEvent(EventTypes.RoomName);
+
+  bool get canChangeTopic => canChangeStateEvent(EventTypes.RoomTopic);
 
   bool get isUnacceptedDirectChat {
     if (isDirectChat) {

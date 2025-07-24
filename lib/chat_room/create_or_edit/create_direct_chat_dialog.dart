@@ -9,15 +9,14 @@ import '../../l10n/l10n.dart';
 import '../../common/chat_model.dart';
 import '../../common/view/search_auto_complete.dart';
 
-class ChatNewDirectChatDialog extends StatefulWidget {
-  const ChatNewDirectChatDialog({super.key});
+class CreateDirectChatDialog extends StatefulWidget {
+  const CreateDirectChatDialog({super.key});
 
   @override
-  State<ChatNewDirectChatDialog> createState() =>
-      _ChatNewDirectChatDialogState();
+  State<CreateDirectChatDialog> createState() => _CreateDirectChatDialogState();
 }
 
-class _ChatNewDirectChatDialogState extends State<ChatNewDirectChatDialog> {
+class _CreateDirectChatDialogState extends State<CreateDirectChatDialog> {
   String? _error;
   final _searchController = TextEditingController();
 

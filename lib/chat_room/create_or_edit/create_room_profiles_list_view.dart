@@ -6,8 +6,8 @@ import '../../common/view/chat_avatar.dart';
 import '../../common/view/ui_constants.dart';
 import 'create_or_edit_room_model.dart';
 
-class ProfilesListView extends StatelessWidget with WatchItMixin {
-  const ProfilesListView({super.key});
+class CreateRoomProfilesListView extends StatelessWidget with WatchItMixin {
+  const CreateRoomProfilesListView({super.key});
 
   @override
   Widget build(BuildContext context) {

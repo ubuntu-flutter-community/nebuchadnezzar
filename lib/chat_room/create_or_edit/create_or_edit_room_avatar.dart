@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
@@ -15,18 +13,17 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../input/draft_model.dart';
 
-class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
-  const ChatRoomCreateOrEditAvatar({
-    super.key,
-    required this.room,
-    this.avatarDraftBytes,
-  });
+class CreateOrEditRoomAvatar extends StatelessWidget with WatchItMixin {
+  const CreateOrEditRoomAvatar({super.key, required this.room});
 
   final Room? room;
-  final Uint8List? avatarDraftBytes;
 
   @override
   Widget build(BuildContext context) {
+    final avatarDraftBytes = watchPropertyValue(
+      (DraftModel m) => m.avatarDraftFile?.bytes,
+    );
+
     final theme = context.theme;
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
@@ -34,10 +31,6 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
     final roomAvatarError = watchPropertyValue(
       (DraftModel m) => m.roomAvatarError,
     );
-    final ava = watchStream(
-      (ChatModel m) => m.getJoinedRoomAvatarStream(room),
-      initialValue: room?.avatar,
-    ).data;
     final foreGroundColor = context.colorScheme.isLight
         ? Colors.black
         : Colors.white;
@@ -49,13 +42,15 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
       spacing: kMediumPadding,
       children: [
         Stack(
-          key: ValueKey(ava?.toString()),
           children: [
             Padding(
               padding: const EdgeInsets.all(kSmallPadding),
               child: room != null
                   ? ChatAvatar(
-                      avatarUri: ava,
+                      avatarUri: watchStream(
+                        (ChatModel m) => m.getJoinedRoomAvatarStream(room),
+                        initialValue: room?.avatar,
+                      ).data,
                       dimension: 80,
                       fallBackIconSize: 40,
                     )
@@ -72,7 +67,7 @@ class ChatRoomCreateOrEditAvatar extends StatelessWidget with WatchItMixin {
                           child: avatarDraftBytes == null
                               ? const Icon(YaruIcons.user, size: 40)
                               : Image.memory(
-                                  avatarDraftBytes!,
+                                  avatarDraftBytes,
                                   fit: BoxFit.cover,
                                 ),
                         ),

@@ -13,8 +13,8 @@ class CreateOrEditRoomButton extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final name = watchPropertyValue((CreateOrEditRoomModel m) => m.name);
-    final topic = watchPropertyValue((CreateOrEditRoomModel m) => m.topic);
+    final name = watchPropertyValue((CreateOrEditRoomModel m) => m.nameDraft);
+    final topic = watchPropertyValue((CreateOrEditRoomModel m) => m.topicDraft);
     final space = watchPropertyValue((CreateOrEditRoomModel m) => m.isSpace);
     final profiles = watchPropertyValue(
       (CreateOrEditRoomModel m) => m.profiles,

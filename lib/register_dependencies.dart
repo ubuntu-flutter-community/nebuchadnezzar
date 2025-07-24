@@ -152,5 +152,7 @@ void registerDependencies() {
 
       return localNotifier;
     })
-    ..registerLazySingleton<CreateOrEditRoomModel>(CreateOrEditRoomModel.new);
+    ..registerLazySingleton<CreateOrEditRoomModel>(
+      () => CreateOrEditRoomModel(client: di<Client>()),
+    );
 }

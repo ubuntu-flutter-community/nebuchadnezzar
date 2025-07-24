@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../l10n/l10n.dart';
-import '../../chat_room/create_or_edit/chat_create_or_edit_room_dialog.dart';
-import '../../chat_room/create_or_edit/chat_new_direct_chat_dialog.dart';
+import '../../chat_room/create_or_edit/create_or_edit_room_dialog.dart';
+import '../../chat_room/create_or_edit/create_direct_chat_dialog.dart';
 
 class ChatNewChatPopupMenuButton extends StatelessWidget {
   const ChatNewChatPopupMenuButton({super.key});
@@ -20,7 +20,7 @@ class ChatNewChatPopupMenuButton extends StatelessWidget {
           PopupMenuItem(
             onTap: () => showDialog(
               context: context,
-              builder: (context) => const ChatNewDirectChatDialog(),
+              builder: (context) => const CreateDirectChatDialog(),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -30,7 +30,7 @@ class ChatNewChatPopupMenuButton extends StatelessWidget {
           PopupMenuItem(
             onTap: () => showDialog(
               context: context,
-              builder: (context) => const ChatCreateOrEditRoomDialog(),
+              builder: (context) => const CreateOrEditRoomDialog(),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,8 +40,7 @@ class ChatNewChatPopupMenuButton extends StatelessWidget {
           PopupMenuItem(
             onTap: () => showDialog(
               context: context,
-              builder: (context) =>
-                  const ChatCreateOrEditRoomDialog(space: true),
+              builder: (context) => const CreateOrEditRoomDialog(space: true),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
