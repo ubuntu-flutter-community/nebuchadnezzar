@@ -68,10 +68,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         if (!di<ChatModel>().archiveActive &&
             !di<ChatModel>().loadingArchive &&
             leftRoomUpdate.hasData) {
-          di<ChatModel>().leaveRoom(
-            room: widget.room,
-            onFail: (error) => showSnackBar(context, content: Text(error)),
-          );
+          di<ChatModel>().setSelectedRoom(null);
           showDialog(
             context: context,
             barrierDismissible: false,

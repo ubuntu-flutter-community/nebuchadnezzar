@@ -101,16 +101,14 @@ class SearchModel extends SafeChangeNotifier {
     try {
       roomSearchResult = await _client.queryPublicRooms(
         filter: PublicRoomQueryFilter(genericSearchTerm: searchQuery),
-        limit: 200,
+        limit: 20,
+        includeAllNetworks: true,
       );
 
       if (searchQuery.isValidMatrixId &&
+          searchQuery.sigil == '#' &&
           roomSearchResult.chunk.any(
-                (room) =>
-                    room.canonicalAlias?.toLowerCase().contains(
-                      searchQuery.toLowerCase(),
-                    ) ==
-                    true,
+                (room) => room.canonicalAlias == searchQuery,
               ) ==
               false) {
         final response = await _client.getRoomIdByAlias(searchQuery);
@@ -118,6 +116,7 @@ class SearchModel extends SafeChangeNotifier {
         if (roomId != null) {
           roomSearchResult.chunk.add(
             PublicRoomsChunk(
+              avatarUrl: _client.getRoomById(roomId)?.avatar,
               name: searchQuery,
               guestCanJoin: false,
               numJoinedMembers: 0,
@@ -128,8 +127,9 @@ class SearchModel extends SafeChangeNotifier {
           );
         }
       }
-    } catch (e) {
+    } catch (e, s) {
       onFail(e.toString());
+      printMessageInDebugMode(e, s);
     }
 
     return (roomSearchResult?.chunk ?? [])

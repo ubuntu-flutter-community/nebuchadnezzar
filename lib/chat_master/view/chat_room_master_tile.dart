@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -26,9 +27,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
     final chatModel = di<ChatModel>();
 
     final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
-    final processingJoinOrLeave = watchPropertyValue(
-      (ChatModel m) => m.processingJoinOrLeave,
-    );
+
     final loadingArchive = watchPropertyValue(
       (ChatModel m) => m.loadingArchive,
     );
@@ -36,7 +35,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
     return ChatMasterTileMenu(
       room: room,
       child: Opacity(
-        opacity: processingJoinOrLeave || loadingArchive ? 0.3 : 1,
+        opacity: loadingArchive ? 0.3 : 1,
         child: Padding(
           padding: const EdgeInsets.only(bottom: kSmallPadding),
           child: Stack(
@@ -56,7 +55,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                 subtitle: room.membership == Membership.invite
                     ? Text(room.getLocalizedDisplayname())
                     : ChatRoomMasterTileSubTitle(room: room),
-                onTap: processingJoinOrLeave || loadingArchive
+                onTap: loadingArchive
                     ? null
                     : () async {
                         if (room.isArchived) {
@@ -69,11 +68,20 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                                   ChatInvitationDialog(room: room),
                             );
                           } else {
-                            await chatModel.joinRoom(
-                              room,
-                              onFail: (e) =>
-                                  showSnackBar(context, content: Text(e)),
-                            );
+                            showFutureLoadingDialog(
+                              context: context,
+                              onError: (error) {
+                                showErrorSnackBar(context, error.toString());
+                                return error.toString();
+                              },
+                              future: () => chatModel.joinRoom(room),
+                            ).then((result) {
+                              if (result.asValue?.value != null) {
+                                chatModel.setSelectedRoom(
+                                  result.asValue!.value,
+                                );
+                              }
+                            });
                           }
                         }
                         di<DraftModel>().setAttaching(false);

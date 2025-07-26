@@ -89,9 +89,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
     final isArchivedRoom = watchPropertyValue(
       (ChatModel m) => m.selectedRoom?.isArchived == true,
     );
-    final processingJoinOrLeave = watchPropertyValue(
-      (ChatModel m) => m.processingJoinOrLeave,
-    );
+
     final loadingArchive = watchPropertyValue(
       (ChatModel m) => m.loadingArchive,
     );
@@ -117,7 +115,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
                     ),
                   if (context.showSideBar)
                     const VerticalDivider(width: 0, thickness: 0),
-                  if (processingJoinOrLeave || loadingArchive)
+                  if (loadingArchive)
                     const Expanded(child: Center(child: Progress()))
                   else if (selectedRoom == null)
                     const Expanded(child: ChatNoSelectedRoomPage())

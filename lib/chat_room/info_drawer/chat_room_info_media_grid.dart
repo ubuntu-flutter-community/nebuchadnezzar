@@ -123,64 +123,85 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
 
     return NotificationListener<ScrollEndNotification>(
       onNotification: (notification) {
-        di<TimelineModel>().requestHistory(timeline, historyCount: 50);
+        di<TimelineModel>().requestHistory(
+          timeline,
+          filter: StateFilter(types: [EventTypes.Message]),
+          historyCount: 1000,
+        );
 
         return true;
       },
-      child: GridView.builder(
-        padding: const EdgeInsets.only(
-          left: kBigPadding,
-          right: kBigPadding,
-          bottom: 3 * kBigPadding,
-        ),
-        itemCount: events.length,
-        itemBuilder: (context, i) {
-          final event = events[i];
+      child: Stack(
+        children: [
+          GridView.builder(
+            padding: const EdgeInsets.only(
+              left: kBigPadding,
+              right: kBigPadding,
+              bottom: 3 * kBigPadding,
+            ),
+            itemCount: events.length,
+            itemBuilder: (context, i) {
+              final event = events[i];
 
-          return switch (messageType) {
-            MessageTypes.Image => ChatImage(
-              height: 90,
-              fit: BoxFit.cover,
-              showDescription: false,
-              event: event,
-              onTap: event.isSvgImage
-                  ? null
-                  : () => showDialog(
-                      context: context,
-                      builder: (context) =>
-                          ChatMessageImageFullScreenDialog(event: event),
-                    ),
-            ),
-            _ => Center(
-              child: IconButton.outlined(
-                tooltip: context.l10n.downloadFile,
-                onPressed: () => di<ChatDownloadModel>().safeFile(
+              return switch (messageType) {
+                MessageTypes.Image => ChatImage(
+                  height: 90,
+                  fit: BoxFit.cover,
+                  showDescription: false,
                   event: event,
-                  dialogTitle: l10n.saveFile,
-                  confirmButtonText: l10n.saveFile,
+                  onTap: event.isSvgImage
+                      ? null
+                      : () => showDialog(
+                          context: context,
+                          builder: (context) =>
+                              ChatMessageImageFullScreenDialog(event: event),
+                        ),
                 ),
-                icon: switch (messageType) {
-                  MessageTypes.Audio => const Icon(YaruIcons.music_note),
-                  MessageTypes.File => const Icon(YaruIcons.document),
-                  MessageTypes.Video => const Icon(YaruIcons.video),
-                  _ => const Placeholder(),
-                },
-              ),
+                _ => Center(
+                  child: IconButton.outlined(
+                    tooltip: context.l10n.downloadFile,
+                    onPressed: () => di<ChatDownloadModel>().safeFile(
+                      event: event,
+                      dialogTitle: l10n.saveFile,
+                      confirmButtonText: l10n.saveFile,
+                    ),
+                    icon: switch (messageType) {
+                      MessageTypes.Audio => const Icon(YaruIcons.music_note),
+                      MessageTypes.File => const Icon(YaruIcons.document),
+                      MessageTypes.Video => const Icon(YaruIcons.video),
+                      _ => const Placeholder(),
+                    },
+                  ),
+                ),
+              };
+            },
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: switch (messageType) {
+                MessageTypes.Audio ||
+                MessageTypes.File ||
+                MessageTypes.Video => 4,
+                _ => 2,
+              },
+              mainAxisExtent: switch (messageType) {
+                MessageTypes.Audio ||
+                MessageTypes.File ||
+                MessageTypes.Video => 80,
+                _ => 100,
+              },
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
             ),
-          };
-        },
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: switch (messageType) {
-            MessageTypes.Audio || MessageTypes.File || MessageTypes.Video => 4,
-            _ => 2,
-          },
-          mainAxisExtent: switch (messageType) {
-            MessageTypes.Audio || MessageTypes.File || MessageTypes.Video => 80,
-            _ => 100,
-          },
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 10,
+            right: 10,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: ChatLoadMoreHistoryButton(timeline: timeline),
+            ),
+          ),
+        ],
       ),
     );
   }

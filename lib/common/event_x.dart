@@ -35,6 +35,7 @@ extension EventX on Event {
         EventTypes.Unknown,
         EventTypes.GuestAccess,
         EventTypes.Encryption,
+        EventTypes.RoomPinnedEvents,
       }.contains(type);
 
   bool get isCallEvent => type.contains('m.call.');
@@ -59,12 +60,6 @@ extension EventX on Event {
     required bool showAvatarChanges,
     required bool showDisplayNameChanges,
   }) {
-    if (type == 'm.room.server_acl') {
-      return true;
-    }
-    if (type == EventTypes.RoomPinnedEvents) {
-      return true;
-    }
     if (type == EventTypes.RoomMember &&
         roomMemberChangeType == RoomMemberChangeType.avatar &&
         !showAvatarChanges) {
@@ -83,7 +78,11 @@ extension EventX on Event {
       return true;
     }
 
-    return {EventTypes.Redaction, EventTypes.Reaction}.contains(type);
+    return {
+      EventTypes.Redaction,
+      EventTypes.Reaction,
+      'm.room.server_acl',
+    }.contains(type);
   }
 
   EventPosition getEventPosition({

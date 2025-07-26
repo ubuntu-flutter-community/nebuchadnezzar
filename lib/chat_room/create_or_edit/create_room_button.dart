@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/chat_model.dart';
@@ -41,25 +42,35 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
     return ImportantButton(
       onPressed: name.trim().isEmpty
           ? null
-          : () {
+          : () async {
               if (context.mounted && Navigator.of(context).canPop()) {
                 Navigator.of(context).pop();
               }
 
-              di<ChatModel>().createRoom(
-                space: space,
-                topic: topic,
-                avatarFile: avatarDraftFile,
-                enableEncryption: encrypted,
-                invite: profiles.map((p) => p.userId).toList(),
-                groupName: name,
-                joinRules: joinRules,
-                historyVisibility: historyVisibility,
-                onFail: (error) => showSnackBar(context, content: Text(error)),
-                onSuccess: () => di<CreateOrEditRoomModel>().resetAvatar(),
-                groupCall: groupCall,
-                federated: federated,
+              final result = await showFutureLoadingDialog(
+                context: context,
+                onError: (error) {
+                  showErrorSnackBar(context, error.toString());
+                  return error.toString();
+                },
+                future: () => di<ChatModel>().createRoomOrSpace(
+                  space: space,
+                  spaceTopic: topic,
+                  avatarFile: avatarDraftFile,
+                  enableEncryption: encrypted,
+                  invite: profiles.map((p) => p.userId).toList(),
+                  groupName: name,
+                  joinRules: joinRules,
+                  historyVisibility: historyVisibility,
+
+                  groupCall: groupCall,
+                  federated: federated,
+                ),
               );
+
+              if (result.asValue?.value != null) {
+                di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+              }
             },
       child: Text(space ? l10n.createNewSpace : l10n.createGroup),
     );

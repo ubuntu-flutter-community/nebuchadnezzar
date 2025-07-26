@@ -21,17 +21,11 @@ class ChatModel extends SafeChangeNotifier {
   List<Room> get _rooms => _client.rooms;
 
   /// The list of the archived rooms, call loadArchive() before first call
-  List<Room> get _archivedRooms => _client.archivedRooms
-      .map((e) => e.room)
-      .where(
-        (e) =>
-            _filteredRoomsQuery == null || _filteredRoomsQuery!.trim().isEmpty
-            ? true
-            : e.getLocalizedDisplayname().toLowerCase().contains(
-                _filteredRoomsQuery!.toLowerCase(),
-              ),
-      )
-      .toList();
+  List<Room> get _archivedRooms =>
+      _client.archivedRooms.map((e) => e.room).toList();
+
+  Room? getRoomById(String? roomId) =>
+      roomId == null ? null : _client.getRoomById(roomId);
 
   String? _filteredRoomsQuery;
   String? get filteredRoomsQuery => _filteredRoomsQuery;
@@ -41,7 +35,7 @@ class ChatModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  List<Room> get filteredRooms {
+  List<Room> get _activeOrArchivedRoomsOrSpaces {
     final theRooms = (archiveActive ? _archivedRooms : _rooms)
         .where(roomsFilter?.filter ?? (e) => true)
         .toList();
@@ -61,6 +55,17 @@ class ChatModel extends SafeChangeNotifier {
           .where((r) => r!.isArchived == archiveActive),
     ).toList();
   }
+
+  List<Room> get filteredRooms => _activeOrArchivedRoomsOrSpaces
+      .where(
+        (e) =>
+            _filteredRoomsQuery == null || _filteredRoomsQuery!.trim().isEmpty
+            ? true
+            : e.getLocalizedDisplayname().toLowerCase().contains(
+                _filteredRoomsQuery!.toLowerCase(),
+              ),
+      )
+      .toList();
 
   // Streams derived from the client onSync stream
   /// The unfiltered onSync stream of the [Client]
@@ -170,14 +175,6 @@ class ChatModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  bool _processingJoinOrLeave = false;
-  bool get processingJoinOrLeave => _processingJoinOrLeave;
-  void _setProcessingJoinOrLeave(bool value) {
-    if (value == _processingJoinOrLeave) return;
-    _processingJoinOrLeave = value;
-    notifyListeners();
-  }
-
   Room? _selectedRoom;
   Room? get selectedRoom => _selectedRoom;
   void setSelectedRoom(Room? value) {
@@ -213,45 +210,53 @@ class ChatModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> joinRoom(
-    Room room, {
-    required Function(String error) onFail,
-    bool clear = false,
-    bool select = true,
-  }) async {
-    if (clear) {
-      setSelectedRoom(null);
-    }
+  Future<Room> joinRoom(Room room) async {
     if (room.membership != Membership.join) {
       try {
-        _setProcessingJoinOrLeave(true);
         await room.join();
         if (room.isDirectChat && !room.encrypted) {
           await room.enableEncryption();
           printMessageInDebugMode('Room encrypted: ${room.encrypted}');
         }
-        if (select) {
-          setSelectedRoom(room);
-        }
-      } on Exception catch (e) {
-        onFail(e.toString());
-        setSelectedRoom(null);
-      } finally {
-        _setProcessingJoinOrLeave(false);
+      } on Exception catch (e, s) {
+        printMessageInDebugMode(e, s);
+        rethrow;
       }
-    } else {
-      if (select) {
-        setSelectedRoom(room);
-      }
+    }
+
+    return room;
+  }
+
+  Future<void> addToSpace(Room room, Room space) async {
+    if (room.isSpace) {
+      throw Exception('Cannot add a space to itself.');
+    }
+
+    try {
+      await space.setSpaceChild(room.id);
+      notifyListeners();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
     }
   }
 
-  Future<void> createRoom({
-    required bool space,
-    required Function(String error) onFail,
-    required Function() onSuccess,
+  Future<void> removeFromSpace(Room room, Room space) async {
+    if (room.isSpace) {
+      throw Exception('Cannot remove a space from itself.');
+    }
+
+    try {
+      await space.removeSpaceChild(room.id);
+      notifyListeners();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<Room?> createRoomOrSpace({
     String? groupName,
-    String? topic,
     bool enableEncryption = true,
     List<String>? invite,
     List<StateEvent>? initialState,
@@ -262,122 +267,72 @@ class ChatModel extends SafeChangeNotifier {
     bool federated = true,
     Map<String, dynamic>? powerLevelContentOverride,
     MatrixFile? avatarFile,
-  }) async {
-    if (space) {
-      await _createSpace(
-        name: groupName,
-        topic: topic,
-        invite: invite,
-        joinRules: joinRules,
-        onFail: onFail,
-        onSuccess: onSuccess,
-      );
-      return;
-    }
-
-    setSelectedRoom(null);
-    _setProcessingJoinOrLeave(true);
-    String? roomId;
-
-    try {
-      roomId = await _client.createGroupChat(
-        groupName: groupName,
-        enableEncryption: enableEncryption,
-        invite: invite,
-        initialState: initialState,
-        visibility: joinRules == JoinRules.private
-            ? Visibility.private
-            : Visibility.public,
-
-        historyVisibility: historyVisibility,
-        waitForSync: waitForSync,
-        groupCall: groupCall,
-        federated: federated,
-        powerLevelContentOverride: powerLevelContentOverride,
-      );
-    } catch (e, s) {
-      onFail(e.toString());
-      printMessageInDebugMode(e, s);
-    } finally {
-      _setProcessingJoinOrLeave(false);
-    }
-    if (roomId != null) {
-      final maybeRoom = _client.getRoomById(roomId);
-      if (maybeRoom != null) {
-        setSelectedRoom(maybeRoom);
-        if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
-            avatarFile?.bytes != null) {
-          try {
-            await maybeRoom.setAvatar(avatarFile);
-          } on Exception catch (e, s) {
-            printMessageInDebugMode(e, s);
-            onFail(e.toString());
-          }
-        }
-        if (maybeRoom.isDirectChat && !maybeRoom.encrypted) {
-          try {
-            await maybeRoom.enableEncryption();
-            printMessageInDebugMode('Room encrypted: ${maybeRoom.encrypted}');
-          } on Exception catch (e, s) {
-            printMessageInDebugMode(e, s);
-            onFail(e.toString());
-          }
-        }
-
-        onSuccess();
-      }
-    }
-  }
-
-  Future<String?> _createSpace({
-    String? name,
-    JoinRules? joinRules,
-    List<String>? invite,
-    List<Invite3pid>? invite3pid,
-    String? roomVersion,
-    String? topic,
-    bool waitForSync = true,
+    bool space = false,
+    List<Invite3pid>? spaceInvite3pid,
+    String? spaceRoomVersion,
+    String? spaceTopic,
     String? spaceAliasName,
-    required Function(String error) onFail,
-    required Function() onSuccess,
   }) async {
-    _setProcessingJoinOrLeave(true);
-    String? spaceRoomId;
+    String? roomId;
     try {
-      printMessageInDebugMode('Creating space...');
-      spaceRoomId = await _client.createSpace(
-        name: name,
-        visibility: joinRules == JoinRules.private
-            ? Visibility.private
-            : Visibility.public,
-        invite: invite,
-        invite3pid: invite3pid,
-        roomVersion: roomVersion,
-        topic: topic,
-        waitForSync: waitForSync,
-        spaceAliasName: spaceAliasName,
-      );
-    } on Exception catch (e, s) {
+      roomId = space
+          ? await _client.createSpace(
+              name: groupName,
+              visibility: joinRules == JoinRules.private
+                  ? Visibility.private
+                  : Visibility.public,
+              invite: invite,
+              invite3pid: spaceInvite3pid,
+              roomVersion: spaceRoomVersion,
+              topic: spaceTopic,
+              waitForSync: waitForSync,
+              spaceAliasName: spaceAliasName,
+            )
+          : await _client.createGroupChat(
+              groupName: groupName,
+              enableEncryption: enableEncryption,
+              invite: invite,
+              initialState: initialState,
+              visibility: joinRules == JoinRules.private
+                  ? Visibility.private
+                  : Visibility.public,
+
+              historyVisibility: historyVisibility,
+              waitForSync: waitForSync,
+              groupCall: groupCall,
+              federated: federated,
+              powerLevelContentOverride: powerLevelContentOverride,
+            );
+    } catch (e, s) {
       printMessageInDebugMode(e, s);
-      onFail(e.toString());
+      rethrow;
     }
-    if (spaceRoomId != null) {
-      final space = _client.getRoomById(spaceRoomId);
-      if (space != null) {
-        onSuccess();
-        setSelectedRoom(space);
+
+    final maybeRoom = _client.getRoomById(roomId);
+    if (maybeRoom != null) {
+      if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
+          avatarFile?.bytes != null) {
+        try {
+          await maybeRoom.setAvatar(avatarFile);
+        } on Exception catch (e, s) {
+          printMessageInDebugMode(e, s);
+        }
+      }
+      if (maybeRoom.isDirectChat && !maybeRoom.encrypted) {
+        try {
+          await maybeRoom.enableEncryption();
+          printMessageInDebugMode('Room encrypted: ${maybeRoom.encrypted}');
+        } on Exception catch (e, s) {
+          printMessageInDebugMode(e, s);
+          rethrow;
+        }
       }
     }
-    _setProcessingJoinOrLeave(false);
-    return spaceRoomId;
+
+    return maybeRoom;
   }
 
-  Future<void> joinDirectChat(
-    String userId, {
-    required Function(String error) onFail,
-  }) async {
-    _setProcessingJoinOrLeave(true);
-
+  Future<Room?> startOrGetDirectChat(String userId) async {
     final maybeDirectChatId = _client.getDirectChatFromUserId(userId);
     Room? maybeRoom;
     if (maybeDirectChatId != null) {
@@ -392,33 +347,17 @@ class ChatModel extends SafeChangeNotifier {
           preset: CreateRoomPreset.privateChat,
         );
       } on Exception catch (e) {
-        onFail(e.toString());
+        printMessageInDebugMode(e);
+        rethrow;
       }
 
-      if (maybeId != null) {
-        maybeRoom = Room(id: maybeId, client: _client);
-      }
+      maybeRoom = _client.getRoomById(maybeId);
     }
 
-    if (maybeRoom != null) {
-      try {
-        await joinRoom(maybeRoom, onFail: onFail);
-      } on Exception catch (e) {
-        onFail(e.toString());
-      } finally {
-        _setProcessingJoinOrLeave(false);
-      }
-    }
-
-    _setProcessingJoinOrLeave(false);
+    return maybeRoom;
   }
 
-  Future<void> joinAndSelectRoomByChunk(
-    PublicRoomsChunk chunk, {
-    required Function(String error) onFail,
-  }) async {
-    _setProcessingJoinOrLeave(true);
-
+  Future<Room?> knockOrJoinRoomChunk(PublicRoomsChunk chunk) async {
     final knock = chunk.joinRule == 'knock';
 
     String? roomId;
@@ -433,49 +372,24 @@ class ChatModel extends SafeChangeNotifier {
       if (!knock && _client.getRoomById(roomId) == null) {
         await _client.waitForRoomInSync(roomId);
       }
-    } on Exception catch (e) {
-      onFail(e.toString());
-    } finally {
-      if (roomId != null) {
-        final room = _client.getRoomById(roomId);
-        if (room != null && !room.isSpace) {
-          setSelectedRoom(room);
-        }
-      }
-      _setProcessingJoinOrLeave(false);
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
     }
+
+    return _client.getRoomById(roomId);
   }
 
-  bool _forget = false;
-  bool get forget => _forget;
-  void setForget(bool value) {
-    if (value == _forget) return;
-    _forget = value;
-    notifyListeners();
-  }
-
-  Future<void> leaveRoom({
-    required Function(String error) onFail,
-    required Room room,
-    bool forget = false,
-  }) async {
-    _setProcessingJoinOrLeave(true);
+  Future<void> leaveRoom({required Room room, required bool forget}) async {
     try {
-      await room.leave();
-      if (forget) {
-        await room.forget();
-      }
-      if (room == activeSpace) {
-        setActiveSpace(null);
-      }
-      await _client.oneShotSync();
-    } on Exception catch (e) {
-      onFail(e.toString());
-    } finally {
-      setSelectedRoom(null);
-      _setProcessingJoinOrLeave(false);
+      await Future.wait([
+        if (forget) room.forget() else room.leave(),
+        if (forget) _client.oneShotSync(),
+      ]);
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
     }
-    setForget(false);
   }
 
   Future initAfterEncryptionSetup() async => Future.wait<Future<dynamic>?>(

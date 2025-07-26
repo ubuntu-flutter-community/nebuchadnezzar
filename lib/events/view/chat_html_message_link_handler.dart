@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:matrix/matrix_api_lite/generated/model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,10 +8,12 @@ import 'package:watch_it/watch_it.dart';
 import '../../app/view/error_page.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
+import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
+import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
 void chatHtmlMessageLinkHandler(
@@ -60,7 +63,9 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
   void initState() {
     super.initState();
     _future = di<SearchModel>().findPublicRoomChunks(
-      widget.url.replaceAll('https://matrix.to/#/', ''),
+      widget.url
+          .replaceAll('https://matrix.to/#/', '')
+          .replaceAll('https://matrix.to/#/#', ''),
       onFail: (error) => showSnackBar(context, content: Text(error)),
     );
   }
@@ -76,26 +81,62 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
             content: ErrorBody(error: snapshot.error.toString()),
           );
         }
+
+        final roomChunk = snapshot.data?.firstOrNull;
         return ConfirmationDialog(
-          confirmEnabled: snapshot.hasData,
-          onConfirm: snapshot.hasData
-              ? () => di<ChatModel>().joinAndSelectRoomByChunk(
-                  snapshot.data!.first,
-                  onFail: (e) => showSnackBar(context, content: Text(e)),
-                )
+          confirmEnabled: snapshot.hasData && snapshot.data!.isNotEmpty,
+          confirmLabel:
+              roomChunk != null &&
+                  di<ChatModel>().getRoomById(roomChunk.roomId) != null
+              ? l10n.openChat
+              : l10n.joinRoom,
+          onConfirm: roomChunk != null
+              ? () {
+                  final joinedRoom = di<ChatModel>().getRoomById(
+                    roomChunk.roomId,
+                  );
+
+                  if (joinedRoom != null) {
+                    di<ChatModel>().setSelectedRoom(joinedRoom);
+                    return Future.value();
+                  }
+
+                  return showFutureLoadingDialog(
+                    context: context,
+                    future: () =>
+                        di<ChatModel>().knockOrJoinRoomChunk(roomChunk),
+                    onError: (error) {
+                      showErrorSnackBar(context, error.toString());
+                      return error.toString();
+                    },
+                  ).then((result) {
+                    if (result.asValue?.value != null) {
+                      di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+                    }
+                  });
+                }
               : null,
           title: Text(snapshot.hasData ? l10n.joinRoom : l10n.search),
           content: SizedBox(
-            height: 50,
+            height: 80,
             width: 200,
-            child:
-                (snapshot.hasData &&
-                    snapshot.data!.isNotEmpty &&
-                    context.mounted)
+            child: (snapshot.hasData)
                 ? Center(
-                    child: Text(
-                      snapshot.data!.first.canonicalAlias ??
-                          snapshot.data!.first.roomId,
+                    child: Column(
+                      spacing: kMediumPadding,
+                      children: [
+                        if (snapshot.data!.isNotEmpty)
+                          ChatAvatar(
+                            avatarUri: snapshot.data!.first.avatarUrl,
+                            dimension: 40,
+                          ),
+                        Text(
+                          snapshot.data!.isNotEmpty
+                              ? snapshot.data!.first.canonicalAlias ??
+                                    snapshot.data!.first.roomId
+                              : l10n.nothingFound,
+                        ),
+                      ],
                     ),
                   )
                 : const Center(child: Progress()),

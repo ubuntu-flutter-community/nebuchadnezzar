@@ -45,8 +45,8 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
                     onPressed: () => showFutureLoadingDialog(
                       context: context,
                       onError: (error) {
-                        showErrorSnackBar(context, error);
-                        return error;
+                        showErrorSnackBar(context, error.toString());
+                        return error.toString();
                       },
                       future: () => event.room.sendReaction(event.eventId, e),
                     ),

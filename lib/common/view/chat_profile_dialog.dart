@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -110,13 +111,26 @@ class _ChatProfileState extends State<ChatProfile> {
                                           const ChatSettingsDialog(),
                                     );
                                   } else {
-                                    di<ChatModel>().joinDirectChat(
-                                      snapshot.data!.userId,
-                                      onFail: (error) => showSnackBar(
-                                        context,
-                                        content: Text(error),
-                                      ),
-                                    );
+                                    showFutureLoadingDialog(
+                                      context: context,
+                                      onError: (error) {
+                                        showErrorSnackBar(
+                                          context,
+                                          error.toString(),
+                                        );
+                                        return error.toString();
+                                      },
+                                      future: () =>
+                                          di<ChatModel>().startOrGetDirectChat(
+                                            snapshot.data!.userId,
+                                          ),
+                                    ).then((result) {
+                                      if (result.asValue?.value != null) {
+                                        di<ChatModel>().setSelectedRoom(
+                                          result.asValue!.value!,
+                                        );
+                                      }
+                                    });
                                   }
                                 },
                                 label: Text(

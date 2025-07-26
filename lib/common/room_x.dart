@@ -20,6 +20,8 @@ extension RoomX on Room {
 
   bool get canChangeTopic => canChangeStateEvent(EventTypes.RoomTopic);
 
+  bool get canEditSpace => canChangeStateEvent(EventTypes.SpaceChild);
+
   bool get isUnacceptedDirectChat {
     if (isDirectChat) {
       return getParticipants()

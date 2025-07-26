@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/chat_user_search_auto_complete.dart';
 import '../../common/view/confirm.dart';
+import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../common/chat_model.dart';
-import '../../common/view/search_auto_complete.dart';
 
 class CreateDirectChatDialog extends StatefulWidget {
   const CreateDirectChatDialog({super.key});
@@ -31,10 +33,20 @@ class _CreateDirectChatDialogState extends State<CreateDirectChatDialog> {
     final l10n = context.l10n;
     return ConfirmationDialog(
       scrollable: true,
-      onConfirm: () => di<ChatModel>().joinDirectChat(
-        _searchController.text,
-        onFail: (error) => setState(() => _error = error),
-      ),
+      onConfirm: () =>
+          showFutureLoadingDialog(
+            context: context,
+            onError: (error) {
+              showErrorSnackBar(context, error.toString());
+              return error.toString();
+            },
+            future: () =>
+                di<ChatModel>().startOrGetDirectChat(_searchController.text),
+          ).then((result) {
+            if (result.asValue?.value != null) {
+              di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+            }
+          }),
       confirmLabel: l10n.startConversation,
       title: Text(l10n.directChat),
       content: Column(
