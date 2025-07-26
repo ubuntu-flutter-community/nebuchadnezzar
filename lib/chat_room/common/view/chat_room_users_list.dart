@@ -4,7 +4,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/chat_model.dart';
+import '../../../common/user_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/chat_avatar.dart';
 import '../../../common/view/chat_profile_dialog.dart';
@@ -12,6 +12,7 @@ import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../create_or_edit/create_or_edit_room_model.dart';
 
 class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
   const ChatRoomUsersList({
@@ -30,7 +31,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
     final membershipFilter = [Membership.join, Membership.invite];
 
     final users = watchStream(
-      (ChatModel m) => m.getUsersStreamOfJoinedRoom(
+      (CreateOrEditRoomModel m) => m.getUsersStreamOfJoinedRoom(
         room,
         membershipFilter: membershipFilter,
       ),
@@ -60,7 +61,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
                 mainAxisSize: MainAxisSize.min,
                 spacing: kSmallPadding,
                 children: [
-                  if (room.canKick && user.id != di<ChatModel>().myUserId)
+                  if (room.canKick && !user.isLoggedInUser)
                     IconButton(
                       tooltip: l10n.kickFromChat,
                       onPressed: () => showDialog(
@@ -76,7 +77,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
                         color: context.colorScheme.error,
                       ),
                     ),
-                  if (room.canBan && user.id != di<ChatModel>().myUserId)
+                  if (room.canBan && !user.isLoggedInUser)
                     IconButton(
                       tooltip: context.l10n.banFromChat,
                       onPressed: () => showDialog(

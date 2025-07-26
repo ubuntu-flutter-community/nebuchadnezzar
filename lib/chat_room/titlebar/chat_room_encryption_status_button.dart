@@ -3,9 +3,9 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
+import '../create_or_edit/create_or_edit_room_model.dart';
 
 class ChatRoomEncryptionStatusButton extends StatelessWidget with WatchItMixin {
   const ChatRoomEncryptionStatusButton({super.key, required this.room});
@@ -19,8 +19,9 @@ class ChatRoomEncryptionStatusButton extends StatelessWidget with WatchItMixin {
 
     final encrypted =
         watchStream(
-          (ChatModel m) => m.getJoinedRoomEncryptedStream(room),
+          (CreateOrEditRoomModel m) => m.getIsRoomEncryptedStream(room),
           initialValue: room.encrypted,
+          preserveState: false,
         ).data ??
         room.encrypted;
 

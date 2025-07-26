@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_room/create_or_edit/create_direct_chat_dialog.dart';
-import '../../chat_room/create_or_edit/create_or_edit_room_dialog.dart';
+import '../../chat_room/create_or_edit/view/create_direct_chat_dialog.dart';
+import '../../chat_room/create_or_edit/view/create_or_edit_room_dialog.dart';
 import '../../l10n/l10n.dart';
 import 'chat_rooms_or_spaces_search_dialog.dart';
 

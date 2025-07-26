@@ -7,11 +7,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/icons.dart';
 
+import '../../authentication/authentication_model.dart';
+import '../../common/event_x.dart';
 import '../../common/uri_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
-import '../../common/event_x.dart';
 
 class ChatMap extends StatelessWidget {
   const ChatMap({
@@ -38,7 +38,8 @@ class ChatMap extends StatelessWidget {
           spacing: kMediumPadding,
           children: [
             Map(
-              isUserMessage: event.senderId == di<ChatModel>().myUserId,
+              isUserMessage:
+                  event.senderId == di<AuthenticationModel>().loggedInUserId,
               latitude: latlong.first!,
               longitude: latlong.last!,
             ),

@@ -3,12 +3,13 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/sliver_sticky_panel.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../chat_room/create_or_edit/create_or_edit_room_dialog.dart';
+import '../../chat_room/create_or_edit/view/create_or_edit_room_dialog.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
 
@@ -70,11 +71,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
                           Navigator.of(context).pop();
                           showFutureLoadingDialog(
                             context: context,
-                            onError: (error) {
-                              showErrorSnackBar(context, error.toString());
-                              return error.toString();
-                            },
-                            future: () => di<ChatModel>().leaveRoom(
+                            future: () => di<CreateOrEditRoomModel>().leaveRoom(
                               room: activeSpace,
                               forget: false,
                             ),

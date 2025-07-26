@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/chat_model.dart';
-import '../../common/view/common_widgets.dart';
-import '../../common/view/snackbars.dart';
-import '../../l10n/l10n.dart';
-import 'create_or_edit_room_model.dart';
+import '../../../common/chat_model.dart';
+import '../../../common/view/common_widgets.dart';
+import '../../../l10n/l10n.dart';
+import '../create_or_edit_room_model.dart';
 
 class CreateRoomButton extends StatelessWidget with WatchItMixin {
-  const CreateRoomButton({super.key});
+  const CreateRoomButton({super.key, required this.isSpace});
+
+  final bool isSpace;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final name = watchPropertyValue((CreateOrEditRoomModel m) => m.nameDraft);
     final topic = watchPropertyValue((CreateOrEditRoomModel m) => m.topicDraft);
-    final space = watchPropertyValue((CreateOrEditRoomModel m) => m.isSpace);
     final profiles = watchPropertyValue(
-      (CreateOrEditRoomModel m) => m.profiles,
+      (CreateOrEditRoomModel m) => m.profilesDraft,
     );
     final joinRules = watchPropertyValue(
       (CreateOrEditRoomModel m) => m.joinRules,
@@ -29,9 +29,7 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
     final groupCall = watchPropertyValue(
       (CreateOrEditRoomModel m) => m.groupCall,
     );
-    final federated = watchPropertyValue(
-      (CreateOrEditRoomModel m) => m.federated,
-    );
+
     final encrypted = watchPropertyValue(
       (CreateOrEditRoomModel m) => m.enableEncryption,
     );
@@ -49,12 +47,8 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
 
               final result = await showFutureLoadingDialog(
                 context: context,
-                onError: (error) {
-                  showErrorSnackBar(context, error.toString());
-                  return error.toString();
-                },
-                future: () => di<ChatModel>().createRoomOrSpace(
-                  space: space,
+                future: () => di<CreateOrEditRoomModel>().createRoomOrSpace(
+                  space: isSpace,
                   spaceTopic: topic,
                   avatarFile: avatarDraftFile,
                   enableEncryption: encrypted,
@@ -64,7 +58,6 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
                   historyVisibility: historyVisibility,
 
                   groupCall: groupCall,
-                  federated: federated,
                 ),
               );
 
@@ -72,7 +65,7 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
                 di<ChatModel>().setSelectedRoom(result.asValue!.value!);
               }
             },
-      child: Text(space ? l10n.createNewSpace : l10n.createGroup),
+      child: Text(isSpace ? l10n.createNewSpace : l10n.createGroup),
     );
   }
 }

@@ -4,10 +4,10 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
 import '../../common/chat_model.dart';
 import '../../common/room_x.dart';
 import '../../common/view/confirm.dart';
-import '../../common/view/snackbars.dart';
 import '../../l10n/l10n.dart';
 
 class RemoveFromSpaceDialog extends StatefulWidget
@@ -59,12 +59,10 @@ class _RemoveFromSpaceDialogState extends State<RemoveFromSpaceDialog> {
       confirmEnabled: _selectedSpace != null,
       onConfirm: () => showFutureLoadingDialog(
         context: context,
-        future: () =>
-            di<ChatModel>().removeFromSpace(widget.room, _selectedSpace!),
-        onError: (error) {
-          showErrorSnackBar(context, error.toString());
-          return error.toString();
-        },
+        future: () => di<CreateOrEditRoomModel>().removeFromSpace(
+          widget.room,
+          _selectedSpace!,
+        ),
       ),
     );
   }
@@ -110,11 +108,10 @@ class _AddToSpaceDialogState extends State<AddToSpaceDialog> {
       confirmEnabled: _selectedSpace != null,
       onConfirm: () => showFutureLoadingDialog(
         context: context,
-        onError: (error) {
-          showErrorSnackBar(context, error.toString());
-          return error.toString();
-        },
-        future: () => di<ChatModel>().addToSpace(widget.room, _selectedSpace!),
+        future: () => di<CreateOrEditRoomModel>().addToSpace(
+          widget.room,
+          _selectedSpace!,
+        ),
       ),
     );
   }

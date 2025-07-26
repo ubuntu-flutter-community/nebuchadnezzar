@@ -16,6 +16,7 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../create_or_edit/create_or_edit_room_model.dart';
 import '../../info_drawer/chat_room_info_drawer.dart';
 import '../../input/draft_model.dart';
 import '../../input/view/chat_input.dart';
@@ -86,7 +87,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     final unAcceptedDirectChat = !widget.room.isUnacceptedDirectChat
         ? false
         : watchStream(
-            (ChatModel m) => m
+            (CreateOrEditRoomModel m) => m
                 .getUsersStreamOfJoinedRoom(
                   widget.room,
                   membershipFilter: [Membership.invite],

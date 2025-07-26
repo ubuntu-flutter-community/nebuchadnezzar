@@ -4,6 +4,7 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
 import '../../l10n/l10n.dart';
 import '../chat_model.dart';
 import '../search_model.dart';
@@ -54,11 +55,8 @@ class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
         } else {
           showFutureLoadingDialog(
             context: context,
-            onError: (error) {
-              showErrorSnackBar(context, error.toString());
-              return error.toString();
-            },
-            future: () => di<ChatModel>().startOrGetDirectChat(option.userId),
+            future: () =>
+                di<CreateOrEditRoomModel>().startOrGetDirectChat(option.userId),
           ).then((result) {
             if (result.asValue?.value != null) {
               di<ChatModel>().setSelectedRoom(result.asValue!.value!);

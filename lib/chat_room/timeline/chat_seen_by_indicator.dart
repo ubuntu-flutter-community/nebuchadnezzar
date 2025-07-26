@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/view/build_context_x.dart';
-import '../../common/view/ui_constants.dart';
+import '../../authentication/authentication_model.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
+import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
+import '../../common/view/ui_constants.dart';
 
 class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
   const ChatEventSeenByIndicator({super.key, required this.event});
@@ -24,7 +25,7 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
               initialValue: event.receipts,
             ).data
             ?.map((e) => e.user)
-            .where((e) => e.id != di<ChatModel>().myUserId)
+            .where((e) => e.id != di<AuthenticationModel>().loggedInUserId)
             .toList() ??
         [];
 

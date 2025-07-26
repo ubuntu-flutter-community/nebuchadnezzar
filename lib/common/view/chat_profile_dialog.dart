@@ -5,6 +5,8 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../app/view/error_page.dart';
+import '../../authentication/authentication_model.dart';
+import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_dialog.dart';
 import '../chat_model.dart';
@@ -12,7 +14,6 @@ import '../search_model.dart';
 import 'build_context_x.dart';
 import 'chat_avatar.dart';
 import 'common_widgets.dart';
-import 'snackbars.dart';
 import 'ui_constants.dart';
 
 class ChatProfileDialog extends StatelessWidget {
@@ -57,7 +58,7 @@ class _ChatProfileState extends State<ChatProfile> {
 
         final myProfile =
             snapshot.hasData &&
-            snapshot.data!.userId == di<ChatModel>().myUserId;
+            snapshot.data!.userId == di<AuthenticationModel>().loggedInUserId;
         return SizedBox(
           height: 300,
           width: 200,
@@ -113,15 +114,8 @@ class _ChatProfileState extends State<ChatProfile> {
                                   } else {
                                     showFutureLoadingDialog(
                                       context: context,
-                                      onError: (error) {
-                                        showErrorSnackBar(
-                                          context,
-                                          error.toString(),
-                                        );
-                                        return error.toString();
-                                      },
-                                      future: () =>
-                                          di<ChatModel>().startOrGetDirectChat(
+                                      future: () => di<CreateOrEditRoomModel>()
+                                          .startOrGetDirectChat(
                                             snapshot.data!.userId,
                                           ),
                                     ).then((result) {

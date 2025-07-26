@@ -3,16 +3,16 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
-import '../../common/view/sliver_sticky_panel.dart';
-import '../../common/view/space.dart';
-import '../../common/view/ui_constants.dart';
-import '../../l10n/l10n.dart';
-import '../common/view/chat_room_users_list.dart';
+import '../../../common/view/build_context_x.dart';
+import '../../../common/view/sliver_sticky_panel.dart';
+import '../../../common/view/space.dart';
+import '../../../common/view/ui_constants.dart';
+import '../../../l10n/l10n.dart';
+import '../../common/view/chat_room_users_list.dart';
 import 'chat_room_permissions.dart';
 import 'create_or_edit_room_avatar.dart';
 import 'create_or_edit_room_header.dart';
-import 'create_or_edit_room_model.dart';
+import '../create_or_edit_room_model.dart';
 import 'create_or_edit_room_user_search_auto_complete.dart';
 import 'create_room_button.dart';
 import 'create_room_profiles_list_view.dart';
@@ -53,7 +53,7 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
       actionsPadding: const EdgeInsets.all(kMediumPadding),
       contentPadding: const EdgeInsets.only(bottom: kBigPadding),
       content: SizedBox(
-        height: 2 * _maxWidth,
+        height: isSpace ? _maxWidth : 2 * _maxWidth,
         width: _maxWidth,
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
@@ -92,10 +92,13 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
                   sliver: SliverToBoxAdapter(
-                    child: CreateOrEditRoomHeader(room: widget.room),
+                    child: CreateOrEditRoomHeader(
+                      room: widget.room,
+                      isSpace: isSpace,
+                    ),
                   ),
                 ),
-                if (widget.room != null)
+                if (widget.room != null && !isSpace)
                   SliverPadding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: kBigPadding,
@@ -152,7 +155,7 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
                       onPressed: Navigator.of(context).pop,
                       child: Text(l10n.cancel),
                     ),
-                    const CreateRoomButton(),
+                    CreateRoomButton(isSpace: isSpace),
                   ],
                 ),
               ),

@@ -6,9 +6,9 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
-import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../create_or_edit/create_or_edit_room_model.dart';
 
 class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
   const ChatRoomInfoDrawerForgetButton({super.key, required this.room});
@@ -41,11 +41,8 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
           showFutureLoadingDialog(
             title: context.l10n.delete,
             context: context,
-            onError: (error) {
-              showErrorSnackBar(context, error.toString());
-              return error.toString();
-            },
-            future: () => di<ChatModel>().leaveRoom(room: room, forget: true),
+            future: () =>
+                di<CreateOrEditRoomModel>().leaveRoom(room: room, forget: true),
           );
         },
         icon: Icon(

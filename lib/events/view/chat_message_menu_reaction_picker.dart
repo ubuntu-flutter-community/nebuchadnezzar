@@ -6,7 +6,6 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
-import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../settings/settings_model.dart';
@@ -44,10 +43,6 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
                   (e) => IconButton(
                     onPressed: () => showFutureLoadingDialog(
                       context: context,
-                      onError: (error) {
-                        showErrorSnackBar(context, error.toString());
-                        return error.toString();
-                      },
                       future: () => event.room.sendReaction(event.eventId, e),
                     ),
                     icon: Text(e),

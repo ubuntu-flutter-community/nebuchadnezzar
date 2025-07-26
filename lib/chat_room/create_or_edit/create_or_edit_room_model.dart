@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
@@ -12,39 +13,24 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
   CreateOrEditRoomModel({required Client client}) : _client = client;
 
   final Client _client;
-  Stream<SyncUpdate> get joinedUpdateStream =>
+  Stream<SyncUpdate> get _joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
 
-  Stream<JoinedRoomUpdate?> getJoinedRoomUpdate(String? roomId) =>
-      joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
+  Stream<JoinedRoomUpdate?> _getJoinedRoomUpdate(String? roomId) =>
+      _joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
 
   void init({required Room? room, required bool isSpace}) {
-    if (room == null) {
-      _nameDraft = '';
-      _topicDraft = '';
-      _isSpace = isSpace;
-      _enableEncryption = false;
-      _federated = false;
-      _groupCall = false;
-      _joinRules = JoinRules.public;
-      _historyVisibility = HistoryVisibility.shared;
-      _profiles = {};
-      _avatarDraftFile = null;
-      _roomAvatarError = null;
-    } else {
-      _nameDraft = room.name;
-      _topicDraft = room.topic;
-      _isSpace = room.isSpace;
-      _enableEncryption = room.encrypted;
-      _federated = room.isFederated;
-      _groupCall = room.groupCallsEnabledForEveryone;
-      _joinRules = room.joinRules ?? JoinRules.public;
-      _historyVisibility = room.historyVisibility ?? HistoryVisibility.shared;
-      _profiles = room.getProfiles();
-    }
+    _nameDraft = '';
+    _topicDraft = '';
+    _enableEncryption = false;
+    _groupCall = false;
+    _joinRules = JoinRules.public;
+    _historyVisibility = HistoryVisibility.shared;
+    _profilesDraft = {};
+    _avatarDraftFile = null;
   }
 
-  // ROOM NAME DRAFT
+  // ROOM NAME
 
   String _nameDraft = '';
   String get nameDraft => _nameDraft;
@@ -55,10 +41,10 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
   }
 
   Stream<String> getJoinedRoomNameStream(Room room) =>
-      getJoinedRoomUpdate(room.id).map((_) => room.name).distinct();
+      _getJoinedRoomUpdate(room.id).map((_) => room.name).distinct();
 
   Stream<bool> getJoinedRoomCanChangeNameStream(Room room) =>
-      getJoinedRoomUpdate(room.id).map((_) => room.canChangeName).distinct();
+      _getJoinedRoomUpdate(room.id).map((_) => room.canChangeName).distinct();
 
   Future<void> changeRoomName(Room room, String name) async {
     try {
@@ -69,7 +55,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
-  // ROOM TOPIC DRAFT
+  // ROOM TOPIC
 
   String _topicDraft = '';
   String get topicDraft => _topicDraft;
@@ -80,10 +66,10 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
   }
 
   Stream<String> getJoinedRoomTopicStream(Room room) =>
-      getJoinedRoomUpdate(room.id).map((_) => room.topic).distinct();
+      _getJoinedRoomUpdate(room.id).map((_) => room.topic).distinct();
 
   Stream<bool> getJoinedRoomCanChangeTopicStream(Room room) =>
-      getJoinedRoomUpdate(room.id).map((_) => room.canChangeTopic).distinct();
+      _getJoinedRoomUpdate(room.id).map((_) => room.canChangeTopic).distinct();
 
   Future<void> changeRoomTopic(Room room, String topic) async {
     try {
@@ -94,8 +80,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
-  bool _isSpace = false;
-  bool get isSpace => _isSpace;
+  // ROOM ENCRYPTION
 
   bool _enableEncryption = false;
   bool get enableEncryption => _enableEncryption;
@@ -104,6 +89,19 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     _enableEncryption = enableEncryption;
     notifyListeners();
   }
+
+  Stream<bool?> getIsRoomEncryptedStream(Room? room) =>
+      _getJoinedRoomUpdate(room?.id)
+          .map(
+            (e) => e?.ephemeral?.firstWhereOrNull(
+              (e) => e.type == EventTypes.Encrypted,
+            ),
+          )
+          .map((e) => room?.encrypted);
+
+  Stream<bool> getCanChangeEncryptionStream(Room? room) => _getJoinedRoomUpdate(
+    room?.id,
+  ).map((_) => room!.canChangeStateEvent(EventTypes.Encryption));
 
   Future<void> enableEncryptionForRoom(Room room) async {
     try {
@@ -118,14 +116,6 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
-  bool _federated = false;
-  bool get federated => _federated;
-  void setFederated(bool federated) {
-    if (federated == _federated) return;
-    _federated = federated;
-    notifyListeners();
-  }
-
   bool _groupCall = false;
   bool get groupCall => _groupCall;
   void setGroupCall(bool groupCall) {
@@ -134,6 +124,8 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
+  // ROOM JOIN RULES
+
   JoinRules _joinRules = JoinRules.public;
   JoinRules get joinRules => _joinRules;
   void setJoinRules(JoinRules joinRule) {
@@ -141,6 +133,26 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     _joinRules = joinRule;
     notifyListeners();
   }
+
+  Future<void> setJoinRulesForRoom({
+    required Room room,
+    required JoinRules value,
+  }) async {
+    try {
+      await room.setJoinRules(value);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Stream<bool> getCanChangeJoinRulesStream(Room room) =>
+      _getJoinedRoomUpdate(room.id).map((_) => room.canChangeJoinRules);
+
+  Stream<JoinRules?> getJoinedRoomJoinRulesStream(Room room) =>
+      _getJoinedRoomUpdate(room.id).map((_) => room.joinRules);
+
+  // ROOM HISTORY VISIBILITY
 
   HistoryVisibility _historyVisibility = HistoryVisibility.shared;
   HistoryVisibility get historyVisibility => _historyVisibility;
@@ -162,29 +174,26 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
-  Future<void> setJoinRulesForRoom({
-    required Room room,
-    required JoinRules value,
-  }) async {
-    try {
-      await room.setJoinRules(value);
-    } catch (e, s) {
-      printMessageInDebugMode(e, s);
-      rethrow;
-    }
-  }
+  Stream<bool> getCanChangeHistoryVisibilityStream(Room room) =>
+      _getJoinedRoomUpdate(room.id).map((_) => room.canChangeHistoryVisibility);
 
-  Set<Profile> _profiles = {};
+  Stream<HistoryVisibility?> getJoinedRoomHistoryVisibilityStream(Room room) =>
+      _getJoinedRoomUpdate(room.id).map((_) => room.historyVisibility);
 
-  Set<Profile> get profiles => _profiles;
-  void setProfiles(Set<Profile> profiles) {
-    _profiles = profiles;
+  // ROOM PROFILES DRAFT AND INVITES
+
+  Set<Profile> _profilesDraft = {};
+  Set<Profile> get profilesDraft => _profilesDraft;
+
+  void addProfileToDraft(Profile profile) {
+    if (_profilesDraft.contains(profile)) return;
+    _profilesDraft.add(profile);
     notifyListeners();
   }
 
-  void addProfile(Profile profile) {
-    if (_profiles.contains(profile)) return;
-    _profiles.add(profile);
+  void removeProfileFromDraft(Profile profile) {
+    if (!_profilesDraft.contains(profile)) return;
+    _profilesDraft.remove(profile);
     notifyListeners();
   }
 
@@ -199,11 +208,18 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
-  void removeProfile(Profile profile) {
-    if (!_profiles.contains(profile)) return;
-    _profiles.remove(profile);
-    notifyListeners();
-  }
+  Stream<List<User>> getUsersStreamOfJoinedRoom(
+    Room room, {
+    List<Membership> membershipFilter = const [
+      Membership.join,
+      Membership.invite,
+      Membership.knock,
+    ],
+  }) => _client.onSync.stream.asyncMap(
+    (_) => room.requestParticipants(membershipFilter),
+  );
+
+  // ROOM POWER LEVELS
 
   Stream<Map<String, Object?>> getPermissionsStream(Room room) => _client
       .onSync
@@ -217,6 +233,9 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
                 false),
       )
       .map((event) => room.getState(EventTypes.RoomPowerLevels)?.content ?? {});
+
+  Stream<bool> canChangePowerLevels(Room room) =>
+      _getJoinedRoomUpdate(room.id).map((_) => room.canChangePowerLevel);
 
   Future<void> editPowerLevel({
     required Room room,
@@ -258,6 +277,8 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
+  // ROOM PUSH RULES
+
   Future<void> setPushRuleState(
     Room room, {
     required PushRuleState value,
@@ -270,33 +291,27 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
-  bool _attachingAvatar = false;
-  bool get attachingAvatar => _attachingAvatar;
-  void setAttachingAvatar(bool value) {
-    if (value == _attachingAvatar) return;
-    _attachingAvatar = value;
+  Stream<PushRuleState> getPushRuleStateStream(Room room) =>
+      _client.onSync.stream.map((_) => room.pushRuleState);
 
-    notifyListeners();
-  }
+  // ROOM AVATAR DRAFT OR UPLOAD
 
   MatrixFile? _avatarDraftFile;
   MatrixFile? get avatarDraftFile => _avatarDraftFile;
 
-  String? _roomAvatarError;
-  String? get roomAvatarError => _roomAvatarError;
-  void setRoomAvatarError(String? value) {
-    _roomAvatarError = value;
-    notifyListeners();
-  }
+  Stream<Uri?> getJoinedRoomAvatarStream(Room? room) =>
+      _getJoinedRoomUpdate(room?.id)
+          .map(
+            (e) => e?.ephemeral?.firstWhereOrNull(
+              (e) => e.type == EventTypes.RoomAvatar,
+            ),
+          )
+          .map((e) => room?.avatar);
 
   Future<void> setRoomAvatar({
     required Room? room,
-    required Function(String error) onFail,
     required String wrongFormatString,
   }) async {
-    setRoomAvatarError(null);
-    setAttachingAvatar(true);
-
     try {
       XFile? xFile;
       if (Platforms.isLinux) {
@@ -313,7 +328,6 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       }
 
       if (xFile == null) {
-        setAttachingAvatar(false);
         return;
       }
 
@@ -321,9 +335,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       final bytes = await xFile.readAsBytes();
 
       if (mime?.startsWith('image') != true) {
-        setRoomAvatarError(wrongFormatString);
-        setAttachingAvatar(false);
-        return;
+        throw Exception(wrongFormatString);
       }
 
       _avatarDraftFile = await MatrixImageFile.shrink(
@@ -339,10 +351,214 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
         _avatarDraftFile = null;
       }
     } on Exception catch (e, s) {
-      onFail(e.toString());
       printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  // CREATE ROOM, SPACE OR DIRECT CHAT
+
+  Future<Room?> createRoomOrSpace({
+    String? groupName,
+    bool enableEncryption = true,
+    List<String>? invite,
+    List<StateEvent>? initialState,
+    required JoinRules joinRules,
+    HistoryVisibility? historyVisibility,
+    bool waitForSync = true,
+    bool groupCall = false,
+    bool federated = true,
+    Map<String, dynamic>? powerLevelContentOverride,
+    MatrixFile? avatarFile,
+    bool space = false,
+    List<Invite3pid>? spaceInvite3pid,
+    String? spaceRoomVersion,
+    String? spaceTopic,
+    String? spaceAliasName,
+  }) async {
+    String? roomId;
+    try {
+      roomId = space
+          ? await _client.createSpace(
+              name: groupName,
+              visibility: joinRules == JoinRules.private
+                  ? Visibility.private
+                  : Visibility.public,
+              invite: invite,
+              invite3pid: spaceInvite3pid,
+              roomVersion: spaceRoomVersion,
+              topic: spaceTopic,
+              waitForSync: waitForSync,
+              spaceAliasName: spaceAliasName,
+            )
+          : await _client.createGroupChat(
+              groupName: groupName,
+              enableEncryption: enableEncryption,
+              invite: invite,
+              initialState: initialState,
+              visibility: joinRules == JoinRules.private
+                  ? Visibility.private
+                  : Visibility.public,
+
+              historyVisibility: historyVisibility,
+              waitForSync: waitForSync,
+              groupCall: groupCall,
+              federated: federated,
+              powerLevelContentOverride: powerLevelContentOverride,
+            );
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
     }
 
-    setAttachingAvatar(false);
+    final maybeRoom = _client.getRoomById(roomId);
+    if (maybeRoom != null) {
+      if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
+          avatarFile?.bytes != null) {
+        try {
+          await maybeRoom.setAvatar(avatarFile);
+        } on Exception catch (e, s) {
+          printMessageInDebugMode(e, s);
+        }
+      }
+      if (maybeRoom.isDirectChat && !maybeRoom.encrypted) {
+        try {
+          await maybeRoom.enableEncryption();
+          printMessageInDebugMode('Room encrypted: ${maybeRoom.encrypted}');
+        } on Exception catch (e, s) {
+          printMessageInDebugMode(e, s);
+          rethrow;
+        }
+      }
+    }
+
+    return maybeRoom;
+  }
+
+  Future<Room?> startOrGetDirectChat(String userId) async {
+    final maybeDirectChatId = _client.getDirectChatFromUserId(userId);
+    Room? maybeRoom;
+    if (maybeDirectChatId != null) {
+      maybeRoom = _client.getRoomById(maybeDirectChatId);
+    }
+
+    if (maybeRoom == null) {
+      String? maybeId;
+      try {
+        maybeId = await _client.startDirectChat(
+          userId,
+          preset: CreateRoomPreset.privateChat,
+        );
+      } on Exception catch (e) {
+        printMessageInDebugMode(e);
+        rethrow;
+      }
+
+      maybeRoom = _client.getRoomById(maybeId);
+    }
+
+    return maybeRoom;
+  }
+
+  // JOIN, LEAVE OR KNOCK ROOM
+
+  Future<Room> joinRoom(Room room) async {
+    if (room.membership != Membership.join) {
+      try {
+        await room.join();
+        if (room.isDirectChat && !room.encrypted) {
+          await room.enableEncryption();
+          printMessageInDebugMode('Room encrypted: ${room.encrypted}');
+        }
+      } on Exception catch (e, s) {
+        printMessageInDebugMode(e, s);
+        rethrow;
+      }
+    }
+
+    return room;
+  }
+
+  Future<void> leaveRoom({required Room room, required bool forget}) async {
+    try {
+      await Future.wait([
+        if (forget) room.forget() else room.leave(),
+        if (forget) _client.oneShotSync(),
+      ]);
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<Room?> knockOrJoinRoomChunk(PublicRoomsChunk chunk) async {
+    final knock = chunk.joinRule == 'knock';
+
+    String? roomId;
+    try {
+      if (_client.getRoomById(chunk.roomId) != null) {
+        roomId = chunk.roomId;
+      }
+      roomId = knock
+          ? await _client.knockRoom(chunk.roomId)
+          : await _client.joinRoom(chunk.roomId);
+
+      if (!knock && _client.getRoomById(roomId) == null) {
+        await _client.waitForRoomInSync(roomId);
+      }
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+
+    return _client.getRoomById(roomId);
+  }
+
+  // ADD OR REMOVE ROOM TO SPACE
+
+  Future<void> addToSpace(Room room, Room space) async {
+    if (room.isSpace) {
+      throw Exception('Cannot add a space to itself.');
+    }
+
+    try {
+      await space.setSpaceChild(room.id);
+      notifyListeners();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<void> removeFromSpace(Room room, Room space) async {
+    if (room.isSpace) {
+      throw Exception('Cannot remove a space from itself.');
+    }
+
+    try {
+      await space.removeSpaceChild(room.id);
+      notifyListeners();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Stream<String> getJoinedRoomCanonicalAliasStream(Room room) =>
+      _getJoinedRoomUpdate(room.id).map((_) => room.canonicalAlias).distinct();
+
+  Stream<bool> getCanChangeCanonicalAliasStream(Room room) =>
+      _getJoinedRoomUpdate(
+        room.id,
+      ).map((_) => room.canChangeCanonicalAlias).distinct();
+
+  Future<void> changeRoomCanonicalAlias(Room room, String text) async {
+    // Implement the logic to change the room's canonical alias
+    try {
+      await room.setCanonicalAlias(text);
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
   }
 }

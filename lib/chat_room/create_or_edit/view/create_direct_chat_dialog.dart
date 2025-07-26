@@ -3,13 +3,14 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
-import '../../common/view/chat_user_search_auto_complete.dart';
-import '../../common/view/confirm.dart';
-import '../../common/view/snackbars.dart';
-import '../../common/view/ui_constants.dart';
-import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
+import '../../../authentication/authentication_model.dart';
+import '../../../common/chat_model.dart';
+import '../../../common/view/build_context_x.dart';
+import '../../../common/view/chat_user_search_auto_complete.dart';
+import '../../../common/view/confirm.dart';
+import '../../../common/view/ui_constants.dart';
+import '../../../l10n/l10n.dart';
+import '../create_or_edit_room_model.dart';
 
 class CreateDirectChatDialog extends StatefulWidget {
   const CreateDirectChatDialog({super.key});
@@ -36,12 +37,9 @@ class _CreateDirectChatDialogState extends State<CreateDirectChatDialog> {
       onConfirm: () =>
           showFutureLoadingDialog(
             context: context,
-            onError: (error) {
-              showErrorSnackBar(context, error.toString());
-              return error.toString();
-            },
-            future: () =>
-                di<ChatModel>().startOrGetDirectChat(_searchController.text),
+            future: () => di<CreateOrEditRoomModel>().startOrGetDirectChat(
+              _searchController.text,
+            ),
           ).then((result) {
             if (result.asValue?.value != null) {
               di<ChatModel>().setSelectedRoom(result.asValue!.value!);
@@ -63,7 +61,8 @@ class _CreateDirectChatDialogState extends State<CreateDirectChatDialog> {
             ),
           ),
           ChatUserSearchAutoComplete(
-            labelText: '${l10n.search} ${di<ChatModel>().homeServerId}',
+            labelText:
+                '${l10n.search} ${di<AuthenticationModel>().homeServerId}',
             suffix: const Icon(YaruIcons.search),
             onProfileSelected: (p) => _searchController.text = p.userId,
           ),
