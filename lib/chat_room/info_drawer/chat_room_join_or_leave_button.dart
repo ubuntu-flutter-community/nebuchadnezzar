@@ -7,10 +7,10 @@ import 'package:yaru/yaru.dart';
 import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
-import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../create_or_edit/create_or_edit_room_model.dart';
 
 class ChatRoomJoinOrLeaveButton extends StatelessWidget {
   const ChatRoomJoinOrLeaveButton({super.key, required this.room});
@@ -20,7 +20,6 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final chatModel = di<ChatModel>();
 
     final joinedRoom = room.membership == Membership.join;
 
@@ -53,22 +52,17 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
             if (joinedRoom) {
               await showFutureLoadingDialog(
                 context: context,
-                onError: (error) {
-                  showErrorSnackBar(context, error.toString());
-                  return error.toString();
-                },
-                future: () => chatModel.leaveRoom(room: room, forget: false),
+                future: () => di<CreateOrEditRoomModel>().leaveRoom(
+                  room: room,
+                  forget: false,
+                ),
               ).then((_) {
                 di<ChatModel>().setSelectedRoom(null);
               });
             } else {
               await showFutureLoadingDialog(
                 context: context,
-                onError: (error) {
-                  showErrorSnackBar(context, error.toString());
-                  return error.toString();
-                },
-                future: () => chatModel.joinRoom(room),
+                future: () => di<CreateOrEditRoomModel>().joinRoom(room),
               ).then((result) {
                 if (result.asValue?.value != null) {
                   di<ChatModel>().setSelectedRoom(result.asValue!.value);

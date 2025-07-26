@@ -9,7 +9,6 @@ import '../../chat_room/titlebar/chat_room_notification_button.dart';
 import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
-import '../../common/view/snackbars.dart';
 import '../../l10n/l10n.dart';
 import 'add_and_remove_from_space_dialog.dart';
 
@@ -78,11 +77,7 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                     onConfirm: () =>
                         showFutureLoadingDialog(
                           context: context,
-                          onError: (error) {
-                            showErrorSnackBar(context, error.toString());
-                            return error.toString();
-                          },
-                          future: () => di<ChatModel>().leaveRoom(
+                          future: () => di<CreateOrEditRoomModel>().leaveRoom(
                             room: widget.room,
                             forget: false,
                           ),

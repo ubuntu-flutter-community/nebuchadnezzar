@@ -4,6 +4,12 @@ import 'package:yaru/yaru.dart';
 
 extension EventX on Event {
   bool get isImage => messageType == MessageTypes.Image;
+  bool get isFile => messageType == MessageTypes.File;
+  bool get isVideo => messageType == MessageTypes.Video;
+  bool get isAudio => messageType == MessageTypes.Audio;
+  bool get isText => messageType == MessageTypes.Text;
+  bool get isLocation => messageType == MessageTypes.Location;
+  bool get isSticker => messageType == MessageTypes.Sticker;
   bool get isSvgImage => attachmentMimetype == 'image/svg+xml';
 
   String? get fileDescription {
@@ -36,6 +42,7 @@ extension EventX on Event {
         EventTypes.GuestAccess,
         EventTypes.Encryption,
         EventTypes.RoomPinnedEvents,
+        EventTypes.RoomCanonicalAlias,
       }.contains(type);
 
   bool get isCallEvent => type.contains('m.call.');

@@ -3,12 +3,11 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
-import '../../common/chat_model.dart';
-import '../../common/view/snackbars.dart';
-import '../../common/view/ui_constants.dart';
-import '../../l10n/app_localizations.dart';
-import '../../l10n/l10n.dart';
-import 'create_or_edit_room_model.dart';
+
+import '../../../common/view/ui_constants.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../l10n/l10n.dart';
+import '../create_or_edit_room_model.dart';
 
 class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
     with WatchItMixin {
@@ -21,8 +20,8 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
     final l10n = context.l10n;
     final vis =
         watchStream(
-          (ChatModel m) =>
-              m.getJoinedRoomUpdate(room.id).map((_) => room.historyVisibility),
+          (CreateOrEditRoomModel m) =>
+              m.getJoinedRoomHistoryVisibilityStream(room),
           initialValue: room.historyVisibility,
           preserveState: false,
         ).data ??
@@ -30,9 +29,8 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
 
     final canChangeHistoryVisibility =
         watchStream(
-          (ChatModel m) => m
-              .getJoinedRoomUpdate(room.id)
-              .map((_) => room.canChangeHistoryVisibility),
+          (CreateOrEditRoomModel m) =>
+              m.getCanChangeHistoryVisibilityStream(room),
           initialValue: room.canChangeHistoryVisibility,
           preserveState: false,
         ).data ??
@@ -50,10 +48,6 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
                 context: context,
                 future: () => di<CreateOrEditRoomModel>()
                     .setHistoryVisibilityForRoom(room: room, value: v),
-                onError: (e) {
-                  showSnackBar(context, content: Text(e.toString()));
-                  return e;
-                },
               )
             : null,
         itemBuilder: (context) => HistoryVisibility.values

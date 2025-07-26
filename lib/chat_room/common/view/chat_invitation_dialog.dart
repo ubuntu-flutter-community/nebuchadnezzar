@@ -3,9 +3,9 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../../common/view/confirm.dart';
-import '../../../common/view/snackbars.dart';
 import '../../../common/chat_model.dart';
+import '../../../common/view/confirm.dart';
+import '../../create_or_edit/create_or_edit_room_model.dart';
 
 class ChatInvitationDialog extends StatelessWidget with WatchItMixin {
   const ChatInvitationDialog({super.key, required this.room});
@@ -18,11 +18,8 @@ class ChatInvitationDialog extends StatelessWidget with WatchItMixin {
     onCancel: () =>
         showFutureLoadingDialog(
           context: context,
-          onError: (error) {
-            showErrorSnackBar(context, error.toString());
-            return error.toString();
-          },
-          future: () => di<ChatModel>().leaveRoom(room: room, forget: false),
+          future: () =>
+              di<CreateOrEditRoomModel>().leaveRoom(room: room, forget: false),
         ).then((_) {
           if (context.mounted) {
             di<ChatModel>().setSelectedRoom(null);
@@ -31,11 +28,7 @@ class ChatInvitationDialog extends StatelessWidget with WatchItMixin {
     onConfirm: () =>
         showFutureLoadingDialog(
           context: context,
-          onError: (error) {
-            showErrorSnackBar(context, error.toString());
-            return error.toString();
-          },
-          future: () => di<ChatModel>().joinRoom(room),
+          future: () => di<CreateOrEditRoomModel>().joinRoom(room),
         ).then((result) {
           if (result.asValue?.value != null) {
             di<ChatModel>().setSelectedRoom(result.asValue!.value);

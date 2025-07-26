@@ -8,7 +8,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../common/view/chat_room_display_name.dart';
-import '../create_or_edit/create_or_edit_room_dialog.dart';
+import '../create_or_edit/view/create_or_edit_room_dialog.dart';
 import 'chat_room_info_drawer_avatar.dart';
 
 class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {

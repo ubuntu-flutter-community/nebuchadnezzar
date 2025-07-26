@@ -4,12 +4,10 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
-import '../../common/view/snackbars.dart';
-import '../../common/view/ui_constants.dart';
-import '../../l10n/app_localizations.dart';
-import '../../l10n/l10n.dart';
-import 'create_or_edit_room_model.dart';
+import '../../../common/view/ui_constants.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../l10n/l10n.dart';
+import '../create_or_edit_room_model.dart';
 
 class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
   const ChatRoomJoinRulesDropDown({super.key, required this.room});
@@ -22,9 +20,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
 
     final canChangeJoinRules =
         watchStream(
-          (ChatModel m) => m
-              .getJoinedRoomUpdate(room.id)
-              .map((_) => room.canChangeJoinRules),
+          (CreateOrEditRoomModel m) => m.getCanChangeJoinRulesStream(room),
           preserveState: false,
           initialValue: room.canChangeJoinRules,
         ).data ??
@@ -32,8 +28,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
 
     final joinRules =
         watchStream(
-          (ChatModel m) =>
-              m.getJoinedRoomUpdate(room.id).map((_) => room.joinRules),
+          (CreateOrEditRoomModel m) => m.getJoinedRoomJoinRulesStream(room),
           preserveState: false,
           initialValue: room.joinRules,
         ).data ??
@@ -51,10 +46,6 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
         onSelected: canChangeJoinRules
             ? (v) => showFutureLoadingDialog(
                 context: context,
-                onError: (e) {
-                  showErrorSnackBar(context, e);
-                  return e;
-                },
                 future: () => di<CreateOrEditRoomModel>().setJoinRulesForRoom(
                   room: room,
                   value: v,

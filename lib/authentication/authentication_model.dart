@@ -20,6 +20,10 @@ class AuthenticationModel extends SafeChangeNotifier {
 
   Stream<LoginState> get loginStateStream => _client.onLoginStateChanged.stream;
   bool get isLogged => _client.isLogged();
+  String? get loggedInUserId => !_client.isLogged() ? null : _client.userID;
+  String? get homeServerId => _client.homeserver?.host;
+  String? get homeServerName =>
+      _client.homeserver?.host.replaceAll('matrix-client.', '');
 
   Stream<UiaRequest<dynamic>> get onUiaRequestStream =>
       _client.onUiaRequest.stream;

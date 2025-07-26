@@ -22,6 +22,9 @@ extension RoomX on Room {
 
   bool get canEditSpace => canChangeStateEvent(EventTypes.SpaceChild);
 
+  bool get canChangeCanonicalAlias =>
+      canChangeStateEvent(EventTypes.RoomCanonicalAlias);
+
   bool get isUnacceptedDirectChat {
     if (isDirectChat) {
       return getParticipants()

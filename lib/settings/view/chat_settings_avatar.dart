@@ -55,7 +55,7 @@ class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
               onPressed: attachingAvatar
                   ? null
                   : () => di<SettingsModel>().setMyProfilAvatar(
-                      onFail: (e) => showErrorSnackBar(context, e),
+                      onFail: (e) => showErrorSnackBar(context, e.toString()),
                       onWrongFileFormat: () =>
                           showSnackBar(context, content: Text(l10n.notAnImage)),
                     ),

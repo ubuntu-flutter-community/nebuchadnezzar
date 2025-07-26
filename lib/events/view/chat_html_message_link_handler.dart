@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../app/view/error_page.dart';
+import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
 import '../../common/view/chat_avatar.dart';
@@ -103,12 +104,8 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
 
                   return showFutureLoadingDialog(
                     context: context,
-                    future: () =>
-                        di<ChatModel>().knockOrJoinRoomChunk(roomChunk),
-                    onError: (error) {
-                      showErrorSnackBar(context, error.toString());
-                      return error.toString();
-                    },
+                    future: () => di<CreateOrEditRoomModel>()
+                        .knockOrJoinRoomChunk(roomChunk),
                   ).then((result) {
                     if (result.asValue?.value != null) {
                       di<ChatModel>().setSelectedRoom(result.asValue!.value!);

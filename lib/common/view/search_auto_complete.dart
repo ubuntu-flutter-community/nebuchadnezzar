@@ -4,6 +4,7 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
 import '../../l10n/l10n.dart';
 import '../chat_model.dart';
 import '../search_model.dart';
@@ -42,11 +43,8 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
       onSelected: (option) =>
           showFutureLoadingDialog(
             context: context,
-            future: () => di<ChatModel>().knockOrJoinRoomChunk(option),
-            onError: (error) {
-              showErrorSnackBar(context, error.toString());
-              return error.toString();
-            },
+            future: () =>
+                di<CreateOrEditRoomModel>().knockOrJoinRoomChunk(option),
           ).then((result) {
             if (result.asValue?.value != null) {
               if (context.mounted) {
@@ -104,12 +102,8 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
                           onTap: () =>
                               showFutureLoadingDialog(
                                 context: context,
-                                future: () =>
-                                    di<ChatModel>().knockOrJoinRoomChunk(chunk),
-                                onError: (error) {
-                                  showErrorSnackBar(context, error.toString());
-                                  return error.toString();
-                                },
+                                future: () => di<CreateOrEditRoomModel>()
+                                    .knockOrJoinRoomChunk(chunk),
                               ).then((result) {
                                 if (result.asValue?.value != null) {
                                   di<ChatModel>().setSelectedRoom(

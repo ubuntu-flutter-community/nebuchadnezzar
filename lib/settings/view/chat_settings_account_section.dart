@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
+import '../../authentication/authentication_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
@@ -32,7 +32,9 @@ class _ChatSettingsAccountSectionState
     settingsModel.init();
     initialText = settingsModel.myProfile?.displayName ?? '';
     _displayNameController = TextEditingController(text: initialText);
-    _idController = TextEditingController(text: di<ChatModel>().myUserId);
+    _idController = TextEditingController(
+      text: di<AuthenticationModel>().loggedInUserId,
+    );
   }
 
   @override
@@ -75,7 +77,8 @@ class _ChatSettingsAccountSectionState
                                   _displayNameController.text
                           ? () => di<SettingsModel>().setDisplayName(
                               name: _displayNameController.text,
-                              onFail: (e) => showErrorSnackBar(context, e),
+                              onFail: (e) =>
+                                  showErrorSnackBar(context, e.toString()),
                             )
                           : null,
                       icon: saved

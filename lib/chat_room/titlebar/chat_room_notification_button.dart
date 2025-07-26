@@ -18,7 +18,7 @@ class ChatRoomNotificationButton extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final pushRuleState =
         watchStream(
-          (ChatModel m) => m.syncStream.map((_) => room.pushRuleState),
+          (CreateOrEditRoomModel m) => m.getPushRuleStateStream(room),
           initialValue: room.pushRuleState,
         ).data ??
         room.pushRuleState;
