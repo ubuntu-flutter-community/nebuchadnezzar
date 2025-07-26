@@ -11,11 +11,17 @@ import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../create_or_edit_room_model.dart';
 
-class CreateOrEditRoomAvatar extends StatelessWidget with WatchItMixin {
+class CreateOrEditRoomAvatar extends StatefulWidget
+    with WatchItStatefulWidgetMixin {
   const CreateOrEditRoomAvatar({super.key, required this.room});
 
   final Room? room;
 
+  @override
+  State<CreateOrEditRoomAvatar> createState() => _CreateOrEditRoomAvatarState();
+}
+
+class _CreateOrEditRoomAvatarState extends State<CreateOrEditRoomAvatar> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -29,12 +35,12 @@ class CreateOrEditRoomAvatar extends StatelessWidget with WatchItMixin {
       children: [
         Padding(
           padding: const EdgeInsets.all(kSmallPadding),
-          child: room != null
+          child: widget.room != null
               ? ChatAvatar(
                   avatarUri: watchStream(
                     (CreateOrEditRoomModel m) =>
-                        m.getJoinedRoomAvatarStream(room),
-                    initialValue: room?.avatar,
+                        m.getJoinedRoomAvatarStream(widget.room),
+                    initialValue: widget.room?.avatar,
                   ).data,
                   dimension: 80,
                   fallBackIconSize: 40,
@@ -56,8 +62,8 @@ class CreateOrEditRoomAvatar extends StatelessWidget with WatchItMixin {
                   ),
                 ),
         ),
-        if (room?.canChangeStateEvent(EventTypes.RoomAvatar) == true ||
-            room == null)
+        if (widget.room?.canChangeStateEvent(EventTypes.RoomAvatar) == true ||
+            widget.room == null)
           Positioned(
             bottom: 0,
             right: 0,
@@ -73,10 +79,10 @@ class CreateOrEditRoomAvatar extends StatelessWidget with WatchItMixin {
               onPressed: () => showFutureLoadingDialog(
                 context: context,
                 future: () => di<CreateOrEditRoomModel>().setRoomAvatar(
-                  room: room,
+                  room: widget.room,
                   wrongFormatString: context.l10n.notAnImage,
                 ),
-              ),
+              ).then((_) => setState(() {})),
               icon: Icon(
                 YaruIcons.pen,
                 color: contrastColor(colorScheme.primary),

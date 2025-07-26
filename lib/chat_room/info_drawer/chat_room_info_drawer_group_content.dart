@@ -7,8 +7,8 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../common/view/chat_room_users_list.dart';
 import 'chat_room_info_drawer_topic.dart';
-import 'chat_room_info_media_grid.dart';
-import 'chat_room_media_grid_headline.dart';
+import 'chat_room_info_drawer_media_grid.dart';
+import 'chat_room_info_drawer_media_grid_headline.dart';
 
 class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
   const ChatRoomInfoDrawerGroupContent({super.key, required this.room});
@@ -41,7 +41,7 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
                     Text(l10n.users, style: theme.textTheme.titleSmall),
                   ],
                 ),
-                ChatRoomMediaGridHeadline(room: room),
+                ChatRoomInfoDrawerMediaGridHeadline(room: room),
               ]
               .map(
                 (e) => MouseRegion(cursor: SystemMouseCursors.click, child: e),
@@ -55,7 +55,7 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
         ),
         SizedBox(
           height: context.mediaQuerySize.height - 340,
-          child: ChatRoomInfoMediaGridTabs(
+          child: ChatRoomInfoDrawerMediaGridTabs(
             key: ValueKey('${room.id}_media_'),
             room: room,
           ),

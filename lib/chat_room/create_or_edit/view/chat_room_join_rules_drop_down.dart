@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Visibility;
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
@@ -61,33 +61,39 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
   }
 }
 
-class ChatCreateRoomJoinRulesDropDown extends StatelessWidget
-    with WatchItMixin {
-  const ChatCreateRoomJoinRulesDropDown({
-    super.key,
-    required this.joinRules,
-    required this.onSelected,
-  });
+class CreateRoomVisibilitySwitch extends StatelessWidget with WatchItMixin {
+  const CreateRoomVisibilitySwitch({super.key});
 
-  final JoinRules joinRules;
-  final void Function(JoinRules joinRules) onSelected;
+  @override
+  Widget build(BuildContext context) => SwitchListTile(
+    title: Text(context.l10n.groupCanBeFoundViaSearch),
+    value:
+        watchPropertyValue((CreateOrEditRoomModel m) => m.visibilityDraft) ==
+        Visibility.public,
+    onChanged: (value) => di<CreateOrEditRoomModel>().setVisibilityDraft(
+      value ? Visibility.public : Visibility.private,
+    ),
+  );
+}
+
+// Create CreateRoomPreset switch
+class CreateRoomPresetSwitch extends StatelessWidget with WatchItMixin {
+  const CreateRoomPresetSwitch({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final preset = watchPropertyValue(
+      (CreateOrEditRoomModel m) => m.createRoomPresetDraft,
+    );
 
-    return YaruTile(
-      leading: const Icon(YaruIcons.private_mask),
-      padding: const EdgeInsets.symmetric(horizontal: kMediumPadding),
-      // TODO: localize
-      title: const Text('Join Rules'),
-      trailing: YaruPopupMenuButton<JoinRules>(
-        onSelected: onSelected,
-        itemBuilder: (context) => JoinRules.values
-            .map((e) => PopupMenuItem(value: e, child: Text(e.localize(l10n))))
-            .toList(),
-        child: Text(joinRules.localize(l10n)),
-      ),
+    return SwitchListTile(
+      title: Text(l10n.groupIsPublic),
+      value: preset == CreateRoomPreset.publicChat,
+      onChanged: (value) =>
+          di<CreateOrEditRoomModel>().setCreateRoomPresetDraft(
+            value ? CreateRoomPreset.publicChat : CreateRoomPreset.privateChat,
+          ),
     );
   }
 }

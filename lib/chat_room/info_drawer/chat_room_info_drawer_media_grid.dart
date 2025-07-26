@@ -15,17 +15,18 @@ import '../../l10n/l10n.dart';
 import '../timeline/timeline_model.dart';
 import '../timeline/timeline_x.dart';
 
-class ChatRoomInfoMediaGridTabs extends StatefulWidget {
-  const ChatRoomInfoMediaGridTabs({super.key, required this.room});
+class ChatRoomInfoDrawerMediaGridTabs extends StatefulWidget {
+  const ChatRoomInfoDrawerMediaGridTabs({super.key, required this.room});
 
   final Room room;
 
   @override
-  State<ChatRoomInfoMediaGridTabs> createState() =>
-      _ChatRoomInfoMediaGridTabsState();
+  State<ChatRoomInfoDrawerMediaGridTabs> createState() =>
+      _ChatRoomInfoDrawerMediaGridTabsState();
 }
 
-class _ChatRoomInfoMediaGridTabsState extends State<ChatRoomInfoMediaGridTabs>
+class _ChatRoomInfoDrawerMediaGridTabsState
+    extends State<ChatRoomInfoDrawerMediaGridTabs>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
 

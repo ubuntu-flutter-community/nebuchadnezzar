@@ -39,6 +39,7 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
         onPressed: () {
           di<ChatModel>().setSelectedRoom(null);
           showFutureLoadingDialog(
+            barrierDismissible: true,
             title: context.l10n.delete,
             context: context,
             future: () =>

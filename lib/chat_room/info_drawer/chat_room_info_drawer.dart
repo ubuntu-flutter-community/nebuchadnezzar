@@ -10,7 +10,7 @@ import 'chat_room_info_drawer_direct_chat_header.dart';
 import 'chat_room_info_drawer_forget_button.dart';
 import 'chat_room_info_drawer_group_content.dart';
 import 'chat_room_info_drawer_group_header.dart';
-import 'chat_room_join_or_leave_button.dart';
+import 'chat_room_info_drawer_leave_button.dart';
 
 class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
   const ChatRoomInfoDrawer({super.key, required this.room});
@@ -57,11 +57,14 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
                           : const SizedBox.shrink()
                     : ChatRoomInfoDrawerGroupContent(room: room),
               ),
-            if (room.isArchived) ChatRoomInfoDrawerForgetButton(room: room),
+
             Align(
               alignment: Alignment.bottomCenter,
-              child: ChatRoomJoinOrLeaveButton(room: room),
+              child: room.isArchived
+                  ? ChatRoomInfoDrawerForgetButton(room: room)
+                  : ChatRoomInfoDrawerLeaveButton(room: room),
             ),
+            if (room.isArchived) const SizedBox(height: kBigPadding),
           ],
         ),
       ),

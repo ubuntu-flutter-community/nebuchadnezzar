@@ -13,22 +13,24 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
   CreateOrEditRoomModel({required Client client}) : _client = client;
 
   final Client _client;
+
+  void init({required Room? room, required bool isSpace}) {
+    _nameDraft = '';
+    _topicDraft = '';
+    _enableEncryptionDraft = false;
+    _groupCallDraft = false;
+    _visibilityDraft = Visibility.public;
+    _createRoomPresetDraft = CreateRoomPreset.publicChat;
+    _historyVisibilityDraft = HistoryVisibility.shared;
+    _profilesDraft = {};
+    _avatarDraftFile = null;
+  }
+
   Stream<SyncUpdate> get _joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
 
   Stream<JoinedRoomUpdate?> _getJoinedRoomUpdate(String? roomId) =>
       _joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
-
-  void init({required Room? room, required bool isSpace}) {
-    _nameDraft = '';
-    _topicDraft = '';
-    _enableEncryption = false;
-    _groupCall = false;
-    _joinRules = JoinRules.public;
-    _historyVisibility = HistoryVisibility.shared;
-    _profilesDraft = {};
-    _avatarDraftFile = null;
-  }
 
   // ROOM NAME
 
@@ -80,13 +82,32 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
+  // ROOM CANONICAL ALIAS
+
+  Stream<String> getJoinedRoomCanonicalAliasStream(Room room) =>
+      _getJoinedRoomUpdate(room.id).map((_) => room.canonicalAlias).distinct();
+
+  Stream<bool> getCanChangeCanonicalAliasStream(Room room) =>
+      _getJoinedRoomUpdate(
+        room.id,
+      ).map((_) => room.canChangeCanonicalAlias).distinct();
+
+  Future<void> changeRoomCanonicalAlias(Room room, String text) async {
+    try {
+      await room.setCanonicalAlias(text);
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
   // ROOM ENCRYPTION
 
-  bool _enableEncryption = false;
-  bool get enableEncryption => _enableEncryption;
-  void setEnableEncryption(bool enableEncryption) {
-    if (enableEncryption == _enableEncryption) return;
-    _enableEncryption = enableEncryption;
+  bool _enableEncryptionDraft = false;
+  bool get enableEncryptionDraft => _enableEncryptionDraft;
+  void setEnableEncryptionDraft(bool enableEncryption) {
+    if (enableEncryption == _enableEncryptionDraft) return;
+    _enableEncryptionDraft = enableEncryption;
     notifyListeners();
   }
 
@@ -116,21 +137,21 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
-  bool _groupCall = false;
-  bool get groupCall => _groupCall;
-  void setGroupCall(bool groupCall) {
-    if (groupCall == _groupCall) return;
-    _groupCall = groupCall;
+  // ROOM JOIN RULES
+
+  Visibility _visibilityDraft = Visibility.public;
+  Visibility get visibilityDraft => _visibilityDraft;
+  void setVisibilityDraft(Visibility visibility) {
+    if (visibility == _visibilityDraft) return;
+    _visibilityDraft = visibility;
     notifyListeners();
   }
 
-  // ROOM JOIN RULES
-
-  JoinRules _joinRules = JoinRules.public;
-  JoinRules get joinRules => _joinRules;
-  void setJoinRules(JoinRules joinRule) {
-    if (joinRule == _joinRules) return;
-    _joinRules = joinRule;
+  CreateRoomPreset _createRoomPresetDraft = CreateRoomPreset.publicChat;
+  CreateRoomPreset get createRoomPresetDraft => _createRoomPresetDraft;
+  void setCreateRoomPresetDraft(CreateRoomPreset preset) {
+    if (preset == _createRoomPresetDraft) return;
+    _createRoomPresetDraft = preset;
     notifyListeners();
   }
 
@@ -154,11 +175,11 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM HISTORY VISIBILITY
 
-  HistoryVisibility _historyVisibility = HistoryVisibility.shared;
-  HistoryVisibility get historyVisibility => _historyVisibility;
-  void setHistoryVisibility(HistoryVisibility historyVisibility) {
-    if (historyVisibility == _historyVisibility) return;
-    _historyVisibility = historyVisibility;
+  HistoryVisibility _historyVisibilityDraft = HistoryVisibility.shared;
+  HistoryVisibility get historyVisibilityDraft => _historyVisibilityDraft;
+  void setHistoryVisibilityDraft(HistoryVisibility historyVisibility) {
+    if (historyVisibility == _historyVisibilityDraft) return;
+    _historyVisibilityDraft = historyVisibility;
     notifyListeners();
   }
 
@@ -356,53 +377,52 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
+  // GROUP CALL DRAFT
+
+  bool _groupCallDraft = false;
+  bool get groupCallDraft => _groupCallDraft;
+  void setGroupCallDraft(bool groupCall) {
+    if (groupCall == _groupCallDraft) return;
+    _groupCallDraft = groupCall;
+    notifyListeners();
+  }
+
   // CREATE ROOM, SPACE OR DIRECT CHAT
 
   Future<Room?> createRoomOrSpace({
-    String? groupName,
-    bool enableEncryption = true,
-    List<String>? invite,
-    List<StateEvent>? initialState,
-    required JoinRules joinRules,
-    HistoryVisibility? historyVisibility,
+    required bool space,
     bool waitForSync = true,
-    bool groupCall = false,
+    List<StateEvent>? initialState,
     bool federated = true,
     Map<String, dynamic>? powerLevelContentOverride,
-    MatrixFile? avatarFile,
-    bool space = false,
-    List<Invite3pid>? spaceInvite3pid,
-    String? spaceRoomVersion,
-    String? spaceTopic,
-    String? spaceAliasName,
   }) async {
     String? roomId;
     try {
       roomId = space
           ? await _client.createSpace(
-              name: groupName,
-              visibility: joinRules == JoinRules.private
-                  ? Visibility.private
-                  : Visibility.public,
-              invite: invite,
-              invite3pid: spaceInvite3pid,
-              roomVersion: spaceRoomVersion,
-              topic: spaceTopic,
+              name: _nameDraft,
+              visibility: _visibilityDraft,
+              invite: _profilesDraft
+                  .map((p) => p.userId)
+                  .toList(growable: false),
+              invite3pid: null,
+              roomVersion: null,
+              topic: _topicDraft,
               waitForSync: waitForSync,
-              spaceAliasName: spaceAliasName,
+              spaceAliasName: _nameDraft,
             )
           : await _client.createGroupChat(
-              groupName: groupName,
-              enableEncryption: enableEncryption,
-              invite: invite,
+              groupName: _nameDraft,
+              enableEncryption: _enableEncryptionDraft,
+              invite: _profilesDraft
+                  .map((p) => p.userId)
+                  .toList(growable: false),
               initialState: initialState,
-              visibility: joinRules == JoinRules.private
-                  ? Visibility.private
-                  : Visibility.public,
-
-              historyVisibility: historyVisibility,
+              visibility: _visibilityDraft,
+              preset: _createRoomPresetDraft,
+              historyVisibility: _historyVisibilityDraft,
               waitForSync: waitForSync,
-              groupCall: groupCall,
+              groupCall: _groupCallDraft,
               federated: federated,
               powerLevelContentOverride: powerLevelContentOverride,
             );
@@ -414,9 +434,9 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     final maybeRoom = _client.getRoomById(roomId);
     if (maybeRoom != null) {
       if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
-          avatarFile?.bytes != null) {
+          _avatarDraftFile?.bytes != null) {
         try {
-          await maybeRoom.setAvatar(avatarFile);
+          await maybeRoom.setAvatar(_avatarDraftFile);
         } on Exception catch (e, s) {
           printMessageInDebugMode(e, s);
         }
@@ -538,24 +558,6 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     try {
       await space.removeSpaceChild(room.id);
       notifyListeners();
-    } on Exception catch (e, s) {
-      printMessageInDebugMode(e, s);
-      rethrow;
-    }
-  }
-
-  Stream<String> getJoinedRoomCanonicalAliasStream(Room room) =>
-      _getJoinedRoomUpdate(room.id).map((_) => room.canonicalAlias).distinct();
-
-  Stream<bool> getCanChangeCanonicalAliasStream(Room room) =>
-      _getJoinedRoomUpdate(
-        room.id,
-      ).map((_) => room.canChangeCanonicalAlias).distinct();
-
-  Future<void> changeRoomCanonicalAlias(Room room, String text) async {
-    // Implement the logic to change the room's canonical alias
-    try {
-      await room.setCanonicalAlias(text);
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
