@@ -13,28 +13,33 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
     with WatchItMixin {
   const ChatRoomHistoryVisibilityDropDown({super.key, required this.room});
 
-  final Room room;
+  final Room? room;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final vis =
-        watchStream(
-          (CreateOrEditRoomModel m) =>
-              m.getJoinedRoomHistoryVisibilityStream(room),
-          initialValue: room.historyVisibility,
-          preserveState: false,
-        ).data ??
-        room.historyVisibility;
+    final historyVisibilityDraft = watchPropertyValue(
+      (CreateOrEditRoomModel m) => m.historyVisibilityDraft,
+    );
+    final vis = room == null
+        ? historyVisibilityDraft
+        : watchStream(
+                (CreateOrEditRoomModel m) =>
+                    m.getJoinedRoomHistoryVisibilityStream(room!),
+                initialValue: room!.historyVisibility,
+                preserveState: false,
+              ).data ??
+              room!.historyVisibility;
 
-    final canChangeHistoryVisibility =
-        watchStream(
-          (CreateOrEditRoomModel m) =>
-              m.getCanChangeHistoryVisibilityStream(room),
-          initialValue: room.canChangeHistoryVisibility,
-          preserveState: false,
-        ).data ??
-        false;
+    final canChangeHistoryVisibility = room == null
+        ? true
+        : watchStream(
+                (CreateOrEditRoomModel m) =>
+                    m.getCanChangeHistoryVisibilityStream(room!),
+                initialValue: room!.canChangeHistoryVisibility,
+                preserveState: false,
+              ).data ??
+              false;
 
     return YaruTile(
       leading: const Icon(YaruIcons.private_mask),
@@ -43,46 +48,23 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
       trailing: YaruPopupMenuButton<HistoryVisibility>(
         initialValue: vis,
         enabled: canChangeHistoryVisibility,
-        onSelected: canChangeHistoryVisibility
+        onSelected: room == null
+            ? (v) => di<CreateOrEditRoomModel>().setHistoryVisibilityDraft(v)
+            : canChangeHistoryVisibility
             ? (v) => showFutureLoadingDialog(
                 context: context,
                 future: () => di<CreateOrEditRoomModel>()
-                    .setHistoryVisibilityForRoom(room: room, value: v),
+                    .setHistoryVisibilityForRoom(room: room!, value: v),
               )
             : null,
         itemBuilder: (context) => HistoryVisibility.values
             .map((e) => PopupMenuItem(value: e, child: Text(e.localize(l10n))))
             .toList(),
-        child: Text(room.historyVisibility?.localize(l10n) ?? ''),
-      ),
-    );
-  }
-}
-
-class ChatCreateRoomHistoryVisibilityDropDown extends StatelessWidget {
-  const ChatCreateRoomHistoryVisibilityDropDown({
-    super.key,
-    required this.initialValue,
-    required this.onSelected,
-  });
-
-  final HistoryVisibility initialValue;
-  final void Function(HistoryVisibility historyVisibility) onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return YaruTile(
-      leading: const Icon(YaruIcons.private_mask),
-      padding: const EdgeInsets.symmetric(horizontal: kMediumPadding),
-      title: Text(l10n.visibilityOfTheChatHistory),
-      trailing: YaruPopupMenuButton<HistoryVisibility>(
-        initialValue: initialValue,
-        onSelected: onSelected,
-        itemBuilder: (context) => HistoryVisibility.values
-            .map((e) => PopupMenuItem(value: e, child: Text(e.localize(l10n))))
-            .toList(),
-        child: Text(initialValue.localize(l10n)),
+        child: Text(
+          room == null
+              ? historyVisibilityDraft.localize(l10n)
+              : room!.historyVisibility?.localize(l10n) ?? '',
+        ),
       ),
     );
   }

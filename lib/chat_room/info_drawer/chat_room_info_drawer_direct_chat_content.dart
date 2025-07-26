@@ -3,8 +3,8 @@ import 'package:matrix/matrix.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
-import 'chat_room_info_media_grid.dart';
-import 'chat_room_media_grid_headline.dart';
+import 'chat_room_info_drawer_media_grid.dart';
+import 'chat_room_info_drawer_media_grid_headline.dart';
 
 class ChatRoomInfoDrawerDirectChatContent extends StatelessWidget {
   const ChatRoomInfoDrawerDirectChatContent({super.key, required this.room});
@@ -20,11 +20,11 @@ class ChatRoomInfoDrawerDirectChatContent extends StatelessWidget {
         children: [
           ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: kBigPadding),
-            title: ChatRoomMediaGridHeadline(room: room),
+            title: ChatRoomInfoDrawerMediaGridHeadline(room: room),
           ),
           SizedBox(
             height: context.mediaQuerySize.height - 425,
-            child: ChatRoomInfoMediaGridTabs(
+            child: ChatRoomInfoDrawerMediaGridTabs(
               key: ValueKey('${room.id}_media'),
               room: room,
             ),

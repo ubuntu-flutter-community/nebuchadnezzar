@@ -23,7 +23,9 @@ class CreateOrEditRoomHeader extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final encrypted = room == null
-        ? watchPropertyValue((CreateOrEditRoomModel m) => m.enableEncryption)
+        ? watchPropertyValue(
+            (CreateOrEditRoomModel m) => m.enableEncryptionDraft,
+          )
         : watchStream(
                 (CreateOrEditRoomModel m) => m.getIsRoomEncryptedStream(room),
                 initialValue: room!.encrypted,
@@ -79,9 +81,8 @@ class CreateOrEditRoomHeader extends StatelessWidget with WatchItMixin {
                       onChanged: canChangeEncryption
                           ? (v) {
                               if (room == null) {
-                                di<CreateOrEditRoomModel>().setEnableEncryption(
-                                  v,
-                                );
+                                di<CreateOrEditRoomModel>()
+                                    .setEnableEncryptionDraft(v);
                               } else {
                                 showFutureLoadingDialog(
                                   context: context,
@@ -94,26 +95,13 @@ class CreateOrEditRoomHeader extends StatelessWidget with WatchItMixin {
                     ),
                     title: Text(l10n.encrypted),
                   ),
-
-                  if (room != null)
-                    ChatRoomHistoryVisibilityDropDown(room: room!)
-                  else
-                    ChatCreateRoomHistoryVisibilityDropDown(
-                      initialValue: watchPropertyValue(
-                        (CreateOrEditRoomModel m) => m.historyVisibility,
-                      ),
-                      onSelected:
-                          di<CreateOrEditRoomModel>().setHistoryVisibility,
-                    ),
+                  ChatRoomHistoryVisibilityDropDown(room: room),
                   if (room != null)
                     ChatRoomJoinRulesDropDown(room: room!)
-                  else
-                    ChatCreateRoomJoinRulesDropDown(
-                      joinRules: watchPropertyValue(
-                        (CreateOrEditRoomModel m) => m.joinRules,
-                      ),
-                      onSelected: di<CreateOrEditRoomModel>().setJoinRules,
-                    ),
+                  else ...const [
+                    CreateRoomPresetSwitch(),
+                    CreateRoomVisibilitySwitch(),
+                  ],
                 ],
         ),
       ),

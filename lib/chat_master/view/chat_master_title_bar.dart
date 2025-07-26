@@ -31,17 +31,15 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
         spaceEnd: true,
         widthGap: kSmallPadding,
         skip: 0,
-        children: !archiveActive
-            ? [
-                const ChatNewChatPopupMenuButton(),
-                IconButton(
-                  tooltip: context.l10n.search,
-                  isSelected: searchActive,
-                  onPressed: searchModel.toggleSearch,
-                  icon: const Icon(YaruIcons.search),
-                ),
-              ]
-            : [],
+        children: [
+          if (!archiveActive) const ChatNewChatPopupMenuButton(),
+          IconButton(
+            tooltip: context.l10n.search,
+            isSelected: searchActive,
+            onPressed: searchModel.toggleSearch,
+            icon: const Icon(YaruIcons.search),
+          ),
+        ],
       ),
     );
   }

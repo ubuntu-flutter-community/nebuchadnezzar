@@ -7,8 +7,9 @@ import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../timeline/timeline_model.dart';
 
-class ChatRoomMediaGridHeadline extends StatelessWidget with WatchItMixin {
-  const ChatRoomMediaGridHeadline({super.key, required this.room});
+class ChatRoomInfoDrawerMediaGridHeadline extends StatelessWidget
+    with WatchItMixin {
+  const ChatRoomInfoDrawerMediaGridHeadline({super.key, required this.room});
 
   final Room room;
 
