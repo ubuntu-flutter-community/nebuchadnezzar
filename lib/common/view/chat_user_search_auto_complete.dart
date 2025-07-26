@@ -12,26 +12,35 @@ import 'chat_avatar.dart';
 import 'snackbars.dart';
 import 'ui_constants.dart';
 
-class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
-  const ChatRoomsAndSpacesAutoComplete({super.key, required this.suffix});
+class ChatUserSearchAutoComplete extends StatelessWidget with WatchItMixin {
+  const ChatUserSearchAutoComplete({
+    super.key,
+    required this.suffix,
+    this.onProfileSelected,
+    this.width,
+    this.labelText,
+  });
 
   final Widget suffix;
+  final void Function(Profile)? onProfileSelected;
+  final double? width;
+  final String? labelText;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
 
-    final searchType = watchPropertyValue((SearchModel m) => m.searchType);
-    final label =
-        '${context.l10n.search} ${searchType == SearchType.spaces ? context.l10n.spaces : context.l10n.publicRooms}';
-
-    return Autocomplete<PublicRoomsChunk>(
+    return Autocomplete<Profile>(
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) =>
               TextField(
                 decoration: InputDecoration(
-                  hintText: label,
-                  label: Text(label),
+                  hintText:
+                      labelText ??
+                      '${context.l10n.search} ${context.l10n.users}',
+                  label: Text(
+                    labelText ?? '${context.l10n.search} ${context.l10n.users}',
+                  ),
                   suffixIcon: suffix,
                 ),
                 controller: textEditingController,
@@ -39,33 +48,39 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
                 focusNode: focusNode,
                 autofocus: true,
               ),
-      onSelected: (option) =>
+      onSelected: (option) {
+        if (onProfileSelected != null) {
+          onProfileSelected!(option);
+        } else {
           showFutureLoadingDialog(
             context: context,
-            future: () => di<ChatModel>().knockOrJoinRoomChunk(option),
             onError: (error) {
               showErrorSnackBar(context, error.toString());
               return error.toString();
             },
+            future: () => di<ChatModel>().startOrGetDirectChat(option.userId),
           ).then((result) {
             if (result.asValue?.value != null) {
-              if (context.mounted) {
-                Navigator.of(context).pop();
-              }
               di<ChatModel>().setSelectedRoom(result.asValue!.value!);
             }
-          }),
-      displayStringForOption: (chunk) => chunk.name ?? chunk.roomId,
-
-      optionsBuilder: (textEditingValue) =>
-          di<SearchModel>().findPublicRoomChunks(
+          });
+        }
+      },
+      displayStringForOption: (profile) =>
+          profile.displayName ?? profile.userId,
+      optionsBuilder: (textEditingValue) async =>
+          await di<SearchModel>().findUserProfiles(
             textEditingValue.text,
-            onFail: (error) => showSnackBar(context, content: Text(error)),
-          ),
+            onFail: () => showSnackBar(
+              context,
+              content: Text(context.l10n.oopsSomethingWentWrong),
+            ),
+          ) ??
+          <Profile>[],
       optionsViewBuilder: (context, onSelected, options) => Align(
         alignment: Alignment.topLeft,
         child: SizedBox(
-          width: 220,
+          width: width ?? 220,
           height: (options.length * 50) > 400 ? 400 : options.length * 60,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(6),
@@ -90,33 +105,15 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
                           Scrollable.ensureVisible(context, alignment: 0.5);
                         });
                       }
-                      final chunk = options.elementAt(index);
+                      final t = options.elementAt(index);
                       return Padding(
                         padding: const EdgeInsets.only(bottom: kSmallPadding),
                         child: ListTile(
-                          key: ValueKey(chunk.roomId),
-                          leading: ChatAvatar(avatarUri: chunk.avatarUrl),
-                          title: Text(chunk.name ?? chunk.roomId, maxLines: 1),
-                          subtitle: Text(
-                            chunk.canonicalAlias ?? chunk.roomId,
-                            maxLines: 1,
-                          ),
-                          onTap: () =>
-                              showFutureLoadingDialog(
-                                context: context,
-                                future: () =>
-                                    di<ChatModel>().knockOrJoinRoomChunk(chunk),
-                                onError: (error) {
-                                  showErrorSnackBar(context, error.toString());
-                                  return error.toString();
-                                },
-                              ).then((result) {
-                                if (result.asValue?.value != null) {
-                                  di<ChatModel>().setSelectedRoom(
-                                    result.asValue!.value!,
-                                  );
-                                }
-                              }),
+                          key: ValueKey(t.userId),
+                          leading: ChatAvatar(avatarUri: t.avatarUrl),
+                          title: Text(t.displayName ?? t.userId, maxLines: 1),
+                          subtitle: Text(t.userId, maxLines: 1),
+                          onTap: () => onSelected(t),
                         ),
                       );
                     },

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/rooms_filter.dart';
 import '../../common/view/common_widgets.dart';
+import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../common/chat_model.dart';
 import '../../common/search_model.dart';
 import '../../common/view/chat_avatar.dart';
+import '../../l10n/l10n.dart';
 
 class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
   const ChatSpacesSearchList({super.key});
@@ -52,13 +55,38 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
               message: chunk.topic ?? ' ',
               child: Text(chunk.canonicalAlias ?? chunk.topic.toString()),
             ),
-            onTap: () {
-              di<SearchModel>().setSpaceSearchVisible(value: false);
-              di<ChatModel>().joinAndSelectRoomByChunk(
-                chunk,
-                onFail: (error) => showSnackBar(context, content: Text(error)),
-              );
-            },
+            onTap: () => ConfirmationDialog.show(
+              title: Text(context.l10n.joinRoom),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: kMediumPadding,
+                children: [
+                  ChatAvatar(avatarUri: chunk.avatarUrl),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      chunk.canonicalAlias ?? chunk.name ?? chunk.roomId,
+                    ),
+                  ),
+                ],
+              ),
+              context: context,
+              onConfirm: () {
+                Navigator.of(context).pop();
+                showFutureLoadingDialog(
+                  context: context,
+                  future: () => di<ChatModel>().knockOrJoinRoomChunk(chunk),
+                  onError: (error) {
+                    showErrorSnackBar(context, error.toString());
+                    return error.toString();
+                  },
+                ).then((result) {
+                  if (result.asValue?.value != null) {
+                    di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+                  }
+                });
+              },
+            ),
           ),
         );
       },

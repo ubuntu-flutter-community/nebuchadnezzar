@@ -37,7 +37,7 @@ class ConfirmationDialog extends StatefulWidget {
   final String? confirmLabel, cancelLabel;
   final EdgeInsetsGeometry? contentPadding;
 
-  static Future<void> show({
+  static Future<T?> show<T>({
     required BuildContext context,
     Widget? title,
     Widget? content,

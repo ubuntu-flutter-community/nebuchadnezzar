@@ -7,9 +7,9 @@ import '../../common/room_x.dart';
 import '../../common/view/ui_constants.dart';
 import 'chat_room_info_drawer_direct_chat_content.dart';
 import 'chat_room_info_drawer_direct_chat_header.dart';
+import 'chat_room_info_drawer_forget_button.dart';
 import 'chat_room_info_drawer_group_content.dart';
 import 'chat_room_info_drawer_group_header.dart';
-import 'chat_room_info_drawer_leave_button.dart';
 import 'chat_room_join_or_leave_button.dart';
 
 class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {

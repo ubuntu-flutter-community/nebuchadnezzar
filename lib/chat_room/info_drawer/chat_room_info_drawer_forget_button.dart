@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
-import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -36,23 +36,18 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
                     : null,
               )
             : null,
-        onPressed: () => showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            showCloseIcon: false,
-            onConfirm: () async => di<ChatModel>().leaveRoom(
-              room: room,
-              onFail: (error) => showSnackBar(context, content: Text(error)),
-              forget: true,
-            ),
-            title: Text(l10n.delete),
-            content: Text(
-              room.getLocalizedDisplayname(),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
+        onPressed: () {
+          di<ChatModel>().setSelectedRoom(null);
+          showFutureLoadingDialog(
+            title: context.l10n.delete,
+            context: context,
+            onError: (error) {
+              showErrorSnackBar(context, error.toString());
+              return error.toString();
+            },
+            future: () => di<ChatModel>().leaveRoom(room: room, forget: true),
+          );
+        },
         icon: Icon(
           YaruIcons.trash,
           color: room.isArchived ? theme.colorScheme.error : null,

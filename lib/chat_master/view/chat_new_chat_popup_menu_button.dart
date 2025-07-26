@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../l10n/l10n.dart';
-import '../../chat_room/create_or_edit/create_or_edit_room_dialog.dart';
 import '../../chat_room/create_or_edit/create_direct_chat_dialog.dart';
+import '../../chat_room/create_or_edit/create_or_edit_room_dialog.dart';
+import '../../l10n/l10n.dart';
+import 'chat_rooms_or_spaces_search_dialog.dart';
 
 class ChatNewChatPopupMenuButton extends StatelessWidget {
   const ChatNewChatPopupMenuButton({super.key});
@@ -11,6 +12,7 @@ class ChatNewChatPopupMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+
     return PopupMenuButton(
       tooltip: l10n.newChat,
       padding: EdgeInsets.zero,
@@ -45,6 +47,19 @@ class ChatNewChatPopupMenuButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [Text(l10n.newSpace), const Icon(YaruIcons.globe)],
+            ),
+          ),
+          PopupMenuItem(
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => const ChatRoomsOrSpacesSearchDialog(),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('${l10n.search} ${l10n.publicRooms}'),
+                const Icon(YaruIcons.search),
+              ],
             ),
           ),
         ];

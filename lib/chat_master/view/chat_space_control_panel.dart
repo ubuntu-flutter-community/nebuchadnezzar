@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/view/confirm.dart';
+import '../../common/view/sliver_sticky_panel.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -16,58 +19,75 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final activeSpace = watchPropertyValue((ChatModel m) => m.activeSpace);
     final spaceSearch = watchPropertyValue((SearchModel m) => m.spaceSearch);
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: kMediumPlusPadding,
-        right: kMediumPlusPadding,
-        top: kMediumPadding,
-        bottom: kMediumPadding,
-      ),
-      child: Row(
-        spacing: kMediumPadding,
-        children: [
-          SizedBox.square(
-            dimension: kAvatarDefaultSize,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
-              onPressed: () => showDialog(
-                context: context,
-                builder: (context) => CreateOrEditRoomDialog(room: activeSpace),
-              ),
-              child: const Icon(YaruIcons.pen),
-            ),
-          ),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: spaceSearch == null || activeSpace == null
-                  ? null
-                  : () => di<SearchModel>().searchSpaces(
-                      activeSpace,
-                      onFail: (e) => showSnackBar(context, content: Text(e)),
-                    ),
-              child: Text(context.l10n.discover),
-            ),
-          ),
-          SizedBox.square(
-            dimension: kAvatarDefaultSize,
-            child: IconButton.outlined(
-              padding: EdgeInsets.zero,
-              tooltip: context.l10n.leave,
-              style: IconButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(kYaruButtonRadius),
+    return SliverStickyPanel(
+      toolbarHeight: 60,
+      child: Padding(
+        padding: const EdgeInsets.only(top: kSmallPadding),
+        child: Row(
+          spacing: kMediumPadding,
+          children: [
+            SizedBox.square(
+              dimension: kAvatarDefaultSize,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) =>
+                      CreateOrEditRoomDialog(room: activeSpace),
                 ),
+                child: const Icon(YaruIcons.pen),
               ),
-              onPressed: activeSpace == null
-                  ? null
-                  : () => di<ChatModel>().leaveRoom(
-                      room: activeSpace,
-                      onFail: (e) => showSnackBar(context, content: Text(e)),
-                    ),
-              icon: const Icon(YaruIcons.log_out),
             ),
-          ),
-        ],
+            Expanded(
+              child: ElevatedButton(
+                onPressed: spaceSearch == null || activeSpace == null
+                    ? null
+                    : () => di<SearchModel>().searchSpaces(
+                        activeSpace,
+                        onFail: (e) => showSnackBar(context, content: Text(e)),
+                      ),
+                child: Text(context.l10n.discover),
+              ),
+            ),
+            SizedBox.square(
+              dimension: kAvatarDefaultSize,
+              child: IconButton.outlined(
+                padding: EdgeInsets.zero,
+                tooltip: context.l10n.leave,
+                style: IconButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(kYaruButtonRadius),
+                  ),
+                ),
+                onPressed: activeSpace == null
+                    ? null
+                    : () => ConfirmationDialog.show(
+                        title: Text(
+                          '${context.l10n.leave} ${activeSpace.getLocalizedDisplayname()}',
+                        ),
+                        context: context,
+                        onConfirm: () {
+                          Navigator.of(context).pop();
+                          showFutureLoadingDialog(
+                            context: context,
+                            onError: (error) {
+                              showErrorSnackBar(context, error.toString());
+                              return error.toString();
+                            },
+                            future: () => di<ChatModel>().leaveRoom(
+                              room: activeSpace,
+                              forget: false,
+                            ),
+                          ).then((_) {
+                            di<ChatModel>().setSelectedRoom(null);
+                          });
+                        },
+                      ),
+                icon: const Icon(YaruIcons.log_out),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

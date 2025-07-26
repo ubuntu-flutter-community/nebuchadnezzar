@@ -29,6 +29,8 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       _joinRules = JoinRules.public;
       _historyVisibility = HistoryVisibility.shared;
       _profiles = {};
+      _avatarDraftFile = null;
+      _roomAvatarError = null;
     } else {
       _nameDraft = room.name;
       _topicDraft = room.topic;
@@ -279,10 +281,6 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   MatrixFile? _avatarDraftFile;
   MatrixFile? get avatarDraftFile => _avatarDraftFile;
-  void resetAvatar() {
-    _avatarDraftFile = null;
-    notifyListeners();
-  }
 
   String? _roomAvatarError;
   String? get roomAvatarError => _roomAvatarError;

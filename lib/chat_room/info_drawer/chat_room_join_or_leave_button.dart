@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/chat_model.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
 
 class ChatRoomJoinOrLeaveButton extends StatelessWidget {
   const ChatRoomJoinOrLeaveButton({super.key, required this.room});
@@ -48,22 +49,35 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
         onPressed: () => ConfirmationDialog.show(
           context: context,
           title: Text(message),
-          content: const ForgetCheckBox(),
           onConfirm: () async {
-            void onFail(error) => showSnackBar(context, content: Text(error));
             if (joinedRoom) {
-              await chatModel.leaveRoom(
-                room: room,
-                onFail: onFail,
-                forget: di<ChatModel>().forget,
-              );
-            } else if (!notReJoinable) {
-              await chatModel.joinRoom(
-                room,
-                onFail: onFail,
-                clear: true,
-                select: false,
-              );
+              await showFutureLoadingDialog(
+                context: context,
+                onError: (error) {
+                  showErrorSnackBar(context, error.toString());
+                  return error.toString();
+                },
+                future: () => chatModel.leaveRoom(room: room, forget: false),
+              ).then((_) {
+                di<ChatModel>().setSelectedRoom(null);
+              });
+            } else {
+              await showFutureLoadingDialog(
+                context: context,
+                onError: (error) {
+                  showErrorSnackBar(context, error.toString());
+                  return error.toString();
+                },
+                future: () => chatModel.joinRoom(room),
+              ).then((result) {
+                if (result.asValue?.value != null) {
+                  di<ChatModel>().setSelectedRoom(result.asValue!.value);
+                }
+              });
+            }
+
+            if (context.mounted) {
+              Navigator.of(context).pop();
             }
           },
         ),
@@ -76,19 +90,6 @@ class ChatRoomJoinOrLeaveButton extends StatelessWidget {
               )
             : const Icon(YaruIcons.log_in),
       ),
-    );
-  }
-}
-
-class ForgetCheckBox extends StatelessWidget with WatchItMixin {
-  const ForgetCheckBox({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return CheckboxListTile.adaptive(
-      title: Text(context.l10n.delete),
-      value: watchPropertyValue((ChatModel m) => m.forget),
-      onChanged: (v) => di<ChatModel>().setForget(v ?? false),
     );
   }
 }

@@ -30,6 +30,11 @@ class TimelineModel extends SafeChangeNotifier {
 
     try {
       await timeline.requestHistory(filter: filter, historyCount: historyCount);
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+    }
+
+    try {
       await timeline.room.requestParticipants(
         [
           Membership.join,
@@ -38,10 +43,12 @@ class TimelineModel extends SafeChangeNotifier {
           if (timeline.room.isArchived) Membership.leave,
         ],
         true,
-        null,
+        true,
       );
-    } on Exception catch (e, s) {
-      printMessageInDebugMode(e, s);
+    } on Exception catch (_) {
+      printMessageInDebugMode(
+        'Failed to request all participants for room ${timeline.room.getLocalizedDisplayname()}.',
+      );
     }
 
     _setUpdatingTimeline(roomId: timeline.room.id, value: false);
