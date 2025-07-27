@@ -15,7 +15,7 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final name = watchPropertyValue((CreateOrEditRoomModel m) => m.nameDraft);
+    final name = watchValue((CreateOrEditRoomModel m) => m.nameDraft);
 
     return ImportantButton(
       onPressed: name.trim().isEmpty
@@ -28,7 +28,13 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
                   ),
                 ).then((result) {
                   if (result.asValue?.value != null) {
-                    di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+                    if (isSpace) {
+                      di<ChatModel>().setSelectedRoom(null);
+                      di<ChatModel>().setActiveSpace(result.asValue!.value!);
+                    } else {
+                      di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+                    }
+
                     if (context.mounted && Navigator.of(context).canPop()) {
                       Navigator.of(context).pop();
                     }

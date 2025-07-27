@@ -68,11 +68,10 @@ class CreateRoomVisibilitySwitch extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) => SwitchListTile(
     title: Text(context.l10n.groupCanBeFoundViaSearch),
     value:
-        watchPropertyValue((CreateOrEditRoomModel m) => m.visibilityDraft) ==
+        watchValue((CreateOrEditRoomModel m) => m.visibilityDraft) ==
         Visibility.public,
-    onChanged: (value) => di<CreateOrEditRoomModel>().setVisibilityDraft(
-      value ? Visibility.public : Visibility.private,
-    ),
+    onChanged: (value) => di<CreateOrEditRoomModel>().visibilityDraft.value =
+        value ? Visibility.public : Visibility.private,
   );
 }
 
@@ -83,7 +82,7 @@ class CreateRoomPresetSwitch extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final preset = watchPropertyValue(
+    final preset = watchValue(
       (CreateOrEditRoomModel m) => m.createRoomPresetDraft,
     );
 
@@ -91,9 +90,9 @@ class CreateRoomPresetSwitch extends StatelessWidget with WatchItMixin {
       title: Text(l10n.groupIsPublic),
       value: preset == CreateRoomPreset.publicChat,
       onChanged: (value) =>
-          di<CreateOrEditRoomModel>().setCreateRoomPresetDraft(
-            value ? CreateRoomPreset.publicChat : CreateRoomPreset.privateChat,
-          ),
+          di<CreateOrEditRoomModel>().createRoomPresetDraft.value = value
+          ? CreateRoomPreset.publicChat
+          : CreateRoomPreset.privateChat,
     );
   }
 }

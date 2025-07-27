@@ -6,8 +6,8 @@ import '../../chat_room/create_or_edit/view/create_or_edit_room_dialog.dart';
 import '../../l10n/l10n.dart';
 import 'chat_rooms_or_spaces_search_dialog.dart';
 
-class ChatNewChatPopupMenuButton extends StatelessWidget {
-  const ChatNewChatPopupMenuButton({super.key});
+class ChatMasterNewChatPopupMenuButton extends StatelessWidget {
+  const ChatMasterNewChatPopupMenuButton({super.key});
 
   @override
   Widget build(BuildContext context) {

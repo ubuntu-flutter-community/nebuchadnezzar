@@ -77,6 +77,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
                             ),
                           ).then((_) {
                             di<ChatModel>().setSelectedRoom(null);
+                            di<ChatModel>().setActiveSpace(null);
                           });
                         },
                       ),
