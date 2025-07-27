@@ -20,7 +20,9 @@ class ChatRoomMasterTileAvatar extends StatelessWidget with WatchItMixin {
           initialValue: room.pushRuleState,
         ).data ??
         room.pushRuleState;
+
     return ChatAvatar(
+      key: ValueKey('${room.id}_avatar_${room.avatar ?? ''}_$pushRuleState'),
       avatarUri: pushRuleState == PushRuleState.dontNotify ? null : room.avatar,
       fallBackIcon: room.membership != Membership.invite
           ? pushRuleState == PushRuleState.dontNotify

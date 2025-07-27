@@ -18,7 +18,7 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final historyVisibilityDraft = watchPropertyValue(
+    final historyVisibilityDraft = watchValue(
       (CreateOrEditRoomModel m) => m.historyVisibilityDraft,
     );
     final vis = room == null
@@ -49,7 +49,8 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
         initialValue: vis,
         enabled: canChangeHistoryVisibility,
         onSelected: room == null
-            ? (v) => di<CreateOrEditRoomModel>().setHistoryVisibilityDraft(v)
+            ? (v) =>
+                  di<CreateOrEditRoomModel>().historyVisibilityDraft.value = v
             : canChangeHistoryVisibility
             ? (v) => showFutureLoadingDialog(
                 context: context,

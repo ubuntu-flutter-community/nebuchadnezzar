@@ -8,8 +8,8 @@ import '../../common/view/sliver_sticky_panel.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 
-class ActiveSpaceInfo extends StatelessWidget with WatchItMixin {
-  const ActiveSpaceInfo({super.key});
+class ChatMasterActiveSpaceInfo extends StatelessWidget with WatchItMixin {
+  const ChatMasterActiveSpaceInfo({super.key});
 
   @override
   Widget build(BuildContext context) {

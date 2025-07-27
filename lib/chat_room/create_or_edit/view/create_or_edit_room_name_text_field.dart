@@ -70,7 +70,7 @@ class _CreateOrEditRoomNameTextFieldState
           controller: _nameController,
           autofocus: true,
           enabled: enabledNameField,
-          onChanged: di<CreateOrEditRoomModel>().setNameDraft,
+          onChanged: (v) => di<CreateOrEditRoomModel>().nameDraft.value = v,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(12),
             label: Text(widget.isSpace ? l10n.spaceName : l10n.groupName),

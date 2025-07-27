@@ -9,7 +9,8 @@ import '../../common/view/space.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import 'chat_new_chat_popup_menu_button.dart';
+import 'chat_master_clear_archive_button.dart';
+import 'chat_master_new_chat_popup_menu_button.dart';
 
 class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
   const ChatMasterTitleBar({super.key});
@@ -32,7 +33,11 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
         widthGap: kSmallPadding,
         skip: 0,
         children: [
-          if (!archiveActive) const ChatNewChatPopupMenuButton(),
+          if (!archiveActive)
+            const ChatMasterNewChatPopupMenuButton()
+          else
+            const ChatMasterClearArchiveButton(),
+
           IconButton(
             tooltip: context.l10n.search,
             isSelected: searchActive,

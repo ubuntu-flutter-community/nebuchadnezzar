@@ -66,7 +66,7 @@ class _CreateOrEditRoomTopicTextFieldState
           controller: _topicController,
           autofocus: true,
           enabled: enabledTopicField,
-          onChanged: di<CreateOrEditRoomModel>().setTopicDraft,
+          onChanged: (v) => di<CreateOrEditRoomModel>().topicDraft.value = v,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(12),
             label: Text(l10n.chatDescription),

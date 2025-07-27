@@ -9,21 +9,21 @@ import '../../common/logging.dart';
 import '../../common/platforms.dart';
 import '../../common/room_x.dart';
 
-class CreateOrEditRoomModel extends SafeChangeNotifier {
+class CreateOrEditRoomModel {
   CreateOrEditRoomModel({required Client client}) : _client = client;
 
   final Client _client;
 
   void init({required Room? room, required bool isSpace}) {
-    _nameDraft = '';
-    _topicDraft = '';
-    _enableEncryptionDraft = false;
-    _groupCallDraft = false;
-    _visibilityDraft = Visibility.public;
-    _createRoomPresetDraft = CreateRoomPreset.publicChat;
-    _historyVisibilityDraft = HistoryVisibility.shared;
-    _profilesDraft = {};
-    _avatarDraftFile = null;
+    nameDraft.value = '';
+    topicDraft.value = '';
+    enableEncryptionDraft.value = false;
+    groupCallDraft.value = false;
+    visibilityDraft.value = Visibility.public;
+    createRoomPresetDraft.value = CreateRoomPreset.publicChat;
+    historyVisibilityDraft.value = HistoryVisibility.shared;
+    profilesDraft.value = {};
+    avatarDraft.value = null;
   }
 
   Stream<SyncUpdate> get _joinedUpdateStream =>
@@ -34,13 +34,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM NAME
 
-  String _nameDraft = '';
-  String get nameDraft => _nameDraft;
-  void setNameDraft(String name) {
-    if (name == _nameDraft) return;
-    _nameDraft = name;
-    notifyListeners();
-  }
+  SafeValueNotifier<String> nameDraft = SafeValueNotifier('');
 
   Stream<String> getJoinedRoomNameStream(Room room) =>
       _getJoinedRoomUpdate(room.id).map((_) => room.name).distinct();
@@ -59,13 +53,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM TOPIC
 
-  String _topicDraft = '';
-  String get topicDraft => _topicDraft;
-  void setTopicDraft(String topic) {
-    if (topic == _topicDraft) return;
-    _topicDraft = topic;
-    notifyListeners();
-  }
+  SafeValueNotifier<String> topicDraft = SafeValueNotifier('');
 
   Stream<String> getJoinedRoomTopicStream(Room room) =>
       _getJoinedRoomUpdate(room.id).map((_) => room.topic).distinct();
@@ -103,13 +91,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM ENCRYPTION
 
-  bool _enableEncryptionDraft = false;
-  bool get enableEncryptionDraft => _enableEncryptionDraft;
-  void setEnableEncryptionDraft(bool enableEncryption) {
-    if (enableEncryption == _enableEncryptionDraft) return;
-    _enableEncryptionDraft = enableEncryption;
-    notifyListeners();
-  }
+  SafeValueNotifier<bool> enableEncryptionDraft = SafeValueNotifier(false);
 
   Stream<bool?> getIsRoomEncryptedStream(Room? room) =>
       _getJoinedRoomUpdate(room?.id)
@@ -139,21 +121,12 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM JOIN RULES
 
-  Visibility _visibilityDraft = Visibility.public;
-  Visibility get visibilityDraft => _visibilityDraft;
-  void setVisibilityDraft(Visibility visibility) {
-    if (visibility == _visibilityDraft) return;
-    _visibilityDraft = visibility;
-    notifyListeners();
-  }
-
-  CreateRoomPreset _createRoomPresetDraft = CreateRoomPreset.publicChat;
-  CreateRoomPreset get createRoomPresetDraft => _createRoomPresetDraft;
-  void setCreateRoomPresetDraft(CreateRoomPreset preset) {
-    if (preset == _createRoomPresetDraft) return;
-    _createRoomPresetDraft = preset;
-    notifyListeners();
-  }
+  SafeValueNotifier<CreateRoomPreset> createRoomPresetDraft = SafeValueNotifier(
+    CreateRoomPreset.publicChat,
+  );
+  SafeValueNotifier<Visibility> visibilityDraft = SafeValueNotifier(
+    Visibility.public,
+  );
 
   Future<void> setJoinRulesForRoom({
     required Room room,
@@ -175,13 +148,8 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM HISTORY VISIBILITY
 
-  HistoryVisibility _historyVisibilityDraft = HistoryVisibility.shared;
-  HistoryVisibility get historyVisibilityDraft => _historyVisibilityDraft;
-  void setHistoryVisibilityDraft(HistoryVisibility historyVisibility) {
-    if (historyVisibility == _historyVisibilityDraft) return;
-    _historyVisibilityDraft = historyVisibility;
-    notifyListeners();
-  }
+  SafeValueNotifier<HistoryVisibility> historyVisibilityDraft =
+      SafeValueNotifier(HistoryVisibility.shared);
 
   Future<void> setHistoryVisibilityForRoom({
     required Room room,
@@ -203,19 +171,16 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM PROFILES DRAFT AND INVITES
 
-  Set<Profile> _profilesDraft = {};
-  Set<Profile> get profilesDraft => _profilesDraft;
+  SafeValueNotifier<Set<Profile>> profilesDraft = SafeValueNotifier({});
 
   void addProfileToDraft(Profile profile) {
-    if (_profilesDraft.contains(profile)) return;
-    _profilesDraft.add(profile);
-    notifyListeners();
+    if (profilesDraft.value.contains(profile)) return;
+    profilesDraft.value = {...profilesDraft.value, profile};
   }
 
   void removeProfileFromDraft(Profile profile) {
-    if (!_profilesDraft.contains(profile)) return;
-    _profilesDraft.remove(profile);
-    notifyListeners();
+    if (!profilesDraft.value.contains(profile)) return;
+    profilesDraft.value = {...profilesDraft.value..remove(profile)};
   }
 
   Future<void> inviteUserToRoom({
@@ -317,8 +282,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // ROOM AVATAR DRAFT OR UPLOAD
 
-  MatrixFile? _avatarDraftFile;
-  MatrixFile? get avatarDraftFile => _avatarDraftFile;
+  SafeValueNotifier<MatrixImageFile?> avatarDraft = SafeValueNotifier(null);
 
   Stream<Uri?> getJoinedRoomAvatarStream(Room? room) =>
       _getJoinedRoomUpdate(room?.id)
@@ -359,7 +323,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
         throw Exception(wrongFormatString);
       }
 
-      _avatarDraftFile = await MatrixImageFile.shrink(
+      avatarDraft.value = await MatrixImageFile.shrink(
         bytes: bytes,
         name: xFile.name,
         mimeType: mime,
@@ -368,8 +332,8 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
       );
 
       if (room != null) {
-        await room.setAvatar(_avatarDraftFile);
-        _avatarDraftFile = null;
+        await room.setAvatar(avatarDraft.value);
+        avatarDraft.value = null;
       }
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
@@ -379,13 +343,7 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
   // GROUP CALL DRAFT
 
-  bool _groupCallDraft = false;
-  bool get groupCallDraft => _groupCallDraft;
-  void setGroupCallDraft(bool groupCall) {
-    if (groupCall == _groupCallDraft) return;
-    _groupCallDraft = groupCall;
-    notifyListeners();
-  }
+  SafeValueNotifier<bool> groupCallDraft = SafeValueNotifier(false);
 
   // CREATE ROOM, SPACE OR DIRECT CHAT
 
@@ -400,29 +358,29 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     try {
       roomId = space
           ? await _client.createSpace(
-              name: _nameDraft,
-              visibility: _visibilityDraft,
-              invite: _profilesDraft
+              name: nameDraft.value,
+              visibility: visibilityDraft.value,
+              invite: profilesDraft.value
                   .map((p) => p.userId)
                   .toList(growable: false),
               invite3pid: null,
               roomVersion: null,
-              topic: _topicDraft,
+              topic: topicDraft.value,
               waitForSync: waitForSync,
-              spaceAliasName: _nameDraft,
+              spaceAliasName: nameDraft.value,
             )
           : await _client.createGroupChat(
-              groupName: _nameDraft,
-              enableEncryption: _enableEncryptionDraft,
-              invite: _profilesDraft
+              groupName: nameDraft.value,
+              enableEncryption: enableEncryptionDraft.value,
+              invite: profilesDraft.value
                   .map((p) => p.userId)
                   .toList(growable: false),
               initialState: initialState,
-              visibility: _visibilityDraft,
-              preset: _createRoomPresetDraft,
-              historyVisibility: _historyVisibilityDraft,
+              visibility: visibilityDraft.value,
+              preset: createRoomPresetDraft.value,
+              historyVisibility: historyVisibilityDraft.value,
               waitForSync: waitForSync,
-              groupCall: _groupCallDraft,
+              groupCall: groupCallDraft.value,
               federated: federated,
               powerLevelContentOverride: powerLevelContentOverride,
             );
@@ -434,9 +392,9 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     final maybeRoom = _client.getRoomById(roomId);
     if (maybeRoom != null) {
       if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
-          _avatarDraftFile?.bytes != null) {
+          avatarDraft.value?.bytes != null) {
         try {
-          await maybeRoom.setAvatar(_avatarDraftFile);
+          await maybeRoom.setAvatar(avatarDraft.value);
         } on Exception catch (e, s) {
           printMessageInDebugMode(e, s);
         }
@@ -511,6 +469,19 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
     }
   }
 
+  Future<void> forgetAllArchivedRooms() async {
+    final archivedRooms = _client.archivedRooms;
+    if (archivedRooms.isEmpty) return;
+
+    try {
+      await Future.wait(archivedRooms.map((e) => e.room.forget()));
+      await _client.oneShotSync();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
   Future<Room?> knockOrJoinRoomChunk(PublicRoomsChunk chunk) async {
     final knock = chunk.joinRule == 'knock';
 
@@ -543,7 +514,6 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
     try {
       await space.setSpaceChild(room.id);
-      notifyListeners();
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
@@ -557,7 +527,6 @@ class CreateOrEditRoomModel extends SafeChangeNotifier {
 
     try {
       await space.removeSpaceChild(room.id);
-      notifyListeners();
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;

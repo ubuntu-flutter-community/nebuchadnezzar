@@ -27,9 +27,9 @@ class _CreateOrEditRoomAvatarState extends State<CreateOrEditRoomAvatar> {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
 
-    final avatarDraftBytes = watchPropertyValue(
-      (CreateOrEditRoomModel m) => m.avatarDraftFile?.bytes,
-    );
+    final avatarDraftBytes = watchValue(
+      (CreateOrEditRoomModel m) => m.avatarDraft,
+    )?.bytes;
 
     return Stack(
       children: [

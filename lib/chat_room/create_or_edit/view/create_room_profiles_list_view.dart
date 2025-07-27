@@ -12,19 +12,14 @@ class CreateRoomProfilesListView extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final profiles = watchPropertyValue(
-      (CreateOrEditRoomModel m) => m.profilesDraft,
-    );
-    final length = watchPropertyValue(
-      (CreateOrEditRoomModel m) => m.profilesDraft.length,
-    );
+    final profiles = watchValue((CreateOrEditRoomModel m) => m.profilesDraft);
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(
         horizontal: kMediumPadding,
         vertical: kBigPadding,
       ),
-      itemCount: length,
+      itemCount: profiles.length,
       itemBuilder: (context, index) {
         final profile = profiles.elementAt(index);
         return ListTile(
