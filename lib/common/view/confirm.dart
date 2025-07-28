@@ -110,10 +110,24 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
                   onPressed: _loading
                       ? null
                       : () {
-                          widget.onCancel?.call();
-                          if (context.mounted &&
-                              Navigator.of(context).canPop()) {
-                            Navigator.of(context).pop();
+                          if (widget.onCancel is Future Function()) {
+                            setState(() => _loading = true);
+                            widget.onCancel!()
+                                .then((_) {
+                                  if (context.mounted &&
+                                      Navigator.of(context).canPop()) {
+                                    Navigator.of(context).pop();
+                                  }
+                                })
+                                .catchError((error) {
+                                  setState(() => _loading = false);
+                                });
+                          } else {
+                            widget.onCancel?.call();
+                            if (context.mounted &&
+                                Navigator.of(context).canPop()) {
+                              Navigator.of(context).pop();
+                            }
                           }
                         },
                   child: Text(widget.cancelLabel ?? l10n.cancel),

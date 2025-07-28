@@ -32,10 +32,7 @@ class ChatRoomInfoDrawerLeaveButton extends StatelessWidget {
           onConfirm: () =>
               showFutureLoadingDialog(
                 context: context,
-                future: () => di<CreateOrEditRoomModel>().leaveRoom(
-                  room: room,
-                  forget: false,
-                ),
+                future: () => di<CreateOrEditRoomModel>().leaveRoom(room),
               ).then((_) {
                 di<ChatModel>().setSelectedRoom(null);
                 if (context.mounted && Navigator.of(context).canPop()) {

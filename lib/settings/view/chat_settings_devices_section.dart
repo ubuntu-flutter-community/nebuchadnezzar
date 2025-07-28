@@ -1,61 +1,91 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../app/view/error_page.dart';
 import '../../common/date_time_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
-import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../account_model.dart';
 import '../matrix_devices_x.dart';
-import '../settings_model.dart';
 
-class ChatSettingsDevicesSection extends StatelessWidget with WatchItMixin {
+class ChatSettingsDevicesSection extends StatefulWidget
+    with WatchItStatefulWidgetMixin {
   const ChatSettingsDevicesSection({super.key});
+
+  @override
+  State<ChatSettingsDevicesSection> createState() =>
+      _ChatSettingsDevicesSectionState();
+}
+
+class _ChatSettingsDevicesSectionState
+    extends State<ChatSettingsDevicesSection> {
+  late Future<List<Device>?> _devicesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _getFuture();
+  }
+
+  void _getFuture() {
+    _devicesFuture = di<AccountModel>().getDevices();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final devices = watchStream(
-      (SettingsModel m) => m.deviceStream,
-      initialValue: di<SettingsModel>().devices,
-    ).data;
-    return YaruSection(
-      headline: Text(l10n.devices),
-      child: devices == null
-          ? const Center(
-              child: Padding(
-                padding: EdgeInsets.all(kBigPadding),
-                child: Progress(),
-              ),
-            )
-          : Column(
-              children: devices
-                  .map((d) => _DeviceTile(key: ValueKey(d.deviceId), device: d))
-                  .toList(),
-            ),
+    final devices = watchStream((AccountModel m) => m.deviceStream).data;
+
+    return FutureBuilder(
+      future: _devicesFuture,
+      builder: (context, snapshot) {
+        return YaruSection(
+          headline: Text(l10n.devices),
+          child: snapshot.hasError
+              ? Center(child: ErrorBody(error: snapshot.error.toString()))
+              : !snapshot.hasData
+              ? const Center(child: Progress())
+              : Column(
+                  children: (devices ?? snapshot.data ?? [])
+                      .map(
+                        (d) => _DeviceTile(
+                          key: ValueKey(d.deviceId),
+                          device: d,
+                          onDone: () async => _getFuture(),
+                        ),
+                      )
+                      .toList(),
+                ),
+        );
+      },
     );
   }
 }
 
 class _DeviceTile extends StatelessWidget {
-  const _DeviceTile({super.key, required this.device});
+  const _DeviceTile({super.key, required this.device, this.onDone});
 
   final Device device;
+  final Future<void> Function()? onDone;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
-    final settingsModel = di<SettingsModel>();
-    final keys = di<SettingsModel>().getDeviceKeys(device);
-    final isOwnDevice = device.deviceId == settingsModel.myDeviceId;
+    final keys = di<AccountModel>().getDeviceKeys(device);
+    final isOwnDevice = device.deviceId == di<AccountModel>().myDeviceId;
 
     return YaruTile(
       leading: IconButton.outlined(
-        onPressed: () =>
-            di<SettingsModel>().verifyDeviceAction(device, context),
+        onPressed: () => di<AccountModel>().verifyDeviceAction(
+          device: device,
+          context: context,
+          onDone: onDone,
+        ),
         icon: Icon(
           device.icon,
           color: keys == null
@@ -69,7 +99,10 @@ class _DeviceTile extends StatelessWidget {
       ),
       trailing: !isOwnDevice
           ? IconButton(
-              onPressed: () => settingsModel.deleteDevice(device.deviceId),
+              onPressed: () => showFutureLoadingDialog(
+                context: context,
+                future: () => di<AccountModel>().deleteDevice(device.deviceId),
+              ),
               icon: Icon(YaruIcons.trash, color: context.colorScheme.error),
             )
           : null,

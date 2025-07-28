@@ -137,32 +137,16 @@ class ChatModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  bool _loadingArchive = false;
-  bool get loadingArchive => _loadingArchive;
-  void _setLoadingArchive(bool value) {
-    if (value == _loadingArchive) return;
-    _loadingArchive = value;
-    notifyListeners();
-  }
-
   bool _archiveActive = false;
   bool get archiveActive => _archiveActive;
-  void setArchiveActive(bool value) {
-    if (value == _archiveActive) return;
-    _archiveActive = value;
-    notifyListeners();
-  }
-
-  void toggleArchive() {
-    setSelectedRoom(null);
+  Future<void> toggleArchive() async {
     _archiveActive = !_archiveActive;
     if (_archiveActive) {
-      _setLoadingArchive(true);
-      _client.loadArchive().then((_) => _setLoadingArchive(false));
+      await _client.loadArchive();
     } else {
-      _setLoadingArchive(false);
+      await Future.value();
     }
-    notifyListeners();
+    setSelectedRoom(null);
   }
 
   Future initAfterEncryptionSetup() async => Future.wait<Future<dynamic>?>(

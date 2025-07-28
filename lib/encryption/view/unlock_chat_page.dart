@@ -8,11 +8,13 @@ import 'package:yaru/yaru.dart';
 import '../../authentication/authentication_model.dart';
 import '../../authentication/view/uia_request_handler.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_model.dart';
 import 'key_verification_dialog.dart';
 
@@ -104,7 +106,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                   builder: (context, child) {
                     return ElevatedButton.icon(
                       icon: recoveryKeyInputLoading
-                          ? const CircularProgressIndicator.adaptive()
+                          ? const Progress()
                           : const Icon(Icons.lock_open_outlined),
                       label: Text(l10n.unlockOldMessages),
                       onPressed:
@@ -223,6 +225,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                           );
                         },
                 ),
+                const ChatSettingsLogoutButton(),
               ],
             ),
           ),

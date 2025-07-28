@@ -5,10 +5,10 @@ import 'package:yaru/yaru.dart';
 IconData _getIconFromName(String displayname) {
   final name = displayname.toLowerCase();
   if ({'android'}.any((s) => name.contains(s))) {
-    return Icons.phone_android_outlined;
+    return YaruIcons.smartphone;
   }
   if ({'ios', 'ipad', 'iphone', 'ipod'}.any((s) => name.contains(s))) {
-    return Icons.phone_iphone_outlined;
+    return YaruIcons.apple;
   }
   if ({
     'web',

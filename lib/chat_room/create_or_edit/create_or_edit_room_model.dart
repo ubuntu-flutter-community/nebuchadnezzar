@@ -8,6 +8,7 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
 import '../../common/room_x.dart';
+import '../../common/xtypegroup_x.dart';
 
 class CreateOrEditRoomModel {
   CreateOrEditRoomModel({required Client client}) : _client = client;
@@ -300,7 +301,12 @@ class CreateOrEditRoomModel {
     try {
       XFile? xFile;
       if (Platforms.isLinux) {
-        xFile = await openFile();
+        xFile = await openFile(
+          acceptedTypeGroups: <XTypeGroup>[
+            XTypeGroupX.jpgsTypeGroup,
+            XTypeGroupX.pngTypeGroup,
+          ],
+        );
       } else {
         final result = await FilePicker.platform.pickFiles(
           allowMultiple: false,
@@ -457,12 +463,19 @@ class CreateOrEditRoomModel {
     return room;
   }
 
-  Future<void> leaveRoom({required Room room, required bool forget}) async {
+  Future<void> leaveRoom(Room room) async {
     try {
-      await Future.wait([
-        if (forget) room.forget() else room.leave(),
-        if (forget) _client.oneShotSync(),
-      ]);
+      await room.leave();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<void> forgetRoom(Room room) async {
+    try {
+      await room.forget();
+      await _client.oneShotSync();
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;

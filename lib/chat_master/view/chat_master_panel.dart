@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -6,13 +7,12 @@ import '../../common/chat_model.dart';
 import '../../common/rooms_filter.dart';
 import '../../common/search_model.dart';
 import '../../common/view/build_context_x.dart';
-import '../../common/view/common_widgets.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../settings/view/chat_settings_avatar.dart';
 import '../../settings/view/chat_settings_dialog.dart';
 import 'chat_master_list_filter_bar.dart';
+import 'chat_master_settings_tile_avatar.dart';
 import 'chat_master_title_bar.dart';
 import 'chat_rooms_list.dart';
 import 'chat_rooms_search_field.dart';
@@ -26,9 +26,7 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
     final l10n = context.l10n;
     final searchActive = watchPropertyValue((SearchModel m) => m.searchActive);
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
-    final loadingArchive = watchPropertyValue(
-      (ChatModel m) => m.loadingArchive,
-    );
+
     final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
     final chatModel = di<ChatModel>();
 
@@ -41,21 +39,14 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
           const ChatMasterListFilterBar(),
           if (roomsFilter == RoomsFilter.spaces && !archiveActive)
             const ChatSpaceFilter(),
-
-          if (loadingArchive)
-            const Expanded(child: Center(child: Progress()))
-          else
-            const Expanded(child: ChatRoomsList()),
+          const Expanded(child: ChatRoomsList()),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kMediumPadding),
             child: Stack(
               alignment: Alignment.center,
               children: [
                 YaruMasterTile(
-                  leading: const ChatSettingsAvatar(
-                    dimension: 25,
-                    showEditButton: false,
-                  ),
+                  leading: const ChatMasterSettingsTileAvatar(),
                   title: Text(l10n.settings),
                   onTap: () => showDialog(
                     context: context,
@@ -68,7 +59,10 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
                     tooltip: context.l10n.archive,
                     selectedIcon: const Icon(YaruIcons.trash_filled),
                     isSelected: archiveActive,
-                    onPressed: chatModel.toggleArchive,
+                    onPressed: () => showFutureLoadingDialog(
+                      context: context,
+                      future: chatModel.toggleArchive,
+                    ),
                     icon: const Icon(YaruIcons.trash),
                   ),
                 ),

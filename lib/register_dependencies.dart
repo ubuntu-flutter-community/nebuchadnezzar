@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
@@ -24,6 +25,7 @@ import 'common/search_model.dart';
 import 'encryption/encryption_model.dart';
 import 'events/chat_download_model.dart';
 import 'events/chat_download_service.dart';
+import 'settings/account_model.dart';
 import 'settings/settings_model.dart';
 import 'settings/settings_service.dart';
 
@@ -48,6 +50,7 @@ void registerDependencies() {
         aOptions: AndroidOptions(encryptedSharedPreferences: true),
       ),
     )
+    ..registerLazySingleton<Connectivity>(() => Connectivity())
     ..registerSingletonWithDependencies<SettingsService>(
       () => SettingsService(
         sharedPreferences: di<SharedPreferences>(),
@@ -57,7 +60,11 @@ void registerDependencies() {
       dependsOn: [SharedPreferences],
     )
     ..registerSingletonAsync<Client>(
-      ClientX.registerAsync,
+      () async => ClientX.registerAsync(
+        settingsService: di<SettingsService>(),
+        flutterSecureStorage: di<FlutterSecureStorage>(),
+        connectivity: di<Connectivity>(),
+      ),
       dispose: (s) => s.dispose(),
       dependsOn: [SettingsService],
     )
@@ -84,17 +91,14 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
-    ..registerSingletonAsync<SettingsModel>(
-      () async {
-        final settingsModel = SettingsModel(
-          client: di<Client>(),
-          settingsService: di<SettingsService>(),
-        );
-        await settingsModel.init();
-        return settingsModel;
-      },
+    ..registerSingletonWithDependencies<AccountModel>(
+      () => AccountModel(client: di<Client>()),
+      dependsOn: [Client],
+    )
+    ..registerSingletonWithDependencies<SettingsModel>(
+      () => SettingsModel(settingsService: di<SettingsService>()),
       dispose: (s) => s.dispose(),
-      dependsOn: [Client, SettingsService],
+      dependsOn: [SettingsService],
     )
     ..registerSingletonWithDependencies<DraftModel>(
       () => DraftModel(

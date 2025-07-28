@@ -59,7 +59,7 @@ class DraftModel extends SafeChangeNotifier {
       printMessageInDebugMode(e, s);
     }
 
-    final textDraft = '${getTextDraft(room.id)}';
+    final textDraft = getTextDraft(room.id) ?? '';
     removeTextDraft(room.id);
     final matrixFiles = List<MatrixFile>.from(getFilesDraft(room.id));
     if (matrixFiles.isNotEmpty) {
@@ -87,7 +87,9 @@ class DraftModel extends SafeChangeNotifier {
             thumbnail: matrixFile.mimeType.startsWith('video') && xFile != null
                 ? await getVideoThumbnail(xFile)
                 : null,
-            extraContent: textDraft.isNotEmpty ? {'body': textDraft} : null,
+            extraContent: textDraft.isNotEmpty && textDraft != 'null'
+                ? {'body': textDraft}
+                : null,
           );
           if (eventId != null) {
             _matrixFilesToXFile.remove(matrixFile);
