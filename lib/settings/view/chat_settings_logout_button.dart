@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/view/confirm.dart';
-import '../../l10n/l10n.dart';
 import '../../authentication/authentication_model.dart';
 import '../../authentication/view/chat_login_page.dart';
 import '../../common/chat_model.dart';
+import '../../common/view/confirm.dart';
+import '../../l10n/l10n.dart';
 
 class ChatSettingsLogoutButton extends StatelessWidget {
   const ChatSettingsLogoutButton({super.key});

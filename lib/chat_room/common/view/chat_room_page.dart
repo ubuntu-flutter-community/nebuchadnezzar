@@ -66,9 +66,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     registerStreamHandler(
       select: (ChatModel m) => m.getLeftRoomStream(widget.room.id),
       handler: (context, leftRoomUpdate, cancel) {
-        if (!di<ChatModel>().archiveActive &&
-            !di<ChatModel>().loadingArchive &&
-            leftRoomUpdate.hasData) {
+        if (!di<ChatModel>().archiveActive && leftRoomUpdate.hasData) {
           di<ChatModel>().setSelectedRoom(null);
           showDialog(
             context: context,

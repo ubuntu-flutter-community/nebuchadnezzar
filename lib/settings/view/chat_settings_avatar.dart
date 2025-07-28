@@ -1,70 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
-import '../../common/view/common_widgets.dart';
-import '../../common/view/snackbars.dart';
 import '../../l10n/l10n.dart';
-import '../settings_model.dart';
+import '../account_model.dart';
 
-class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
+class ChatSettingsAvatar extends StatefulWidget
+    with WatchItStatefulWidgetMixin {
   const ChatSettingsAvatar({
     super.key,
     this.dimension,
     this.iconSize,
     this.showEditButton = true,
+    required this.profile,
   });
 
   final double? dimension;
   final double? iconSize;
   final bool showEditButton;
+  final Profile? profile;
 
   @override
+  State<ChatSettingsAvatar> createState() => _ChatSettingsAvatarState();
+}
+
+class _ChatSettingsAvatarState extends State<ChatSettingsAvatar> {
+  @override
   Widget build(BuildContext context) {
-    final foreGroundColor = context.colorScheme.isLight
-        ? Colors.black
-        : Colors.white;
     final l10n = context.l10n;
-    final attachingAvatar = watchPropertyValue(
-      (SettingsModel m) => m.attachingAvatar,
-    );
+
     final uri = watchStream(
-      (SettingsModel m) => m.myProfileStream,
-      initialValue: di<SettingsModel>().myProfile,
-    ).data?.avatarUrl;
+      (AccountModel m) => m.myProfileStream.map((e) => e?.avatarUrl),
+      initialValue: widget.profile?.avatarUrl,
+    ).data;
 
     return Stack(
       children: [
         ChatAvatar(
           avatarUri: uri,
-          dimension: dimension ?? 38,
-          fallBackIconSize: iconSize,
+          dimension: widget.dimension ?? 38,
+          fallBackIconSize: widget.iconSize,
         ),
-        if (showEditButton)
+        if (widget.showEditButton)
           Positioned(
             bottom: 0,
             right: 0,
             child: IconButton.filled(
-              style: IconButton.styleFrom(
-                shape: const CircleBorder(),
-                disabledBackgroundColor: context.colorScheme.surface,
-                disabledForegroundColor: foreGroundColor,
+              onPressed: () => showFutureLoadingDialog(
+                context: context,
+                future: () => di<AccountModel>().setMyProfilAvatar(
+                  wrongFileFormat: l10n.notAnImage,
+                ),
               ),
-              onPressed: attachingAvatar
-                  ? null
-                  : () => di<SettingsModel>().setMyProfilAvatar(
-                      onFail: (e) => showErrorSnackBar(context, e.toString()),
-                      onWrongFileFormat: () =>
-                          showSnackBar(context, content: Text(l10n.notAnImage)),
-                    ),
-              icon: attachingAvatar
-                  ? SizedBox.square(
-                      dimension: 15,
-                      child: Progress(strokeWidth: 2, color: foreGroundColor),
-                    )
-                  : const Icon(YaruIcons.pen, color: Colors.white),
+              icon: const Icon(YaruIcons.pen, color: Colors.white),
             ),
           ),
       ],

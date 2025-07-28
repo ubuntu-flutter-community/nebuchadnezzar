@@ -72,8 +72,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
                           showFutureLoadingDialog(
                             context: context,
                             future: () => di<CreateOrEditRoomModel>().leaveRoom(
-                              room: activeSpace,
-                              forget: false,
+                              activeSpace,
                             ),
                           ).then((_) {
                             di<ChatModel>().setSelectedRoom(null);

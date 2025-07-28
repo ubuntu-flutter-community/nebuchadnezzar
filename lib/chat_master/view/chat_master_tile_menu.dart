@@ -78,8 +78,7 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                         showFutureLoadingDialog(
                           context: context,
                           future: () => di<CreateOrEditRoomModel>().leaveRoom(
-                            room: widget.room,
-                            forget: false,
+                            widget.room,
                           ),
                         ).then((_) {
                           if (mounted) {

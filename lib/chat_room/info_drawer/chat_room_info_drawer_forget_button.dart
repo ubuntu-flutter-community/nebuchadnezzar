@@ -42,8 +42,7 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
             barrierDismissible: true,
             title: context.l10n.delete,
             context: context,
-            future: () =>
-                di<CreateOrEditRoomModel>().leaveRoom(room: room, forget: true),
+            future: () => di<CreateOrEditRoomModel>().forgetRoom(room),
           );
         },
         icon: Icon(

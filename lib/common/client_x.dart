@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,15 +13,19 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:watch_it/watch_it.dart';
 
 import '../app/app_config.dart';
 import '../settings/settings_service.dart';
+import 'connecvitiy_x.dart';
 import 'logging.dart';
 import 'platforms.dart';
 
 extension ClientX on Client {
-  static Future<Client> registerAsync() async {
+  static Future<Client> registerAsync({
+    required SettingsService settingsService,
+    required FlutterSecureStorage flutterSecureStorage,
+    required Connectivity connectivity,
+  }) async {
     await vod.init(wasmPath: './assets/assets/vodozemac/');
     final client = Client(
       AppConfig.appId,
@@ -33,15 +38,16 @@ extension ClientX on Client {
             ),
       verificationMethods: {KeyVerificationMethod.numbers},
       enableDehydratedDevices: true,
-      shareKeysWith:
-          ShareKeysWith.values[di<SettingsService>().shareKeysWithIndex],
+      shareKeysWith: ShareKeysWith.values[settingsService.shareKeysWithIndex],
       database: await flutterMatrixSdkDatabaseBuilder(
         AppConfig.appId,
-        di<FlutterSecureStorage>(),
+        flutterSecureStorage,
       ),
     );
     // This reads potential credentials that might exist from previous sessions.
-    await client.init().timeout(const Duration(seconds: 55));
+    if (connectivity.isOnline(await connectivity.checkConnectivity())) {
+      await client.init().timeout(const Duration(seconds: 55));
+    }
     return client;
   }
 

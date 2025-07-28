@@ -5,6 +5,7 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../../common/chat_model.dart';
 import '../../../common/view/confirm.dart';
+import '../../../l10n/l10n.dart';
 import '../../create_or_edit/create_or_edit_room_model.dart';
 
 class ChatInvitationDialog extends StatelessWidget with WatchItMixin {
@@ -14,17 +15,18 @@ class ChatInvitationDialog extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) => ConfirmationDialog(
-    title: Text(room.getLocalizedDisplayname()),
-    onCancel: () =>
+    title: Text('${context.l10n.invite}: ${room.getLocalizedDisplayname()}'),
+    cancelLabel: context.l10n.reject,
+    onCancel: () async =>
         showFutureLoadingDialog(
           context: context,
-          future: () =>
-              di<CreateOrEditRoomModel>().leaveRoom(room: room, forget: false),
+          future: () => di<CreateOrEditRoomModel>().leaveRoom(room),
         ).then((_) {
           if (context.mounted) {
             di<ChatModel>().setSelectedRoom(null);
           }
         }),
+    confirmLabel: context.l10n.accept,
     onConfirm: () =>
         showFutureLoadingDialog(
           context: context,

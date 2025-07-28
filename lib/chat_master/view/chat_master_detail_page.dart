@@ -90,10 +90,6 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
       (ChatModel m) => m.selectedRoom?.isArchived == true,
     );
 
-    final loadingArchive = watchPropertyValue(
-      (ChatModel m) => m.loadingArchive,
-    );
-
     return Scaffold(
       key: masterScaffoldKey,
       drawer: !Platforms.isMacOS
@@ -115,9 +111,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
                     ),
                   if (context.showSideBar)
                     const VerticalDivider(width: 0, thickness: 0),
-                  if (loadingArchive)
-                    const Expanded(child: Center(child: Progress()))
-                  else if (selectedRoom == null)
+                  if (selectedRoom == null)
                     const Expanded(child: ChatNoSelectedRoomPage())
                   else
                     Expanded(
