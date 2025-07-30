@@ -81,7 +81,7 @@ class _ChatRoomPinnedEventTileState extends State<ChatRoomPinnedEventTile> {
               event: s.data!,
               timeline: widget.timeline,
               onReplyOriginClick: (p0) async {},
-              eventPosition: EventPosition.top,
+              eventPosition: EventPosition.semanticSingle,
             )
           : const Text(''),
     );

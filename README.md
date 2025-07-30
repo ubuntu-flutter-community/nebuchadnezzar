@@ -37,6 +37,11 @@ or
 
 Run scripts/prepare-web.sh
 
+### macos
+
+cp /Users/frederik/Downloads/libcrypto.1.1.dylib ~/Projects/nebuchadnezzar/build/macos/Build/Products/Debug/nebuchadnezzar.app/Contents/Frameworks             
+
+
 
 ## Credits: Fluffy-Chat
 
@@ -46,3 +51,4 @@ Thank you for your awesome dart sdk!
 ## Why this name?
 
 The name is inspired by the traveling vehicle from the movie Matrix, which uses the name of https://en.wikipedia.org/wiki/Nebuchadnezzar_II the second king of Babylon!
+
