@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yaru/yaru.dart';
+import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
 class ErrorPage extends StatelessWidget {
@@ -27,6 +28,11 @@ class ErrorBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('An error occurred: $error'));
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(kBigPadding),
+        child: Text('An error occurred: $error'),
+      ),
+    );
   }
 }

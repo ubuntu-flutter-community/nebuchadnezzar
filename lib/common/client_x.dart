@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,7 +15,6 @@ import 'package:universal_html/html.dart' as html;
 
 import '../app/app_config.dart';
 import '../settings/settings_service.dart';
-import 'connecvitiy_x.dart';
 import 'logging.dart';
 import 'platforms.dart';
 
@@ -24,7 +22,6 @@ extension ClientX on Client {
   static Future<Client> registerAsync({
     required SettingsService settingsService,
     required FlutterSecureStorage flutterSecureStorage,
-    required Connectivity connectivity,
   }) async {
     await vod.init(wasmPath: './assets/assets/vodozemac/');
     final client = Client(
@@ -44,10 +41,10 @@ extension ClientX on Client {
         flutterSecureStorage,
       ),
     );
-    // This reads potential credentials that might exist from previous sessions.
-    if (connectivity.isOnline(await connectivity.checkConnectivity())) {
-      await client.init().timeout(const Duration(seconds: 55));
-    }
+    // This reads potential credentials that might exist from previous sessions
+    // to determine whether the user is logged in or not.
+    await client.init().timeout(const Duration(seconds: 55));
+
     return client;
   }
 
