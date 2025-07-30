@@ -2783,6 +2783,7 @@
         "seconds": { "type": "int" }
       }
     },
-    "yesterday": "Gestern"
+    "yesterday": "Gestern",
+    "today": "Heute"
   }
   

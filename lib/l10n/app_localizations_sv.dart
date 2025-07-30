@@ -2371,4 +2371,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get yesterday => 'Igår';
+
+  @override
+  String get today => 'Today';
 }

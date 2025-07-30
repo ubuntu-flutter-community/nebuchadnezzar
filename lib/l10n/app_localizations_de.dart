@@ -2357,4 +2357,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get yesterday => 'Gestern';
+
+  @override
+  String get today => 'Heute';
 }

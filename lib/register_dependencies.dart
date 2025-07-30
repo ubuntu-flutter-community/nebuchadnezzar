@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
@@ -50,7 +49,6 @@ void registerDependencies() {
         aOptions: AndroidOptions(encryptedSharedPreferences: true),
       ),
     )
-    ..registerLazySingleton<Connectivity>(() => Connectivity())
     ..registerSingletonWithDependencies<SettingsService>(
       () => SettingsService(
         sharedPreferences: di<SharedPreferences>(),
@@ -63,7 +61,6 @@ void registerDependencies() {
       () async => ClientX.registerAsync(
         settingsService: di<SettingsService>(),
         flutterSecureStorage: di<FlutterSecureStorage>(),
-        connectivity: di<Connectivity>(),
       ),
       dispose: (s) => s.dispose(),
       dependsOn: [SettingsService],

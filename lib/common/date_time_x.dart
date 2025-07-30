@@ -8,8 +8,7 @@ extension DateTimeX on DateTime {
     final now = DateTime.now();
     final l10n = context.l10n;
 
-    var localeName = WidgetsBinding.instance.platformDispatcher.locale
-        .toString();
+    var localeName = context.l10n.localeName;
     var bool = localeName == 'und' || localeName == 'US';
     final countryCode = bool ? 'en' : localeName;
 
@@ -32,7 +31,7 @@ extension DateTimeX on DateTime {
 
     if (year == now.year && month == now.month) {
       if (day == now.day - 1) {
-        return context.l10n.yesterday;
+        return context.l10n.today;
       }
     }
     return DateFormat.yMd(locale).format(this);
