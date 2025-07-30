@@ -19,7 +19,6 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     this.height,
     this.fit,
     this.width = imageWidth,
-    this.onlyThumbnail = true,
     this.onTap,
     this.showDescription = true,
   });
@@ -29,7 +28,6 @@ class ChatImage extends StatelessWidget with WatchItMixin {
   final double? height;
   final double width;
   final BoxFit? fit;
-  final bool onlyThumbnail;
   final VoidCallback? onTap;
   final bool showDescription;
 
@@ -83,9 +81,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
                         width: theWidth,
                         height: theHeight,
                         fit: theFit,
-                        getThumbnail: event.hasThumbnail
-                            ? onlyThumbnail
-                            : false,
+                        getThumbnail: event.hasThumbnail,
                       ),
               ),
               if (showDescription &&
@@ -132,7 +128,7 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
         ? Future.value(image)
         : localImageModel.downloadImage(
             event: widget.event,
-            getThumbnail: widget.getThumbnail,
+            cache: widget.event.hasThumbnail && widget.getThumbnail,
           );
   }
 

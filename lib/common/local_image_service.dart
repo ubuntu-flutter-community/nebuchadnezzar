@@ -16,13 +16,15 @@ class LocalImageService {
 
   Future<Uint8List?> downloadImage({
     required Event event,
-    required bool getThumbnail,
+    required bool cache,
   }) async {
     final bytes = (await event.downloadAndDecryptAttachment(
-      getThumbnail: getThumbnail,
+      getThumbnail: event.hasThumbnail,
     )).bytes;
 
-    final cover = put(id: event.eventId, data: bytes);
+    final cover = (event.hasThumbnail && cache)
+        ? put(id: event.eventId, data: bytes)
+        : bytes;
     if (cover != null) {
       _propertiesChangedController.add(true);
     }

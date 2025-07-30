@@ -107,6 +107,12 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                     ),
                     child: Text(context.l10n.deleteMessage, style: style),
                   ),
+                if (widget.event.status == EventStatus.error)
+                  MenuItemButton(
+                    trailingIcon: const Icon(YaruIcons.send),
+                    onPressed: () => widget.event.sendAgain(),
+                    child: Text(context.l10n.send, style: style),
+                  ),
                 if (kDebugMode)
                   MenuItemButton(
                     trailingIcon: const Icon(YaruIcons.code),

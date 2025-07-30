@@ -162,7 +162,6 @@ class ImageExtension extends HtmlExtension {
           event: event,
           width: actualWidth,
           height: actualHeight,
-          onlyThumbnail: (actualWidth * actualHeight) > (256 * 256),
         ),
       ),
     );

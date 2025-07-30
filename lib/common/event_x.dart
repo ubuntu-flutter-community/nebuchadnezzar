@@ -98,31 +98,37 @@ extension EventX on Event {
     required bool showAvatarChanges,
     required bool showDisplayNameChanges,
   }) {
-    if (prev == null && next == null) {
-      return EventPosition.top;
-    }
-    if (prev == null ||
-        prev.hideInTimeline(
+    final prevHidden =
+        prev?.hideInTimeline(
           showAvatarChanges: showAvatarChanges,
           showDisplayNameChanges: showDisplayNameChanges,
-        ) ||
-        prev.showAsBadge) {
+        ) ??
+        true;
+    final nextHidden =
+        next?.hideInTimeline(
+          showAvatarChanges: showAvatarChanges,
+          showDisplayNameChanges: showDisplayNameChanges,
+        ) ??
+        true;
+
+    final prevVisible = !prevHidden && !(prev?.showAsBadge ?? true);
+    final nextVisible = !nextHidden && !(next?.showAsBadge ?? true);
+
+    // Single event
+    if ((!prevVisible && !nextVisible) ||
+        (next?.senderId != senderId && prev?.senderId != senderId)) {
+      return EventPosition.semanticSingle;
+    }
+
+    // Top of group
+    if (!prevVisible ||
+        prev!.senderId != senderId ||
+        prev.originServerTs.toLocal().day != originServerTs.toLocal().day) {
       return EventPosition.top;
     }
 
-    if (prev.senderId != senderId) {
-      return EventPosition.top;
-    }
-    if (prev.originServerTs.toLocal().day != originServerTs.toLocal().day) {
-      return EventPosition.top;
-    }
-
-    if (next == null ||
-        next.hideInTimeline(
-          showAvatarChanges: showAvatarChanges,
-          showDisplayNameChanges: showDisplayNameChanges,
-        ) ||
-        next.showAsBadge) {
+    // Bottom of group
+    if (!nextVisible || next!.senderId != senderId) {
       return EventPosition.bottom;
     }
 

@@ -21,8 +21,8 @@ class LocalImageModel extends SafeChangeNotifier {
 
   Future<Uint8List?> downloadImage({
     required Event event,
-    bool getThumbnail = true,
-  }) async => _service.downloadImage(event: event, getThumbnail: getThumbnail);
+    required bool cache,
+  }) async => _service.downloadImage(event: event, cache: cache);
 
   @override
   Future<void> dispose() async {

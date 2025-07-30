@@ -53,9 +53,10 @@ class ChatMessageBubbleContent extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
-          child: eventPosition != EventPosition.top
-              ? const SizedBox.square(dimension: kAvatarDefaultSize)
-              : ChatAvatar(
+          child:
+              eventPosition == EventPosition.top ||
+                  eventPosition == EventPosition.semanticSingle
+              ? ChatAvatar(
                   avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
                   onTap: () => showDialog(
                     context: context,
@@ -65,7 +66,8 @@ class ChatMessageBubbleContent extends StatelessWidget {
                   fallBackColor: avatarFallbackColor(
                     context.colorScheme,
                   ).scale(saturation: -1),
-                ),
+                )
+              : const SizedBox.square(dimension: kAvatarDefaultSize),
         ),
         Flexible(
           child: Stack(
@@ -108,7 +110,9 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                   bottomRight: kBigBubbleRadius,
                                 ),
                                 EventPosition.semanticSingle =>
-                                  const BorderRadius.all(kBigBubbleRadius),
+                                  const BorderRadius.all(
+                                    kBigBubbleRadius,
+                                  ).copyWith(topLeft: kBubbleRadius),
                               },
                             ),
                             child: Column(
@@ -172,7 +176,6 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                             builder: (context) =>
                                                 ChatMessageImageFullScreenDialog(
                                                   event: event,
-                                                  getThumbnail: true,
                                                 ),
                                           ),
                                         ),
