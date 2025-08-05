@@ -71,7 +71,7 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
                 ],
               ),
               context: context,
-              onConfirm: () {
+              onConfirm: () async {
                 Navigator.of(context).pop();
                 showFutureLoadingDialog(
                   context: context,

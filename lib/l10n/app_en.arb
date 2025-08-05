@@ -2784,6 +2784,18 @@
       }
     },
     "yesterday": "Yesterday",
-    "today": "Today"
+    "today": "Today",
+    "moderator": "Moderator",
+    "member": "Member",
+    "changePowerLevel": "Change power level",
+    "canNotChangePowerLevel": "Power level can not be changed because it is not higher than the user whose power level you want to change.",
+    "changePowerLevelForUserToValue": "Change power level for {user} to {value}?",
+    "@changePowerLevelForUserToValue": {
+      "type": "text",
+      "placeholders": {
+        "user": {},
+        "value": {}
+      }
+    }
   }
   

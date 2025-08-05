@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -62,17 +63,19 @@ Future<void> uiaRequestHandler({
             clientSecret: currentClientSecret,
           ),
         );
-        return showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: Text(l10n.weSentYouAnEmail),
-            content: Text(l10n.pleaseClickOnLink),
-            confirmLabel: l10n.iHaveClickedOnLink,
-            cancelLabel: l10n.cancel,
-            onCancel: uiaRequest.cancel,
-            onConfirm: () async => uiaRequest.completeStage(auth),
-          ),
-        );
+        await showOkCancelAlertDialog(
+          context: navigatorContext,
+          title: l10n.weSentYouAnEmail,
+          message: l10n.pleaseClickOnLink,
+          okLabel: l10n.iHaveClickedOnLink,
+          cancelLabel: l10n.cancel,
+        ).then((result) {
+          if (result == OkCancelResult.ok) {
+            uiaRequest.completeStage(auth);
+          } else {
+            uiaRequest.cancel();
+          }
+        });
 
       case AuthenticationTypes.dummy:
         return uiaRequest.completeStage(
@@ -87,17 +90,19 @@ Future<void> uiaRequestHandler({
         );
         launchUrlString(url.toString());
 
-        return showDialog(
+        await showOkCancelAlertDialog(
           context: context,
-          builder: (context) => ConfirmationDialog(
-            title: Text(l10n.pleaseFollowInstructionsOnWeb),
-            confirmLabel: l10n.next,
-            onConfirm: () async => uiaRequest.completeStage(
-              AuthenticationData(session: uiaRequest.session),
-            ),
-            onCancel: uiaRequest.cancel,
-          ),
-        );
+          title: l10n.pleaseFollowInstructionsOnWeb,
+          okLabel: l10n.next,
+        ).then((result) {
+          if (result == OkCancelResult.ok) {
+            uiaRequest.completeStage(
+              AuthenticationData(type: stage, session: uiaRequest.session),
+            );
+          } else {
+            uiaRequest.cancel();
+          }
+        });
     }
   } catch (e, s) {
     Logs().e('Error while background UIA', e, s);

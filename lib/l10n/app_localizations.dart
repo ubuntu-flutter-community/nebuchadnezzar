@@ -4137,6 +4137,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get today;
+
+  /// No description provided for @member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get member;
+
+  /// No description provided for @changePowerLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Change power level'**
+  String get changePowerLevel;
+
+  /// No description provided for @canNotChangePowerLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Power level can not be changed because it is not higher than the user whose power level you want to change.'**
+  String get canNotChangePowerLevel;
+
+  /// No description provided for @changePowerLevelForUserToValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Change power level for {user} to {value}?'**
+  String changePowerLevelForUserToValue(Object user, Object value);
 }
 
 class _AppLocalizationsDelegate

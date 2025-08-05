@@ -1,7 +1,7 @@
 import 'package:matrix/matrix.dart';
 
 extension RoomX on Room {
-  bool get canEditAtleastSomething =>
+  bool get canChangeRoomSettings =>
       ownPowerLevel == 100 ||
       canKick ||
       canBan ||
@@ -12,15 +12,22 @@ extension RoomX on Room {
       canRedact ||
       canChangeName ||
       canChangeTopic ||
-      canChangeStateEvent(EventTypes.RoomAliases) ||
-      canChangeStateEvent(EventTypes.RoomJoinRules) ||
-      canChangeStateEvent(EventTypes.RoomPowerLevels);
+      canChangeRoomAlias ||
+      canEditSpace ||
+      canChangePowerLevel ||
+      canChangeCanonicalAlias;
+
+  bool get canChangeJoinRules => canChangeStateEvent(EventTypes.RoomJoinRules);
+
+  bool get canChangeRoomAlias => canChangeStateEvent(EventTypes.RoomAliases);
 
   bool get canChangeName => canChangeStateEvent(EventTypes.RoomName);
 
   bool get canChangeTopic => canChangeStateEvent(EventTypes.RoomTopic);
 
   bool get canEditSpace => canChangeStateEvent(EventTypes.SpaceChild);
+
+  bool get canChangeAvatar => canChangeStateEvent(EventTypes.RoomAvatar);
 
   bool get canChangeCanonicalAlias =>
       canChangeStateEvent(EventTypes.RoomCanonicalAlias);

@@ -2784,6 +2784,18 @@
       }
     },
     "yesterday": "Gestern",
-    "today": "Heute"
+    "today": "Heute",
+    "moderator": "Moderator",
+    "member": "Mitglied",
+    "changePowerLevel": "Berechtigungsstufe ändern",
+    "canNotChangePowerLevel": "Berechtigungsstufe kann nicht geändert werden, da ihre Berechtigungsstufe nicht höher ist als die des Benutzers, dessen Berechtigungsstufe Sie ändern möchten.",
+    "changePowerLevelForUserToValue": "Berechtigungsstufe für {user} auf {value} ändern?",
+    "@changePowerLevelForUserToValue": {
+      "type": "text",
+      "placeholders": {
+        "user": {},
+        "value": {}
+      }
+    }
   }
   

@@ -1,5 +1,9 @@
 {
   "sv": [
-    "today"
+    "today",
+    "member",
+    "changePowerLevel",
+    "canNotChangePowerLevel",
+    "changePowerLevelForUserToValue"
   ]
 }

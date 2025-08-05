@@ -43,7 +43,7 @@ class ChatMessageMediaAvatar extends StatelessWidget {
                         dialogTitle: l10n.saveFile,
                         confirmButtonText: l10n.saveFile,
                       ),
-                    _ => () {},
+                    _ => () async {},
                   },
                 ),
               ),

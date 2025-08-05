@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -13,6 +14,7 @@ import '../../../common/view/confirm.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../create_or_edit/create_or_edit_room_model.dart';
+import 'chat_room_user_list_power_level_button.dart';
 
 class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
   const ChatRoomUsersList({
@@ -64,12 +66,14 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
                   if (room.canKick && !user.isLoggedInUser)
                     IconButton(
                       tooltip: l10n.kickFromChat,
-                      onPressed: () => showDialog(
+                      onPressed: () => ConfirmationDialog.show(
                         context: context,
-                        builder: (context) => ConfirmationDialog(
-                          title: Text(l10n.kickFromChat),
-                          content: Text(user.id),
-                          onConfirm: () => room.kick(user.id),
+                        title: Text(l10n.kickFromChat),
+                        content: Text(user.id),
+                        onConfirm: () => showFutureLoadingDialog(
+                          context: context,
+                          future: () => di<CreateOrEditRoomModel>()
+                              .removeUserFromRoom(user),
                         ),
                       ),
                       icon: Icon(
@@ -80,12 +84,14 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
                   if (room.canBan && !user.isLoggedInUser)
                     IconButton(
                       tooltip: context.l10n.banFromChat,
-                      onPressed: () => showDialog(
+                      onPressed: () => ConfirmationDialog.show(
                         context: context,
-                        builder: (context) => ConfirmationDialog(
-                          title: Text(l10n.banFromChat),
-                          content: Text(user.id),
-                          onConfirm: () => room.ban(user.id),
+                        title: Text(l10n.banFromChat),
+                        content: Text(user.id),
+                        onConfirm: () => showFutureLoadingDialog(
+                          context: context,
+                          future: () =>
+                              di<CreateOrEditRoomModel>().banUserFromRoom(user),
                         ),
                       ),
                       icon: Icon(
@@ -93,6 +99,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
                         color: context.colorScheme.error,
                       ),
                     ),
+                  ChatRoomUserListTilePowerLevelButton(user: user),
                 ],
               )
             : const SizedBox.shrink(),
@@ -110,33 +117,43 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
   }
 }
 
-class _UserTile extends StatelessWidget {
+class _UserTile extends StatelessWidget with WatchItMixin {
   const _UserTile({super.key, required this.user, this.trailing});
 
   final User user;
   final Widget? trailing;
 
   @override
-  Widget build(BuildContext context) => ListTile(
-    key: key,
-    leading: Opacity(
-      opacity: user.membership == Membership.invite ? 0.5 : 1,
-      child: ChatAvatar(
-        avatarUri: user.avatarUrl,
-        onTap: () => showDialog(
-          context: context,
-          builder: (context) => ChatProfileDialog(userId: user.id),
+  Widget build(BuildContext context) {
+    final userPowerLevel =
+        watchStream(
+          (CreateOrEditRoomModel m) =>
+              m.getJoinedRoomUpdate(user.room.id).map((r) => user.powerLevel),
+          initialValue: user.powerLevel,
+        ).data ??
+        0;
+    return ListTile(
+      key: key,
+      leading: Opacity(
+        opacity: user.membership == Membership.invite ? 0.5 : 1,
+        child: ChatAvatar(
+          avatarUri: user.avatarUrl,
+          onTap: () => showDialog(
+            context: context,
+            builder: (context) => ChatProfileDialog(userId: user.id),
+          ),
         ),
       ),
-    ),
-    title: Text(user.displayName ?? user.id),
-    subtitle: user.membership == Membership.invite
-        ? Text(context.l10n.invited)
-        : Text(
-            user.powerLevel == 0
-                ? context.l10n.participant
-                : context.l10n.admin,
-          ),
-    trailing: trailing,
-  );
+      title: Text(user.displayName ?? user.id),
+      subtitle: user.membership == Membership.invite
+          ? Text(context.l10n.invited)
+          : Text(switch (userPowerLevel) {
+              memberPowerLevel => context.l10n.member,
+              moderatorPowerLevel => context.l10n.moderator,
+              adminPowerLevel => context.l10n.admin,
+              _ => 'unknown',
+            }),
+      trailing: trailing,
+    );
+  }
 }

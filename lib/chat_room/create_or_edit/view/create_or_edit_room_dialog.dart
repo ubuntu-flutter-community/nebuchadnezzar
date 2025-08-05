@@ -19,8 +19,7 @@ import 'create_room_profiles_list_view.dart';
 
 const _maxWidth = 500.0;
 
-class CreateOrEditRoomDialog extends StatefulWidget
-    with WatchItStatefulWidgetMixin {
+class CreateOrEditRoomDialog extends StatefulWidget {
   const CreateOrEditRoomDialog({super.key, this.room, this.space = false});
 
   final Room? room;
@@ -34,7 +33,7 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
   @override
   void initState() {
     super.initState();
-    di<CreateOrEditRoomModel>().init(room: widget.room, isSpace: widget.space);
+    di<CreateOrEditRoomModel>().init(room: widget.room);
   }
 
   @override
