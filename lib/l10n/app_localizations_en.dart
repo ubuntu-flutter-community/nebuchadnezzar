@@ -2360,4 +2360,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get today => 'Today';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get changePowerLevel => 'Change power level';
+
+  @override
+  String get canNotChangePowerLevel =>
+      'Power level can not be changed because it is not higher than the user whose power level you want to change.';
+
+  @override
+  String changePowerLevelForUserToValue(Object user, Object value) {
+    return 'Change power level for $user to $value?';
+  }
 }

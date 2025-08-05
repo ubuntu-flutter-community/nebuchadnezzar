@@ -67,7 +67,7 @@ class ChatSpaceControlPanel extends StatelessWidget with WatchItMixin {
                           '${context.l10n.leave} ${activeSpace.getLocalizedDisplayname()}',
                         ),
                         context: context,
-                        onConfirm: () {
+                        onConfirm: () async {
                           Navigator.of(context).pop();
                           showFutureLoadingDialog(
                             context: context,

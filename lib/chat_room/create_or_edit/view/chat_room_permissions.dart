@@ -9,12 +9,10 @@ import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../create_or_edit_room_model.dart';
 
-// Credit: this code has been inspired by https://github.com/krille-chan/fluffychat permissions
-// Thank you @krille-chan
 class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
-  final Room room;
-
   const ChatRoomPermissions({required this.room, super.key});
+
+  final Room room;
 
   @override
   Widget build(BuildContext context) {
@@ -44,17 +42,6 @@ class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
     final eventsPowerLevels = Map<String, int?>.from(
       powerLevelsContent.tryGetMap<String, int?>('events') ?? {},
     )..removeWhere((k, v) => v is! int);
-
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
-      child: YaruInfoBox(
-        yaruInfoType: YaruInfoType.information,
-        subtitle: Padding(
-          padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
-          child: Text(l10n.chatPermissionsDescription),
-        ),
-      ),
-    );
 
     return YaruExpansionPanel(
       shrinkWrap: true,

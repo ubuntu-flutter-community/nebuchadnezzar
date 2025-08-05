@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
-import 'package:mime/mime.dart';
+// import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
@@ -10,12 +10,16 @@ import '../../common/platforms.dart';
 import '../../common/room_x.dart';
 import '../../common/xtypegroup_x.dart';
 
+const adminPowerLevel = 100;
+const memberPowerLevel = 0;
+const moderatorPowerLevel = 50;
+
 class CreateOrEditRoomModel {
   CreateOrEditRoomModel({required Client client}) : _client = client;
 
   final Client _client;
 
-  void init({required Room? room, required bool isSpace}) {
+  void init({required Room? room}) {
     nameDraft.value = '';
     topicDraft.value = '';
     enableEncryptionDraft.value = false;
@@ -195,6 +199,51 @@ class CreateOrEditRoomModel {
     }
   }
 
+  Future<void> removeUserFromRoom(User user) async {
+    try {
+      await user.room.kick(user.id);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<void> banUserFromRoom(User user) async {
+    try {
+      await user.room.ban(user.id);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<void> changePowerLevel({
+    required User user,
+    required int powerLevel,
+  }) async {
+    try {
+      final room = user.room;
+      final currentPowerLevel = user.powerLevel;
+      await room.setPower(user.id, powerLevel);
+      printMessageInDebugMode(
+        'User ${currentPowerLevel < powerLevel ? 'promoted' : 'demoted'} to ${powerLevel == adminPowerLevel
+            ? 'admin'
+            : powerLevel == moderatorPowerLevel
+            ? 'moderator'
+            : 'user'}.',
+      );
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Stream<SyncUpdate> get joinedUpdateStream =>
+      _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
+
+  Stream<JoinedRoomUpdate?> getJoinedRoomUpdate(String? roomId) =>
+      joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
+
   Stream<List<User>> getUsersStreamOfJoinedRoom(
     Room room, {
     List<Membership> membershipFilter = const [
@@ -202,9 +251,9 @@ class CreateOrEditRoomModel {
       Membership.invite,
       Membership.knock,
     ],
-  }) => _client.onSync.stream.asyncMap(
-    (_) => room.requestParticipants(membershipFilter),
-  );
+  }) => getJoinedRoomUpdate(
+    room.id,
+  ).asyncMap((_) => room.requestParticipants(membershipFilter));
 
   // ROOM POWER LEVELS
 
@@ -309,30 +358,21 @@ class CreateOrEditRoomModel {
         );
       } else {
         final result = await FilePicker.platform.pickFiles(
-          allowMultiple: false,
           type: FileType.image,
         );
-        xFile = result?.files
-            .map((f) => XFile(f.path!, mimeType: lookupMimeType(f.path!)))
-            .toList()
-            .firstOrNull;
+        xFile = result?.files.firstOrNull?.xFile;
       }
 
       if (xFile == null) {
         return;
       }
 
-      final mime = lookupMimeType(xFile.path);
       final bytes = await xFile.readAsBytes();
-
-      if (mime?.startsWith('image') != true) {
-        throw Exception(wrongFormatString);
-      }
 
       avatarDraft.value = await MatrixImageFile.shrink(
         bytes: bytes,
         name: xFile.name,
-        mimeType: mime,
+        mimeType: xFile.mimeType,
         maxDimension: 1000,
         nativeImplementations: _client.nativeImplementations,
       );
@@ -466,6 +506,17 @@ class CreateOrEditRoomModel {
   Future<void> leaveRoom(Room room) async {
     try {
       await room.leave();
+    } on Exception catch (e, s) {
+      printMessageInDebugMode(e, s);
+      rethrow;
+    }
+  }
+
+  Future<void> leaveAllRooms() async {
+    if (_client.rooms.isEmpty) return;
+    try {
+      await Future.wait(_client.rooms.map((e) => e.leave()));
+      await _client.oneShotSync();
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;

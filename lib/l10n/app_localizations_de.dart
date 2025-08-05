@@ -2360,4 +2360,19 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get today => 'Heute';
+
+  @override
+  String get member => 'Mitglied';
+
+  @override
+  String get changePowerLevel => 'Berechtigungsstufe ändern';
+
+  @override
+  String get canNotChangePowerLevel =>
+      'Berechtigungsstufe kann nicht geändert werden, da ihre Berechtigungsstufe nicht höher ist als die des Benutzers, dessen Berechtigungsstufe Sie ändern möchten.';
+
+  @override
+  String changePowerLevelForUserToValue(Object user, Object value) {
+    return 'Berechtigungsstufe für $user auf $value ändern?';
+  }
 }
