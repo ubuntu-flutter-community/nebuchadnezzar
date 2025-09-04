@@ -29,6 +29,8 @@ extension RoomX on Room {
 
   bool get canEditSpace => canChangeStateEvent(EventTypes.SpaceChild);
 
+  bool get canChangeAvatar => canChangeStateEvent(EventTypes.RoomAvatar);
+
   bool get canChangeCanonicalAlias =>
       canChangeStateEvent(EventTypes.RoomCanonicalAlias);
 
