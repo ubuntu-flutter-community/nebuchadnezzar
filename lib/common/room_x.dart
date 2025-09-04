@@ -1,21 +1,23 @@
 import 'package:matrix/matrix.dart';
 
 extension RoomX on Room {
-  bool get canChangeRoomSettings =>
-      ownPowerLevel == 100 ||
-      canKick ||
-      canBan ||
-      canChangeGuestAccess ||
-      canChangeHistoryVisibility ||
-      canChangeJoinRules ||
-      canInvite ||
-      canRedact ||
-      canChangeName ||
-      canChangeTopic ||
-      canChangeRoomAlias ||
-      canEditSpace ||
-      canChangePowerLevel ||
-      canChangeCanonicalAlias;
+  bool get canChangeAnyRoomSetting =>
+      canSendDefaultMessages &&
+      (ownPowerLevel == 100 ||
+          canKick ||
+          canBan ||
+          canChangeGuestAccess ||
+          canChangeHistoryVisibility ||
+          canChangeJoinRules ||
+          canInvite ||
+          canRedact ||
+          canChangeName ||
+          canChangeTopic ||
+          canChangeRoomAlias ||
+          canEditSpace ||
+          canChangePowerLevel ||
+          canChangeCanonicalAlias ||
+          canChangeAvatar);
 
   bool get canChangeJoinRules => canChangeStateEvent(EventTypes.RoomJoinRules);
 
@@ -27,10 +29,10 @@ extension RoomX on Room {
 
   bool get canEditSpace => canChangeStateEvent(EventTypes.SpaceChild);
 
-  bool get canChangeAvatar => canChangeStateEvent(EventTypes.RoomAvatar);
-
   bool get canChangeCanonicalAlias =>
       canChangeStateEvent(EventTypes.RoomCanonicalAlias);
+
+  bool get canChangeAvatar => canChangeStateEvent(EventTypes.RoomAvatar);
 
   bool get isUnacceptedDirectChat {
     if (isDirectChat) {
