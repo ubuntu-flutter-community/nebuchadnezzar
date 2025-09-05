@@ -39,14 +39,14 @@ PODS:
   - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
-  - SQLCipher (4.9.0):
-    - SQLCipher/standard (= 4.9.0)
-  - SQLCipher/common (4.9.0)
-  - SQLCipher/standard (4.9.0):
+  - SQLCipher (4.10.0):
+    - SQLCipher/standard (= 4.10.0)
+  - SQLCipher/common (4.10.0)
+  - SQLCipher/standard (4.10.0):
     - SQLCipher/common
   - sqlcipher_flutter_libs (0.0.1):
     - FlutterMacOS
-    - SQLCipher (~> 4.9.0)
+    - SQLCipher (~> 4.10.0)
   - super_native_extensions (0.0.1):
     - FlutterMacOS
   - system_theme (0.0.1):
@@ -55,7 +55,7 @@ PODS:
     - FlutterMacOS
   - video_compress (0.3.0):
     - FlutterMacOS
-  - window_manager (0.2.0):
+  - window_manager (0.5.0):
     - FlutterMacOS
   - window_to_front (0.0.1):
     - FlutterMacOS
@@ -150,14 +150,14 @@ SPEC CHECKSUMS:
   appkit_ui_element_colors: c8e13c23cbd781e0f5d9b75cad686e6a4bb958da
   desktop_webview_window: 7e37af677d6d19294cb433d9b1d878ef78dffa4d
   device_info_plus: 4fb280989f669696856f8b129e4a5e3cd6c48f76
-  dynamic_color: b820c000cc68df65e7ba7ff177cb98404ce56651
+  dynamic_color: cb7c2a300ee67ed3bd96c3e852df3af0300bf610
   emoji_picker_flutter: 51ca408e289d84d1e460016b2a28721ec754fcf7
   file_picker: 7584aae6fa07a041af2b36a2655122d42f578c1a
   file_selector_macos: 6280b52b459ae6c590af5d78fc35c7267a3c4b31
   flutter_secure_storage_macos: 7f45e30f838cf2659862a4e4e3ee1c347c2b3b54
   flutter_vodozemac: fd2ea9cb3e2a37beaac883a369811fbfe042fc53
   flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65
-  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   irondash_engine_context: 893c7d96d20ce361d7e996f39d360c4c2f9869ba
   local_notifier: ebf072651e35ae5e47280ad52e2707375cb2ae4e
   macos_ui: ff29104a215c2e1b76f37aacdcbba648abb25faa
@@ -166,13 +166,13 @@ SPEC CHECKSUMS:
   screen_retriever_macos: 452e51764a9e1cdb74b3c541238795849f21557f
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
-  SQLCipher: 31878d8ebd27e5c96db0b7cb695c96e9f8ad77da
-  sqlcipher_flutter_libs: df4c20ce574779df9ffa0dceb33e751b068e81c4
+  SQLCipher: eb79c64049cb002b4e9fcb30edb7979bf4706dfc
+  sqlcipher_flutter_libs: 01ead34db27ae5e49987cae46c8a34199eb22cfe
   super_native_extensions: c2795d6d9aedf4a79fae25cb6160b71b50549189
   system_theme: ed74293ad07d3a05e3e2d0059ff342360346f1a0
   url_launcher_macos: 0fba8ddabfc33ce0a9afe7c5fef5aab3d8d2d673
   video_compress: 752b161da855df2492dd1a8fa899743cc8fe9534
-  window_manager: 1d01fa7ac65a6e6f83b965471b1a7fdd3f06166c
+  window_manager: b729e31d38fb04905235df9ea896128991cad99e
   window_to_front: 9e76fd432e36700a197dac86a0011e49c89abe0a
 
 PODFILE CHECKSUM: 5bc6a71ad752a68d2b4bce2aeb96d0f7aab52719

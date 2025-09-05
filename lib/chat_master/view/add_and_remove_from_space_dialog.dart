@@ -47,11 +47,13 @@ class _RemoveFromSpaceDialogState extends State<RemoveFromSpaceDialog> {
             )
             .toList()
             .map(
-              (space) => RadioListTile<Room>(
-                title: Text(space.getLocalizedDisplayname()),
-                value: space,
+              (space) => RadioGroup(
                 groupValue: _selectedSpace,
                 onChanged: (value) => setState(() => _selectedSpace = value),
+                child: RadioListTile<Room>(
+                  title: Text(space.getLocalizedDisplayname()),
+                  value: space,
+                ),
               ),
             )
             .toList(),
@@ -90,17 +92,19 @@ class _AddToSpaceDialogState extends State<AddToSpaceDialog> {
         mainAxisSize: MainAxisSize.min,
         children: spaces
             .map(
-              (space) => RadioListTile<Room>(
-                title: Text(space.getLocalizedDisplayname()),
-                value: space,
+              (space) => RadioGroup(
                 groupValue: _selectedSpace,
-                onChanged:
-                    space.canEditSpace == true &&
-                        !space.spaceChildren
-                            .map((c) => c.roomId)
-                            .contains(widget.room.id)
-                    ? (value) => setState(() => _selectedSpace = value)
-                    : null,
+                onChanged: (value) => setState(() => _selectedSpace = value),
+
+                child: RadioListTile<Room>(
+                  title: Text(space.getLocalizedDisplayname()),
+                  value: space,
+                  enabled:
+                      space.canEditSpace == true &&
+                      !space.spaceChildren
+                          .map((c) => c.roomId)
+                          .contains(widget.room.id),
+                ),
               ),
             )
             .toList(),

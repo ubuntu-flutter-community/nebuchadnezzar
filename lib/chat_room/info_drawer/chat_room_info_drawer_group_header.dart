@@ -70,14 +70,14 @@ class ChatRoomInfoDrawerGroupHeader extends StatelessWidget {
       automaticallyImplyLeading: false,
       actions: [
         Flexible(
-          key: ValueKey(room.canChangeRoomSettings),
+          key: ValueKey(room.canChangeAnyRoomSetting),
           child: Padding(
             padding: const EdgeInsets.only(
               right: kBigPadding,
               left: kMediumPadding,
             ),
             child: IconButton(
-              onPressed: !room.isArchived && room.canChangeRoomSettings
+              onPressed: !room.isArchived && room.canChangeAnyRoomSetting
                   ? () => showDialog(
                       context: context,
                       builder: (context) => CreateOrEditRoomDialog(room: room),

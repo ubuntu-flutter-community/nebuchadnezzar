@@ -273,6 +273,11 @@ class CreateOrEditRoomModel {
   Stream<bool> canChangePowerLevels(Room room) =>
       _getJoinedRoomUpdate(room.id).map((_) => room.canChangePowerLevel);
 
+  Stream<bool> getCanChangeAnyRoomSettingsStream(Room? room) =>
+      _getJoinedRoomUpdate(
+        room?.id,
+      ).map((_) => room?.canChangeAnyRoomSetting ?? false);
+
   Future<void> editPowerLevel({
     required Room room,
     required String key,

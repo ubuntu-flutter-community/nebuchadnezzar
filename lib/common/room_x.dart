@@ -1,21 +1,23 @@
 import 'package:matrix/matrix.dart';
 
 extension RoomX on Room {
-  bool get canChangeRoomSettings =>
-      ownPowerLevel == 100 ||
-      canKick ||
-      canBan ||
-      canChangeGuestAccess ||
-      canChangeHistoryVisibility ||
-      canChangeJoinRules ||
-      canInvite ||
-      canRedact ||
-      canChangeName ||
-      canChangeTopic ||
-      canChangeRoomAlias ||
-      canEditSpace ||
-      canChangePowerLevel ||
-      canChangeCanonicalAlias;
+  bool get canChangeAnyRoomSetting =>
+      canSendDefaultMessages &&
+      (ownPowerLevel == 100 ||
+          canKick ||
+          canBan ||
+          canChangeGuestAccess ||
+          canChangeHistoryVisibility ||
+          canChangeJoinRules ||
+          canInvite ||
+          canRedact ||
+          canChangeName ||
+          canChangeTopic ||
+          canChangeRoomAlias ||
+          canEditSpace ||
+          canChangePowerLevel ||
+          canChangeCanonicalAlias ||
+          canChangeAvatar);
 
   bool get canChangeJoinRules => canChangeStateEvent(EventTypes.RoomJoinRules);
 
