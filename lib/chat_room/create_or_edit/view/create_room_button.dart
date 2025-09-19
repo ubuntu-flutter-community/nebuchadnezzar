@@ -28,11 +28,12 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
                   ),
                 ).then((result) {
                   if (result.asValue?.value != null) {
-                    if (isSpace) {
-                      di<ChatModel>().setSelectedRoom(null);
-                      di<ChatModel>().setActiveSpace(result.asValue!.value!);
+                    final room = result.asValue!.value!;
+
+                    if (room.isSpace) {
+                      di<ChatModel>().setActiveSpace(room);
                     } else {
-                      di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+                      di<ChatModel>().setSelectedRoom(room);
                     }
 
                     if (context.mounted && Navigator.of(context).canPop()) {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../common/view/build_context_x.dart';
 import '../../common/event_x.dart';
+import '../../common/view/build_context_x.dart';
+import '../../l10n/l10n.dart';
 
 class LocalizedDisplayEventText extends StatefulWidget {
   const LocalizedDisplayEventText({
@@ -34,8 +35,13 @@ class _LocalizedDisplayEventTextState extends State<LocalizedDisplayEventText> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      _cache.containsKey(widget.displayEvent.eventId)
+  Widget build(BuildContext context) => widget.displayEvent.showAsSpecialBadge
+      ? Text(
+          widget.displayEvent.getCustomLocalizationOrFallback(
+            l10n: context.l10n,
+          ),
+        )
+      : _cache.containsKey(widget.displayEvent.eventId)
       ? _Content(
           text: _cache[widget.displayEvent.eventId]!,
           style: widget.style,

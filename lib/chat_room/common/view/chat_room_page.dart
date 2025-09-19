@@ -44,7 +44,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   void initState() {
     super.initState();
-    widget.room.postLoad();
     _timelineFuture = widget.room.getTimeline(
       onNewEvent: () => _roomListKey.currentState?.setState(() {}),
       onChange: (i) => _roomListKey.currentState?.setState(() {}),
@@ -134,7 +133,9 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             endDrawer: ChatRoomInfoDrawer(room: widget.room),
             appBar: ChatRoomTitleBar(room: widget.room),
             bottomNavigationBar:
-                widget.room.isArchived || unAcceptedDirectChat != false
+                widget.room.isArchived ||
+                    unAcceptedDirectChat != false ||
+                    widget.room.isSpace
                 ? null
                 : ChatInput(
                     key: ValueKey('${widget.room.id}input'),

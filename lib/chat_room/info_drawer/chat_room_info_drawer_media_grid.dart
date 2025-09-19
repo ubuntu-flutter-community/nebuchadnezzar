@@ -194,12 +194,14 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
             ),
           ),
           Positioned(
-            bottom: 10,
+            bottom: 0,
             left: 10,
             right: 10,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: ChatLoadMoreHistoryButton(timeline: timeline),
+            child: Material(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: ChatLoadMoreHistoryButton(timeline: timeline),
+              ),
             ),
           ),
         ],

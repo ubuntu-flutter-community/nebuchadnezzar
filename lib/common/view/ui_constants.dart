@@ -15,7 +15,7 @@ const kBigPadding = 20.0;
 
 const kCardPadding = 15.0;
 
-const kSideBarWith = 260.0;
+const kSideBarWith = 280.0;
 
 const kShowSideBarThreshHold = 600.0;
 

@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
+import 'logging.dart';
 import 'rooms_filter.dart';
 
 class ChatModel extends SafeChangeNotifier {
@@ -35,12 +36,8 @@ class ChatModel extends SafeChangeNotifier {
     final theRooms = (archiveActive ? _archivedRooms : _rooms)
         .where(roomsFilter?.filter ?? (e) => true)
         .toList();
-    if (roomsFilter != RoomsFilter.spaces) {
+    if (roomsFilter != RoomsFilter.spaces || activeSpace == null) {
       return theRooms.where((r) => !r.isSpace).toList();
-    }
-
-    if (activeSpace == null) {
-      return [];
     }
 
     return Set<Room>.from(
@@ -68,7 +65,16 @@ class ChatModel extends SafeChangeNotifier {
   Stream<SyncUpdate> get syncStream => _client.onSync.stream;
 
   Stream<List<Receipt>> getRoomsReceiptsStream(Event event) =>
-      getJoinedRoomUpdate(event.room.id).map((_) => event.receipts);
+      getJoinedRoomUpdate(event.room.id).asyncMap((_) async {
+        try {
+          await Future.wait(
+            event.receipts.map((e) => _client.getUserProfile(e.user.id)),
+          );
+        } on Exception catch (_) {
+          printMessageInDebugMode('Failed to fetch all receipt profiles :(');
+        }
+        return event.receipts;
+      });
 
   /// A stream of [LeftRoomUpdate]s for a specific `roomId`
   Stream<LeftRoomUpdate?> getLeftRoomStream(String roomId) => _client
@@ -113,8 +119,12 @@ class ChatModel extends SafeChangeNotifier {
   void setRoomsFilter(RoomsFilter? value) {
     if (_roomsFilter == value) {
       _roomsFilter = null;
+      _selectedRoom = null;
     } else {
       _roomsFilter = value;
+    }
+    if (_roomsFilter != null) {
+      _activeSpace = null;
     }
     setSelectedRoom(null);
   }
@@ -122,12 +132,10 @@ class ChatModel extends SafeChangeNotifier {
   Room? _activeSpace;
   Room? get activeSpace => _activeSpace;
   void setActiveSpace(Room? roomId) {
-    if (_activeSpace == roomId) {
-      _activeSpace = null;
-    } else {
-      _activeSpace = roomId;
-    }
-    notifyListeners();
+    _roomsFilter = RoomsFilter.spaces;
+    _activeSpace = roomId;
+
+    setSelectedRoom(_activeSpace);
   }
 
   Room? _selectedRoom;

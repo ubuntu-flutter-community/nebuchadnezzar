@@ -85,8 +85,13 @@ class _ConfirmationDialogState<T> extends State<ConfirmationDialog<T>> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AlertDialog(
-      titlePadding: widget.titlePadding,
-      title: widget.title,
+      titlePadding: widget.titlePadding ?? EdgeInsets.zero,
+      title: YaruDialogTitleBar(
+        backgroundColor: Colors.transparent,
+        title: widget.title,
+        isClosable: widget.showCloseIcon,
+        border: BorderSide.none,
+      ),
       scrollable: widget.scrollable,
       content: _error != null
           ? Padding(
@@ -110,7 +115,7 @@ class _ConfirmationDialogState<T> extends State<ConfirmationDialog<T>> {
       contentPadding: widget.contentPadding,
       actionsAlignment: MainAxisAlignment.start,
       actionsOverflowAlignment: OverflowBarAlignment.center,
-      actionsPadding: const EdgeInsets.all(16),
+      actionsPadding: const EdgeInsets.all(kMediumPadding),
       actions: [
         Row(
           children: space(

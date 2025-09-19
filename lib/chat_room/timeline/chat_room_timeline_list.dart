@@ -43,10 +43,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => di<TimelineModel>()
-        ..loadAllKeysFromRoom(widget.timeline)
-        ..trySetReadMarker(widget.timeline)
-        ..requestHistory(widget.timeline, historyCount: 500),
+      (_) => di<TimelineModel>().postTimelineLoad(widget.timeline),
     );
   }
 
@@ -103,7 +100,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                 return Column(
                   children: [
                     const SizedBox.shrink(),
-                    if (i == 0)
+                    if (i == 0 && !widget.timeline.room.isSpace)
                       ChatEventSeenByIndicator(
                         key: ValueKey(
                           '${event.eventId}${widget.timeline.events.length}',
@@ -156,7 +153,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                           timeline: widget.timeline,
                         ),
                       ),
-                      if (i == 0)
+                      if (i == 0 && !widget.timeline.room.isSpace)
                         ChatEventSeenByIndicator(
                           key: ValueKey(
                             '${event.eventId}${widget.timeline.events.length}',

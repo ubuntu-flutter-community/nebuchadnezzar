@@ -22,13 +22,25 @@ class ChatMasterListFilterBar extends StatelessWidget with WatchItMixin {
       child: YaruChoiceChipBar(
         showCheckMarks: false,
         shrinkWrap: false,
+        clearOnSelect: false,
+        selectedFirst: false,
         style: YaruChoiceChipBarStyle.stack,
-        labels: RoomsFilter.values
-            .map((e) => Text(e.localize(context.l10n)))
+        labels: RoomsFilter.shownValues
+            .map(
+              (e) => Tooltip(
+                message: e.localize(context.l10n),
+                child: Icon(
+                  e.iconData,
+                  semanticLabel: e.localize(context.l10n),
+                ),
+              ),
+            )
             .toList(),
-        isSelected: RoomsFilter.values.map((e) => e == roomsFilter).toList(),
+        isSelected: RoomsFilter.shownValues
+            .map((e) => e == roomsFilter)
+            .toList(),
         onSelected: (i) =>
-            di<ChatModel>().setRoomsFilter(RoomsFilter.values[i]),
+            di<ChatModel>().setRoomsFilter(RoomsFilter.shownValues[i]),
       ),
     );
   }
