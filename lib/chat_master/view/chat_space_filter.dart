@@ -8,12 +8,15 @@ import '../../common/view/chat_avatar.dart';
 import '../../common/view/ui_constants.dart';
 
 class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
-  const ChatSpaceFilter({super.key});
+  const ChatSpaceFilter({super.key, required this.show});
+
+  final bool show;
 
   @override
   Widget build(BuildContext context) {
+    const dimension = 40.0;
     final chatModel = di<ChatModel>();
-    final activeSpaceId = watchPropertyValue((ChatModel m) => m.activeSpace);
+    final activeSpace = watchPropertyValue((ChatModel m) => m.activeSpace);
 
     final spaces =
         watchStream(
@@ -23,38 +26,54 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
         ).data ??
         chatModel.spaces;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kMediumPlusPadding),
-      child: SizedBox(
-        height: 46,
-        child: ListView.separated(
-          separatorBuilder: (context, index) =>
-              const SizedBox(width: kSmallPadding),
-          scrollDirection: Axis.horizontal,
-          itemCount: spaces.length,
-          itemBuilder: (context, index) {
-            final space = spaces.elementAt(index);
-            return Tooltip(
-              message: space.name,
-              child: YaruSelectableContainer(
-                onTap: () {
-                  chatModel.setActiveSpace(space);
-                  di<SearchModel>().resetSpaceSearch();
-                },
-                padding: EdgeInsets.zero,
-                selected: activeSpaceId == space,
-                borderRadius: BorderRadius.circular(8),
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: ChatAvatar(
-                    avatarUri: space.avatar,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
+    watchPropertyValue((ChatModel m) => m.selectedRoom);
+
+    return AnimatedContainer(
+      alignment: Alignment.center,
+      width: show ? dimension + kMediumPlusPadding : 0,
+      duration: const Duration(milliseconds: 200),
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2, left: kMediumPlusPadding),
+              child: SizedBox(
+                width: dimension,
+                child: ListView.separated(
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: kSmallPadding),
+                  itemCount: spaces.length,
+                  itemBuilder: (context, index) {
+                    final space = spaces.elementAt(index);
+                    return Tooltip(
+                      message: space.name,
+                      child: SizedBox.square(
+                        dimension: dimension,
+                        child: YaruSelectableContainer(
+                          key: ValueKey('${space.id}_space'),
+                          onTap: () {
+                            chatModel.setActiveSpace(space);
+                            di<SearchModel>().resetSpaceSearch();
+                          },
+                          padding: EdgeInsets.zero,
+                          selected: activeSpace == space,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(3),
+                            child: ChatAvatar(
+                              avatarUri: space.avatar,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -5,6 +5,13 @@ import '../../common/event_x.dart';
 import '../../common/logging.dart';
 
 class TimelineModel extends SafeChangeNotifier {
+  Future<void> postTimelineLoad(Timeline timeline) async {
+    await loadRoomStates(timeline.room);
+    await loadAllKeysFromRoom(timeline);
+    await requestHistory(timeline, historyCount: 500);
+    await trySetReadMarker(timeline);
+  }
+
   final Map<String, Timeline> _timelines = {};
   Timeline? getTimeline(String roomId) => _timelines[roomId];
   void _setTimeline({required Timeline timeline}) {
@@ -28,27 +35,15 @@ class TimelineModel extends SafeChangeNotifier {
     _setUpdatingTimeline(roomId: timeline.room.id, value: true);
     _setTimeline(timeline: timeline);
 
-    try {
-      await timeline.requestHistory(filter: filter, historyCount: historyCount);
-    } on Exception catch (e, s) {
-      printMessageInDebugMode(e, s);
-    }
-
-    try {
-      await timeline.room.requestParticipants(
-        [
-          Membership.join,
-          Membership.invite,
-          Membership.knock,
-          if (timeline.room.isArchived) Membership.leave,
-        ],
-        true,
-        true,
-      );
-    } on Exception catch (_) {
-      printMessageInDebugMode(
-        'Failed to request all participants for room ${timeline.room.getLocalizedDisplayname()}.',
-      );
+    if (timeline.canRequestHistory) {
+      try {
+        await timeline.requestHistory(
+          filter: filter,
+          historyCount: historyCount,
+        );
+      } on Exception catch (e, s) {
+        printMessageInDebugMode(e, s);
+      }
     }
 
     _setUpdatingTimeline(roomId: timeline.room.id, value: false);

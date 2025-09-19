@@ -104,11 +104,12 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
             snapshot.connectionState == ConnectionState.done
             ? Row(
                 children: [
-                  if (context.showSideBar)
+                  if (context.showSideBar) ...[
                     const SizedBox(
                       width: kSideBarWith,
                       child: ChatMasterSidePanel(),
                     ),
+                  ],
                   if (context.showSideBar)
                     const VerticalDivider(width: 0, thickness: 0),
                   if (selectedRoom == null)

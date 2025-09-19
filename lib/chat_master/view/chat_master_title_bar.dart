@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -37,12 +38,21 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
             const ChatMasterNewChatPopupMenuButton()
           else
             const ChatMasterClearArchiveButton(),
-
           IconButton(
             tooltip: context.l10n.search,
             isSelected: searchActive,
             onPressed: searchModel.toggleSearch,
             icon: const Icon(YaruIcons.search),
+          ),
+          IconButton(
+            tooltip: context.l10n.archive,
+            selectedIcon: const Icon(YaruIcons.trash_filled),
+            isSelected: watchPropertyValue((ChatModel m) => m.archiveActive),
+            onPressed: () => showFutureLoadingDialog(
+              context: context,
+              future: di<ChatModel>().toggleArchive,
+            ),
+            icon: const Icon(YaruIcons.trash),
           ),
         ],
       ),

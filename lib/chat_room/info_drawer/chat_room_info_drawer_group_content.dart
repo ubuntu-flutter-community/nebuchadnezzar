@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_master/view/chat_space_discover_button.dart';
+import '../../chat_master/view/chat_spaces_search_list.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../common/view/chat_room_users_list.dart';
-import 'chat_room_info_drawer_topic.dart';
 import 'chat_room_info_drawer_media_grid.dart';
 import 'chat_room_info_drawer_media_grid_headline.dart';
+import 'chat_room_info_drawer_topic.dart';
 
 class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
   const ChatRoomInfoDrawerGroupContent({super.key, required this.room});
@@ -19,6 +21,17 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = context.theme;
+
+    if (room.isSpace) {
+      return const Column(
+        spacing: kMediumPadding,
+        children: [
+          ChatSpaceDiscoverButton(),
+          Expanded(child: ChatSpacesSearchList()),
+        ],
+      );
+    }
+
     return YaruExpansionPanel(
       border: Border.all(color: Colors.transparent),
       placeDividers: false,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -25,10 +24,6 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final searchActive = watchPropertyValue((SearchModel m) => m.searchActive);
-    final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
-
-    final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
-    final chatModel = di<ChatModel>();
 
     return Material(
       color: getPanelBg(context.theme),
@@ -37,9 +32,18 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
           const ChatMasterTitleBar(),
           if (searchActive) const ChatRoomsSearchField(),
           const ChatMasterListFilterBar(),
-          if (roomsFilter == RoomsFilter.spaces && !archiveActive)
-            const ChatSpaceFilter(),
-          const Expanded(child: ChatRoomsList()),
+          Expanded(
+            child: Row(
+              children: [
+                ChatSpaceFilter(
+                  show: watchPropertyValue(
+                    (ChatModel m) => m.roomsFilter == RoomsFilter.spaces,
+                  ),
+                ),
+                const Expanded(child: ChatRoomsList()),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kMediumPadding),
             child: Stack(
@@ -51,19 +55,6 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
                   onTap: () => showDialog(
                     context: context,
                     builder: (context) => const ChatSettingsDialog(),
-                  ),
-                ),
-                Positioned(
-                  right: kMediumPadding,
-                  child: IconButton(
-                    tooltip: context.l10n.archive,
-                    selectedIcon: const Icon(YaruIcons.trash_filled),
-                    isSelected: archiveActive,
-                    onPressed: () => showFutureLoadingDialog(
-                      context: context,
-                      future: chatModel.toggleArchive,
-                    ),
-                    icon: const Icon(YaruIcons.trash),
                   ),
                 ),
               ],

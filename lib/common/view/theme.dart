@@ -80,10 +80,15 @@ Color getMonochromeBg({
           : darkFactor ?? factor),
 );
 
-Color getEventBadgeColor(ThemeData theme) =>
-    theme.colorScheme.onSurface.withValues(alpha: 0.2);
+Color getEventBadgeColor(ThemeData theme, String type) =>
+    type == 'm.space.parent' || type == 'm.space.child'
+    ? theme.colorScheme.primary
+    : theme.colorScheme.onSurface.withValues(alpha: 0.2);
 
-Color getEventBadgeTextColor(ThemeData theme) => theme.colorScheme.onSurface;
+Color getEventBadgeTextColor(ThemeData theme, String type) =>
+    type == 'm.space.parent' || type == 'm.space.child'
+    ? theme.colorScheme.onPrimary
+    : theme.colorScheme.onSurface;
 
 ButtonStyle get textFieldSuffixStyle => IconButton.styleFrom(
   shape: const RoundedRectangleBorder(

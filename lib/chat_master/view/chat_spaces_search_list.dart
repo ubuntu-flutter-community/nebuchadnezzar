@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -20,27 +19,24 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
     final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
-    final spaceSearchVisible = watchPropertyValue(
-      (SearchModel m) => m.spaceSearchVisible,
-    );
+
     final spaceSearch = watchPropertyValue((SearchModel m) => m.spaceSearch);
     final spaceSearchL = watchPropertyValue(
       (SearchModel m) => m.spaceSearch?.length ?? 0,
     );
     if (spaceSearch == null) {
-      return const SliverToBoxAdapter(
+      return const Center(
         child: Padding(padding: EdgeInsets.all(kBigPadding), child: Progress()),
       );
     }
 
-    if (!spaceSearchVisible ||
-        archiveActive ||
+    if (archiveActive ||
         roomsFilter != RoomsFilter.spaces ||
         spaceSearchL == 0) {
-      return const SliverToBoxAdapter(child: SizedBox.shrink());
+      return const SizedBox.shrink();
     }
 
-    return SliverList.builder(
+    return ListView.builder(
       itemCount: spaceSearchL,
       itemBuilder: (context, index) {
         final chunk = spaceSearch.elementAt(index);
@@ -49,14 +45,21 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
           child: YaruMasterTile(
             key: ValueKey(chunk.roomId),
             leading: ChatAvatar(avatarUri: chunk.avatarUrl),
-            title: Text(chunk.name ?? chunk.roomId),
+            title: Text(
+              '${chunk.roomType == 'm.space' ? '(${context.l10n.space}) ' : ''}'
+              '${chunk.name ?? chunk.canonicalAlias ?? ''}',
+            ),
             subtitle: Tooltip(
               margin: const EdgeInsets.all(kBigPadding),
               message: chunk.topic ?? ' ',
-              child: Text(chunk.canonicalAlias ?? chunk.topic.toString()),
+              child: Text(chunk.canonicalAlias ?? chunk.topic ?? ''),
             ),
             onTap: () => ConfirmationDialog.show(
-              title: Text(context.l10n.joinRoom),
+              title: Text(
+                chunk.joinRule == 'knock'
+                    ? context.l10n.knock
+                    : context.l10n.joinRoom,
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 spacing: kMediumPadding,
@@ -72,16 +75,17 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
               ),
               context: context,
               onConfirm: () async {
-                Navigator.of(context).pop();
-                showFutureLoadingDialog(
-                  context: context,
-                  future: () =>
-                      di<CreateOrEditRoomModel>().knockOrJoinRoomChunk(chunk),
-                ).then((result) {
-                  if (result.asValue?.value != null) {
-                    di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+                final maybe = await di<CreateOrEditRoomModel>()
+                    .knockOrJoinRoomChunk(chunk);
+                if (maybe != null) {
+                  di<ChatModel>().setSelectedRoom(maybe);
+                  if (maybe.isSpace) {
+                    di<ChatModel>().setActiveSpace(maybe);
                   }
-                });
+                }
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ),

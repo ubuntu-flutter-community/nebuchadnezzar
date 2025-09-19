@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
+import '../l10n/app_localizations.dart';
+
 extension EventX on Event {
   bool get isImage => messageType == MessageTypes.Image;
   bool get isFile => messageType == MessageTypes.File;
@@ -25,10 +27,38 @@ extension EventX on Event {
     return null;
   }
 
+  String getCustomLocalizationOrFallback({
+    required AppLocalizations l10n,
+    MatrixLocalizations? i18n,
+  }) {
+    i18n ??= i18n = const MatrixDefaultLocalizations();
+    final maybeSpaceChildOrParentId =
+        '${stateKey?.isNotEmpty == true && room.client.getRoomById(stateKey!) != null ? room.client.getRoomById(stateKey!)?.getLocalizedDisplayname() : l10n.unavailable}';
+    if (type == 'm.space.parent') {
+      return '${l10n.space}: $maybeSpaceChildOrParentId';
+    } else if (type == 'm.space.child') {
+      final membership = unsigned?['membership'] as String?;
+      final via = content['via'] as List<dynamic>?;
+
+      if (membership == 'join' && via?.isEmpty == true) {
+        return 'Chat has been removed from this space ${maybeSpaceChildOrParentId == l10n.unavailable ? '' : ': $maybeSpaceChildOrParentId'}';
+      }
+
+      return '${l10n.chatHasBeenAddedToThisSpace}${maybeSpaceChildOrParentId == l10n.unavailable ? '' : ': $maybeSpaceChildOrParentId'}';
+    }
+
+    return calcLocalizedBodyFallback(i18n);
+  }
+
+  bool get showAsSpecialBadge =>
+      {'m.space.parent', 'm.space.child'}.contains(type);
+
   bool get showAsBadge =>
       type.contains('m.call.') ||
       messageType == MessageTypes.Emote ||
       {
+        'm.space.parent',
+        'm.space.child',
         EventTypes.RoomAvatar,
         EventTypes.RoomAliases,
         EventTypes.RoomTopic,

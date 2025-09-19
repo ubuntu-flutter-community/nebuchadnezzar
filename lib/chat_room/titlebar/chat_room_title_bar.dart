@@ -46,6 +46,7 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
                   room: room,
                 ),
         ),
+        if (room.isSpace) Text('(${context.l10n.space})'),
       ],
     ),
     leading: !Platforms.isMacOS && !context.showSideBar
@@ -54,16 +55,18 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
     actions: space(
       widthGap: kSmallPadding,
       children: [
-        if (!room.isArchived)
+        if (!room.isArchived && !room.isSpace) ...[
           ChatRoomPinButton(
             key: ValueKey('${room.id}_${room.isFavourite}'),
             room: room,
           ),
-        if (!room.isArchived)
+
           ChatRoomNotificationButton(
             key: ValueKey('${room.id}_${room.pushRuleState.hashCode}'),
             room: room,
           ),
+        ],
+
         IconButton(
           key: ValueKey('${room.id}_${room.isDirectChat}'),
           tooltip: context.l10n.chatDetails,

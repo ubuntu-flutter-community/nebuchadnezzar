@@ -43,7 +43,7 @@ dependencies:
   linkify: ^5.0.0
   liquid_progress_indicator_v2: ^0.5.0
   local_notifier: ^0.1.6
-  matrix: ^1.1.0
+  matrix: ^2.0.1
   mesh: ^0.5.0
   mime: ^2.0.0
   path: ^1.9.0
@@ -69,10 +69,7 @@ dependencies:
   window_manager: ^0.5.1
   xdg_directories: ^1.1.0
   xdg_icons: ^0.1.0
-  yaru:
-    git:
-      url: https://github.com/ubuntu/yaru.dart
-      ref: e09d8512665c521def2d65ca233c365e50eda711
+  yaru: ^8.3.0
 
 dev_dependencies:
   build_runner: ^2.4.8
