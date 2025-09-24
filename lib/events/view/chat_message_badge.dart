@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
@@ -33,7 +34,10 @@ class ChatMessageBadge extends StatelessWidget {
             Flexible(
               child: Badge(
                 textColor: getEventBadgeTextColor(theme, displayEvent.type),
-                backgroundColor: getEventBadgeColor(theme, displayEvent.type),
+                backgroundColor: getEventBadgeColor(
+                  theme,
+                  displayEvent.showAsSpecialBadge,
+                ),
                 label: ConstrainedBox(
                   constraints: const BoxConstraints(
                     maxWidth: 400,

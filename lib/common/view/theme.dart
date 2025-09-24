@@ -80,8 +80,8 @@ Color getMonochromeBg({
           : darkFactor ?? factor),
 );
 
-Color getEventBadgeColor(ThemeData theme, String type) =>
-    type == 'm.space.parent' || type == 'm.space.child'
+Color getEventBadgeColor(ThemeData theme, bool showAsSpecialBadge) =>
+    showAsSpecialBadge
     ? theme.colorScheme.primary
     : theme.colorScheme.onSurface.withValues(alpha: 0.2);
 

@@ -32,6 +32,11 @@ extension EventX on Event {
     MatrixLocalizations? i18n,
   }) {
     i18n ??= i18n = const MatrixDefaultLocalizations();
+
+    if (type == EventTypes.RoomPinnedEvents) {
+      return 'Event was pinned';
+    }
+
     final maybeSpaceChildOrParentId =
         '${stateKey?.isNotEmpty == true && room.client.getRoomById(stateKey!) != null ? room.client.getRoomById(stateKey!)?.getLocalizedDisplayname() : l10n.unavailable}';
     if (type == 'm.space.parent') {
@@ -50,8 +55,11 @@ extension EventX on Event {
     return calcLocalizedBodyFallback(i18n);
   }
 
-  bool get showAsSpecialBadge =>
-      {'m.space.parent', 'm.space.child'}.contains(type);
+  bool get showAsSpecialBadge => {
+    'm.space.parent',
+    'm.space.child',
+    EventTypes.RoomPinnedEvents,
+  }.contains(type);
 
   bool get showAsBadge =>
       type.contains('m.call.') ||

@@ -50,6 +50,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   @override
   void dispose() {
     _controller.dispose();
+    widget.timeline.cancelSubscriptions();
     super.dispose();
   }
 
