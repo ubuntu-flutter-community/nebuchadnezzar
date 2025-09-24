@@ -72,6 +72,10 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
         ).data ??
         [];
 
+    watchPropertyValue(
+      (TimelineModel m) => m.getUpdatingTimeline(widget.timeline.room.id),
+    );
+
     return Stack(
       children: [
         NotificationListener<ScrollEndNotification>(
