@@ -50,6 +50,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   @override
   void dispose() {
     _controller.dispose();
+    widget.timeline.cancelSubscriptions();
     super.dispose();
   }
 
@@ -70,6 +71,10 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
           initialValue: widget.timeline.room.pinnedEventIds,
         ).data ??
         [];
+
+    watchPropertyValue(
+      (TimelineModel m) => m.getUpdatingTimeline(widget.timeline.room.id),
+    );
 
     return Stack(
       children: [

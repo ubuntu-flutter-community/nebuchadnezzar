@@ -5,9 +5,33 @@ import '../../common/event_x.dart';
 import '../../common/logging.dart';
 
 class TimelineModel extends SafeChangeNotifier {
+  Future<Timeline> loadTimeline(
+    Room room, {
+    void Function(int)? onChange,
+    void Function(int)? onRemove,
+    void Function(int)? onInsert,
+    void Function()? onNewEvent,
+    void Function()? onUpdate,
+    String? eventContextId,
+    int? limit = Room.defaultHistoryCount,
+  }) async {
+    // This calls await postLoad() and then creates a new Timeline object
+    final timeline = await room.getTimeline(
+      onChange: onChange,
+      onRemove: onRemove,
+      onInsert: onInsert,
+      onNewEvent: onNewEvent,
+      onUpdate: onUpdate,
+      eventContextId: eventContextId,
+      limit: limit,
+    );
+
+    _setTimeline(timeline: timeline);
+    return timeline;
+  }
+
   Future<void> postTimelineLoad(Timeline timeline) async {
-    await loadRoomStates(timeline.room);
-    await loadAllKeysFromRoom(timeline);
+    _requestKeysForUndecryptableEvents(timeline);
     await requestHistory(timeline, historyCount: 500);
     await trySetReadMarker(timeline);
   }
@@ -71,26 +95,10 @@ class TimelineModel extends SafeChangeNotifier {
     }
   }
 
-  Future<void> loadAllKeysFromRoom(Timeline timeline) async {
+  // Request the keys for undecryptable events of this timeline
+  void _requestKeysForUndecryptableEvents(Timeline timeline) {
     try {
-      for (final event
-          in timeline.events
-              .toList(growable: false)
-              .where(
-                (e) =>
-                    e.isEncryptedAndCouldDecrypt &&
-                    !_hasLoadedKeys.contains(e.eventId),
-              )) {
-        await event.requestKey();
-        await timeline.room.client.encryption?.decryptRoomEvent(
-          event,
-          store: event.stateKey != null,
-        );
-        _hasLoadedKeys.add(event.eventId);
-        printMessageInDebugMode(
-          'Decrypted event ${event.eventId} in room ${timeline.room.getLocalizedDisplayname()}',
-        );
-      }
+      timeline.requestKeys(onlineKeyBackupOnly: false);
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
     }
