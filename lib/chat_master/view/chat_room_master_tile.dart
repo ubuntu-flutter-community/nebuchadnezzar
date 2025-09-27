@@ -4,9 +4,9 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../chat_room/common/view/chat_invitation_dialog.dart';
-import '../../chat_room/input/draft_model.dart';
+import '../../chat_room/input/draft_manager.dart';
 import '../../chat_room/titlebar/chat_room_pin_button.dart';
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/view/scaffold_state_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -22,9 +22,9 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final chatModel = di<ChatModel>();
+    final chatManager = di<ChatManager>();
 
-    final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
+    final selectedRoom = watchPropertyValue((ChatManager m) => m.selectedRoom);
 
     return ChatMasterTileMenu(
       room: room,
@@ -47,11 +47,11 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                   ? Text(room.getLocalizedDisplayname())
                   : ChatRoomMasterTileSubTitle(room: room),
               onTap: () async {
-                di<DraftModel>().setAttaching(false);
+                di<DraftManager>().setAttaching(false);
                 masterScaffoldKey.currentState?.hideDrawer();
                 return switch (room.membership) {
                   Membership.join ||
-                  Membership.leave => chatModel.setSelectedRoom(room),
+                  Membership.leave => chatManager.setSelectedRoom(room),
                   Membership.invite => showDialog(
                     context: context,
                     builder: (context) => ChatInvitationDialog(room: room),

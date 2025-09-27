@@ -5,15 +5,15 @@ import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../l10n/l10n.dart';
-import '../common/chat_model.dart';
+import '../common/chat_manager.dart';
 
 Future<void> chatNotificationHandler(
   BuildContext context,
   AsyncSnapshot<Event?> newValue,
   void Function() cancel,
 ) async {
-  final focused = await windowManager.isFocused();
-  final selectedRoom = di<ChatModel>().selectedRoom;
+  final focused = await di<WindowManager>().isFocused();
+  final selectedRoom = di<ChatManager>().selectedRoom;
   if (newValue.hasData && !focused && selectedRoom == null ||
       selectedRoom?.id != newValue.data?.room.id) {
     final event = newValue.data!;
@@ -27,11 +27,11 @@ Future<void> chatNotificationHandler(
       ],
     );
     notification.onClick = () {
-      di<ChatModel>().setSelectedRoom(event.room);
+      di<ChatManager>().setSelectedRoom(event.room);
     };
     notification.onClickAction = (i) {
-      di<ChatModel>().setSelectedRoom(event.room);
-      windowManager.focus();
+      di<ChatManager>().setSelectedRoom(event.room);
+      di<WindowManager>().focus();
     };
     notification.show();
   }

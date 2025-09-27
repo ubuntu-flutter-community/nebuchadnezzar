@@ -7,7 +7,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../settings_model.dart';
+import '../settings_manager.dart';
 
 class ChatSettingsCustomizationSection extends StatefulWidget {
   const ChatSettingsCustomizationSection({super.key});
@@ -29,7 +29,7 @@ class _ChatSettingsCustomizationSectionState
     super.initState();
 
     _textController = TextEditingController(
-      text: di<SettingsModel>().defaultReactions.join(),
+      text: di<SettingsManager>().defaultReactions.join(),
     );
   }
 
@@ -122,7 +122,7 @@ class _ChatSettingsCustomizationSectionState
         .map((e) => e)
         .where((e) => stringContainsEmoji(e))
         .toList();
-    di<SettingsModel>().setDefaultReactions(list);
+    di<SettingsManager>().setDefaultReactions(list);
   }
 }
 

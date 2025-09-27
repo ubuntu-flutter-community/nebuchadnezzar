@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
@@ -16,7 +16,7 @@ class ChatRoomsSearchField extends StatelessWidget {
       bottom: kMediumPadding,
     ),
     child: TextField(
-      onChanged: di<ChatModel>().setFilteredRoomsQuery,
+      onChanged: di<ChatManager>().setFilteredRoomsQuery,
       decoration: InputDecoration(
         hintText: context.l10n.search,
         label: Text(context.l10n.search),

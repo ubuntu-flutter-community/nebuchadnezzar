@@ -8,7 +8,8 @@ import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
+import '../edit_room_service.dart';
 
 class CreateOrEditRoomTopicTextField extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -38,7 +39,7 @@ class _CreateOrEditRoomTopicTextFieldState
     final enabledTopicField = widget.room == null
         ? true
         : watchStream(
-                (CreateOrEditRoomModel m) =>
+                (EditRoomService m) =>
                     m.getJoinedRoomCanChangeTopicStream(widget.room!),
                 initialValue: widget.room!.canChangeTopic,
                 preserveState: false,
@@ -50,8 +51,7 @@ class _CreateOrEditRoomTopicTextFieldState
     final roomTopic = widget.room == null
         ? null
         : watchStream(
-                (CreateOrEditRoomModel m) =>
-                    m.getJoinedRoomTopicStream(widget.room!),
+                (EditRoomService m) => m.getJoinedRoomTopicStream(widget.room!),
                 initialValue: widget.room!.topic,
                 preserveState: false,
               ).data ??
@@ -66,7 +66,7 @@ class _CreateOrEditRoomTopicTextFieldState
           controller: _topicController,
           autofocus: true,
           enabled: enabledTopicField,
-          onChanged: (v) => di<CreateOrEditRoomModel>().topicDraft.value = v,
+          onChanged: (v) => di<CreateRoomManager>().topicDraft.value = v,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(12),
             label: Text(l10n.chatDescription),
@@ -82,11 +82,10 @@ class _CreateOrEditRoomTopicTextFieldState
                               _topicController.clear();
                               return e.toString();
                             },
-                            future: () =>
-                                di<CreateOrEditRoomModel>().changeRoomTopic(
-                                  widget.room!,
-                                  _topicController.text,
-                                ),
+                            future: () => di<EditRoomService>().changeRoomTopic(
+                              widget.room!,
+                              _topicController.text,
+                            ),
                           ),
                     icon: topicIsSynced
                         ? YaruAnimatedVectorIcon(

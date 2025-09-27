@@ -5,8 +5,8 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'chat_download_service.dart';
 
-class ChatDownloadModel extends SafeChangeNotifier {
-  ChatDownloadModel({required ChatDownloadService service})
+class ChatDownloadManager extends SafeChangeNotifier {
+  ChatDownloadManager({required ChatDownloadService service})
     : _service = service {
     _propertiesChangedSub = _service.propertiesChanged.listen(
       (_) => notifyListeners(),

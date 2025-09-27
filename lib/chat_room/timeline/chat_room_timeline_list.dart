@@ -5,7 +5,7 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/date_time_x.dart';
 import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
@@ -13,10 +13,10 @@ import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../events/view/chat_event_tile.dart';
 import '../../l10n/l10n.dart';
-import '../../settings/settings_model.dart';
+import '../../settings/settings_manager.dart';
 import 'chat_room_pinned_events_dialog.dart';
 import 'chat_seen_by_indicator.dart';
-import 'timeline_model.dart';
+import 'timeline_manager.dart';
 
 class ChatRoomTimelineList extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -43,7 +43,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) => di<TimelineModel>().postTimelineLoad(widget.timeline),
+      (_) => di<TimelineManager>().postTimelineLoad(widget.timeline),
     );
   }
 
@@ -58,14 +58,14 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final showAvatarChanges = watchPropertyValue(
-      (SettingsModel m) => m.showChatAvatarChanges,
+      (SettingsManager m) => m.showChatAvatarChanges,
     );
     final showDisplayNameChanges = watchPropertyValue(
-      (SettingsModel m) => m.showChatDisplaynameChanges,
+      (SettingsManager m) => m.showChatDisplaynameChanges,
     );
     final pinnedEvents =
         watchStream(
-          (ChatModel m) => m
+          (ChatManager m) => m
               .getJoinedRoomUpdate(widget.timeline.room.id)
               .map((_) => widget.timeline.room.pinnedEventIds),
           initialValue: widget.timeline.room.pinnedEventIds,
@@ -73,7 +73,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
         [];
 
     watchPropertyValue(
-      (TimelineModel m) => m.getUpdatingTimeline(widget.timeline.room.id),
+      (TimelineManager m) => m.getUpdatingTimeline(widget.timeline.room.id),
     );
 
     return Stack(
@@ -122,7 +122,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                   : widget.timeline.events.elementAtOrNull(i - 1);
 
               if (i == 0) {
-                di<TimelineModel>().trySetReadMarker(widget.timeline);
+                di<TimelineManager>().trySetReadMarker(widget.timeline);
               }
 
               return AutoScrollTag(
@@ -201,7 +201,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                 YaruIcons.history,
                 color: theme.colorScheme.onSurface,
               ),
-              onPressed: () => di<TimelineModel>().requestHistory(
+              onPressed: () => di<TimelineManager>().requestHistory(
                 widget.timeline,
                 historyCount: 50,
               ),
@@ -232,7 +232,10 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     if (metrics.atEdge) {
       final isAtBottom = metrics.pixels != 0;
       if (isAtBottom) {
-        di<TimelineModel>().requestHistory(widget.timeline, historyCount: 150);
+        di<TimelineManager>().requestHistory(
+          widget.timeline,
+          historyCount: 150,
+        );
       } else {
         setState(() => _showScrollButton = false);
       }
@@ -245,7 +248,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   Future<void> _jump(Event event) async {
     int index = widget.timeline.events.indexOf(event);
     while (index == -1 && retryCount >= 0) {
-      await di<TimelineModel>().requestHistory(
+      await di<TimelineManager>().requestHistory(
         widget.timeline,
         historyCount: 5,
       );

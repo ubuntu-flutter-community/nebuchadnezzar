@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../authentication/authentication_model.dart';
+import '../../authentication/authentication_service.dart';
 import '../../authentication/view/chat_login_page.dart';
 import '../../encryption/view/check_encryption_setup_page.dart';
 import 'app.dart';
@@ -54,7 +54,7 @@ class _WaitForRegistrationPageState extends State<WaitForRegistrationPage> {
             darkTheme: widget.darkTheme,
             highContrastDarkTheme: widget.highContrastDarkTheme,
             highContrastTheme: widget.highContrastTheme,
-            child: (!di<AuthenticationModel>().isLogged)
+            child: (!di<AuthenticationService>().isLogged)
                 ? const ChatLoginPage()
                 : const CheckEncryptionSetupPage(),
           )

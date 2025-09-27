@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import 'chat_room_master_tile.dart';
 
 class ChatRoomsList extends StatelessWidget with WatchItMixin {
@@ -11,15 +11,15 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final filteredRooms =
         watchStream(
-          (ChatModel m) => m.syncStream.map((_) => m.filteredRooms),
-          initialValue: di<ChatModel>().filteredRooms,
+          (ChatManager m) => m.syncStream.map((_) => m.filteredRooms),
+          initialValue: di<ChatManager>().filteredRooms,
           preserveState: false,
         ).data ??
-        di<ChatModel>().filteredRooms;
-    watchPropertyValue((ChatModel m) => m.filteredRoomsQuery);
-    watchPropertyValue((ChatModel m) => m.roomsFilter);
-    watchPropertyValue((ChatModel m) => m.archiveActive);
-    watchPropertyValue((ChatModel m) => m.activeSpace);
+        di<ChatManager>().filteredRooms;
+    watchPropertyValue((ChatManager m) => m.filteredRoomsQuery);
+    watchPropertyValue((ChatManager m) => m.roomsFilter);
+    watchPropertyValue((ChatManager m) => m.archiveActive);
+    watchPropertyValue((ChatManager m) => m.activeSpace);
 
     return CustomScrollView(
       slivers: [

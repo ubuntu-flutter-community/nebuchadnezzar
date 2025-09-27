@@ -8,7 +8,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../settings/settings_model.dart';
+import '../../settings/settings_manager.dart';
 
 class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
   const ChatMessageMenuReactionPicker({super.key, required this.event});
@@ -18,7 +18,7 @@ class ChatMessageMenuReactionPicker extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final defaultReactions = watchPropertyValue(
-      (SettingsModel m) => m.defaultReactions,
+      (SettingsManager m) => m.defaultReactions,
     );
     return YaruExpandable(
       expandButtonPosition: YaruExpandableButtonPosition.start,

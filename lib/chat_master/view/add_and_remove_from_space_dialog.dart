@@ -4,8 +4,8 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
-import '../../common/chat_model.dart';
+import '../../chat_room/create_or_edit/edit_room_service.dart';
+import '../../common/chat_manager.dart';
 import '../../common/room_x.dart';
 import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
@@ -26,7 +26,7 @@ class _RemoveFromSpaceDialogState extends State<RemoveFromSpaceDialog> {
   @override
   void initState() {
     super.initState();
-    _selectedSpace = di<ChatModel>().spaces.firstWhereOrNull(
+    _selectedSpace = di<ChatManager>().spaces.firstWhereOrNull(
       (space) =>
           space.spaceChildren.map((c) => c.roomId).contains(widget.room.id),
     );
@@ -34,7 +34,7 @@ class _RemoveFromSpaceDialogState extends State<RemoveFromSpaceDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final spaces = watchPropertyValue((ChatModel m) => m.spaces);
+    final spaces = watchPropertyValue((ChatManager m) => m.spaces);
 
     return ConfirmationDialog(
       title: Text(context.l10n.removeFromSpace),
@@ -61,10 +61,8 @@ class _RemoveFromSpaceDialogState extends State<RemoveFromSpaceDialog> {
       confirmEnabled: _selectedSpace != null,
       onConfirm: () => showFutureLoadingDialog(
         context: context,
-        future: () => di<CreateOrEditRoomModel>().removeFromSpace(
-          widget.room,
-          _selectedSpace!,
-        ),
+        future: () =>
+            di<EditRoomService>().removeFromSpace(widget.room, _selectedSpace!),
       ),
     );
   }
@@ -84,7 +82,7 @@ class _AddToSpaceDialogState extends State<AddToSpaceDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final spaces = watchPropertyValue((ChatModel m) => m.spaces);
+    final spaces = watchPropertyValue((ChatManager m) => m.spaces);
 
     return ConfirmationDialog(
       title: Text(context.l10n.addToSpace),
@@ -112,10 +110,8 @@ class _AddToSpaceDialogState extends State<AddToSpaceDialog> {
       confirmEnabled: _selectedSpace != null,
       onConfirm: () => showFutureLoadingDialog(
         context: context,
-        future: () => di<CreateOrEditRoomModel>().addToSpace(
-          widget.room,
-          _selectedSpace!,
-        ),
+        future: () =>
+            di<EditRoomService>().addToSpace(widget.room, _selectedSpace!),
       ),
     );
   }

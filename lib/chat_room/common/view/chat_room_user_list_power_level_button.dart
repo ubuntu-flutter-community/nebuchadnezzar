@@ -7,7 +7,7 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/confirm.dart';
 import '../../../l10n/l10n.dart';
-import '../../create_or_edit/create_or_edit_room_model.dart';
+import '../../create_or_edit/edit_room_service.dart';
 
 class ChatRoomUserListTilePowerLevelButton extends StatelessWidget
     with WatchItMixin {
@@ -27,7 +27,7 @@ class ChatRoomUserListTilePowerLevelButton extends StatelessWidget
     final ownPowerLevel = myUser == null
         ? 0
         : watchStream(
-                (CreateOrEditRoomModel m) => m
+                (EditRoomService m) => m
                     .getJoinedRoomUpdate(room.id)
                     .map((r) => myUser.powerLevel),
                 initialValue: myUser.powerLevel,
@@ -36,7 +36,7 @@ class ChatRoomUserListTilePowerLevelButton extends StatelessWidget
 
     final userPowerLevel =
         watchStream(
-          (CreateOrEditRoomModel m) =>
+          (EditRoomService m) =>
               m.getJoinedRoomUpdate(room.id).map((r) => user.powerLevel),
           initialValue: user.powerLevel,
         ).data ??
@@ -84,10 +84,8 @@ class ChatRoomUserListTilePowerLevelButton extends StatelessWidget
               },
             ),
           ),
-          onConfirm: () => di<CreateOrEditRoomModel>().changePowerLevel(
-            user: user,
-            powerLevel: v,
-          ),
+          onConfirm: () =>
+              di<EditRoomService>().changePowerLevel(user: user, powerLevel: v),
         ),
         icon: Icon(
           YaruIcons.settings,

@@ -12,7 +12,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
-import '../encryption_model.dart';
+import '../encryption_manager.dart';
 
 class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
   const NewKeyCreatedPage({super.key, required this.encryptionKey});
@@ -23,13 +23,13 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = context.theme;
-    final model = di<EncryptionModel>();
+    final encryptionManager = di<EncryptionManager>();
 
     final recoveryKeyCopied = watchPropertyValue(
-      (EncryptionModel m) => m.recoveryKeyCopied,
+      (EncryptionManager m) => m.recoveryKeyCopied,
     );
     final storeInSecureStorage = watchPropertyValue(
-      (EncryptionModel m) => m.storeInSecureStorage,
+      (EncryptionManager m) => m.storeInSecureStorage,
     );
 
     return Scaffold(
@@ -75,7 +75,8 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                 YaruCheckboxListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
                   value: storeInSecureStorage,
-                  onChanged: (v) => model.setStoreInSecureStorage(v ?? false),
+                  onChanged: (v) =>
+                      encryptionManager.setStoreInSecureStorage(v ?? false),
                   title: Text(getSecureStorageLocalizedName(context.l10n)),
                   subtitle: Text(l10n.storeInSecureStorageDescription),
                 ),
@@ -88,7 +89,7 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                       context,
                       content: Text(l10n.copiedToClipboard),
                     );
-                    model.setRecoveryKeyCopied(true);
+                    encryptionManager.setRecoveryKeyCopied(true);
                   },
                   title: Text(l10n.copyToClipboard),
                   subtitle: Text(l10n.saveKeyManuallyDescription),
@@ -98,7 +99,7 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                   label: Text(l10n.next),
                   onPressed: (recoveryKeyCopied || storeInSecureStorage)
                       ? () {
-                          model.storeRecoveryKey();
+                          encryptionManager.storeRecoveryKey();
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                               builder: (context) =>

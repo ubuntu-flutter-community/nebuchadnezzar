@@ -6,7 +6,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/event_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../events/view/chat_event_tile.dart';
 
 class ChatRoomPinnedEventsDialog extends StatelessWidget with WatchItMixin {
@@ -18,7 +18,7 @@ class ChatRoomPinnedEventsDialog extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final pinnedEvents =
         watchStream(
-          (ChatModel m) => m
+          (ChatManager m) => m
               .getJoinedRoomUpdate(timeline.room.id)
               .map((_) => timeline.room.pinnedEventIds),
           initialValue: timeline.room.pinnedEventIds,

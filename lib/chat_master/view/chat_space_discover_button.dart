@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
-import '../../common/search_model.dart';
+import '../../common/chat_manager.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 
@@ -12,8 +12,8 @@ class ChatSpaceDiscoverButton extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final activeSpace = watchPropertyValue((ChatModel m) => m.activeSpace);
-    final spaceSearch = watchPropertyValue((SearchModel m) => m.spaceSearch);
+    final activeSpace = watchPropertyValue((ChatManager m) => m.activeSpace);
+    final spaceSearch = watchPropertyValue((SearchManager m) => m.spaceSearch);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: kBigPadding + kSmallPadding,
@@ -25,7 +25,7 @@ class ChatSpaceDiscoverButton extends StatelessWidget with WatchItMixin {
               label: Text(context.l10n.discover),
               onPressed: spaceSearch == null || activeSpace == null
                   ? null
-                  : () => di<SearchModel>().searchSpaces(
+                  : () => di<SearchManager>().searchSpaces(
                       activeSpace,
                       onFail: (error) {},
                     ),

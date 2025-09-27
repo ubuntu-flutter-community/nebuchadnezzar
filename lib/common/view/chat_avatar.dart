@@ -5,7 +5,7 @@ import 'package:yaru/yaru.dart';
 import 'avatar_vignette.dart';
 import 'safe_network_image.dart';
 import 'ui_constants.dart';
-import '../remote_image_model.dart';
+import '../remote_image_manager.dart';
 
 class ChatAvatar extends StatefulWidget with WatchItStatefulWidgetMixin {
   const ChatAvatar({
@@ -41,8 +41,8 @@ class _ChatAvatarState extends State<ChatAvatar> {
     super.initState();
     final uri = widget.avatarUri;
 
-    if (uri != null && di<RemoteImageModel>().getAvatarUri(uri) == null) {
-      _futureUri = di<RemoteImageModel>().fetchAvatarUri(
+    if (uri != null && di<RemoteImageManager>().getAvatarUri(uri) == null) {
+      _futureUri = di<RemoteImageManager>().fetchAvatarUri(
         uri: uri,
         width: widget.dimension,
         height: widget.dimension,
@@ -55,7 +55,7 @@ class _ChatAvatarState extends State<ChatAvatar> {
     final borderRadius =
         widget.borderRadius ?? BorderRadius.circular(widget.dimension / 2);
     final uri = watchPropertyValue(
-      (RemoteImageModel m) => m.getAvatarUri(widget.avatarUri),
+      (RemoteImageManager m) => m.getAvatarUri(widget.avatarUri),
     );
 
     final fallback = Icon(
@@ -69,7 +69,7 @@ class _ChatAvatarState extends State<ChatAvatar> {
       borderRadius: borderRadius,
       child: uri != null || _futureUri == null
           ? SafeNetworkImage(
-              httpHeaders: di<RemoteImageModel>().httpHeaders,
+              httpHeaders: di<RemoteImageManager>().httpHeaders,
               url: uri.toString(),
               fit: widget.fit,
               fallBackIcon: fallback,
@@ -78,7 +78,7 @@ class _ChatAvatarState extends State<ChatAvatar> {
               future: _futureUri,
               builder: (context, snapshot) => SafeNetworkImage(
                 fit: widget.fit,
-                httpHeaders: di<RemoteImageModel>().httpHeaders,
+                httpHeaders: di<RemoteImageManager>().httpHeaders,
                 url: snapshot.data?.toString(),
                 fallBackIcon: fallback,
               ),

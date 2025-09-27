@@ -3,11 +3,11 @@ import 'package:matrix/encryption.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../app/view/splash_page.dart';
-import '../../authentication/authentication_model.dart';
+import '../../authentication/authentication_service.dart';
 import '../../authentication/view/uia_request_handler.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../l10n/l10n.dart';
-import '../encryption_model.dart';
+import '../encryption_manager.dart';
 import 'encryption_setup_error_page.dart';
 import 'new_key_created_page.dart';
 import 'unlock_chat_page.dart';
@@ -24,13 +24,13 @@ class _SetupEncryptedChatPageState extends State<SetupEncryptedChatPage> {
   @override
   void initState() {
     super.initState();
-    di<EncryptionModel>().startBootstrap(wipe: false);
+    di<EncryptionManager>().startBootstrap(wipe: false);
   }
 
   @override
   Widget build(BuildContext context) {
     registerStreamHandler(
-      select: (AuthenticationModel m) => m.onUiaRequestStream,
+      select: (AuthenticationService m) => m.onUiaRequestStream,
       handler: (context, newValue, cancel) async {
         if (newValue.hasData) {
           await uiaRequestHandler(
@@ -43,17 +43,17 @@ class _SetupEncryptedChatPageState extends State<SetupEncryptedChatPage> {
     );
 
     final recoveryKeyStored = watchPropertyValue(
-      (EncryptionModel m) => m.recoveryKeyStored,
+      (EncryptionManager m) => m.recoveryKeyStored,
     );
 
-    final key = watchPropertyValue((EncryptionModel m) => m.key);
+    final key = watchPropertyValue((EncryptionManager m) => m.key);
 
     if (key != null && recoveryKeyStored == false) {
       return NewKeyCreatedPage(encryptionKey: key);
     }
 
     final bootstrapState = watchPropertyValue(
-      (EncryptionModel m) => m.bootstrap?.state,
+      (EncryptionManager m) => m.bootstrap?.state,
     );
 
     return switch (bootstrapState) {

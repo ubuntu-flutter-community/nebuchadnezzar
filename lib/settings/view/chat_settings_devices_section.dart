@@ -9,7 +9,7 @@ import '../../common/date_time_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../l10n/l10n.dart';
-import '../account_model.dart';
+import '../account_manager.dart';
 import '../matrix_devices_x.dart';
 
 class ChatSettingsDevicesSection extends StatefulWidget
@@ -32,13 +32,13 @@ class _ChatSettingsDevicesSectionState
   }
 
   void _getFuture() {
-    _devicesFuture = di<AccountModel>().getDevices();
+    _devicesFuture = di<AccountManager>().getDevices();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final devices = watchStream((AccountModel m) => m.deviceStream).data;
+    final devices = watchStream((AccountManager m) => m.deviceStream).data;
 
     return FutureBuilder(
       future: _devicesFuture,
@@ -76,12 +76,12 @@ class _DeviceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
-    final keys = di<AccountModel>().getDeviceKeys(device);
-    final isOwnDevice = device.deviceId == di<AccountModel>().myDeviceId;
+    final keys = di<AccountManager>().getDeviceKeys(device);
+    final isOwnDevice = device.deviceId == di<AccountManager>().myDeviceId;
 
     return YaruTile(
       leading: IconButton.outlined(
-        onPressed: () => di<AccountModel>().verifyDeviceAction(
+        onPressed: () => di<AccountManager>().verifyDeviceAction(
           device: device,
           context: context,
           onDone: onDone,
@@ -101,7 +101,8 @@ class _DeviceTile extends StatelessWidget {
           ? IconButton(
               onPressed: () => showFutureLoadingDialog(
                 context: context,
-                future: () => di<AccountModel>().deleteDevice(device.deviceId),
+                future: () =>
+                    di<AccountManager>().deleteDevice(device.deviceId),
               ),
               icon: Icon(YaruIcons.trash, color: context.colorScheme.error),
             )

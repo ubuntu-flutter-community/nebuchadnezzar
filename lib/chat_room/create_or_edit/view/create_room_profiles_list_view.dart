@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../authentication/authentication_model.dart';
+import '../../../authentication/authentication_service.dart';
 import '../../../common/view/chat_avatar.dart';
 import '../../../common/view/ui_constants.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
 
 class CreateRoomProfilesListView extends StatelessWidget with WatchItMixin {
   const CreateRoomProfilesListView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final profiles = watchValue((CreateOrEditRoomModel m) => m.profilesDraft);
+    final profiles = watchValue((CreateRoomManager m) => m.profilesDraft);
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(
@@ -29,11 +29,11 @@ class CreateRoomProfilesListView extends StatelessWidget with WatchItMixin {
           leading: ChatAvatar(avatarUri: profile.avatarUrl),
           title: Text(profile.displayName ?? profile.userId, maxLines: 1),
           subtitle: Text(profile.userId, maxLines: 1),
-          trailing: profile.userId == di<AuthenticationModel>().loggedInUserId
+          trailing: profile.userId == di<AuthenticationService>().loggedInUserId
               ? null
               : IconButton(
-                  onPressed: () => di<CreateOrEditRoomModel>()
-                      .removeProfileFromDraft(profile),
+                  onPressed: () =>
+                      di<CreateRoomManager>().removeProfileFromDraft(profile),
                   icon: const Icon(YaruIcons.trash),
                 ),
         );

@@ -6,14 +6,14 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/chat_model.dart';
+import '../../../common/chat_manager.dart';
 import '../../../common/logging.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../common/view/chat_typing_indicator.dart';
-import '../draft_model.dart';
+import '../draft_manager.dart';
 import 'chat_attachment_draft_panel.dart';
 import 'chat_input_emoji_picker.dart';
 
@@ -34,7 +34,7 @@ class _ChatInputState extends State<ChatInput> {
   void initState() {
     super.initState();
     _sendController = TextEditingController(
-      text: di<DraftModel>().getTextDraft(widget.room.id),
+      text: di<DraftManager>().getTextDraft(widget.room.id),
     );
     _sendNode = FocusNode(
       onKeyEvent: (node, event) {
@@ -75,40 +75,35 @@ class _ChatInputState extends State<ChatInput> {
     super.dispose();
   }
 
-  Future<void> send() async {
-    final model = di<DraftModel>();
-    if (model.sending) {
-      return;
-    }
-
-    await model.send(
-      room: widget.room,
-      onFail: (error) => showSnackBar(context, content: Text(error)),
-      onSuccess: () {
-        _sendController.clear();
-        _sendNode.requestFocus();
-      },
-    );
-  }
+  Future<void> send() async => di<DraftManager>().send(
+    room: widget.room,
+    onFail: (error) => showSnackBar(context, content: Text(error)),
+    onSuccess: () {
+      _sendController.clear();
+      _sendNode.requestFocus();
+    },
+  );
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final draftModel = di<DraftModel>();
+    final draftManager = di<DraftManager>();
     final draftFiles = watchPropertyValue(
-      (DraftModel m) => m.getFilesDraft(widget.room.id),
+      (DraftManager m) => m.getFilesDraft(widget.room.id),
     );
-    final attaching = watchPropertyValue((DraftModel m) => m.attaching);
-    final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
-    final sending = watchPropertyValue((DraftModel m) => m.sending);
+    final attaching = watchPropertyValue((DraftManager m) => m.attaching);
+    final archiveActive = watchPropertyValue(
+      (ChatManager m) => m.archiveActive,
+    );
+    final sending = watchPropertyValue((DraftManager m) => m.sending);
 
-    final replyEvent = watchPropertyValue((DraftModel m) => m.replyEvent);
+    final replyEvent = watchPropertyValue((DraftManager m) => m.replyEvent);
     final editEvent = watchPropertyValue(
-      (DraftModel m) => m.getEditEvent(widget.room.id),
+      (DraftManager m) => m.getEditEvent(widget.room.id),
     );
 
     final draft = watchPropertyValue(
-      (DraftModel m) => m.getTextDraft(widget.room.id),
+      (DraftManager m) => m.getTextDraft(widget.room.id),
     );
     _sendController.text = draft ?? '';
     _sendNode.requestFocus();
@@ -146,7 +141,7 @@ class _ChatInputState extends State<ChatInput> {
                   ),
                   child: YaruInfoBox(
                     trailing: IconButton(
-                      onPressed: () => di<DraftModel>()
+                      onPressed: () => di<DraftManager>()
                         ..setReplyEvent(null)
                         ..setEditEvent(roomId: widget.room.id, event: null)
                         ..setTextDraft(
@@ -183,7 +178,7 @@ class _ChatInputState extends State<ChatInput> {
                   enabled: !archiveActive && !unAcceptedDirectChat,
                   autofocus: true,
                   onChanged: (v) {
-                    draftModel.setTextDraft(
+                    draftManager.setTextDraft(
                       roomId: widget.room.id,
                       draft: v,
                       notify: false,
@@ -207,7 +202,7 @@ class _ChatInputState extends State<ChatInput> {
                                     archiveActive ||
                                     unAcceptedDirectChat
                                 ? null
-                                : () => draftModel.addAttachment(
+                                : () => draftManager.addAttachment(
                                     widget.room.id,
                                     onFail: (error) =>
                                         showErrorSnackBar(context, error),
@@ -231,7 +226,7 @@ class _ChatInputState extends State<ChatInput> {
                                 : (cat, emo) {
                                     _sendController.text =
                                         _sendController.text + emo.emoji;
-                                    draftModel.setTextDraft(
+                                    draftManager.setTextDraft(
                                       roomId: widget.room.id,
                                       draft: _sendController.text,
                                       notify: true,

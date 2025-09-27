@@ -5,8 +5,8 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'logging.dart';
 
-class SearchModel extends SafeChangeNotifier {
-  SearchModel({required Client client}) : _client = client;
+class SearchManager extends SafeChangeNotifier {
+  SearchManager({required Client client}) : _client = client;
 
   final Client _client;
 

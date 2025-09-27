@@ -5,7 +5,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
-import '../timeline/timeline_model.dart';
+import '../timeline/timeline_manager.dart';
 
 class ChatRoomInfoDrawerMediaGridHeadline extends StatelessWidget
     with WatchItMixin {
@@ -16,7 +16,7 @@ class ChatRoomInfoDrawerMediaGridHeadline extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final updating = watchPropertyValue(
-      (TimelineModel m) => m.getUpdatingTimeline(room.id),
+      (TimelineManager m) => m.getUpdatingTimeline(room.id),
     );
     return Row(
       spacing: kSmallPadding,

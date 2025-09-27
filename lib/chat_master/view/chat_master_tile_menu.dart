@@ -4,9 +4,9 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
+import '../../chat_room/create_or_edit/edit_room_service.dart';
 import '../../chat_room/titlebar/chat_room_notification_button.dart';
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
@@ -48,7 +48,7 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                   onPressed: () => showFutureLoadingDialog(
                     context: context,
                     future: () =>
-                        di<CreateOrEditRoomModel>().toggleFavorite(widget.room),
+                        di<EditRoomService>().toggleFavorite(widget.room),
                   ),
                   leadingIcon: const Icon(YaruIcons.pin),
                   child: Text(
@@ -77,12 +77,11 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                     onConfirm: () =>
                         showFutureLoadingDialog(
                           context: context,
-                          future: () => di<CreateOrEditRoomModel>().leaveRoom(
-                            widget.room,
-                          ),
+                          future: () =>
+                              di<EditRoomService>().leaveRoom(widget.room),
                         ).then((_) {
                           if (mounted) {
-                            di<ChatModel>().setSelectedRoom(null);
+                            di<ChatManager>().setSelectedRoom(null);
                           }
                         }),
                   ),

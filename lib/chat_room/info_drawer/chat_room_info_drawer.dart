@@ -4,7 +4,7 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../common/room_x.dart';
 import '../../common/view/ui_constants.dart';
-import '../create_or_edit/create_or_edit_room_model.dart';
+import '../create_or_edit/edit_room_service.dart';
 import 'chat_room_info_drawer_direct_chat_content.dart';
 import 'chat_room_info_drawer_direct_chat_header.dart';
 import 'chat_room_info_drawer_forget_button.dart';
@@ -20,7 +20,7 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final unAcceptedDirectChat = watchStream(
-      (CreateOrEditRoomModel m) => m
+      (EditRoomService m) => m
           .getUsersStreamOfJoinedRoom(
             room,
             membershipFilter: [Membership.invite],

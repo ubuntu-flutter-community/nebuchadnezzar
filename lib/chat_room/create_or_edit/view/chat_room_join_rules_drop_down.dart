@@ -7,7 +7,8 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
+import '../edit_room_service.dart';
 
 class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
   const ChatRoomJoinRulesDropDown({super.key, required this.room});
@@ -20,7 +21,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
 
     final canChangeJoinRules =
         watchStream(
-          (CreateOrEditRoomModel m) => m.getCanChangeJoinRulesStream(room),
+          (EditRoomService m) => m.getCanChangeJoinRulesStream(room),
           preserveState: false,
           initialValue: room.canChangeJoinRules,
         ).data ??
@@ -28,7 +29,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
 
     final joinRules =
         watchStream(
-          (CreateOrEditRoomModel m) => m.getJoinedRoomJoinRulesStream(room),
+          (EditRoomService m) => m.getJoinedRoomJoinRulesStream(room),
           preserveState: false,
           initialValue: room.joinRules,
         ).data ??
@@ -46,7 +47,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
         onSelected: canChangeJoinRules
             ? (v) => showFutureLoadingDialog(
                 context: context,
-                future: () => di<CreateOrEditRoomModel>().setJoinRulesForRoom(
+                future: () => di<EditRoomService>().setJoinRulesForRoom(
                   room: room,
                   value: v,
                 ),
@@ -68,10 +69,11 @@ class CreateRoomVisibilitySwitch extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) => SwitchListTile(
     title: Text(context.l10n.groupCanBeFoundViaSearch),
     value:
-        watchValue((CreateOrEditRoomModel m) => m.visibilityDraft) ==
+        watchValue((CreateRoomManager m) => m.visibilityDraft) ==
         Visibility.public,
-    onChanged: (value) => di<CreateOrEditRoomModel>().visibilityDraft.value =
-        value ? Visibility.public : Visibility.private,
+    onChanged: (value) => di<CreateRoomManager>().visibilityDraft.value = value
+        ? Visibility.public
+        : Visibility.private,
   );
 }
 
@@ -82,15 +84,13 @@ class CreateRoomPresetSwitch extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final preset = watchValue(
-      (CreateOrEditRoomModel m) => m.createRoomPresetDraft,
-    );
+    final preset = watchValue((CreateRoomManager m) => m.createRoomPresetDraft);
 
     return SwitchListTile(
       title: Text(l10n.groupIsPublic),
       value: preset == CreateRoomPreset.publicChat,
       onChanged: (value) =>
-          di<CreateOrEditRoomModel>().createRoomPresetDraft.value = value
+          di<CreateRoomManager>().createRoomPresetDraft.value = value
           ? CreateRoomPreset.publicChat
           : CreateRoomPreset.privateChat,
     );

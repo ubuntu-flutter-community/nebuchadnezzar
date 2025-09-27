@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/icons.dart';
 
-import '../../authentication/authentication_model.dart';
+import '../../authentication/authentication_service.dart';
 import '../../common/event_x.dart';
 import '../../common/uri_x.dart';
 import '../../common/view/ui_constants.dart';
@@ -39,7 +39,7 @@ class ChatMap extends StatelessWidget {
           children: [
             Map(
               isUserMessage:
-                  event.senderId == di<AuthenticationModel>().loggedInUserId,
+                  event.senderId == di<AuthenticationService>().loggedInUserId,
               latitude: latlong.first!,
               longitude: latlong.last!,
             ),

@@ -9,10 +9,10 @@ import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../common/view/chat_room_users_list.dart';
+import '../create_room_manager.dart';
 import 'chat_room_permissions.dart';
 import 'create_or_edit_room_avatar.dart';
 import 'create_or_edit_room_header.dart';
-import '../create_or_edit_room_model.dart';
 import 'create_or_edit_room_user_search_auto_complete.dart';
 import 'create_room_button.dart';
 import 'create_room_profiles_list_view.dart';
@@ -33,7 +33,7 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
   @override
   void initState() {
     super.initState();
-    di<CreateOrEditRoomModel>().init(room: widget.room);
+    di<CreateRoomManager>().init(room: widget.room);
   }
 
   @override

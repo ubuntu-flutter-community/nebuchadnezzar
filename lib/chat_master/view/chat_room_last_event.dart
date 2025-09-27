@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../chat_room/timeline/timeline_model.dart';
+import '../../chat_room/timeline/timeline_manager.dart';
 import '../../common/event_x.dart';
 import '../../l10n/l10n.dart';
 
@@ -19,7 +19,7 @@ class _ChatRoomLastEventState extends State<ChatRoomLastEvent> {
   @override
   void initState() {
     super.initState();
-    di<TimelineModel>().loadSingleKeyForEvent(widget.lastEvent);
+    di<TimelineManager>().loadSingleKeyForEvent(widget.lastEvent);
   }
 
   @override

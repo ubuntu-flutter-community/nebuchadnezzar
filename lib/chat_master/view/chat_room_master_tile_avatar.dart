@@ -3,7 +3,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/push_rule_state_x.dart';
 import '../../common/view/chat_avatar.dart';
 
@@ -16,7 +16,7 @@ class ChatRoomMasterTileAvatar extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final pushRuleState =
         watchStream(
-          (ChatModel m) => m.syncStream.map((_) => room.pushRuleState),
+          (ChatManager m) => m.syncStream.map((_) => room.pushRuleState),
           initialValue: room.pushRuleState,
         ).data ??
         room.pushRuleState;

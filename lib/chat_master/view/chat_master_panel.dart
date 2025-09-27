@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/rooms_filter.dart';
-import '../../common/search_model.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
@@ -23,7 +23,9 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final searchActive = watchPropertyValue((SearchModel m) => m.searchActive);
+    final searchActive = watchPropertyValue(
+      (SearchManager m) => m.searchActive,
+    );
 
     return Material(
       color: getPanelBg(context.theme),
@@ -37,7 +39,7 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
               children: [
                 ChatSpaceFilter(
                   show: watchPropertyValue(
-                    (ChatModel m) => m.roomsFilter == RoomsFilter.spaces,
+                    (ChatManager m) => m.roomsFilter == RoomsFilter.spaces,
                   ),
                 ),
                 const Expanded(child: ChatRoomsList()),

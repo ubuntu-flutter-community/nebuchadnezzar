@@ -10,8 +10,8 @@ import '../app/app_config.dart';
 import '../common/logging.dart';
 import '../common/platforms.dart';
 
-class AuthenticationModel extends SafeChangeNotifier {
-  AuthenticationModel({required Client client}) : _client = client;
+class AuthenticationService {
+  AuthenticationService({required Client client}) : _client = client;
 
   final Client _client;
 
@@ -28,20 +28,9 @@ class AuthenticationModel extends SafeChangeNotifier {
   Stream<UiaRequest<dynamic>> get onUiaRequestStream =>
       _client.onUiaRequest.stream;
 
-  bool _processingAccess = false;
-  bool get processingAccess => _processingAccess;
-  void _setProcessingAccess(bool value) {
-    if (value == _processingAccess) return;
-    _processingAccess = value;
-    notifyListeners();
-  }
+  final processingAccess = SafeValueNotifier<bool>(false);
 
-  bool _showPassword = false;
-  bool get showPassword => _showPassword;
-  void toggleShowPassword({bool? forceValue}) {
-    _showPassword = forceValue ?? !_showPassword;
-    notifyListeners();
-  }
+  final showPassword = SafeValueNotifier<bool>(false);
 
   final int _timeoutSeconds = 65;
   Future<void> login({
@@ -51,7 +40,7 @@ class AuthenticationModel extends SafeChangeNotifier {
     required Function(String error) onFail,
     required Future Function() onSuccess,
   }) async {
-    _setProcessingAccess(true);
+    processingAccess.value = true;
     try {
       await _client.checkHomeserver(Uri.https(homeServer, ''));
 
@@ -70,7 +59,7 @@ class AuthenticationModel extends SafeChangeNotifier {
       await onFail(e.toString());
       printMessageInDebugMode(e, s);
     } finally {
-      _setProcessingAccess(false);
+      processingAccess.value = false;
     }
   }
 
@@ -79,7 +68,7 @@ class AuthenticationModel extends SafeChangeNotifier {
     required Function(String error) onFail,
     required Future Function() onSuccess,
   }) async {
-    _setProcessingAccess(true);
+    processingAccess.value = true;
     try {
       final redirectUrl = Platforms.isWeb
           ? Uri.parse(
@@ -135,18 +124,15 @@ class AuthenticationModel extends SafeChangeNotifier {
       printMessageInDebugMode('Error during client.login with token: $e', s);
       onFail('Failed to login with SSO token: ${e.toString()}');
     } finally {
-      _setProcessingAccess(false);
+      processingAccess.value = false;
     }
   }
 
-  Future logout({required Function(String error) onFail}) async {
-    _setProcessingAccess(true);
+  Future<void> logout() async {
     try {
       await _client.logout();
-    } on Exception catch (e) {
-      onFail(e.toString());
-    } finally {
-      _setProcessingAccess(false);
+    } on Exception {
+      rethrow;
     }
   }
 }

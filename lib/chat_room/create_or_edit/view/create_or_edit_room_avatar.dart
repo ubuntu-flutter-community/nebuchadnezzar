@@ -9,38 +9,32 @@ import '../../../common/view/chat_avatar.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
+import '../edit_room_service.dart';
 
-class CreateOrEditRoomAvatar extends StatefulWidget
-    with WatchItStatefulWidgetMixin {
+class CreateOrEditRoomAvatar extends StatelessWidget with WatchItMixin {
   const CreateOrEditRoomAvatar({super.key, required this.room});
 
   final Room? room;
 
-  @override
-  State<CreateOrEditRoomAvatar> createState() => _CreateOrEditRoomAvatarState();
-}
-
-class _CreateOrEditRoomAvatarState extends State<CreateOrEditRoomAvatar> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
 
     final avatarDraftBytes = watchValue(
-      (CreateOrEditRoomModel m) => m.avatarDraft,
+      (CreateRoomManager m) => m.avatarDraft,
     )?.bytes;
 
     return Stack(
       children: [
         Padding(
           padding: const EdgeInsets.all(kSmallPadding),
-          child: widget.room != null
+          child: room != null
               ? ChatAvatar(
                   avatarUri: watchStream(
-                    (CreateOrEditRoomModel m) =>
-                        m.getJoinedRoomAvatarStream(widget.room),
-                    initialValue: widget.room?.avatar,
+                    (EditRoomService m) => m.getJoinedRoomAvatarStream(room),
+                    initialValue: room?.avatar,
                   ).data,
                   dimension: 80,
                   fallBackIconSize: 40,
@@ -62,8 +56,8 @@ class _CreateOrEditRoomAvatarState extends State<CreateOrEditRoomAvatar> {
                   ),
                 ),
         ),
-        if (widget.room?.canChangeStateEvent(EventTypes.RoomAvatar) == true ||
-            widget.room == null)
+        if (room?.canChangeStateEvent(EventTypes.RoomAvatar) == true ||
+            room == null)
           Positioned(
             bottom: 0,
             right: 0,
@@ -78,11 +72,16 @@ class _CreateOrEditRoomAvatarState extends State<CreateOrEditRoomAvatar> {
               ),
               onPressed: () => showFutureLoadingDialog(
                 context: context,
-                future: () => di<CreateOrEditRoomModel>().setRoomAvatar(
-                  room: widget.room,
-                  wrongFormatString: context.l10n.notAnImage,
-                ),
-              ).then((_) => setState(() {})),
+                future: () => room == null
+                    ? di<CreateRoomManager>().setRoomAvatar(
+                        room: room,
+                        wrongFormatString: context.l10n.notAnImage,
+                      )
+                    : di<EditRoomService>().setRoomAvatar(
+                        room: room,
+                        wrongFormatString: context.l10n.notAnImage,
+                      ),
+              ),
               icon: Icon(
                 YaruIcons.pen,
                 color: contrastColor(colorScheme.primary),

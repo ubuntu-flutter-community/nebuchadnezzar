@@ -9,8 +9,8 @@ import '../../common/local_image_service.dart';
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
 
-class DraftModel extends SafeChangeNotifier {
-  DraftModel({
+class DraftManager extends SafeChangeNotifier {
+  DraftManager({
     required Client client,
     required LocalImageService localImageService,
   }) : _client = client,
@@ -50,6 +50,7 @@ class DraftModel extends SafeChangeNotifier {
     required Function(String error) onFail,
     required Function() onSuccess,
   }) async {
+    if (_sending) return;
     _setSending(true);
 
     try {

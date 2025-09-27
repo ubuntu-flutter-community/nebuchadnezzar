@@ -8,7 +8,7 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
-import '../authentication_model.dart';
+import '../authentication_service.dart';
 
 Future<void> uiaRequestHandler({
   required UiaRequest uiaRequest,
@@ -16,8 +16,8 @@ Future<void> uiaRequestHandler({
   required bool rootNavigator,
 }) async {
   final l10n = context.l10n;
-  var currentThreepidCreds = di<AuthenticationModel>().currentThreepidCreds;
-  var currentClientSecret = di<AuthenticationModel>().currentClientSecret;
+  var currentThreepidCreds = di<AuthenticationService>().currentThreepidCreds;
+  var currentClientSecret = di<AuthenticationService>().currentClientSecret;
   final client = di<Client>();
   final navigatorContext = Navigator.of(
     context,

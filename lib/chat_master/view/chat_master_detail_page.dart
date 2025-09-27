@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../authentication/authentication_model.dart';
+import '../../authentication/authentication_service.dart';
 import '../../authentication/view/chat_login_page.dart';
 import '../../authentication/view/uia_request_handler.dart';
 import '../../chat_room/common/view/chat_no_selected_room_page.dart';
 import '../../chat_room/common/view/chat_room_page.dart';
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
-import '../../encryption/encryption_model.dart';
+import '../../encryption/encryption_manager.dart';
 import '../../encryption/view/key_verification_dialog.dart';
 import '../../notification/chat_notification_handler.dart';
 import 'chat_master_panel.dart';
@@ -32,13 +32,13 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
   @override
   void initState() {
     super.initState();
-    _initAfterEncryptionSetup = di<ChatModel>().initAfterEncryptionSetup();
+    _initAfterEncryptionSetup = di<ChatManager>().initAfterEncryptionSetup();
   }
 
   @override
   Widget build(BuildContext context) {
     registerStreamHandler(
-      select: (EncryptionModel m) => m.onKeyVerificationRequest,
+      select: (EncryptionManager m) => m.onKeyVerificationRequest,
       handler: (context, newValue, cancel) {
         if (newValue.hasData) {
           KeyVerificationDialog(
@@ -50,7 +50,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
     );
 
     registerStreamHandler(
-      select: (AuthenticationModel m) => m.onUiaRequestStream,
+      select: (AuthenticationService m) => m.onUiaRequestStream,
       handler: (context, newValue, cancel) async {
         if (newValue.hasData) {
           await uiaRequestHandler(
@@ -63,7 +63,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
     );
 
     registerStreamHandler(
-      select: (AuthenticationModel m) => m.loginStateStream,
+      select: (AuthenticationService m) => m.loginStateStream,
       handler: (context, newValue, cancel) {
         if (newValue.hasData && newValue.data != LoginState.loggedIn) {
           Navigator.of(context).pushAndRemoveUntil(
@@ -75,7 +75,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
     );
 
     registerStreamHandler(
-      select: (ChatModel m) => m.notificationStream,
+      select: (ChatManager m) => m.notificationStream,
       handler: chatNotificationHandler,
     );
 
@@ -85,9 +85,9 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
     //   handler: callHandler,
     // );
 
-    final selectedRoom = watchPropertyValue((ChatModel m) => m.selectedRoom);
+    final selectedRoom = watchPropertyValue((ChatManager m) => m.selectedRoom);
     final isArchivedRoom = watchPropertyValue(
-      (ChatModel m) => m.selectedRoom?.isArchived == true,
+      (ChatManager m) => m.selectedRoom?.isArchived == true,
     );
 
     return Scaffold(

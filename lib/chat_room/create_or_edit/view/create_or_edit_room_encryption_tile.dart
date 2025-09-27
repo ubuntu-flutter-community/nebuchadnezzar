@@ -7,7 +7,8 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
+import '../edit_room_service.dart';
 
 class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
   const CreateOrEditRoomEncryptionTile({super.key, this.room});
@@ -17,9 +18,9 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final encrypted = room == null
-        ? watchValue((CreateOrEditRoomModel m) => m.enableEncryptionDraft)
+        ? watchValue((CreateRoomManager m) => m.enableEncryptionDraft)
         : watchStream(
-                (CreateOrEditRoomModel m) => m.getIsRoomEncryptedStream(room),
+                (EditRoomService m) => m.getIsRoomEncryptedStream(room),
                 initialValue: room!.encrypted,
                 preserveState: false,
               ).data ??
@@ -30,8 +31,7 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
         : room!.encrypted
         ? false
         : watchStream(
-                (CreateOrEditRoomModel m) =>
-                    m.getCanChangeEncryptionStream(room),
+                (EditRoomService m) => m.getCanChangeEncryptionStream(room),
                 initialValue: room!.canChangeStateEvent(EventTypes.Encryption),
                 preserveState: false,
               ).data ??
@@ -47,12 +47,12 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
         onChanged: canChangeEncryption
             ? (v) {
                 if (room == null) {
-                  di<CreateOrEditRoomModel>().enableEncryptionDraft.value = v;
+                  di<CreateRoomManager>().enableEncryptionDraft.value = v;
                 } else {
                   showFutureLoadingDialog(
                     context: context,
-                    future: () => di<CreateOrEditRoomModel>()
-                        .enableEncryptionForRoom(room!),
+                    future: () =>
+                        di<EditRoomService>().enableEncryptionForRoom(room!),
                   );
                 }
               }

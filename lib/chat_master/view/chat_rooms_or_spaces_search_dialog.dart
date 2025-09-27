@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/search_model.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/search_auto_complete.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
@@ -12,7 +12,7 @@ class ChatRoomsOrSpacesSearchDialog extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final searchType = watchPropertyValue((SearchModel m) => m.searchType);
+    final searchType = watchPropertyValue((SearchManager m) => m.searchType);
 
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
@@ -31,7 +31,7 @@ class ChatRoomsOrSpacesSearchDialog extends StatelessWidget with WatchItMixin {
             padding: EdgeInsets.zero,
             style: textFieldSuffixStyle,
             onPressed: () =>
-                di<SearchModel>().setSearchType(switch (searchType) {
+                di<SearchManager>().setSearchType(switch (searchType) {
                   SearchType.rooms => SearchType.spaces,
                   _ => SearchType.rooms,
                 }),

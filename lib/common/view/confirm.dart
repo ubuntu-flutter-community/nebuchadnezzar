@@ -54,7 +54,7 @@ class ConfirmationDialog<T> extends StatefulWidget {
     EdgeInsetsGeometry? contentPadding,
     Future<T> Function()? onCancel,
     bool showCancel = true,
-  }) => showDialog(
+  }) => showDialog<T>(
     context: context,
     barrierDismissible: barrierDismissible,
     builder: (context) => ConfirmationDialog<T>(

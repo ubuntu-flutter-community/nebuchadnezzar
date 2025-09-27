@@ -5,8 +5,8 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'remote_image_service.dart';
 
-class RemoteImageModel extends SafeChangeNotifier {
-  RemoteImageModel({required RemoteImageService service})
+class RemoteImageManager extends SafeChangeNotifier {
+  RemoteImageManager({required RemoteImageService service})
     : _onlineArtService = service {
     _propertiesChangedSub ??= _onlineArtService.propertiesChanged.listen(
       (_) => notifyListeners(),

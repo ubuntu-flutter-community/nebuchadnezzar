@@ -2,8 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
-// import 'package:mime/mime.dart';
-import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
@@ -14,22 +12,10 @@ const adminPowerLevel = 100;
 const memberPowerLevel = 0;
 const moderatorPowerLevel = 50;
 
-class CreateOrEditRoomModel {
-  CreateOrEditRoomModel({required Client client}) : _client = client;
+class EditRoomService {
+  EditRoomService({required Client client}) : _client = client;
 
   final Client _client;
-
-  void init({required Room? room}) {
-    nameDraft.value = '';
-    topicDraft.value = '';
-    enableEncryptionDraft.value = false;
-    groupCallDraft.value = false;
-    visibilityDraft.value = Visibility.public;
-    createRoomPresetDraft.value = CreateRoomPreset.publicChat;
-    historyVisibilityDraft.value = HistoryVisibility.shared;
-    profilesDraft.value = {};
-    avatarDraft.value = null;
-  }
 
   Stream<SyncUpdate> get _joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
@@ -38,8 +24,6 @@ class CreateOrEditRoomModel {
       _joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
 
   // ROOM NAME
-
-  SafeValueNotifier<String> nameDraft = SafeValueNotifier('');
 
   Stream<String> getJoinedRoomNameStream(Room room) =>
       _getJoinedRoomUpdate(room.id).map((_) => room.name).distinct();
@@ -57,8 +41,6 @@ class CreateOrEditRoomModel {
   }
 
   // ROOM TOPIC
-
-  SafeValueNotifier<String> topicDraft = SafeValueNotifier('');
 
   Stream<String> getJoinedRoomTopicStream(Room room) =>
       _getJoinedRoomUpdate(room.id).map((_) => room.topic).distinct();
@@ -96,8 +78,6 @@ class CreateOrEditRoomModel {
 
   // ROOM ENCRYPTION
 
-  SafeValueNotifier<bool> enableEncryptionDraft = SafeValueNotifier(false);
-
   Stream<bool?> getIsRoomEncryptedStream(Room? room) =>
       _getJoinedRoomUpdate(room?.id)
           .map(
@@ -126,13 +106,6 @@ class CreateOrEditRoomModel {
 
   // ROOM JOIN RULES
 
-  SafeValueNotifier<CreateRoomPreset> createRoomPresetDraft = SafeValueNotifier(
-    CreateRoomPreset.publicChat,
-  );
-  SafeValueNotifier<Visibility> visibilityDraft = SafeValueNotifier(
-    Visibility.public,
-  );
-
   Future<void> setJoinRulesForRoom({
     required Room room,
     required JoinRules value,
@@ -153,9 +126,6 @@ class CreateOrEditRoomModel {
 
   // ROOM HISTORY VISIBILITY
 
-  SafeValueNotifier<HistoryVisibility> historyVisibilityDraft =
-      SafeValueNotifier(HistoryVisibility.shared);
-
   Future<void> setHistoryVisibilityForRoom({
     required Room room,
     required HistoryVisibility value,
@@ -175,18 +145,6 @@ class CreateOrEditRoomModel {
       _getJoinedRoomUpdate(room.id).map((_) => room.historyVisibility);
 
   // ROOM PROFILES DRAFT AND INVITES
-
-  SafeValueNotifier<Set<Profile>> profilesDraft = SafeValueNotifier({});
-
-  void addProfileToDraft(Profile profile) {
-    if (profilesDraft.value.contains(profile)) return;
-    profilesDraft.value = {...profilesDraft.value, profile};
-  }
-
-  void removeProfileFromDraft(Profile profile) {
-    if (!profilesDraft.value.contains(profile)) return;
-    profilesDraft.value = {...profilesDraft.value..remove(profile)};
-  }
 
   Future<void> inviteUserToRoom({
     required Room room,
@@ -337,8 +295,6 @@ class CreateOrEditRoomModel {
 
   // ROOM AVATAR DRAFT OR UPLOAD
 
-  SafeValueNotifier<MatrixImageFile?> avatarDraft = SafeValueNotifier(null);
-
   Stream<Uri?> getJoinedRoomAvatarStream(Room? room) =>
       _getJoinedRoomUpdate(room?.id)
           .map(
@@ -353,6 +309,7 @@ class CreateOrEditRoomModel {
     required String wrongFormatString,
   }) async {
     try {
+      MatrixImageFile? avatarDraft;
       XFile? xFile;
       if (Platforms.isLinux) {
         xFile = await openFile(
@@ -374,7 +331,7 @@ class CreateOrEditRoomModel {
 
       final bytes = await xFile.readAsBytes();
 
-      avatarDraft.value = await MatrixImageFile.shrink(
+      avatarDraft = await MatrixImageFile.shrink(
         bytes: bytes,
         name: xFile.name,
         mimeType: xFile.mimeType,
@@ -383,110 +340,12 @@ class CreateOrEditRoomModel {
       );
 
       if (room != null) {
-        await room.setAvatar(avatarDraft.value);
-        avatarDraft.value = null;
+        await room.setAvatar(avatarDraft);
       }
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
     }
-  }
-
-  // GROUP CALL DRAFT
-
-  SafeValueNotifier<bool> groupCallDraft = SafeValueNotifier(false);
-
-  // CREATE ROOM, SPACE OR DIRECT CHAT
-
-  Future<Room?> createRoomOrSpace({
-    required bool space,
-    bool waitForSync = true,
-    List<StateEvent>? initialState,
-    bool federated = true,
-    Map<String, dynamic>? powerLevelContentOverride,
-  }) async {
-    String? roomId;
-    try {
-      roomId = space
-          ? await _client.createSpace(
-              name: nameDraft.value,
-              visibility: visibilityDraft.value,
-              invite: profilesDraft.value
-                  .map((p) => p.userId)
-                  .toList(growable: false),
-              invite3pid: null,
-              roomVersion: null,
-              topic: topicDraft.value,
-              waitForSync: waitForSync,
-              spaceAliasName: nameDraft.value,
-            )
-          : await _client.createGroupChat(
-              groupName: nameDraft.value,
-              enableEncryption: enableEncryptionDraft.value,
-              invite: profilesDraft.value
-                  .map((p) => p.userId)
-                  .toList(growable: false),
-              initialState: initialState,
-              visibility: visibilityDraft.value,
-              preset: createRoomPresetDraft.value,
-              historyVisibility: historyVisibilityDraft.value,
-              waitForSync: waitForSync,
-              groupCall: groupCallDraft.value,
-              federated: federated,
-              powerLevelContentOverride: powerLevelContentOverride,
-            );
-    } catch (e, s) {
-      printMessageInDebugMode(e, s);
-      rethrow;
-    }
-
-    final maybeRoom = _client.getRoomById(roomId);
-    if (maybeRoom != null) {
-      if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
-          avatarDraft.value?.bytes != null) {
-        try {
-          await maybeRoom.setAvatar(avatarDraft.value);
-        } on Exception catch (e, s) {
-          printMessageInDebugMode(e, s);
-        }
-      }
-      if (maybeRoom.isDirectChat && !maybeRoom.encrypted) {
-        try {
-          await maybeRoom.enableEncryption();
-          printMessageInDebugMode('Room encrypted: ${maybeRoom.encrypted}');
-        } on Exception catch (e, s) {
-          printMessageInDebugMode(e, s);
-          rethrow;
-        }
-      }
-    }
-
-    return maybeRoom;
-  }
-
-  Future<Room?> startOrGetDirectChat(String userId) async {
-    final maybeDirectChatId = _client.getDirectChatFromUserId(userId);
-    Room? maybeRoom;
-    if (maybeDirectChatId != null) {
-      maybeRoom = _client.getRoomById(maybeDirectChatId);
-    }
-
-    if (maybeRoom == null) {
-      String? maybeId;
-      try {
-        maybeId = await _client.startDirectChat(
-          userId,
-          preset: CreateRoomPreset.privateChat,
-        );
-      } on Exception catch (e) {
-        printMessageInDebugMode(e);
-        rethrow;
-      }
-
-      maybeRoom = _client.getRoomById(maybeId);
-    }
-
-    return maybeRoom;
   }
 
   // JOIN, LEAVE OR KNOCK ROOM

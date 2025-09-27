@@ -7,7 +7,8 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/chat_user_search_auto_complete.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
+import '../edit_room_service.dart';
 
 class CreateOrEditRoomUserSearchAutoComplete extends StatelessWidget {
   const CreateOrEditRoomUserSearchAutoComplete({
@@ -35,13 +36,13 @@ class CreateOrEditRoomUserSearchAutoComplete extends StatelessWidget {
           if (room != null) {
             showFutureLoadingDialog(
               context: context,
-              future: () => di<CreateOrEditRoomModel>().inviteUserToRoom(
+              future: () => di<EditRoomService>().inviteUserToRoom(
                 room: room!,
                 userId: p.userId,
               ),
             );
           } else {
-            di<CreateOrEditRoomModel>().addProfileToDraft(p);
+            di<CreateRoomManager>().addProfileToDraft(p);
           }
         },
       ),

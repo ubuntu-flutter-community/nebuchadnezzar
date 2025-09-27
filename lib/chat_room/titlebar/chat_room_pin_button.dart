@@ -3,7 +3,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
 
@@ -17,7 +17,7 @@ class ChatRoomPinButton extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final isFavourite =
         watchStream(
-          (ChatModel m) =>
+          (ChatManager m) =>
               m.getJoinedRoomUpdate(room.id).map((e) => room.isFavourite),
           initialValue: room.isFavourite,
         ).data ??

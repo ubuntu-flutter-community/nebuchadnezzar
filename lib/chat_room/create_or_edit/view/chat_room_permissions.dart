@@ -7,7 +7,7 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../edit_room_service.dart';
 
 class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
   const ChatRoomPermissions({required this.room, super.key});
@@ -18,11 +18,11 @@ class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final l10n = context.l10n;
-    final model = di<CreateOrEditRoomModel>();
+    final service = di<EditRoomService>();
 
     final canChangePowerLevel =
         watchStream(
-          (CreateOrEditRoomModel m) => m.canChangePowerLevels(room),
+          (EditRoomService m) => m.canChangePowerLevels(room),
           initialValue: room.canChangePowerLevel,
           preserveState: false,
         ).data ??
@@ -30,7 +30,7 @@ class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
 
     final powerLevelsContent =
         watchStream(
-          (CreateOrEditRoomModel m) => m.getPermissionsStream(room),
+          (EditRoomService m) => m.getPermissionsStream(room),
           initialValue:
               room.getState(EventTypes.RoomPowerLevels)?.content ?? {},
         ).data ??
@@ -62,7 +62,7 @@ class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
                   permission: entry.value,
                   onChanged: (level) => showFutureLoadingDialog(
                     context: context,
-                    future: () => model.editPowerLevel(
+                    future: () => service.editPowerLevel(
                       room: room,
                       key: entry.key,
                       newLevel: level,
@@ -90,7 +90,7 @@ class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
                 category: 'notifications',
                 onChanged: (level) => showFutureLoadingDialog(
                   context: context,
-                  future: () => model.editPowerLevel(
+                  future: () => service.editPowerLevel(
                     room: room,
                     key: key,
                     newLevel: level,
@@ -115,7 +115,7 @@ class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
 
                   onChanged: (level) => showFutureLoadingDialog(
                     context: context,
-                    future: () => model.editPowerLevel(
+                    future: () => service.editPowerLevel(
                       room: room,
                       key: entry.key,
                       newLevel: level,

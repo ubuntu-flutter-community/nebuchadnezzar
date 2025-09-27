@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../settings/settings_model.dart';
+import '../../settings/settings_manager.dart';
 import '../app_config.dart';
 
 class App extends StatelessWidget with WatchItMixin {
@@ -31,7 +31,7 @@ class App extends StatelessWidget with WatchItMixin {
     themeMode:
         themeMode ??
         watchPropertyValue(
-          (SettingsModel m) => ThemeMode.values[m.themModeIndex],
+          (SettingsManager m) => ThemeMode.values[m.themModeIndex],
         ),
     theme: lightTheme?.copyWith(pageTransitionsTheme: pTT),
     darkTheme: darkTheme?.copyWith(pageTransitionsTheme: pTT),
