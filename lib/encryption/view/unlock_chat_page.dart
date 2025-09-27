@@ -5,7 +5,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../authentication/authentication_model.dart';
+import '../../authentication/authentication_service.dart';
 import '../../authentication/view/uia_request_handler.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
@@ -15,7 +15,7 @@ import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
-import '../encryption_model.dart';
+import '../encryption_manager.dart';
 import 'key_verification_dialog.dart';
 
 class UnlockChatPage extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -39,18 +39,18 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final l10n = context.l10n;
-    final model = di<EncryptionModel>();
+    final encryptionManager = di<EncryptionManager>();
 
-    final bootstrap = watchPropertyValue((EncryptionModel m) => m.bootstrap);
+    final bootstrap = watchPropertyValue((EncryptionManager m) => m.bootstrap);
     final recoveryKeyInputLoading = watchPropertyValue(
-      (EncryptionModel m) => m.recoveryKeyInputLoading,
+      (EncryptionManager m) => m.recoveryKeyInputLoading,
     );
     final recoveryKeyInputError = watchPropertyValue(
-      (EncryptionModel m) => m.recoveryKeyInputError,
+      (EncryptionManager m) => m.recoveryKeyInputError,
     );
 
     registerStreamHandler(
-      select: (AuthenticationModel m) => m.onUiaRequestStream,
+      select: (AuthenticationService m) => m.onUiaRequestStream,
       handler: (context, newValue, cancel) async {
         if (newValue.hasData) {
           await uiaRequestHandler(
@@ -114,8 +114,10 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                               _recoveryKeyTextEditingController.text.isEmpty
                           ? null
                           : () async {
-                              model.setRecoveryKeyInputError(null);
-                              model.setRecoveryKeyInputLoading(true);
+                              encryptionManager.setRecoveryKeyInputError(null);
+                              encryptionManager.setRecoveryKeyInputLoading(
+                                true,
+                              );
                               try {
                                 final newKey = _recoveryKeyTextEditingController
                                     .text
@@ -157,7 +159,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                                   );
                                 }
                               } on FormatException catch (_) {
-                                model.setRecoveryKeyInputError(
+                                encryptionManager.setRecoveryKeyInputError(
                                   l10n.wrongRecoveryKey,
                                 );
                               } catch (e, _) {
@@ -168,7 +170,9 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                                   );
                                 }
                               } finally {
-                                model.setRecoveryKeyInputLoading(false);
+                                encryptionManager.setRecoveryKeyInputLoading(
+                                  false,
+                                );
                               }
                             },
                     );
@@ -194,7 +198,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                             final req = await showFutureLoadingDialog(
                               context: context,
                               future:
-                                  di<EncryptionModel>().startKeyVerification,
+                                  di<EncryptionManager>().startKeyVerification,
                             );
                             if (context.mounted) {
                               if (req.error != null) return;
@@ -220,7 +224,8 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                             builder: (context) => ConfirmationDialog(
                               title: Text(l10n.recoveryKeyLost),
                               content: Text(l10n.wipeChatBackup),
-                              onConfirm: () => model.startBootstrap(wipe: true),
+                              onConfirm: () =>
+                                  encryptionManager.startBootstrap(wipe: true),
                             ),
                           );
                         },

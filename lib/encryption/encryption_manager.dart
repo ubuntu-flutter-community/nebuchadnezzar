@@ -4,8 +4,8 @@ import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
-class EncryptionModel extends SafeChangeNotifier {
-  EncryptionModel({
+class EncryptionManager extends SafeChangeNotifier {
+  EncryptionManager({
     required Client client,
     required FlutterSecureStorage secureStorage,
   }) : _client = client,

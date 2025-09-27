@@ -4,7 +4,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/common_widgets.dart';
 import '../../l10n/l10n.dart';
-import '../settings_model.dart';
+import '../settings_manager.dart';
 
 class ChatSettingsEventsSection extends StatelessWidget with WatchItMixin {
   const ChatSettingsEventsSection({super.key});
@@ -12,7 +12,7 @@ class ChatSettingsEventsSection extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final settingsModel = di<SettingsModel>();
+    final settingsManager = di<SettingsManager>();
 
     return YaruSection(
       // TODO: localize
@@ -23,18 +23,18 @@ class ChatSettingsEventsSection extends StatelessWidget with WatchItMixin {
             title: Text(l10n.changedTheChatAvatar('"UserABC"')),
             trailing: CommonSwitch(
               value: watchPropertyValue(
-                (SettingsModel m) => m.showChatAvatarChanges,
+                (SettingsManager m) => m.showChatAvatarChanges,
               ),
-              onChanged: settingsModel.setShowAvatarChanges,
+              onChanged: settingsManager.setShowAvatarChanges,
             ),
           ),
           YaruTile(
             title: Text(l10n.changedTheDisplaynameTo('"UserABC"', '"UserXYZ"')),
             trailing: CommonSwitch(
               value: watchPropertyValue(
-                (SettingsModel m) => m.showChatDisplaynameChanges,
+                (SettingsManager m) => m.showChatDisplaynameChanges,
               ),
-              onChanged: settingsModel.setShowChatDisplaynameChanges,
+              onChanged: settingsManager.setShowChatDisplaynameChanges,
             ),
           ),
         ],

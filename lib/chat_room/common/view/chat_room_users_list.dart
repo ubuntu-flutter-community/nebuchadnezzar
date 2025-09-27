@@ -13,7 +13,7 @@ import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../create_or_edit/create_or_edit_room_model.dart';
+import '../../create_or_edit/edit_room_service.dart';
 import 'chat_room_user_list_power_level_button.dart';
 
 class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
@@ -33,7 +33,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
     final membershipFilter = [Membership.join, Membership.invite];
 
     final users = watchStream(
-      (CreateOrEditRoomModel m) => m.getUsersStreamOfJoinedRoom(
+      (EditRoomService m) => m.getUsersStreamOfJoinedRoom(
         room,
         membershipFilter: membershipFilter,
       ),
@@ -72,8 +72,8 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
                         content: Text(user.id),
                         onConfirm: () => showFutureLoadingDialog(
                           context: context,
-                          future: () => di<CreateOrEditRoomModel>()
-                              .removeUserFromRoom(user),
+                          future: () =>
+                              di<EditRoomService>().removeUserFromRoom(user),
                         ),
                       ),
                       icon: Icon(
@@ -91,7 +91,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
                         onConfirm: () => showFutureLoadingDialog(
                           context: context,
                           future: () =>
-                              di<CreateOrEditRoomModel>().banUserFromRoom(user),
+                              di<EditRoomService>().banUserFromRoom(user),
                         ),
                       ),
                       icon: Icon(
@@ -127,7 +127,7 @@ class _UserTile extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final userPowerLevel =
         watchStream(
-          (CreateOrEditRoomModel m) =>
+          (EditRoomService m) =>
               m.getJoinedRoomUpdate(user.room.id).map((r) => user.powerLevel),
           initialValue: user.powerLevel,
         ).data ??

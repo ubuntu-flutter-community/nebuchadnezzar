@@ -6,7 +6,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
-import '../settings_model.dart';
+import '../settings_manager.dart';
 import 'theme_tile.dart';
 
 class ThemeSection extends StatelessWidget with WatchItMixin {
@@ -14,9 +14,11 @@ class ThemeSection extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final model = di<SettingsModel>();
+    final settingsManager = di<SettingsManager>();
     final l10n = context.l10n;
-    final themeIndex = watchPropertyValue((SettingsModel m) => m.themModeIndex);
+    final themeIndex = watchPropertyValue(
+      (SettingsManager m) => m.themModeIndex,
+    );
 
     return YaruSection(
       headline: Text(l10n.changeTheme),
@@ -37,7 +39,7 @@ class ThemeSection extends StatelessWidget with WatchItMixin {
                           padding: const EdgeInsets.all(1),
                           borderRadius: BorderRadius.circular(15),
                           selected: themeIndex == i,
-                          onTap: () => model.setThemModeIndex(i),
+                          onTap: () => settingsManager.setThemModeIndex(i),
                           selectionColor: context.theme.colorScheme.primary,
                           child: ThemeTile(ThemeMode.values[i]),
                         ),

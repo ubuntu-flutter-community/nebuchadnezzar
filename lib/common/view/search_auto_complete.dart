@@ -4,10 +4,10 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
+import '../../chat_room/create_or_edit/edit_room_service.dart';
 import '../../l10n/l10n.dart';
-import '../chat_model.dart';
-import '../search_model.dart';
+import '../chat_manager.dart';
+import '../search_manager.dart';
 import 'build_context_x.dart';
 import 'chat_avatar.dart';
 import 'snackbars.dart';
@@ -22,7 +22,7 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final theme = context.theme;
 
-    final searchType = watchPropertyValue((SearchModel m) => m.searchType);
+    final searchType = watchPropertyValue((SearchManager m) => m.searchType);
     final label =
         '${context.l10n.search} ${searchType == SearchType.spaces ? context.l10n.spaces : context.l10n.publicRooms}';
 
@@ -43,20 +43,19 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
       onSelected: (option) =>
           showFutureLoadingDialog(
             context: context,
-            future: () =>
-                di<CreateOrEditRoomModel>().knockOrJoinRoomChunk(option),
+            future: () => di<EditRoomService>().knockOrJoinRoomChunk(option),
           ).then((result) {
             if (result.asValue?.value != null) {
               if (context.mounted) {
                 Navigator.of(context).pop();
               }
-              di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+              di<ChatManager>().setSelectedRoom(result.asValue!.value!);
             }
           }),
       displayStringForOption: (chunk) => chunk.name ?? chunk.roomId,
 
       optionsBuilder: (textEditingValue) =>
-          di<SearchModel>().findPublicRoomChunks(
+          di<SearchManager>().findPublicRoomChunks(
             textEditingValue.text,
             onFail: (error) => showSnackBar(context, content: Text(error)),
           ),
@@ -102,11 +101,11 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
                           onTap: () =>
                               showFutureLoadingDialog(
                                 context: context,
-                                future: () => di<CreateOrEditRoomModel>()
+                                future: () => di<EditRoomService>()
                                     .knockOrJoinRoomChunk(chunk),
                               ).then((result) {
                                 if (result.asValue?.value != null) {
-                                  di<ChatModel>().setSelectedRoom(
+                                  di<ChatManager>().setSelectedRoom(
                                     result.asValue!.value!,
                                   );
                                 }

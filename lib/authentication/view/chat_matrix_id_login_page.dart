@@ -6,7 +6,7 @@ import '../../app/app_config.dart';
 import '../../common/view/snackbars.dart';
 import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/l10n.dart';
-import '../authentication_model.dart';
+import '../authentication_service.dart';
 import 'chat_login_page_scaffold.dart';
 
 class ChatMatrixIdLoginPage extends StatefulWidget
@@ -27,19 +27,18 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final authenticationModel = di<AuthenticationModel>();
-    bool processingAccess = watchPropertyValue(
-      (AuthenticationModel m) => m.processingAccess,
+    final authenticationService = di<AuthenticationService>();
+    bool processingAccess = watchValue(
+      (AuthenticationService m) => m.processingAccess,
     );
-    bool showPassword = watchPropertyValue(
-      (AuthenticationModel m) => m.showPassword,
-    );
+    bool showPassword = watchValue((AuthenticationService m) => m.showPassword);
 
     var onPressed = processingAccess
         ? null
         : () async {
-            authenticationModel.toggleShowPassword(forceValue: false);
-            return authenticationModel.login(
+            authenticationService.showPassword.value = !showPassword;
+
+            return authenticationService.login(
               homeServer: _homeServerController.text.trim(),
               username: _usernameController.text,
               password: _passwordController.text,
@@ -97,7 +96,8 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
                   ),
                 ),
               ),
-              onPressed: authenticationModel.toggleShowPassword,
+              onPressed: () => di<AuthenticationService>().showPassword.value =
+                  !showPassword,
               icon: Icon(showPassword ? YaruIcons.eye_filled : YaruIcons.eye),
             ),
           ),

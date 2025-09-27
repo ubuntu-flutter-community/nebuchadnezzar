@@ -3,16 +3,16 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
-import '../../events/chat_download_model.dart';
+import '../../events/chat_download_manager.dart';
 import '../../events/view/chat_image.dart';
 import '../../events/view/chat_message_image_full_screen_dialog.dart';
 import '../../l10n/l10n.dart';
-import '../timeline/timeline_model.dart';
+import '../timeline/timeline_manager.dart';
 import '../timeline/timeline_x.dart';
 
 class ChatRoomInfoDrawerMediaGridTabs extends StatefulWidget {
@@ -94,11 +94,14 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
     final colorScheme = context.colorScheme;
     final l10n = context.l10n;
 
-    watchStream((ChatModel m) => m.getEventStream(room), initialValue: null);
-    watchStream((ChatModel m) => m.getHistoryStream(room), initialValue: null);
+    watchStream((ChatManager m) => m.getEventStream(room), initialValue: null);
+    watchStream(
+      (ChatManager m) => m.getHistoryStream(room),
+      initialValue: null,
+    );
 
     final timeline = watchPropertyValue(
-      (TimelineModel m) => m.getTimeline(room.id),
+      (TimelineManager m) => m.getTimeline(room.id),
     );
 
     if (timeline == null) {
@@ -124,7 +127,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
 
     return NotificationListener<ScrollEndNotification>(
       onNotification: (notification) {
-        di<TimelineModel>().requestHistory(
+        di<TimelineManager>().requestHistory(
           timeline,
           filter: StateFilter(types: [EventTypes.Message]),
           historyCount: 1000,
@@ -161,7 +164,7 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
                 _ => Center(
                   child: IconButton.outlined(
                     tooltip: context.l10n.downloadFile,
-                    onPressed: () => di<ChatDownloadModel>().safeFile(
+                    onPressed: () => di<ChatDownloadManager>().safeFile(
                       event: event,
                       dialogTitle: l10n.saveFile,
                       confirmButtonText: l10n.saveFile,
@@ -218,7 +221,7 @@ class ChatLoadMoreHistoryButton extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final updatingTimeline = watchPropertyValue(
-      (TimelineModel m) => m.getUpdatingTimeline(timeline.room.id),
+      (TimelineManager m) => m.getUpdatingTimeline(timeline.room.id),
     );
 
     return OutlinedButton.icon(
@@ -228,7 +231,7 @@ class ChatLoadMoreHistoryButton extends StatelessWidget with WatchItMixin {
               child: Progress(strokeWidth: 2),
             )
           : const Icon(YaruIcons.refresh),
-      onPressed: () => di<TimelineModel>().requestHistory(
+      onPressed: () => di<TimelineManager>().requestHistory(
         timeline,
         filter: StateFilter(types: [EventTypes.Message]),
         historyCount: 1000,

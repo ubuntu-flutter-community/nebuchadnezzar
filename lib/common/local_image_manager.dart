@@ -6,8 +6,8 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'local_image_service.dart';
 
-class LocalImageModel extends SafeChangeNotifier {
-  LocalImageModel({required LocalImageService service}) : _service = service {
+class LocalImageManager extends SafeChangeNotifier {
+  LocalImageManager({required LocalImageService service}) : _service = service {
     _propertiesChangedSub ??= _service.propertiesChanged.listen(
       (_) => notifyListeners(),
     );

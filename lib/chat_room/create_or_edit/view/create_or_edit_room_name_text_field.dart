@@ -8,7 +8,8 @@ import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
+import '../edit_room_service.dart';
 
 class CreateOrEditRoomNameTextField extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -43,7 +44,7 @@ class _CreateOrEditRoomNameTextFieldState
     final enabledNameField = widget.room == null
         ? true
         : watchStream(
-                (CreateOrEditRoomModel m) =>
+                (EditRoomService m) =>
                     m.getJoinedRoomCanChangeNameStream(widget.room!),
                 initialValue: widget.room!.canChangeName,
                 preserveState: false,
@@ -54,8 +55,7 @@ class _CreateOrEditRoomNameTextFieldState
     final roomName = widget.room == null
         ? null
         : watchStream(
-                (CreateOrEditRoomModel m) =>
-                    m.getJoinedRoomNameStream(widget.room!),
+                (EditRoomService m) => m.getJoinedRoomNameStream(widget.room!),
                 initialValue: widget.room!.name,
                 preserveState: false,
               ).data ??
@@ -70,7 +70,7 @@ class _CreateOrEditRoomNameTextFieldState
           controller: _nameController,
           autofocus: true,
           enabled: enabledNameField,
-          onChanged: (v) => di<CreateOrEditRoomModel>().nameDraft.value = v,
+          onChanged: (v) => di<CreateRoomManager>().nameDraft.value = v,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(12),
             label: Text(widget.isSpace ? l10n.spaceName : l10n.groupName),
@@ -86,11 +86,10 @@ class _CreateOrEditRoomNameTextFieldState
                               _nameController.clear();
                               return e.toString();
                             },
-                            future: () =>
-                                di<CreateOrEditRoomModel>().changeRoomName(
-                                  widget.room!,
-                                  _nameController.text,
-                                ),
+                            future: () => di<EditRoomService>().changeRoomName(
+                              widget.room!,
+                              _nameController.text,
+                            ),
                           ),
                     icon: nameIsSynced
                         ? YaruAnimatedVectorIcon(

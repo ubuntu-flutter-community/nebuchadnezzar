@@ -6,7 +6,7 @@ import 'package:yaru/yaru.dart';
 import '../../../common/matrix_file_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
-import '../draft_model.dart';
+import '../draft_manager.dart';
 
 class ChatPendingAttachment extends StatelessWidget {
   const ChatPendingAttachment({
@@ -90,7 +90,7 @@ class ChatPendingAttachmentCompressButton extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     final compress = watchPropertyValue(
-      (DraftModel m) => m.getCompressFile(roomId: roomId, file: file),
+      (DraftManager m) => m.getCompressFile(roomId: roomId, file: file),
     );
     return ElevatedButton.icon(
       onPressed: onToggleCompress,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../common/view/ui_constants.dart';
-import '../draft_model.dart';
+import '../draft_manager.dart';
 import 'chat_pending_attachment.dart';
 
 class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
@@ -13,15 +13,15 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final draftFiles = watchPropertyValue(
-      (DraftModel m) => m.getFilesDraft(roomId),
+      (DraftManager m) => m.getFilesDraft(roomId),
     );
 
-    final attaching = watchPropertyValue((DraftModel m) => m.attaching);
+    final attaching = watchPropertyValue((DraftManager m) => m.attaching);
 
     final draftFilesL = watchPropertyValue(
-      (DraftModel m) => m.getFilesDraft(roomId).length,
+      (DraftManager m) => m.getFilesDraft(roomId).length,
     );
-    final sending = watchPropertyValue((DraftModel m) => m.sending);
+    final sending = watchPropertyValue((DraftManager m) => m.sending);
 
     if (!attaching && draftFilesL == 0) return const SizedBox.shrink();
 
@@ -49,13 +49,13 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
                   duration: const Duration(seconds: 1),
                   child: ChatPendingAttachment(
                     roomId: roomId,
-                    onToggleCompress: () => di<DraftModel>().toggleCompress(
+                    onToggleCompress: () => di<DraftManager>().toggleCompress(
                       roomId: roomId,
                       file: file,
                     ),
                     onTap: sending
                         ? null
-                        : () => di<DraftModel>().removeFileFromDraft(
+                        : () => di<DraftManager>().removeFileFromDraft(
                             roomId: roomId,
                             file: file,
                           ),

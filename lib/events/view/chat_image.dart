@@ -7,7 +7,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/event_x.dart';
-import '../../common/local_image_model.dart';
+import '../../common/local_image_manager.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 
@@ -41,7 +41,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     final theWidth = dimension ?? width;
     final theFit = fit ?? BoxFit.cover;
     final maybeImage = watchPropertyValue(
-      (LocalImageModel m) => m.get(event.eventId),
+      (LocalImageManager m) => m.get(event.eventId),
     );
 
     if (event.status == EventStatus.error) {
@@ -122,11 +122,11 @@ class _ChatImageFutureState extends State<ChatImageFuture> {
   @override
   void initState() {
     super.initState();
-    final localImageModel = di<LocalImageModel>();
-    final image = localImageModel.get(widget.event.eventId);
+    final localImageManager = di<LocalImageManager>();
+    final image = localImageManager.get(widget.event.eventId);
     _future = image != null
         ? Future.value(image)
-        : localImageModel.downloadImage(
+        : localImageManager.downloadImage(
             event: widget.event,
             cache: widget.event.hasThumbnail && widget.getThumbnail,
           );

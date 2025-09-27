@@ -5,12 +5,12 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../app/view/error_page.dart';
-import '../../authentication/authentication_model.dart';
-import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
+import '../../authentication/authentication_service.dart';
+import '../../chat_room/create_or_edit/create_room_manager.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_dialog.dart';
-import '../chat_model.dart';
-import '../search_model.dart';
+import '../chat_manager.dart';
+import '../search_manager.dart';
 import 'build_context_x.dart';
 import 'chat_avatar.dart';
 import 'common_widgets.dart';
@@ -43,7 +43,7 @@ class _ChatProfileState extends State<ChatProfile> {
   @override
   void initState() {
     super.initState();
-    _future = di<SearchModel>().lookupProfile(widget.userId);
+    _future = di<SearchManager>().lookupProfile(widget.userId);
   }
 
   @override
@@ -58,7 +58,7 @@ class _ChatProfileState extends State<ChatProfile> {
 
         final myProfile =
             snapshot.hasData &&
-            snapshot.data!.userId == di<AuthenticationModel>().loggedInUserId;
+            snapshot.data!.userId == di<AuthenticationService>().loggedInUserId;
         return SizedBox(
           height: 300,
           width: 200,
@@ -114,13 +114,13 @@ class _ChatProfileState extends State<ChatProfile> {
                                   } else {
                                     showFutureLoadingDialog(
                                       context: context,
-                                      future: () => di<CreateOrEditRoomModel>()
-                                          .startOrGetDirectChat(
+                                      future: () => di<CreateRoomManager>()
+                                          .createOrGetDirectChat(
                                             snapshot.data!.userId,
                                           ),
                                     ).then((result) {
                                       if (result.asValue?.value != null) {
-                                        di<ChatModel>().setSelectedRoom(
+                                        di<ChatManager>().setSelectedRoom(
                                           result.asValue!.value!,
                                         );
                                       }

@@ -6,9 +6,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../app/view/error_page.dart';
-import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
-import '../../common/chat_model.dart';
-import '../../common/search_model.dart';
+import '../../chat_room/create_or_edit/edit_room_service.dart';
+import '../../common/chat_manager.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
 import '../../common/view/common_widgets.dart';
@@ -63,7 +63,7 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
   @override
   void initState() {
     super.initState();
-    _future = di<SearchModel>().findPublicRoomChunks(
+    _future = di<SearchManager>().findPublicRoomChunks(
       widget.url
           .replaceAll('https://matrix.to/#/', '')
           .replaceAll('https://matrix.to/#/#', ''),
@@ -88,27 +88,27 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
           confirmEnabled: snapshot.hasData && snapshot.data!.isNotEmpty,
           confirmLabel:
               roomChunk != null &&
-                  di<ChatModel>().getRoomById(roomChunk.roomId) != null
+                  di<ChatManager>().getRoomById(roomChunk.roomId) != null
               ? l10n.openChat
               : l10n.joinRoom,
           onConfirm: roomChunk != null
               ? () {
-                  final joinedRoom = di<ChatModel>().getRoomById(
+                  final joinedRoom = di<ChatManager>().getRoomById(
                     roomChunk.roomId,
                   );
 
                   if (joinedRoom != null) {
-                    di<ChatModel>().setSelectedRoom(joinedRoom);
+                    di<ChatManager>().setSelectedRoom(joinedRoom);
                     return Future.value();
                   }
 
                   return showFutureLoadingDialog(
                     context: context,
-                    future: () => di<CreateOrEditRoomModel>()
-                        .knockOrJoinRoomChunk(roomChunk),
+                    future: () =>
+                        di<EditRoomService>().knockOrJoinRoomChunk(roomChunk),
                   ).then((result) {
                     if (result.asValue?.value != null) {
-                      di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+                      di<ChatManager>().setSelectedRoom(result.asValue!.value!);
                     }
                   });
                 }

@@ -6,7 +6,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/chat_avatar.dart';
 import '../../l10n/l10n.dart';
-import '../account_model.dart';
+import '../account_manager.dart';
 
 class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
   const ChatSettingsAvatar({
@@ -27,7 +27,7 @@ class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
     final l10n = context.l10n;
 
     final uri = watchStream(
-      (AccountModel m) => m.myProfileStream.map((e) => e?.avatarUrl),
+      (AccountManager m) => m.myProfileStream.map((e) => e?.avatarUrl),
       initialValue: profile?.avatarUrl,
     ).data;
 
@@ -45,7 +45,7 @@ class ChatSettingsAvatar extends StatelessWidget with WatchItMixin {
             child: IconButton.filled(
               onPressed: () => showFutureLoadingDialog(
                 context: context,
-                future: () => di<AccountModel>().setMyProfilAvatar(
+                future: () => di<AccountManager>().setMyProfilAvatar(
                   wrongFileFormat: l10n.notAnImage,
                 ),
               ),

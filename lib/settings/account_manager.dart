@@ -12,8 +12,8 @@ import '../common/platforms.dart';
 import '../encryption/view/key_verification_dialog.dart';
 import '../common/xtypegroup_x.dart';
 
-class AccountModel {
-  AccountModel({required Client client}) : _client = client;
+class AccountManager {
+  AccountManager({required Client client}) : _client = client;
 
   final Client _client;
 

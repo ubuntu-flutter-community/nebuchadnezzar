@@ -4,7 +4,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
-import '../chat_download_model.dart';
+import '../chat_download_manager.dart';
 
 class ChatMessageAttachmentIndicator extends StatelessWidget with WatchItMixin {
   const ChatMessageAttachmentIndicator({
@@ -21,7 +21,7 @@ class ChatMessageAttachmentIndicator extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final isEventDownload = watchPropertyValue(
-      (ChatDownloadModel m) => m.isEventDownloaded(event),
+      (ChatDownloadManager m) => m.isEventDownloaded(event),
     );
 
     // TODO: open with native file manager

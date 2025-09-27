@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../authentication/authentication_model.dart';
-import '../../common/chat_model.dart';
-import '../../common/search_model.dart';
+import '../../authentication/authentication_service.dart';
+import '../../common/chat_manager.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
@@ -21,11 +21,11 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final seenByUsers =
         watchStream(
-              (ChatModel m) => m.getRoomsReceiptsStream(event),
+              (ChatManager m) => m.getRoomsReceiptsStream(event),
               initialValue: event.receipts,
             ).data
             ?.map((e) => e.user)
-            .where((e) => e.id != di<AuthenticationModel>().loggedInUserId)
+            .where((e) => e.id != di<AuthenticationService>().loggedInUserId)
             .toList() ??
         [];
 
@@ -85,7 +85,7 @@ class ChatEventSeenByAvatar extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(15),
         onTap: () async {
-          final profile = await di<SearchModel>().lookupProfile(user.id);
+          final profile = await di<SearchManager>().lookupProfile(user.id);
           if (context.mounted) {
             showDialog(
               context: context,

@@ -7,7 +7,8 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
+import '../edit_room_service.dart';
 
 class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
     with WatchItMixin {
@@ -19,12 +20,12 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final historyVisibilityDraft = watchValue(
-      (CreateOrEditRoomModel m) => m.historyVisibilityDraft,
+      (CreateRoomManager m) => m.historyVisibilityDraft,
     );
     final vis = room == null
         ? historyVisibilityDraft
         : watchStream(
-                (CreateOrEditRoomModel m) =>
+                (EditRoomService m) =>
                     m.getJoinedRoomHistoryVisibilityStream(room!),
                 initialValue: room!.historyVisibility,
                 preserveState: false,
@@ -34,7 +35,7 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
     final canChangeHistoryVisibility = room == null
         ? true
         : watchStream(
-                (CreateOrEditRoomModel m) =>
+                (EditRoomService m) =>
                     m.getCanChangeHistoryVisibilityStream(room!),
                 initialValue: room!.canChangeHistoryVisibility,
                 preserveState: false,
@@ -49,13 +50,14 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
         initialValue: vis,
         enabled: canChangeHistoryVisibility,
         onSelected: room == null
-            ? (v) =>
-                  di<CreateOrEditRoomModel>().historyVisibilityDraft.value = v
+            ? (v) => di<CreateRoomManager>().historyVisibilityDraft.value = v
             : canChangeHistoryVisibility
             ? (v) => showFutureLoadingDialog(
                 context: context,
-                future: () => di<CreateOrEditRoomModel>()
-                    .setHistoryVisibilityForRoom(room: room!, value: v),
+                future: () => di<EditRoomService>().setHistoryVisibilityForRoom(
+                  room: room!,
+                  value: v,
+                ),
               )
             : null,
         itemBuilder: (context) => HistoryVisibility.values

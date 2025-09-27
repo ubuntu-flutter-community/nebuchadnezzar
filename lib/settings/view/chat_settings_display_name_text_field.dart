@@ -7,7 +7,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../l10n/l10n.dart';
-import '../account_model.dart';
+import '../account_manager.dart';
 
 class ChatSettingsDisplayNameTextField extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -52,7 +52,7 @@ class _ChatSettingsDisplayNameTextFieldState
   @override
   Widget build(BuildContext context) {
     final displayName =
-        (watchStream((AccountModel m) => m.myProfileStream).data ??
+        (watchStream((AccountManager m) => m.myProfileStream).data ??
                 widget.profile)
             ?.displayName;
 
@@ -73,7 +73,7 @@ class _ChatSettingsDisplayNameTextFieldState
                   ? null
                   : () => showFutureLoadingDialog(
                       context: context,
-                      future: () => di<AccountModel>().setDisplayName(
+                      future: () => di<AccountManager>().setDisplayName(
                         name: _displayNameController.text,
                       ),
                     ),

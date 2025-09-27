@@ -4,12 +4,12 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../authentication/authentication_model.dart';
+import '../../../authentication/authentication_service.dart';
 import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../edit_room_service.dart';
 
 class CreateOrEditRoomCanonicalAliasTextField extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -42,7 +42,7 @@ class _CreateOrEditRoomCanonicalAliasTextFieldState
     final formKey = GlobalKey<FormState>();
     final enabledAliasField =
         watchStream(
-          (CreateOrEditRoomModel m) =>
+          (EditRoomService m) =>
               m.getCanChangeCanonicalAliasStream(widget.room),
           initialValue: widget.room.canChangeCanonicalAlias,
           preserveState: false,
@@ -52,15 +52,13 @@ class _CreateOrEditRoomCanonicalAliasTextFieldState
     final l10n = context.l10n;
     final roomAlias =
         watchStream(
-          (CreateOrEditRoomModel m) =>
+          (EditRoomService m) =>
               m.getJoinedRoomCanonicalAliasStream(widget.room),
           initialValue: widget.room.canonicalAlias,
           preserveState: false,
         ).data ??
         widget.room.canonicalAlias;
-    final homeServer = watchPropertyValue(
-      (AuthenticationModel m) => m.homeServerName,
-    );
+    final homeServer = di<AuthenticationService>().homeServerName;
 
     return Form(
       key: formKey,
@@ -112,7 +110,7 @@ class _CreateOrEditRoomCanonicalAliasTextFieldState
                                 _aliasController.clear();
                                 return e.toString();
                               },
-                              future: () => di<CreateOrEditRoomModel>()
+                              future: () => di<EditRoomService>()
                                   .changeRoomCanonicalAlias(
                                     widget.room,
                                     _aliasController.text,

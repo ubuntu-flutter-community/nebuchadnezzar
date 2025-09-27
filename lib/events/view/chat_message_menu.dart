@@ -4,7 +4,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_room/input/draft_model.dart';
+import '../../chat_room/input/draft_manager.dart';
 import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
@@ -45,7 +45,8 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                 const Divider(),
                 MenuItemButton(
                   trailingIcon: const Icon(YaruIcons.reply),
-                  onPressed: () => di<DraftModel>().setReplyEvent(widget.event),
+                  onPressed: () =>
+                      di<DraftManager>().setReplyEvent(widget.event),
                   child: Text(context.l10n.reply, style: style),
                 ),
                 if (widget.event.room.canSendDefaultMessages &&
@@ -53,7 +54,7 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                   MenuItemButton(
                     trailingIcon: const Icon(YaruIcons.pen),
                     onPressed: () {
-                      di<DraftModel>()
+                      di<DraftManager>()
                         ..setEditEvent(
                           roomId: widget.event.room.id,
                           event: widget.event,

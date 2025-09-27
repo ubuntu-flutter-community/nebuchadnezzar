@@ -3,8 +3,8 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
-import '../../common/search_model.dart';
+import '../../common/chat_manager.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/space.dart';
 import '../../common/view/theme.dart';
@@ -19,9 +19,13 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final searchModel = di<SearchModel>();
-    final searchActive = watchPropertyValue((SearchModel m) => m.searchActive);
-    final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
+    final searchManager = di<SearchManager>();
+    final searchActive = watchPropertyValue(
+      (SearchManager m) => m.searchActive,
+    );
+    final archiveActive = watchPropertyValue(
+      (ChatManager m) => m.archiveActive,
+    );
     return YaruWindowTitleBar(
       heroTag: '<Left hero tag>',
       title: Text(archiveActive ? l10n.archive : l10n.chats),
@@ -41,16 +45,16 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
           IconButton(
             tooltip: context.l10n.search,
             isSelected: searchActive,
-            onPressed: searchModel.toggleSearch,
+            onPressed: searchManager.toggleSearch,
             icon: const Icon(YaruIcons.search),
           ),
           IconButton(
             tooltip: context.l10n.archive,
             selectedIcon: const Icon(YaruIcons.trash_filled),
-            isSelected: watchPropertyValue((ChatModel m) => m.archiveActive),
+            isSelected: watchPropertyValue((ChatManager m) => m.archiveActive),
             onPressed: () => showFutureLoadingDialog(
               context: context,
-              future: di<ChatModel>().toggleArchive,
+              future: di<ChatManager>().toggleArchive,
             ),
             icon: const Icon(YaruIcons.trash),
           ),

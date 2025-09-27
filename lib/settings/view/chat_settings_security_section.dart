@@ -7,7 +7,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
-import '../settings_model.dart';
+import '../settings_manager.dart';
 
 class ChatSettingsSecuritySection extends StatefulWidget
     with WatchItStatefulWidgetMixin {
@@ -25,7 +25,7 @@ class _ChatSettingsSecuritySectionState
   @override
   void initState() {
     super.initState();
-    _initialIndex = di<SettingsModel>().shareKeysWithIndex;
+    _initialIndex = di<SettingsManager>().shareKeysWithIndex;
   }
 
   @override
@@ -33,7 +33,7 @@ class _ChatSettingsSecuritySectionState
     final l10n = context.l10n;
 
     final shareKeysWith = watchPropertyValue(
-      (SettingsModel m) => ShareKeysWith.values[m.shareKeysWithIndex],
+      (SettingsManager m) => ShareKeysWith.values[m.shareKeysWithIndex],
     );
 
     return YaruSection(
@@ -45,7 +45,7 @@ class _ChatSettingsSecuritySectionState
             trailing: YaruPopupMenuButton<ShareKeysWith>(
               initialValue: shareKeysWith,
               onSelected: (v) =>
-                  di<SettingsModel>().setShareKeysWithIndex(v.index),
+                  di<SettingsManager>().setShareKeysWithIndex(v.index),
               itemBuilder: (context) => ShareKeysWith.values
                   .map(
                     (e) => PopupMenuItem<ShareKeysWith>(

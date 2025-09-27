@@ -3,10 +3,10 @@ import 'package:matrix/matrix_api_lite/generated/model.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../authentication/authentication_model.dart';
+import '../../authentication/authentication_service.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../account_model.dart';
+import '../account_manager.dart';
 import 'chat_settings_avatar.dart';
 import 'chat_settings_display_name_text_field.dart';
 import 'chat_settings_logout_button.dart';
@@ -27,7 +27,7 @@ class _ChatSettingsAccountSectionState
   @override
   void initState() {
     super.initState();
-    _profileFuture = di<AccountModel>().getMyProfile();
+    _profileFuture = di<AccountManager>().getMyProfile();
   }
 
   @override
@@ -53,7 +53,7 @@ class _ChatSettingsAccountSectionState
             title: TextField(
               enabled: false,
               controller: TextEditingController(
-                text: di<AuthenticationModel>().loggedInUserId,
+                text: di<AuthenticationService>().loggedInUserId,
               ),
             ),
             trailing: const ChatSettingsLogoutButton(),

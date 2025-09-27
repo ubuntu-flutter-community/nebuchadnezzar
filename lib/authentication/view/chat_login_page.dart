@@ -8,7 +8,7 @@ import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/l10n.dart';
-import '../authentication_model.dart';
+import '../authentication_service.dart';
 import 'chat_login_page_scaffold.dart';
 import 'chat_matrix_id_login_page.dart';
 
@@ -26,13 +26,13 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    bool processingAccess = watchPropertyValue(
-      (AuthenticationModel m) => m.processingAccess,
+    bool processingAccess = watchValue(
+      (AuthenticationService m) => m.processingAccess,
     );
 
     var onPressed = processingAccess
         ? null
-        : () => di<AuthenticationModel>().singleSingOnLogin(
+        : () => di<AuthenticationService>().singleSingOnLogin(
             onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(
                 builder: (_) => const CheckEncryptionSetupPage(),

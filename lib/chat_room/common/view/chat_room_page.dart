@@ -7,7 +7,7 @@ import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../app/view/error_page.dart';
-import '../../../common/chat_model.dart';
+import '../../../common/chat_manager.dart';
 import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
@@ -16,12 +16,12 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../create_or_edit/create_or_edit_room_model.dart';
+import '../../create_or_edit/edit_room_service.dart';
 import '../../info_drawer/chat_room_info_drawer.dart';
-import '../../input/draft_model.dart';
+import '../../input/draft_manager.dart';
 import '../../input/view/chat_input.dart';
 import '../../timeline/chat_room_timeline_list.dart';
-import '../../timeline/timeline_model.dart';
+import '../../timeline/timeline_manager.dart';
 import '../../titlebar/chat_room_title_bar.dart';
 import 'chat_room_unaccepted_direct_chat_body.dart';
 
@@ -44,7 +44,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   void initState() {
     super.initState();
-    _timelineFuture = di<TimelineModel>().loadTimeline(
+    _timelineFuture = di<TimelineManager>().loadTimeline(
       widget.room,
       onNewEvent: () => _roomListKey.currentState?.setState(() {}),
       onChange: (i) => _roomListKey.currentState?.setState(() {}),
@@ -60,14 +60,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     final colorScheme = context.colorScheme;
 
     final updating = watchPropertyValue(
-      (TimelineModel m) => m.getUpdatingTimeline(widget.room.id),
+      (TimelineManager m) => m.getUpdatingTimeline(widget.room.id),
     );
 
     registerStreamHandler(
-      select: (ChatModel m) => m.getLeftRoomStream(widget.room.id),
+      select: (ChatManager m) => m.getLeftRoomStream(widget.room.id),
       handler: (context, leftRoomUpdate, cancel) {
-        if (!di<ChatModel>().archiveActive && leftRoomUpdate.hasData) {
-          di<ChatModel>().setSelectedRoom(null);
+        if (!di<ChatManager>().archiveActive && leftRoomUpdate.hasData) {
+          di<ChatManager>().setSelectedRoom(null);
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -85,7 +85,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     final unAcceptedDirectChat = !widget.room.isUnacceptedDirectChat
         ? false
         : watchStream(
-            (CreateOrEditRoomModel m) => m
+            (EditRoomService m) => m
                 .getUsersStreamOfJoinedRoom(
                   widget.room,
                   membershipFilter: [Membership.invite],
@@ -109,7 +109,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               if (value == null) return;
               final file = File.fromUri(value);
 
-              await di<DraftModel>().addAttachment(
+              await di<DraftManager>().addAttachment(
                 widget.room.id,
                 onFail: (error) => showSnackBar(context, content: Text(error)),
                 existingFiles: [XFile.fromData(file.readAsBytesSync())],

@@ -4,7 +4,7 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import '../../common/event_x.dart';
 import '../../common/logging.dart';
 
-class TimelineModel extends SafeChangeNotifier {
+class TimelineManager extends SafeChangeNotifier {
   Future<Timeline> loadTimeline(
     Room room, {
     void Function(int)? onChange,

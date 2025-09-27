@@ -11,12 +11,12 @@ import 'package:yaru/yaru.dart';
 import '../../app/view/error_page.dart';
 import '../../common/date_time_x.dart';
 import '../../common/event_x.dart';
-import '../../common/local_image_model.dart';
+import '../../common/local_image_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../chat_download_model.dart';
+import '../chat_download_manager.dart';
 
 class ChatMessageImageFullScreenDialog extends StatefulWidget {
   const ChatMessageImageFullScreenDialog({super.key, required this.event});
@@ -38,7 +38,7 @@ class _ChatMessageImageFullScreenDialogState
   void initState() {
     super.initState();
     _controller = PhotoViewController();
-    _future = di<LocalImageModel>().downloadImage(
+    _future = di<LocalImageManager>().downloadImage(
       event: widget.event,
       cache: false,
     );
@@ -101,7 +101,7 @@ class _ChatMessageImageFullScreenDialogState
         actions: [
           IconButton(
             tooltip: l10n.downloadFile,
-            onPressed: () => di<ChatDownloadModel>().safeFile(
+            onPressed: () => di<ChatDownloadManager>().safeFile(
               event: widget.event,
               dialogTitle: l10n.saveFile,
               confirmButtonText: l10n.saveFile,

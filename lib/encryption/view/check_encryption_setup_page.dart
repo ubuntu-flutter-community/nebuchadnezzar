@@ -5,7 +5,7 @@ import '../../app/view/error_page.dart';
 import '../../app/view/splash_page.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../l10n/l10n.dart';
-import '../encryption_model.dart';
+import '../encryption_manager.dart';
 import 'setup_encrypted_chat_page.dart';
 
 class CheckEncryptionSetupPage extends StatefulWidget {
@@ -22,7 +22,7 @@ class _CheckEncryptionSetupPageState extends State<CheckEncryptionSetupPage> {
   @override
   void initState() {
     super.initState();
-    _isEncryptionSetupNeeded = di<EncryptionModel>()
+    _isEncryptionSetupNeeded = di<EncryptionManager>()
         .checkIfEncryptionSetupIsNeeded();
   }
 

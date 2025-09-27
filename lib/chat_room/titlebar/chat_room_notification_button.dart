@@ -3,11 +3,11 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/push_rule_state_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
-import '../create_or_edit/create_or_edit_room_model.dart';
+import '../create_or_edit/edit_room_service.dart';
 
 class ChatRoomNotificationButton extends StatelessWidget with WatchItMixin {
   const ChatRoomNotificationButton({super.key, required this.room});
@@ -18,7 +18,7 @@ class ChatRoomNotificationButton extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final pushRuleState =
         watchStream(
-          (CreateOrEditRoomModel m) => m.getPushRuleStateStream(room),
+          (EditRoomService m) => m.getPushRuleStateStream(room),
           initialValue: room.pushRuleState,
         ).data ??
         room.pushRuleState;
@@ -29,8 +29,7 @@ class ChatRoomNotificationButton extends StatelessWidget with WatchItMixin {
       initialValue: pushRuleState,
       onSelected: (v) => showFutureLoadingDialog(
         context: context,
-        future: () =>
-            di<CreateOrEditRoomModel>().setPushRuleState(room, value: v),
+        future: () => di<EditRoomService>().setPushRuleState(room, value: v),
       ),
       itemBuilder: (context) => PushRuleState.values
           .map(
@@ -57,7 +56,7 @@ class ChatRoomNotificationsDialog extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final pushRuleState =
         watchStream(
-          (ChatModel m) => m.syncStream.map((_) => room.pushRuleState),
+          (ChatManager m) => m.syncStream.map((_) => room.pushRuleState),
           initialValue: room.pushRuleState,
         ).data ??
         room.pushRuleState;
@@ -72,7 +71,7 @@ class ChatRoomNotificationsDialog extends StatelessWidget with WatchItMixin {
               leading: e.getIcon(context.colorScheme),
               title: Text(e.localize(context.l10n)),
               onTap: () {
-                di<CreateOrEditRoomModel>().setPushRuleState(room, value: e);
+                di<EditRoomService>().setPushRuleState(room, value: e);
                 Navigator.of(context).pop();
               },
             ),

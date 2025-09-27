@@ -9,23 +9,24 @@ import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app/app_config.dart';
-import 'authentication/authentication_model.dart';
-import 'chat_room/create_or_edit/create_or_edit_room_model.dart';
-import 'chat_room/input/draft_model.dart';
-import 'chat_room/timeline/timeline_model.dart';
-import 'common/chat_model.dart';
+import 'authentication/authentication_service.dart';
+import 'chat_room/create_or_edit/create_room_manager.dart';
+import 'chat_room/create_or_edit/edit_room_service.dart';
+import 'chat_room/input/draft_manager.dart';
+import 'chat_room/timeline/timeline_manager.dart';
+import 'common/chat_manager.dart';
 import 'common/client_x.dart';
-import 'common/local_image_model.dart';
+import 'common/local_image_manager.dart';
 import 'common/local_image_service.dart';
 import 'common/platforms.dart';
-import 'common/remote_image_model.dart';
+import 'common/remote_image_manager.dart';
 import 'common/remote_image_service.dart';
-import 'common/search_model.dart';
-import 'encryption/encryption_model.dart';
-import 'events/chat_download_model.dart';
+import 'common/search_manager.dart';
+import 'encryption/encryption_manager.dart';
+import 'events/chat_download_manager.dart';
 import 'events/chat_download_service.dart';
-import 'settings/account_model.dart';
-import 'settings/settings_model.dart';
+import 'settings/account_manager.dart';
+import 'settings/settings_manager.dart';
 import 'settings/settings_service.dart';
 
 void registerDependencies() {
@@ -65,13 +66,12 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [SettingsService],
     )
-    ..registerSingletonWithDependencies<AuthenticationModel>(
-      () => AuthenticationModel(client: di<Client>()),
-      dispose: (s) => s.dispose(),
+    ..registerSingletonWithDependencies<AuthenticationService>(
+      () => AuthenticationService(client: di<Client>()),
       dependsOn: [Client],
     )
-    ..registerSingletonWithDependencies<EncryptionModel>(
-      () => EncryptionModel(
+    ..registerSingletonWithDependencies<EncryptionManager>(
+      () => EncryptionManager(
         client: di<Client>(),
         secureStorage: di<FlutterSecureStorage>(),
       ),
@@ -83,22 +83,22 @@ void registerDependencies() {
       dependsOn: [Client],
       dispose: (s) => s.dispose(),
     )
-    ..registerSingletonWithDependencies<ChatModel>(
-      () => ChatModel(client: di<Client>()),
+    ..registerSingletonWithDependencies<ChatManager>(
+      () => ChatManager(client: di<Client>()),
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
-    ..registerSingletonWithDependencies<AccountModel>(
-      () => AccountModel(client: di<Client>()),
+    ..registerSingletonWithDependencies<AccountManager>(
+      () => AccountManager(client: di<Client>()),
       dependsOn: [Client],
     )
-    ..registerSingletonWithDependencies<SettingsModel>(
-      () => SettingsModel(settingsService: di<SettingsService>()),
+    ..registerSingletonWithDependencies<SettingsManager>(
+      () => SettingsManager(settingsService: di<SettingsService>()),
       dispose: (s) => s.dispose(),
       dependsOn: [SettingsService],
     )
-    ..registerSingletonWithDependencies<DraftModel>(
-      () => DraftModel(
+    ..registerSingletonWithDependencies<DraftManager>(
+      () => DraftManager(
         client: di<Client>(),
         localImageService: di<LocalImageService>(),
       ),
@@ -117,13 +117,13 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [Client, SharedPreferences],
     )
-    ..registerSingletonWithDependencies<ChatDownloadModel>(
-      () => ChatDownloadModel(service: di<ChatDownloadService>()),
+    ..registerSingletonWithDependencies<ChatDownloadManager>(
+      () => ChatDownloadManager(service: di<ChatDownloadService>()),
       dispose: (s) => s.dispose(),
       dependsOn: [ChatDownloadService],
     )
-    ..registerSingletonWithDependencies<LocalImageModel>(
-      () => LocalImageModel(service: di<LocalImageService>()),
+    ..registerSingletonWithDependencies<LocalImageManager>(
+      () => LocalImageManager(service: di<LocalImageService>()),
       dispose: (s) => s.dispose(),
       dependsOn: [LocalImageService],
     )
@@ -132,18 +132,18 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
-    ..registerSingletonWithDependencies<RemoteImageModel>(
-      () => RemoteImageModel(service: di<RemoteImageService>()),
+    ..registerSingletonWithDependencies<RemoteImageManager>(
+      () => RemoteImageManager(service: di<RemoteImageService>()),
       dependsOn: [RemoteImageService],
       dispose: (s) => s.dispose(),
     )
-    ..registerSingletonWithDependencies<SearchModel>(
-      () => SearchModel(client: di<Client>()),
+    ..registerSingletonWithDependencies<SearchManager>(
+      () => SearchManager(client: di<Client>()),
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
-    ..registerLazySingleton<TimelineModel>(
-      () => TimelineModel(),
+    ..registerLazySingleton<TimelineManager>(
+      () => TimelineManager(),
       dispose: (s) => s.dispose(),
     )
     ..registerSingletonAsync<LocalNotifier>(() async {
@@ -153,7 +153,10 @@ void registerDependencies() {
 
       return localNotifier;
     })
-    ..registerLazySingleton<CreateOrEditRoomModel>(
-      () => CreateOrEditRoomModel(client: di<Client>()),
+    ..registerLazySingleton<EditRoomService>(
+      () => EditRoomService(client: di<Client>()),
+    )
+    ..registerLazySingleton<CreateRoomManager>(
+      () => CreateRoomManager(client: di<Client>()),
     );
 }

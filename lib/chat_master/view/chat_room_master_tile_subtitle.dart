@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
 import 'chat_room_last_event.dart';
@@ -16,13 +16,13 @@ class ChatRoomMasterTileSubTitle extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final typingUsers =
         watchStream(
-          (ChatModel m) => m.getTypingUsersStream(room),
+          (ChatManager m) => m.getTypingUsersStream(room),
           initialValue: room.typingUsers,
         ).data ??
         [];
 
     final lastEvent = watchStream(
-      (ChatModel m) => m.getLastEventStream(room),
+      (ChatManager m) => m.getLastEventStream(room),
       initialValue: room.lastEvent,
     ).data;
 

@@ -10,7 +10,7 @@ import '../../common/view/chat_profile_dialog.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../chat_download_model.dart';
+import '../chat_download_manager.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_image.dart';
 import 'chat_map.dart';
@@ -217,7 +217,7 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                                 IconButton(
                                                   tooltip: l10n.downloadFile,
                                                   onPressed: () =>
-                                                      di<ChatDownloadModel>()
+                                                      di<ChatDownloadManager>()
                                                           .safeFile(
                                                             event: event,
                                                             dialogTitle:

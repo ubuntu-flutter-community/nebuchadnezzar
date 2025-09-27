@@ -7,7 +7,7 @@ import 'package:watch_it/watch_it.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../common/chat_model.dart';
+import '../../../common/chat_manager.dart';
 import '../../../common/view/chat_avatar.dart';
 
 class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
@@ -21,7 +21,7 @@ class ChatTypingIndicator extends StatelessWidget with WatchItMixin {
 
     final typingUsers =
         watchStream(
-          (ChatModel m) => m.getTypingUsersStream(room),
+          (ChatManager m) => m.getTypingUsersStream(room),
           initialValue: room.typingUsers,
         ).data ??
         [];

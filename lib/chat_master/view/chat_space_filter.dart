@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_model.dart';
-import '../../common/search_model.dart';
+import '../../common/chat_manager.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/ui_constants.dart';
 
@@ -15,18 +15,18 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     const dimension = 40.0;
-    final chatModel = di<ChatModel>();
-    final activeSpace = watchPropertyValue((ChatModel m) => m.activeSpace);
+    final chatManager = di<ChatManager>();
+    final activeSpace = watchPropertyValue((ChatManager m) => m.activeSpace);
 
     final spaces =
         watchStream(
-          (ChatModel m) => m.spacesStream,
-          initialValue: chatModel.spaces,
+          (ChatManager m) => m.spacesStream,
+          initialValue: chatManager.spaces,
           preserveState: false,
         ).data ??
-        chatModel.spaces;
+        chatManager.spaces;
 
-    watchPropertyValue((ChatModel m) => m.selectedRoom);
+    watchPropertyValue((ChatManager m) => m.selectedRoom);
 
     return AnimatedContainer(
       alignment: Alignment.center,
@@ -52,8 +52,8 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
                         child: YaruSelectableContainer(
                           key: ValueKey('${space.id}_space'),
                           onTap: () {
-                            chatModel.setActiveSpace(space);
-                            di<SearchModel>().resetSpaceSearch();
+                            chatManager.setActiveSpace(space);
+                            di<SearchManager>().resetSpaceSearch();
                           },
                           padding: EdgeInsets.zero,
                           selected: activeSpace == space,

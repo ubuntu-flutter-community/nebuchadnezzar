@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_room/create_or_edit/create_or_edit_room_model.dart';
-import '../../common/chat_model.dart';
+import '../../chat_room/create_or_edit/edit_room_service.dart';
+import '../../common/chat_manager.dart';
 import '../../common/rooms_filter.dart';
-import '../../common/search_model.dart';
+import '../../common/search_manager.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/confirm.dart';
@@ -17,12 +17,14 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final archiveActive = watchPropertyValue((ChatModel m) => m.archiveActive);
-    final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
+    final archiveActive = watchPropertyValue(
+      (ChatManager m) => m.archiveActive,
+    );
+    final roomsFilter = watchPropertyValue((ChatManager m) => m.roomsFilter);
 
-    final spaceSearch = watchPropertyValue((SearchModel m) => m.spaceSearch);
+    final spaceSearch = watchPropertyValue((SearchManager m) => m.spaceSearch);
     final spaceSearchL = watchPropertyValue(
-      (SearchModel m) => m.spaceSearch?.length ?? 0,
+      (SearchManager m) => m.spaceSearch?.length ?? 0,
     );
     if (spaceSearch == null) {
       return const Center(
@@ -75,12 +77,13 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
               ),
               context: context,
               onConfirm: () async {
-                final maybe = await di<CreateOrEditRoomModel>()
-                    .knockOrJoinRoomChunk(chunk);
+                final maybe = await di<EditRoomService>().knockOrJoinRoomChunk(
+                  chunk,
+                );
                 if (maybe != null) {
-                  di<ChatModel>().setSelectedRoom(maybe);
+                  di<ChatManager>().setSelectedRoom(maybe);
                   if (maybe.isSpace) {
-                    di<ChatModel>().setActiveSpace(maybe);
+                    di<ChatManager>().setActiveSpace(maybe);
                   }
                 }
                 if (context.mounted) {

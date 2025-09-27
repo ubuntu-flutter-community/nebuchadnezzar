@@ -8,7 +8,7 @@ import '../../common/view/confirm.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../chat_download_model.dart';
+import '../chat_download_manager.dart';
 
 class ChatMessageMediaAvatar extends StatelessWidget {
   const ChatMessageMediaAvatar({super.key, required this.event});
@@ -38,7 +38,7 @@ class ChatMessageMediaAvatar extends StatelessWidget {
                     MessageTypes.File ||
                     MessageTypes.Audio ||
                     MessageTypes.Video =>
-                      () => di<ChatDownloadModel>().safeFile(
+                      () => di<ChatDownloadManager>().safeFile(
                         event: event,
                         dialogTitle: l10n.saveFile,
                         confirmButtonText: l10n.saveFile,

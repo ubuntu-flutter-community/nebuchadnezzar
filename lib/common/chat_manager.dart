@@ -7,8 +7,8 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'logging.dart';
 import 'rooms_filter.dart';
 
-class ChatModel extends SafeChangeNotifier {
-  ChatModel({required Client client}) : _client = client;
+class ChatManager extends SafeChangeNotifier {
+  ChatManager({required Client client}) : _client = client;
 
   // The matrix dart SDK client
   final Client _client;

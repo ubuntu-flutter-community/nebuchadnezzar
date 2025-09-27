@@ -4,8 +4,8 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'settings_service.dart';
 
-class SettingsModel extends SafeChangeNotifier {
-  SettingsModel({required SettingsService settingsService})
+class SettingsManager extends SafeChangeNotifier {
+  SettingsManager({required SettingsService settingsService})
     : _settingsService = settingsService {
     _propertiesChangedSub ??= _settingsService.propertiesChanged.listen(
       (_) => notifyListeners(),

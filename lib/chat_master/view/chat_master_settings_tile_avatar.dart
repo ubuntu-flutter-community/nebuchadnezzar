@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../settings/account_model.dart';
+import '../../settings/account_manager.dart';
 import '../../settings/view/chat_settings_avatar.dart';
 
 class ChatMasterSettingsTileAvatar extends StatefulWidget {
@@ -20,7 +20,7 @@ class _ChatMasterSettingsTileAvatarState
   @override
   void initState() {
     super.initState();
-    _profileFuture = di<AccountModel>().getMyProfile();
+    _profileFuture = di<AccountManager>().getMyProfile();
   }
 
   @override

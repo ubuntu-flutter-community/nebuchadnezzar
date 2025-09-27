@@ -4,7 +4,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../../common/chat_model.dart';
+import '../../common/chat_manager.dart';
 import '../../common/rooms_filter.dart';
 
 class ChatMasterListFilterBar extends StatelessWidget with WatchItMixin {
@@ -12,7 +12,7 @@ class ChatMasterListFilterBar extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final roomsFilter = watchPropertyValue((ChatModel m) => m.roomsFilter);
+    final roomsFilter = watchPropertyValue((ChatManager m) => m.roomsFilter);
     return Padding(
       padding: const EdgeInsets.only(
         left: kMediumPlusPadding,
@@ -40,7 +40,7 @@ class ChatMasterListFilterBar extends StatelessWidget with WatchItMixin {
             .map((e) => e == roomsFilter)
             .toList(),
         onSelected: (i) =>
-            di<ChatModel>().setRoomsFilter(RoomsFilter.shownValues[i]),
+            di<ChatManager>().setRoomsFilter(RoomsFilter.shownValues[i]),
       ),
     );
   }

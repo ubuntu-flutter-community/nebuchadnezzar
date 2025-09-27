@@ -3,14 +3,14 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../authentication/authentication_model.dart';
-import '../../../common/chat_model.dart';
+import '../../../authentication/authentication_service.dart';
+import '../../../common/chat_manager.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/chat_user_search_auto_complete.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../create_or_edit_room_model.dart';
+import '../create_room_manager.dart';
 
 class CreateDirectChatDialog extends StatefulWidget {
   const CreateDirectChatDialog({super.key});
@@ -37,12 +37,12 @@ class _CreateDirectChatDialogState extends State<CreateDirectChatDialog> {
       onConfirm: () =>
           showFutureLoadingDialog(
             context: context,
-            future: () => di<CreateOrEditRoomModel>().startOrGetDirectChat(
+            future: () => di<CreateRoomManager>().createOrGetDirectChat(
               _searchController.text,
             ),
           ).then((result) {
             if (result.asValue?.value != null) {
-              di<ChatModel>().setSelectedRoom(result.asValue!.value!);
+              di<ChatManager>().setSelectedRoom(result.asValue!.value!);
             }
           }),
       confirmLabel: l10n.startConversation,
@@ -62,7 +62,7 @@ class _CreateDirectChatDialogState extends State<CreateDirectChatDialog> {
           ),
           ChatUserSearchAutoComplete(
             labelText:
-                '${l10n.search} ${di<AuthenticationModel>().homeServerId}',
+                '${l10n.search} ${di<AuthenticationService>().homeServerId}',
             suffix: const Icon(YaruIcons.search),
             onProfileSelected: (p) => _searchController.text = p.userId,
           ),
