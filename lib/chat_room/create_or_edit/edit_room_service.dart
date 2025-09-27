@@ -5,8 +5,8 @@ import 'package:matrix/matrix.dart';
 
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
-import '../../common/room_x.dart';
-import '../../common/xtypegroup_x.dart';
+import '../../extensions/room_x.dart';
+import '../../extensions/xtypegroup_x.dart';
 
 const adminPowerLevel = 100;
 const memberPowerLevel = 0;

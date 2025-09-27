@@ -5,10 +5,10 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../chat_room/input/draft_manager.dart';
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
+import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 import 'chat_event_inspect_dialog.dart';
 import 'chat_message_menu_reaction_picker.dart';

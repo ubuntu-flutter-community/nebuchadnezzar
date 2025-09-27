@@ -3,7 +3,7 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../chat_room/timeline/timeline_manager.dart';
-import '../../common/event_x.dart';
+import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 
 class ChatRoomLastEvent extends StatefulWidget {

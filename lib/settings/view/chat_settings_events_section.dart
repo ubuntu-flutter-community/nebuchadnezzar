@@ -15,8 +15,7 @@ class ChatSettingsEventsSection extends StatelessWidget with WatchItMixin {
     final settingsManager = di<SettingsManager>();
 
     return YaruSection(
-      // TODO: localize
-      headline: const Text('Show these events in the chat'),
+      headline: Text(l10n.showTheseEventsInTheChat),
       child: Column(
         children: [
           YaruTile(

@@ -9,12 +9,12 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../app/view/error_page.dart';
-import '../../common/date_time_x.dart';
-import '../../common/event_x.dart';
 import '../../common/local_image_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/date_time_x.dart';
+import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 import '../chat_download_manager.dart';
 

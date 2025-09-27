@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:matrix/matrix.dart';
-import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../app/app_config.dart';
+import '../common/constants.dart';
 import '../common/logging.dart';
 import '../common/platforms.dart';
 
@@ -28,19 +28,43 @@ class AuthenticationService {
   Stream<UiaRequest<dynamic>> get onUiaRequestStream =>
       _client.onUiaRequest.stream;
 
-  final processingAccess = SafeValueNotifier<bool>(false);
-
-  final showPassword = SafeValueNotifier<bool>(false);
-
   final int _timeoutSeconds = 65;
+
   Future<void> login({
+    required String loginMethod,
+    String homeServer = defaultHomeServer,
+    String? username,
+    String? password,
+  }) async {
+    if (loginMethod == LoginType.mLoginPassword &&
+        ((username?.isEmpty ?? true) || (password?.isEmpty ?? true))) {
+      throw ArgumentError(
+        'homeServer, username and password must be provided for matrixId login method',
+      );
+    } else if (loginMethod == LoginType.mLoginToken && homeServer.isEmpty) {
+      throw ArgumentError(
+        'homeServer must be provided for singleSignOn login method',
+      );
+    }
+
+    return switch (loginMethod) {
+      LoginType.mLoginToken => _singleSingOnLogin(homeServer: homeServer),
+      LoginType.mLoginPassword => _userNamePasswordLogin(
+        homeServer: homeServer,
+        username: username!,
+        password: password!,
+      ),
+      _ => throw UnimplementedError(
+        'Login method $loginMethod is not implemented',
+      ),
+    };
+  }
+
+  Future<void> _userNamePasswordLogin({
     required String homeServer,
     required String username,
     required String password,
-    required Function(String error) onFail,
-    required Future Function() onSuccess,
   }) async {
-    processingAccess.value = true;
     try {
       await _client.checkHomeserver(Uri.https(homeServer, ''));
 
@@ -54,21 +78,12 @@ class AuthenticationService {
                 : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
           .timeout(const Duration(seconds: 30));
-      await onSuccess();
-    } on Exception catch (e, s) {
-      await onFail(e.toString());
-      printMessageInDebugMode(e, s);
-    } finally {
-      processingAccess.value = false;
+    } on Exception {
+      rethrow;
     }
   }
 
-  Future<void> singleSingOnLogin({
-    required String homeServer,
-    required Function(String error) onFail,
-    required Future Function() onSuccess,
-  }) async {
-    processingAccess.value = true;
+  Future<void> _singleSingOnLogin({required String homeServer}) async {
     try {
       final redirectUrl = Platforms.isWeb
           ? Uri.parse(
@@ -100,8 +115,7 @@ class AuthenticationService {
       final token = parsedResult.queryParameters['loginToken'];
       if (token?.isEmpty ?? false) {
         printMessageInDebugMode('Login token is empty or null: $token');
-        onFail('Login token not received from SSO.');
-        return;
+        throw Exception('Login token not received from SSO.');
       }
 
       await _client
@@ -113,24 +127,16 @@ class AuthenticationService {
                 : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
           .timeout(Duration(seconds: _timeoutSeconds));
-      await onSuccess();
-    } on TimeoutException catch (e, s) {
-      printMessageInDebugMode(
-        'Login timed out after $_timeoutSeconds seconds: $e',
-        s,
-      );
-      onFail('Failed to login with SSO token: ${e.toString()}');
-    } catch (e, s) {
-      printMessageInDebugMode('Error during client.login with token: $e', s);
-      onFail('Failed to login with SSO token: ${e.toString()}');
-    } finally {
-      processingAccess.value = false;
+    } on Exception {
+      rethrow;
     }
   }
 
   Future<void> logout() async {
     try {
-      await _client.logout();
+      if (_client.isLogged()) {
+        await _client.logout();
+      }
     } on Exception {
       rethrow;
     }

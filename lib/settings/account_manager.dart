@@ -10,7 +10,7 @@ import 'package:mime/mime.dart';
 import '../common/logging.dart';
 import '../common/platforms.dart';
 import '../encryption/view/key_verification_dialog.dart';
-import '../common/xtypegroup_x.dart';
+import '../extensions/xtypegroup_x.dart';
 
 class AccountManager {
   AccountManager({required Client client}) : _client = client;

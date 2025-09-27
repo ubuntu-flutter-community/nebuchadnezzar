@@ -6,8 +6,8 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../chat_room/create_or_edit/edit_room_service.dart';
 import '../../common/chat_manager.dart';
-import '../../common/room_x.dart';
 import '../../common/view/confirm.dart';
+import '../../extensions/room_x.dart';
 import '../../l10n/l10n.dart';
 
 class RemoveFromSpaceDialog extends StatefulWidget

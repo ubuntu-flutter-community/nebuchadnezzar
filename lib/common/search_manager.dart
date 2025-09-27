@@ -11,7 +11,7 @@ class SearchManager extends SafeChangeNotifier {
   final Client _client;
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
     _debounce?.cancel();
     super.dispose();
   }

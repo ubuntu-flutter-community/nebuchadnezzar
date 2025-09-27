@@ -8,13 +8,13 @@ import 'package:watch_it/watch_it.dart';
 
 import '../../../app/view/error_page.dart';
 import '../../../common/chat_manager.dart';
-import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
+import '../../../extensions/room_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../create_or_edit/edit_room_service.dart';
 import '../../info_drawer/chat_room_info_drawer.dart';

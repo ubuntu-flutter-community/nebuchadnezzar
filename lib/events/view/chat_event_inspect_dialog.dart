@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../common/date_time_x.dart';
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/date_time_x.dart';
+import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 
 class ChatEventInspectDialog extends StatelessWidget {

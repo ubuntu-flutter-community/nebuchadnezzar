@@ -82,11 +82,13 @@ class _ChatSettingsSecuritySectionState
 }
 
 extension _ShareKeysWithX on ShareKeysWith {
-  // TODO: localize
   String localize(AppLocalizations l10n) => switch (this) {
-    ShareKeysWith.all => l10n.all,
-    ShareKeysWith.crossVerifiedIfEnabled => 'crossVerifiedIfEnabled',
-    ShareKeysWith.crossVerified => 'crossVerified',
-    ShareKeysWith.directlyVerifiedOnly => 'directlyVerifiedOnly',
+    ShareKeysWith.all => l10n.shareKeysWithAllDevices,
+    ShareKeysWith.crossVerifiedIfEnabled =>
+      l10n.shareKeysWithCrossVerifiedDevices,
+    ShareKeysWith.crossVerified =>
+      l10n.shareKeysWithCrossVerifiedDevicesIfEnabled,
+    ShareKeysWith.directlyVerifiedOnly =>
+      l10n.shareKeysWithDirectlyVerifiedDevicesOnly,
   };
 }

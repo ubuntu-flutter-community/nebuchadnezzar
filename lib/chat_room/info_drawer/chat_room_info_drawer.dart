@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
-import '../../common/room_x.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/room_x.dart';
 import '../create_or_edit/edit_room_service.dart';
 import 'chat_room_info_drawer_direct_chat_content.dart';
 import 'chat_room_info_drawer_direct_chat_header.dart';

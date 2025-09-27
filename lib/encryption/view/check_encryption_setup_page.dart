@@ -35,6 +35,6 @@ class _CheckEncryptionSetupPageState extends State<CheckEncryptionSetupPage> {
         ? (snapshot.data == true
               ? const SetupEncryptedChatPage()
               : const ChatMasterDetailPage())
-        : SplashPage(title: Text(context.l10n.loadingPleaseWait)),
+        : SplashPage(title: Text(context.l10n.checkingEncryptionPleaseWait)),
   );
 }

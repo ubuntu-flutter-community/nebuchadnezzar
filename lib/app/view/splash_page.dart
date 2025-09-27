@@ -9,14 +9,12 @@ class SplashPage extends StatelessWidget {
   final Widget? title;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: YaruWindowTitleBar(
-        title: title,
-        border: BorderSide.none,
-        backgroundColor: Colors.transparent,
-      ),
-      body: const Center(child: Progress()),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+    appBar: YaruWindowTitleBar(
+      title: title ?? const Text(''),
+      border: BorderSide.none,
+      backgroundColor: Colors.transparent,
+    ),
+    body: const Center(child: Progress()),
+  );
 }

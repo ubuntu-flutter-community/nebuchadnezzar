@@ -5,9 +5,9 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../../authentication/authentication_service.dart';
-import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
+import '../../../extensions/room_x.dart';
 import '../../../l10n/l10n.dart';
 import '../edit_room_service.dart';
 
@@ -79,8 +79,7 @@ class _CreateOrEditRoomCanonicalAliasTextFieldState
               if (value == null || value.isEmpty) {
                 return null;
               } else if (!regex.hasMatch(value)) {
-                // TODO: Localize this error message
-                return 'Invalid input, must match #SOMETHING:$homeServer';
+                return context.l10n.canonicalAliasInvalidInput(homeServer);
               } else if (value == widget.room.canonicalAlias) {
                 return null;
               }
@@ -95,8 +94,10 @@ class _CreateOrEditRoomCanonicalAliasTextFieldState
               helper: aliasIsSynced
                   ? null
                   : Text(
-                      // TODO: Localize this helper text
-                      'Example: #${widget.room.name.toLowerCase()}:${homeServer?.toLowerCase()}',
+                      context.l10n.canonicalAliasHelperText(
+                        widget.room.name,
+                        homeServer.toString(),
+                      ),
                     ),
               suffixIcon: enabledAliasField
                   ? IconButton(

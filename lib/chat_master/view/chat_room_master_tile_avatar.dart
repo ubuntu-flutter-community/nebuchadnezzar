@@ -4,8 +4,8 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
-import '../../common/push_rule_state_x.dart';
 import '../../common/view/chat_avatar.dart';
+import '../../extensions/push_rule_state_x.dart';
 
 class ChatRoomMasterTileAvatar extends StatelessWidget with WatchItMixin {
   const ChatRoomMasterTileAvatar({super.key, required this.room});

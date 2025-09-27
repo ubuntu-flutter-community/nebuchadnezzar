@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/date_time_x.dart';
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/date_time_x.dart';
+import '../../extensions/event_x.dart';
 
 class ChatEventStatusIcon extends StatelessWidget {
   const ChatEventStatusIcon({

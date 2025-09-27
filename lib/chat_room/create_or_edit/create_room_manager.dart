@@ -7,7 +7,7 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
-import '../../common/xtypegroup_x.dart';
+import '../../extensions/xtypegroup_x.dart';
 
 const adminPowerLevel = 100;
 const memberPowerLevel = 0;

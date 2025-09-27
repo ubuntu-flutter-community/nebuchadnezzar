@@ -1,6 +1,6 @@
 import 'package:matrix/matrix.dart';
 
-import '../../common/event_x.dart';
+import '../../extensions/event_x.dart';
 
 extension TimelineX on Timeline {
   List<Event> getMediaEvents(String messageType) => events

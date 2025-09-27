@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../common/event_x.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/event_x.dart';
 import 'chat_message_bubble_content.dart';
 
 class ChatMessageBubble extends StatelessWidget {

@@ -3,9 +3,9 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/matrix_file_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
+import '../../../extensions/matrix_file_x.dart';
 import '../draft_manager.dart';
 
 class ChatPendingAttachment extends StatelessWidget {

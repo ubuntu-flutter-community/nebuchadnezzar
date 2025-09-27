@@ -6,10 +6,10 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/event_x.dart';
 import '../../common/local_image_manager.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/event_x.dart';
 
 class ChatImage extends StatelessWidget with WatchItMixin {
   const ChatImage({

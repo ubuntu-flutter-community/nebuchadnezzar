@@ -2375,4 +2375,50 @@ class AppLocalizationsDe extends AppLocalizations {
   String changePowerLevelForUserToValue(Object user, Object value) {
     return 'Berechtigungsstufe für $user auf $value ändern?';
   }
+
+  @override
+  String get loginInPleaseWait => 'Logging in, please wait...';
+
+  @override
+  String get settingUpApplicationPleaseWait =>
+      'Settings up application, please wait ...';
+
+  @override
+  String get checkingEncryptionPleaseWait =>
+      'Checking encryption, please wait ...';
+
+  @override
+  String get settingUpEncryptionPleaseWait =>
+      'Setting up encryption, please wait ...';
+
+  @override
+  String canonicalAliasInvalidInput(String homeServer) {
+    return 'Invalid input, must match #SOMETHING:$homeServer';
+  }
+
+  @override
+  String canonicalAliasHelperText(String roomName, String homeServer) {
+    return 'Example: #\$$roomName:\$$homeServer';
+  }
+
+  @override
+  String get shareKeysWithAllDevices => 'Share keys with all devices';
+
+  @override
+  String get shareKeysWithCrossVerifiedDevices =>
+      'Share keys with cross-verified devices';
+
+  @override
+  String get shareKeysWithCrossVerifiedDevicesIfEnabled =>
+      'Share keys with cross-verified devices (if enabled)';
+
+  @override
+  String get shareKeysWithDirectlyVerifiedDevicesOnly =>
+      'Share keys with directly verified devices only';
+
+  @override
+  String get joinRules => 'Join rules';
+
+  @override
+  String get showTheseEventsInTheChat => 'Show these events in the chat';
 }

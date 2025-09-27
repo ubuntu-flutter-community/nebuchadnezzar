@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../app/app_config.dart';
+import '../../common/constants.dart';
 import '../../common/view/build_context_x.dart';
-import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
-import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/l10n.dart';
-import '../authentication_service.dart';
+import '../authentication_manager.dart';
 import 'chat_login_page_scaffold.dart';
 import 'chat_matrix_id_login_page.dart';
 
@@ -21,30 +21,26 @@ class ChatLoginPage extends StatefulWidget with WatchItStatefulWidgetMixin {
 
 class _ChatLoginPageState extends State<ChatLoginPage> {
   final TextEditingController _homeServerController = TextEditingController(
-    text: 'matrix.org',
+    text: defaultHomeServer,
   );
+
+  Future<void> onPressed(BuildContext context) async =>
+      di<AuthenticationManager>().login(
+        context,
+        loginMethod: LoginType.mLoginToken,
+        homeServer: _homeServerController.text.trim(),
+      );
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    bool processingAccess = watchValue(
-      (AuthenticationService m) => m.processingAccess,
+
+    final readOnly = watchValue(
+      (AuthenticationManager s) => s.processingAccess,
     );
 
-    var onPressed = processingAccess
-        ? null
-        : () => di<AuthenticationService>().singleSingOnLogin(
-            onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => const CheckEncryptionSetupPage(),
-              ),
-              (route) => false,
-            ),
-            onFail: (e) => showSnackBar(context, content: Text(e.toString())),
-            homeServer: _homeServerController.text.trim(),
-          );
-
     return ChatLoginPageScaffold(
-      processingAccess: processingAccess,
+      processingAccess: readOnly,
       titleLabel: '',
       canPop: false,
       content: [
@@ -62,9 +58,9 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
         ),
         TextField(
           controller: _homeServerController,
-          readOnly: processingAccess,
+          readOnly: readOnly,
           autocorrect: false,
-          onSubmitted: (value) => onPressed?.call(),
+          onSubmitted: readOnly ? null : (value) => onPressed(context),
           decoration: InputDecoration(
             prefixText: 'https://',
             labelText: l10n.homeserver,
@@ -74,7 +70,7 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
           width: double.infinity,
           child: OutlinedButton.icon(
             iconAlignment: IconAlignment.start,
-            onPressed: onPressed,
+            onPressed: readOnly ? null : () => onPressed(context),
             icon: const Icon(YaruIcons.globe),
             label: Text(l10n.login),
           ),
@@ -89,7 +85,7 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
-            onPressed: processingAccess
+            onPressed: readOnly
                 ? null
                 : () => Navigator.of(context).push(
                     MaterialPageRoute(

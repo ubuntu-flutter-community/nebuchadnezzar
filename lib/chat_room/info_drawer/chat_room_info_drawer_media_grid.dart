@@ -4,13 +4,13 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../events/chat_download_manager.dart';
 import '../../events/view/chat_image.dart';
 import '../../events/view/chat_message_image_full_screen_dialog.dart';
+import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 import '../timeline/timeline_manager.dart';
 import '../timeline/timeline_x.dart';
