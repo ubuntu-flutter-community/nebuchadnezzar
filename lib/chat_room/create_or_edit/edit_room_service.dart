@@ -3,14 +3,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../common/constants.dart';
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
 import '../../extensions/room_x.dart';
 import '../../extensions/xtypegroup_x.dart';
-
-const adminPowerLevel = 100;
-const memberPowerLevel = 0;
-const moderatorPowerLevel = 50;
 
 class EditRoomService {
   EditRoomService({required Client client}) : _client = client;

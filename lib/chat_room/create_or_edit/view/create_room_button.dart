@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../common/chat_manager.dart';
@@ -15,7 +16,9 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final name = watchValue((CreateRoomManager m) => m.nameDraft);
+    final name = watchValue(
+      (CreateRoomManager m) => m.draft.select((e) => e.name),
+    );
 
     return ImportantButton(
       onPressed: name.trim().isEmpty

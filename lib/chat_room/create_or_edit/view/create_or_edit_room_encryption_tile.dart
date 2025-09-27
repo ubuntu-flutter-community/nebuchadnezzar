@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -18,7 +19,9 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final encrypted = room == null
-        ? watchValue((CreateRoomManager m) => m.enableEncryptionDraft)
+        ? watchValue(
+            (CreateRoomManager m) => m.draft.select((e) => e.enableEncryption),
+          )
         : watchStream(
                 (EditRoomService m) => m.getIsRoomEncryptedStream(room),
                 initialValue: room!.encrypted,
@@ -47,7 +50,7 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
         onChanged: canChangeEncryption
             ? (v) {
                 if (room == null) {
-                  di<CreateRoomManager>().enableEncryptionDraft.value = v;
+                  di<CreateRoomManager>().updateDraft(enableEncryption: v);
                 } else {
                   showFutureLoadingDialog(
                     context: context,

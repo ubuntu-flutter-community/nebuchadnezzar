@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Visibility;
 import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -69,11 +70,13 @@ class CreateRoomVisibilitySwitch extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) => SwitchListTile(
     title: Text(context.l10n.groupCanBeFoundViaSearch),
     value:
-        watchValue((CreateRoomManager m) => m.visibilityDraft) ==
+        watchValue(
+          (CreateRoomManager m) => m.draft.select((e) => e.visibility),
+        ) ==
         Visibility.public,
-    onChanged: (value) => di<CreateRoomManager>().visibilityDraft.value = value
-        ? Visibility.public
-        : Visibility.private,
+    onChanged: (value) => di<CreateRoomManager>().updateDraft(
+      visibility: value ? Visibility.public : Visibility.private,
+    ),
   );
 }
 
@@ -84,15 +87,18 @@ class CreateRoomPresetSwitch extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final preset = watchValue((CreateRoomManager m) => m.createRoomPresetDraft);
+    final preset = watchValue(
+      (CreateRoomManager m) => m.draft.select((e) => e.createRoomPreset),
+    );
 
     return SwitchListTile(
       title: Text(l10n.groupIsPublic),
       value: preset == CreateRoomPreset.publicChat,
-      onChanged: (value) =>
-          di<CreateRoomManager>().createRoomPresetDraft.value = value
-          ? CreateRoomPreset.publicChat
-          : CreateRoomPreset.privateChat,
+      onChanged: (value) => di<CreateRoomManager>().updateDraft(
+        createRoomPreset: value
+            ? CreateRoomPreset.publicChat
+            : CreateRoomPreset.privateChat,
+      ),
     );
   }
 }

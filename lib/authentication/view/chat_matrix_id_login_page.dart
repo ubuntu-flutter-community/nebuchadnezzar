@@ -6,8 +6,10 @@ import 'package:yaru/yaru.dart';
 import '../../app/app_config.dart';
 import '../../common/constants.dart';
 import '../../common/view/theme.dart';
+import '../../extensions/safe_value_notifier_extension.dart';
 import '../../l10n/l10n.dart';
 import '../authentication_manager.dart';
+import 'authentication_mixin.dart';
 import 'chat_login_page_scaffold.dart';
 
 class ChatMatrixIdLoginPage extends StatefulWidget
@@ -18,21 +20,21 @@ class ChatMatrixIdLoginPage extends StatefulWidget
   State<ChatMatrixIdLoginPage> createState() => _ChatMatrixIdLoginPageState();
 }
 
-class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
+class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage>
+    with AuthenticationMixin {
   final TextEditingController _homeServerController = TextEditingController(
     text: defaultHomeServer,
   );
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> onPressed(BuildContext context) async =>
-      di<AuthenticationManager>().login(
-        context,
-        loginMethod: LoginType.mLoginPassword,
-        homeServer: _homeServerController.text.trim(),
-        username: _usernameController.text.trim(),
-        password: _passwordController.text,
-      );
+  Future<void> onPressed(BuildContext context) async => login(
+    context,
+    loginMethod: LoginType.mLoginPassword,
+    homeServer: _homeServerController.text.trim(),
+    username: _usernameController.text.trim(),
+    password: _passwordController.text,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +86,8 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
               isSelected: showPassword,
               padding: EdgeInsets.zero,
               style: textFieldSuffixStyle,
-              onPressed: () => di<AuthenticationManager>().showPassword.value =
-                  !showPassword,
+              onPressed: () =>
+                  di<AuthenticationManager>().showPassword.toggle(),
               icon: Icon(showPassword ? YaruIcons.eye_filled : YaruIcons.eye),
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -23,7 +24,7 @@ class CreateOrEditRoomAvatar extends StatelessWidget with WatchItMixin {
     final colorScheme = theme.colorScheme;
 
     final avatarDraftBytes = watchValue(
-      (CreateRoomManager m) => m.avatarDraft,
+      (CreateRoomManager m) => m.draft.select((e) => e.avatar),
     )?.bytes;
 
     return Stack(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -12,7 +13,9 @@ class CreateRoomProfilesListView extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final profiles = watchValue((CreateRoomManager m) => m.profilesDraft);
+    final profiles = watchValue(
+      (CreateRoomManager m) => m.draft.select((e) => e.profiles),
+    );
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(
