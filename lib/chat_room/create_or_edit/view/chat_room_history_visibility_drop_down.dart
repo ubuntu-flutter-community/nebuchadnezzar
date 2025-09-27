@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -20,7 +21,7 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final historyVisibilityDraft = watchValue(
-      (CreateRoomManager m) => m.historyVisibilityDraft,
+      (CreateRoomManager m) => m.draft.select((e) => e.historyVisibility),
     );
     final vis = room == null
         ? historyVisibilityDraft
@@ -50,7 +51,7 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
         initialValue: vis,
         enabled: canChangeHistoryVisibility,
         onSelected: room == null
-            ? (v) => di<CreateRoomManager>().historyVisibilityDraft.value = v
+            ? (v) => di<CreateRoomManager>().updateDraft(historyVisibility: v)
             : canChangeHistoryVisibility
             ? (v) => showFutureLoadingDialog(
                 context: context,

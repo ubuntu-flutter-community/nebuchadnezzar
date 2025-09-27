@@ -8,52 +8,53 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
 import '../../extensions/xtypegroup_x.dart';
-
-const adminPowerLevel = 100;
-const memberPowerLevel = 0;
-const moderatorPowerLevel = 50;
+import 'create_room_draft.dart';
 
 class CreateRoomManager {
   CreateRoomManager({required Client client}) : _client = client;
 
   final Client _client;
 
-  void init({required Room? room}) {
-    nameDraft.value = '';
-    topicDraft.value = '';
-    enableEncryptionDraft.value = false;
-    groupCallDraft.value = false;
-    visibilityDraft.value = Visibility.public;
-    createRoomPresetDraft.value = CreateRoomPreset.publicChat;
-    historyVisibilityDraft.value = HistoryVisibility.shared;
-    profilesDraft.value = {};
-    avatarDraft.value = null;
+  SafeValueNotifier<CreateRoomDraft> draft = SafeValueNotifier(
+    CreateRoomDraft.empty(),
+  );
+
+  void init({required Room? room}) => draft.value = CreateRoomDraft.empty();
+
+  void updateDraft({
+    String? name,
+    String? topic,
+    bool? enableEncryption,
+    CreateRoomPreset? createRoomPreset,
+    Visibility? visibility,
+    HistoryVisibility? historyVisibility,
+    Set<Profile>? profiles,
+    MatrixImageFile? avatar,
+    bool? groupCall,
+  }) {
+    draft.value = draft.value.copyWith(
+      name: name,
+      topic: topic,
+      enableEncryption: enableEncryption,
+      createRoomPreset: createRoomPreset,
+      visibility: visibility,
+      historyVisibility: historyVisibility,
+      profiles: profiles,
+      avatar: avatar,
+      groupCall: groupCall,
+    );
   }
 
-  SafeValueNotifier<String> nameDraft = SafeValueNotifier('');
-  SafeValueNotifier<String> topicDraft = SafeValueNotifier('');
-  SafeValueNotifier<bool> enableEncryptionDraft = SafeValueNotifier(false);
-  SafeValueNotifier<CreateRoomPreset> createRoomPresetDraft = SafeValueNotifier(
-    CreateRoomPreset.publicChat,
-  );
-  SafeValueNotifier<Visibility> visibilityDraft = SafeValueNotifier(
-    Visibility.public,
-  );
-  SafeValueNotifier<HistoryVisibility> historyVisibilityDraft =
-      SafeValueNotifier(HistoryVisibility.shared);
-
-  SafeValueNotifier<Set<Profile>> profilesDraft = SafeValueNotifier({});
   void addProfileToDraft(Profile profile) {
-    if (profilesDraft.value.contains(profile)) return;
-    profilesDraft.value = {...profilesDraft.value, profile};
+    if (draft.value.profiles.contains(profile)) return;
+    updateDraft(profiles: {...draft.value.profiles, profile});
   }
 
   void removeProfileFromDraft(Profile profile) {
-    if (!profilesDraft.value.contains(profile)) return;
-    profilesDraft.value = {...profilesDraft.value..remove(profile)};
+    if (!draft.value.profiles.contains(profile)) return;
+    updateDraft(profiles: {...draft.value.profiles..remove(profile)});
   }
 
-  SafeValueNotifier<MatrixImageFile?> avatarDraft = SafeValueNotifier(null);
   Future<void> setRoomAvatar({
     required Room? room,
     required String wrongFormatString,
@@ -80,20 +81,20 @@ class CreateRoomManager {
 
       final bytes = await xFile.readAsBytes();
 
-      avatarDraft.value = await MatrixImageFile.shrink(
-        bytes: bytes,
-        name: xFile.name,
-        mimeType: xFile.mimeType,
-        maxDimension: 1000,
-        nativeImplementations: _client.nativeImplementations,
+      updateDraft(
+        avatar: await MatrixImageFile.shrink(
+          bytes: bytes,
+          name: xFile.name,
+          mimeType: xFile.mimeType,
+          maxDimension: 1000,
+          nativeImplementations: _client.nativeImplementations,
+        ),
       );
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
     }
   }
-
-  SafeValueNotifier<bool> groupCallDraft = SafeValueNotifier(false);
 
   Future<Room?> createRoomOrSpace({
     required bool space,
@@ -106,29 +107,29 @@ class CreateRoomManager {
     try {
       roomId = space
           ? await _client.createSpace(
-              name: nameDraft.value,
-              visibility: visibilityDraft.value,
-              invite: profilesDraft.value
+              name: draft.value.name,
+              visibility: draft.value.visibility,
+              invite: draft.value.profiles
                   .map((p) => p.userId)
                   .toList(growable: false),
               invite3pid: null,
               roomVersion: null,
-              topic: topicDraft.value,
+              topic: draft.value.topic,
               waitForSync: waitForSync,
-              spaceAliasName: nameDraft.value,
+              spaceAliasName: draft.value.name,
             )
           : await _client.createGroupChat(
-              groupName: nameDraft.value,
-              enableEncryption: enableEncryptionDraft.value,
-              invite: profilesDraft.value
+              groupName: draft.value.name,
+              enableEncryption: draft.value.enableEncryption,
+              invite: draft.value.profiles
                   .map((p) => p.userId)
                   .toList(growable: false),
               initialState: initialState,
-              visibility: visibilityDraft.value,
-              preset: createRoomPresetDraft.value,
-              historyVisibility: historyVisibilityDraft.value,
+              visibility: draft.value.visibility,
+              preset: draft.value.createRoomPreset,
+              historyVisibility: draft.value.historyVisibility,
               waitForSync: waitForSync,
-              groupCall: groupCallDraft.value,
+              groupCall: draft.value.groupCall,
               federated: federated,
               powerLevelContentOverride: powerLevelContentOverride,
             );
@@ -140,10 +141,10 @@ class CreateRoomManager {
     final maybeRoom = _client.getRoomById(roomId);
     if (maybeRoom != null) {
       if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
-          avatarDraft.value?.bytes != null) {
+          draft.value.avatar?.bytes != null) {
         try {
-          await maybeRoom.setAvatar(avatarDraft.value);
-          avatarDraft.value = null;
+          await maybeRoom.setAvatar(draft.value.avatar);
+          updateDraft(avatar: null);
         } on Exception catch (e, s) {
           printMessageInDebugMode(e, s);
         }
