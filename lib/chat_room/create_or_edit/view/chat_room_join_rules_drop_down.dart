@@ -38,8 +38,8 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
     return YaruTile(
       leading: const Icon(YaruIcons.private_mask),
       padding: const EdgeInsets.symmetric(horizontal: kMediumPadding),
-      // TODO: localize
-      title: const Text('Join Rules'),
+
+      title: Text(l10n.joinRules),
       enabled: canChangeJoinRules,
       trailing: YaruPopupMenuButton<JoinRules>(
         enabled: canChangeJoinRules,

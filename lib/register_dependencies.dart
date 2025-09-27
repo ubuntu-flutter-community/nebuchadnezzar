@@ -9,13 +9,13 @@ import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app/app_config.dart';
+import 'authentication/authentication_manager.dart';
 import 'authentication/authentication_service.dart';
 import 'chat_room/create_or_edit/create_room_manager.dart';
 import 'chat_room/create_or_edit/edit_room_service.dart';
 import 'chat_room/input/draft_manager.dart';
 import 'chat_room/timeline/timeline_manager.dart';
 import 'common/chat_manager.dart';
-import 'common/client_x.dart';
 import 'common/local_image_manager.dart';
 import 'common/local_image_service.dart';
 import 'common/platforms.dart';
@@ -25,6 +25,7 @@ import 'common/search_manager.dart';
 import 'encryption/encryption_manager.dart';
 import 'events/chat_download_manager.dart';
 import 'events/chat_download_service.dart';
+import 'extensions/client_x.dart';
 import 'settings/account_manager.dart';
 import 'settings/settings_manager.dart';
 import 'settings/settings_service.dart';
@@ -69,6 +70,11 @@ void registerDependencies() {
     ..registerSingletonWithDependencies<AuthenticationService>(
       () => AuthenticationService(client: di<Client>()),
       dependsOn: [Client],
+    )
+    ..registerLazySingleton<AuthenticationManager>(
+      () => AuthenticationManager(
+        authenticationService: di<AuthenticationService>(),
+      ),
     )
     ..registerSingletonWithDependencies<EncryptionManager>(
       () => EncryptionManager(

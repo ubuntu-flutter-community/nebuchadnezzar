@@ -4161,6 +4161,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change power level for {user} to {value}?'**
   String changePowerLevelForUserToValue(Object user, Object value);
+
+  /// No description provided for @loginInPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging in, please wait...'**
+  String get loginInPleaseWait;
+
+  /// No description provided for @settingUpApplicationPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings up application, please wait ...'**
+  String get settingUpApplicationPleaseWait;
+
+  /// No description provided for @checkingEncryptionPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking encryption, please wait ...'**
+  String get checkingEncryptionPleaseWait;
+
+  /// No description provided for @settingUpEncryptionPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting up encryption, please wait ...'**
+  String get settingUpEncryptionPleaseWait;
+
+  /// No description provided for @canonicalAliasInvalidInput.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid input, must match #SOMETHING:{homeServer}'**
+  String canonicalAliasInvalidInput(String homeServer);
+
+  /// No description provided for @canonicalAliasHelperText.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: #\${roomName}:\${homeServer}'**
+  String canonicalAliasHelperText(String roomName, String homeServer);
+
+  /// No description provided for @shareKeysWithAllDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Share keys with all devices'**
+  String get shareKeysWithAllDevices;
+
+  /// No description provided for @shareKeysWithCrossVerifiedDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Share keys with cross-verified devices'**
+  String get shareKeysWithCrossVerifiedDevices;
+
+  /// No description provided for @shareKeysWithCrossVerifiedDevicesIfEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Share keys with cross-verified devices (if enabled)'**
+  String get shareKeysWithCrossVerifiedDevicesIfEnabled;
+
+  /// No description provided for @shareKeysWithDirectlyVerifiedDevicesOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Share keys with directly verified devices only'**
+  String get shareKeysWithDirectlyVerifiedDevicesOnly;
+
+  /// No description provided for @joinRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Join rules'**
+  String get joinRules;
+
+  /// No description provided for @showTheseEventsInTheChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Show these events in the chat'**
+  String get showTheseEventsInTheChat;
 }
 
 class _AppLocalizationsDelegate

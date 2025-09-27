@@ -60,7 +60,7 @@ class _SetupEncryptedChatPageState extends State<SetupEncryptedChatPage> {
       BootstrapState.openExistingSsss => const UnlockChatPage(),
       BootstrapState.done => const ChatMasterDetailPage(),
       BootstrapState.error => const EncryptionSetupErrorPage(),
-      _ => SplashPage(title: Text(context.l10n.loadingPleaseWait)),
+      _ => SplashPage(title: Text(context.l10n.settingUpEncryptionPleaseWait)),
     };
   }
 }

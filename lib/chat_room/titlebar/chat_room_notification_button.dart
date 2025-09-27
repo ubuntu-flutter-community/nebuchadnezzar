@@ -4,8 +4,8 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/chat_manager.dart';
-import '../../common/push_rule_state_x.dart';
 import '../../common/view/build_context_x.dart';
+import '../../extensions/push_rule_state_x.dart';
 import '../../l10n/l10n.dart';
 import '../create_or_edit/edit_room_service.dart';
 

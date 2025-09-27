@@ -8,9 +8,9 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/icons.dart';
 
 import '../../authentication/authentication_service.dart';
-import '../../common/event_x.dart';
-import '../../common/uri_x.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/event_x.dart';
+import '../../extensions/uri_x.dart';
 import '../../l10n/l10n.dart';
 
 class ChatMap extends StatelessWidget {

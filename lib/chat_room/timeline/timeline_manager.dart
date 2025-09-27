@@ -1,8 +1,8 @@
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
-import '../../common/event_x.dart';
 import '../../common/logging.dart';
+import '../../extensions/event_x.dart';
 
 class TimelineManager extends SafeChangeNotifier {
   Future<Timeline> loadTimeline(

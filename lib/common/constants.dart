@@ -1,0 +1,1 @@
+const defaultHomeServer = 'matrix.org';

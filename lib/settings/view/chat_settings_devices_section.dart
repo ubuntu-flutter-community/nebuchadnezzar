@@ -5,9 +5,9 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../app/view/error_page.dart';
-import '../../common/date_time_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
+import '../../extensions/date_time_x.dart';
 import '../../l10n/l10n.dart';
 import '../account_manager.dart';
 import '../matrix_devices_x.dart';

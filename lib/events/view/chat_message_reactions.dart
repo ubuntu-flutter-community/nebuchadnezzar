@@ -6,11 +6,11 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/event_x.dart';
 
 // Credit: this code has been initially copied from https://github.com/krille-chan/fluffychat
 // Thank you @krille-chan

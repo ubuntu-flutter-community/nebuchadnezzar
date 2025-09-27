@@ -14,9 +14,9 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../app/app_config.dart';
+import '../common/logging.dart';
+import '../common/platforms.dart';
 import '../settings/settings_service.dart';
-import 'logging.dart';
-import 'platforms.dart';
 
 extension ClientX on Client {
   static Future<Client> registerAsync({

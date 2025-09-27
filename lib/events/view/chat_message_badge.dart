@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/event_x.dart';
 import 'chat_event_inspect_dialog.dart';
 import 'localized_display_event_text.dart';
 

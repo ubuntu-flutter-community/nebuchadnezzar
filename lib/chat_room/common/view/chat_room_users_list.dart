@@ -5,13 +5,13 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/user_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/chat_avatar.dart';
 import '../../../common/view/chat_profile_dialog.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/ui_constants.dart';
+import '../../../extensions/user_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../create_or_edit/edit_room_service.dart';
 import 'chat_room_user_list_power_level_button.dart';

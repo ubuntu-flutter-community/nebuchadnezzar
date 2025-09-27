@@ -1,9 +1,36 @@
 {
+  "de": [
+    "loginInPleaseWait",
+    "settingUpApplicationPleaseWait",
+    "checkingEncryptionPleaseWait",
+    "settingUpEncryptionPleaseWait",
+    "canonicalAliasInvalidInput",
+    "canonicalAliasHelperText",
+    "shareKeysWithAllDevices",
+    "shareKeysWithCrossVerifiedDevices",
+    "shareKeysWithCrossVerifiedDevicesIfEnabled",
+    "shareKeysWithDirectlyVerifiedDevicesOnly",
+    "joinRules",
+    "showTheseEventsInTheChat"
+  ],
+
   "sv": [
     "today",
     "member",
     "changePowerLevel",
     "canNotChangePowerLevel",
-    "changePowerLevelForUserToValue"
+    "changePowerLevelForUserToValue",
+    "loginInPleaseWait",
+    "settingUpApplicationPleaseWait",
+    "checkingEncryptionPleaseWait",
+    "settingUpEncryptionPleaseWait",
+    "canonicalAliasInvalidInput",
+    "canonicalAliasHelperText",
+    "shareKeysWithAllDevices",
+    "shareKeysWithCrossVerifiedDevices",
+    "shareKeysWithCrossVerifiedDevicesIfEnabled",
+    "shareKeysWithDirectlyVerifiedDevicesOnly",
+    "joinRules",
+    "showTheseEventsInTheChat"
   ]
 }

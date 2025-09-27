@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../app/app_config.dart';
-import '../../common/view/snackbars.dart';
-import '../../encryption/view/check_encryption_setup_page.dart';
+import '../../common/constants.dart';
+import '../../common/view/theme.dart';
 import '../../l10n/l10n.dart';
-import '../authentication_service.dart';
+import '../authentication_manager.dart';
 import 'chat_login_page_scaffold.dart';
 
 class ChatMatrixIdLoginPage extends StatefulWidget
@@ -19,38 +20,31 @@ class ChatMatrixIdLoginPage extends StatefulWidget
 
 class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
   final TextEditingController _homeServerController = TextEditingController(
-    text: 'matrix.org',
+    text: defaultHomeServer,
   );
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  Future<void> onPressed(BuildContext context) async =>
+      di<AuthenticationManager>().login(
+        context,
+        loginMethod: LoginType.mLoginPassword,
+        homeServer: _homeServerController.text.trim(),
+        username: _usernameController.text.trim(),
+        password: _passwordController.text,
+      );
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final authenticationService = di<AuthenticationService>();
-    bool processingAccess = watchValue(
-      (AuthenticationService m) => m.processingAccess,
+
+    final processingAccess = watchValue(
+      (AuthenticationManager s) => s.processingAccess,
     );
-    bool showPassword = watchValue((AuthenticationService m) => m.showPassword);
 
-    var onPressed = processingAccess
-        ? null
-        : () async {
-            authenticationService.showPassword.value = !showPassword;
-
-            return authenticationService.login(
-              homeServer: _homeServerController.text.trim(),
-              username: _usernameController.text,
-              password: _passwordController.text,
-              onSuccess: () => Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const CheckEncryptionSetupPage(),
-                ),
-                (route) => false,
-              ),
-              onFail: (e) => showSnackBar(context, content: Text(e.toString())),
-            );
-          };
+    final showPassword = watchValue(
+      (AuthenticationManager s) => s.showPassword,
+    );
 
     return ChatLoginPageScaffold(
       processingAccess: processingAccess,
@@ -61,17 +55,18 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
           controller: _homeServerController,
           readOnly: processingAccess,
           autocorrect: false,
-          onSubmitted: (value) => onPressed?.call(),
+          textInputAction: TextInputAction.next,
           decoration: InputDecoration(
             prefixText: 'https://',
             labelText: l10n.homeserver,
           ),
         ),
         TextField(
+          autofocus: true,
           controller: _usernameController,
           readOnly: processingAccess,
           autocorrect: false,
-          onSubmitted: (value) => onPressed?.call(),
+          textInputAction: TextInputAction.next,
           decoration: InputDecoration(labelText: l10n.username),
         ),
         TextField(
@@ -79,7 +74,7 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
           readOnly: processingAccess,
           autocorrect: false,
           obscureText: !showPassword,
-          onSubmitted: (value) => onPressed?.call(),
+          onSubmitted: processingAccess ? null : (value) => onPressed(context),
           decoration: InputDecoration(
             labelText: l10n.password,
             suffixIconConstraints: const BoxConstraints(
@@ -88,15 +83,8 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
             suffixIcon: IconButton(
               isSelected: showPassword,
               padding: EdgeInsets.zero,
-              style: IconButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(6),
-                    bottomRight: Radius.circular(6),
-                  ),
-                ),
-              ),
-              onPressed: () => di<AuthenticationService>().showPassword.value =
+              style: textFieldSuffixStyle,
+              onPressed: () => di<AuthenticationManager>().showPassword.value =
                   !showPassword,
               icon: Icon(showPassword ? YaruIcons.eye_filled : YaruIcons.eye),
             ),
@@ -106,8 +94,8 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
           width: double.infinity,
           height: 35,
           child: ElevatedButton(
-            onPressed: onPressed,
-            child: const Text('Login'),
+            onPressed: processingAccess ? null : () => onPressed(context),
+            child: Text(l10n.login),
           ),
         ),
         const SizedBox(height: kYaruTitleBarHeight),

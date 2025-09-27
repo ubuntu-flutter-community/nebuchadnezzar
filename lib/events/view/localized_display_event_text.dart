@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
-import '../../common/event_x.dart';
 import '../../common/view/build_context_x.dart';
+import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 
 class LocalizedDisplayEventText extends StatefulWidget {

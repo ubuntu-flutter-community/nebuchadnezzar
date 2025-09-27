@@ -4,9 +4,9 @@ import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/room_x.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/theme.dart';
+import '../../../extensions/room_x.dart';
 import '../../../l10n/l10n.dart';
 import '../create_room_manager.dart';
 import '../edit_room_service.dart';
