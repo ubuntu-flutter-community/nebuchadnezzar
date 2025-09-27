@@ -301,7 +301,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         );
         buttons.add(
           TextButton(
-            child: Text(l10n.close),
+            child: Text(l10n.start),
             onPressed: () {
               if (context.mounted) {
                 Navigator.of(context, rootNavigator: false).pop();

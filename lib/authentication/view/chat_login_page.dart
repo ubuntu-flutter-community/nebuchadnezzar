@@ -9,6 +9,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../authentication_manager.dart';
+import 'authentication_mixin.dart';
 import 'chat_login_page_scaffold.dart';
 import 'chat_matrix_id_login_page.dart';
 
@@ -19,17 +20,17 @@ class ChatLoginPage extends StatefulWidget with WatchItStatefulWidgetMixin {
   State<ChatLoginPage> createState() => _ChatLoginPageState();
 }
 
-class _ChatLoginPageState extends State<ChatLoginPage> {
+class _ChatLoginPageState extends State<ChatLoginPage>
+    with AuthenticationMixin {
   final TextEditingController _homeServerController = TextEditingController(
     text: defaultHomeServer,
   );
 
-  Future<void> onPressed(BuildContext context) async =>
-      di<AuthenticationManager>().login(
-        context,
-        loginMethod: LoginType.mLoginToken,
-        homeServer: _homeServerController.text.trim(),
-      );
+  Future<void> onPressed(BuildContext context) async => login(
+    context,
+    loginMethod: LoginType.mLoginToken,
+    homeServer: _homeServerController.text.trim(),
+  );
 
   @override
   Widget build(BuildContext context) {
