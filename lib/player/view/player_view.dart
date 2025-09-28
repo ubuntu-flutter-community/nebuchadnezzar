@@ -3,6 +3,7 @@ import 'package:listen_it/listen_it.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../player_manager.dart';
 import 'player_album_art.dart';
@@ -22,7 +23,11 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
     ).data;
 
     final isFullMode = watchValue(
-      (PlayerManager p) => p.playerViewMode.select((e) => e.fullMode),
+      (PlayerManager p) => p.playerViewState.select((e) => e.fullMode),
+    );
+
+    final color = watchValue(
+      (PlayerManager p) => p.playerViewState.select((e) => e.color),
     );
 
     const firstChild = SizedBox.shrink();
@@ -32,7 +37,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       child: SizedBox(
         height: 80,
         child: Material(
-          color: Colors.black.withAlpha(200),
+          color: blendColor(Colors.black, color ?? Colors.black, 0.2),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
           child: media == null
               ? null

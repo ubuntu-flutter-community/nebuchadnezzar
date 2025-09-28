@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:math';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -160,5 +162,14 @@ Config emojiPickerConfig({
         child: DefaultSearchView(config, state, showEmojiView),
       ),
     ),
+  );
+}
+
+Color blendColor(Color baseColor, Color blendColor, double amount) {
+  return Color.fromARGB(
+    (baseColor.alpha * (1 - amount) + blendColor.alpha * amount).round(),
+    (baseColor.red * (1 - amount) + blendColor.red * amount).round(),
+    (baseColor.green * (1 - amount) + blendColor.green * amount).round(),
+    (baseColor.blue * (1 - amount) + blendColor.blue * amount).round(),
   );
 }

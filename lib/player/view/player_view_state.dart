@@ -1,26 +1,34 @@
 import 'dart:convert';
+import 'dart:ui';
 
 class PlayerViewState {
-  PlayerViewState({this.fullMode = false, required this.showQueue});
+  const PlayerViewState({
+    required this.fullMode,
+    required this.showQueue,
+    this.color,
+  });
 
   final bool fullMode;
   final bool showQueue;
+  final Color? color;
 
-  PlayerViewState copyWith({bool? fullMode, bool? showQueue}) {
+  PlayerViewState copyWith({bool? fullMode, bool? showQueue, Color? color}) {
     return PlayerViewState(
       fullMode: fullMode ?? this.fullMode,
       showQueue: showQueue ?? this.showQueue,
+      color: color ?? this.color,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'fullMode': fullMode, 'showQueue': showQueue};
+    return {'fullMode': fullMode, 'showQueue': showQueue, 'color': color};
   }
 
   factory PlayerViewState.fromMap(Map<String, dynamic> map) {
     return PlayerViewState(
       fullMode: map['fullMode'] ?? false,
       showQueue: map['showQueue'] ?? false,
+      color: map['color'] != null ? Color(map['color']) : null,
     );
   }
 
@@ -31,7 +39,7 @@ class PlayerViewState {
 
   @override
   String toString() =>
-      'PlayerViewState(fullMode: $fullMode, showQueue: $showQueue)';
+      'PlayerViewState(fullMode: $fullMode, showQueue: $showQueue, color: $color)';
 
   @override
   bool operator ==(Object other) {
@@ -39,9 +47,10 @@ class PlayerViewState {
 
     return other is PlayerViewState &&
         other.fullMode == fullMode &&
-        other.showQueue == showQueue;
+        other.showQueue == showQueue &&
+        other.color == color;
   }
 
   @override
-  int get hashCode => fullMode.hashCode ^ showQueue.hashCode;
+  int get hashCode => fullMode.hashCode ^ showQueue.hashCode ^ color.hashCode;
 }

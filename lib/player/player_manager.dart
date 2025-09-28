@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
+import '../common/logging.dart';
+import '../extensions/media_x.dart';
 import 'view/player_view_state.dart';
 
 class PlayerManager {
@@ -11,12 +14,16 @@ class PlayerManager {
   final VideoController _controller;
   VideoController get videoController => _controller;
 
-  final playerViewMode = SafeValueNotifier<PlayerViewState>(
-    PlayerViewState(fullMode: false, showQueue: true),
+  final playerViewState = SafeValueNotifier<PlayerViewState>(
+    const PlayerViewState(fullMode: false, showQueue: true),
   );
 
-  void updateViewMode({bool? fullMode}) {
-    playerViewMode.value = playerViewMode.value.copyWith(fullMode: fullMode);
+  void updateViewMode({bool? fullMode, bool? showQueue, Color? color}) {
+    playerViewState.value = playerViewState.value.copyWith(
+      fullMode: fullMode,
+      showQueue: showQueue,
+      color: color,
+    );
   }
 
   Player get _player => _controller.player;
@@ -43,9 +50,12 @@ class PlayerManager {
 
   Playlist get playlist => _player.state.playlist;
 
-  Stream<Media> get currentMediaStream => _player.stream.duration.map(
-    (e) => _player.state.playlist.medias[_player.state.playlist.index],
-  );
+  Stream<Media> get currentMediaStream =>
+      _player.stream.duration.asyncMap((e) async {
+        var media = _player.state.playlist.medias[_player.state.playlist.index];
+        await _setLocalColor(media);
+        return media;
+      });
 
   Media? get currentMedia => _player.state.playlist.medias.isEmpty
       ? null
@@ -131,4 +141,19 @@ class PlayerManager {
       _player.setPlaylistMode(mode);
 
   Future<void> dispose() async => _player.dispose();
+
+  Future<void> _setLocalColor(Media media) async {
+    try {
+      final art = media.albumArt;
+
+      if (art != null) {
+        final colorScheme = await ColorScheme.fromImageProvider(
+          provider: MemoryImage(media.albumArt!),
+        );
+        updateViewMode(color: colorScheme.primary);
+      }
+    } on Exception catch (e) {
+      printMessageInDebugMode(e);
+    }
+  }
 }

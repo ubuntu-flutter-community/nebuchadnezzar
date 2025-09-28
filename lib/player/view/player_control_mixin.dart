@@ -15,7 +15,7 @@ import 'player_full_view.dart';
 
 mixin PlayerControlMixin {
   Future<void> togglePlayerFullMode(BuildContext context) async {
-    if (di<PlayerManager>().playerViewMode.value.fullMode) {
+    if (di<PlayerManager>().playerViewState.value.fullMode) {
       di<PlayerManager>().updateViewMode(fullMode: false);
       Navigator.of(context).maybePop();
     } else {
