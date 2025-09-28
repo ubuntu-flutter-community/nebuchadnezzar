@@ -62,9 +62,11 @@ class _PlayerFullViewState extends State<PlayerFullView>
       preserveState: false,
     ).data;
 
-    final color = watchValue(
-      (PlayerManager p) => p.playerViewState.select((e) => e.color),
-    )!;
+    final color =
+        watchValue(
+          (PlayerManager p) => p.playerViewState.select((e) => e.color),
+        ) ??
+        context.colorScheme.primary;
 
     return DialogTheme(
       backgroundColor: blendColor(Colors.black, color, 0.15),
@@ -188,10 +190,6 @@ class _PlayerFullViewState extends State<PlayerFullView>
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                               selected: playlistIndex == index,
-                                              selectedColor: context
-                                                  .theme
-                                                  .colorScheme
-                                                  .primary,
                                               trailing:
                                                   playlist.medias.length > 1
                                                   ? Row(
