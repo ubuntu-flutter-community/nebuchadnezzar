@@ -39,35 +39,36 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
         child: Material(
           color: blendColor(Colors.black, color ?? Colors.black, 0.2),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-          child: media == null
-              ? null
-              : Column(
+          child: Column(
+            children: [
+              const PlayerTrack(),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: kMediumPadding,
                   children: [
-                    const PlayerTrack(),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        spacing: kMediumPadding,
-                        children: [
-                          if (!isFullMode) ...[
-                            PlayerAlbumArt(media: media),
-                            const PlayerTrackInfo(),
-                          ] else ...[
-                            const SizedBox(width: 70),
-                          ],
-
-                          const Expanded(child: PlayerMainControls()),
-                          IconButton(
-                            style: playerButtonStyle,
-                            icon: const Icon(Icons.stop, color: Colors.white),
-                            onPressed: di<PlayerManager>().stop,
-                          ),
-                          const SizedBox(width: kSmallPadding),
-                        ],
-                      ),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: isFullMode ? 0.0 : 1.0,
+                      child: PlayerAlbumArt(media: media),
                     ),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: isFullMode ? 0.0 : 1.0,
+                      child: const PlayerTrackInfo(),
+                    ),
+                    const Expanded(flex: 5, child: PlayerMainControls()),
+                    IconButton(
+                      style: playerButtonStyle,
+                      icon: const Icon(Icons.stop, color: Colors.white),
+                      onPressed: di<PlayerManager>().stop,
+                    ),
+                    const SizedBox(width: kSmallPadding),
                   ],
                 ),
+              ),
+            ],
+          ),
         ),
       ),
     );
