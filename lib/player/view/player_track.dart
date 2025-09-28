@@ -25,6 +25,19 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
       initialValue: Duration.zero,
     ).data;
 
+    final sliderActive =
+        duration != null &&
+        position != null &&
+        duration.inSeconds > position.inSeconds;
+
+    final bufferActive =
+        bufferedPosition != null &&
+        position != null &&
+        duration != null &&
+        bufferedPosition.inSeconds >= 0 &&
+        bufferedPosition.inSeconds <=
+            (sliderActive ? duration.inSeconds.toDouble() : 1.0);
+
     const thumbShape = RoundSliderThumbShape(
       elevation: 0,
       enabledThumbRadius: 0,
@@ -44,11 +57,11 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
         secondaryActiveTrackColor: Colors.white38,
       ),
       child: Slider(
-        secondaryTrackValue: bufferedPosition?.inSeconds.toDouble() ?? 0,
-
-        value: position?.inSeconds.toDouble() ?? 0,
-        max: (duration?.inSeconds.toDouble() ?? 0).clamp(1, double.infinity),
-        min: 0,
+        max: sliderActive ? duration.inSeconds.toDouble() : 1.0,
+        value: sliderActive ? position.inSeconds.toDouble() : 0,
+        secondaryTrackValue: bufferActive
+            ? bufferedPosition.inSeconds.toDouble()
+            : null,
         onChanged: (value) {
           di<PlayerManager>().seek(Duration(seconds: value.toInt()));
         },
