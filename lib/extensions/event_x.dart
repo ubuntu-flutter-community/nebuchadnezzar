@@ -15,7 +15,12 @@ extension EventX on Event {
   bool get isSvgImage => attachmentMimetype == 'image/svg+xml';
 
   String? get fileDescription {
-    if (!{MessageTypes.File, MessageTypes.Image}.contains(messageType)) {
+    if (!{
+      MessageTypes.File,
+      MessageTypes.Image,
+      MessageTypes.Video,
+      MessageTypes.Audio,
+    }.contains(messageType)) {
       return null;
     }
     final formattedBody = content.tryGet<String>('formatted_body');
@@ -24,6 +29,32 @@ extension EventX on Event {
     final filename = content.tryGet<String>('filename');
     final body = content.tryGet<String>('body');
     if (filename != body && body != null && filename != null) return body;
+    return null;
+  }
+
+  String? get fileName {
+    if (!{
+      MessageTypes.File,
+      MessageTypes.Image,
+      MessageTypes.Video,
+      MessageTypes.Audio,
+    }.contains(messageType)) {
+      return null;
+    }
+    final filename = content.tryGet<String>('filename');
+    if (filename != null) return filename;
+
+    final body = content.tryGet<String>('body');
+    if (body != null) return body;
+
+    final url = content.tryGet<String>('url');
+    if (url != null) {
+      final uri = Uri.tryParse(url);
+      if (uri != null) {
+        return uri.pathSegments.isNotEmpty ? uri.pathSegments.last : url;
+      }
+      return url;
+    }
     return null;
   }
 

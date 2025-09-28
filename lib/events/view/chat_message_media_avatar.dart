@@ -8,9 +8,10 @@ import '../../common/view/confirm.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../../player/view/player_control_mixin.dart';
 import '../chat_download_manager.dart';
 
-class ChatMessageMediaAvatar extends StatelessWidget {
+class ChatMessageMediaAvatar extends StatelessWidget with PlayerControlMixin {
   const ChatMessageMediaAvatar({super.key, required this.event});
 
   final Event event;
@@ -25,28 +26,34 @@ class ChatMessageMediaAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(38 / 2),
         onTap: event.messageType == MessageTypes.Notice
             ? null
-            : () => showDialog(
-                context: context,
-                builder: (context) => ConfirmationDialog(
-                  title: switch (event.messageType) {
-                    MessageTypes.File ||
-                    MessageTypes.Audio ||
-                    MessageTypes.Video => Text(context.l10n.saveFile),
-                    _ => const Text(''),
-                  },
-                  onConfirm: switch (event.messageType) {
-                    MessageTypes.File ||
-                    MessageTypes.Audio ||
-                    MessageTypes.Video =>
-                      () => di<ChatDownloadManager>().safeFile(
-                        event: event,
-                        dialogTitle: l10n.saveFile,
-                        confirmButtonText: l10n.saveFile,
-                      ),
-                    _ => () async {},
-                  },
+            : switch (event.messageType) {
+                MessageTypes.Notice => null,
+                MessageTypes.Audio || MessageTypes.Video =>
+                  event.attachmentMxcUrl == null
+                      ? null
+                      : () => playMatrixMedia(context, event: event),
+                _ => () => showDialog(
+                  context: context,
+                  builder: (context) => ConfirmationDialog(
+                    title: switch (event.messageType) {
+                      MessageTypes.File ||
+                      MessageTypes.Video => Text(context.l10n.saveFile),
+                      _ => const Text(''),
+                    },
+                    onConfirm: switch (event.messageType) {
+                      MessageTypes.File ||
+                      MessageTypes.Audio ||
+                      MessageTypes.Video =>
+                        () => di<ChatDownloadManager>().safeFile(
+                          event: event,
+                          dialogTitle: l10n.saveFile,
+                          confirmButtonText: l10n.saveFile,
+                        ),
+                      _ => () async {},
+                    },
+                  ),
                 ),
-              ),
+              },
         child: CircleAvatar(
           backgroundColor: avatarFallbackColor(context.colorScheme),
           radius: kAvatarDefaultSize / 2,

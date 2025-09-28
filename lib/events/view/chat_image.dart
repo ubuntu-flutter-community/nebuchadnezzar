@@ -59,30 +59,41 @@ class ChatImage extends StatelessWidget with WatchItMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                height: theHeight,
-                width: theWidth,
-                child: maybeImage != null
-                    ? event.isSvgImage
-                          ? SvgPicture.memory(
-                              maybeImage,
-                              fit: theFit,
-                              height: theHeight,
-                              width: theWidth,
-                            )
-                          : Image.memory(
-                              maybeImage,
-                              fit: theFit,
-                              height: theHeight,
-                              width: theWidth,
-                            )
-                    : ChatImageFuture(
-                        event: event,
-                        width: theWidth,
-                        height: theHeight,
-                        fit: theFit,
-                        getThumbnail: event.hasThumbnail,
-                      ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    height: theHeight,
+                    width: theWidth,
+                    child: maybeImage != null
+                        ? event.isSvgImage
+                              ? SvgPicture.memory(
+                                  maybeImage,
+                                  fit: theFit,
+                                  height: theHeight,
+                                  width: theWidth,
+                                )
+                              : Image.memory(
+                                  maybeImage,
+                                  fit: theFit,
+                                  height: theHeight,
+                                  width: theWidth,
+                                )
+                        : ChatImageFuture(
+                            event: event,
+                            width: theWidth,
+                            height: theHeight,
+                            fit: theFit,
+                            getThumbnail: event.hasThumbnail,
+                          ),
+                  ),
+                  if (event.isVideo)
+                    const Icon(
+                      YaruIcons.video,
+                      size: 55,
+                      color: Colors.white70,
+                    ),
+                ],
               ),
               if (showDescription &&
                   event.fileDescription != null &&

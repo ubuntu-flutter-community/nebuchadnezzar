@@ -12,11 +12,14 @@ list(APPEND FLUTTER_PLUGIN_LIST
   handy_window
   irondash_engine_context
   local_notifier
+  media_kit_libs_linux
+  media_kit_video
   screen_retriever_linux
   sqlcipher_flutter_libs
   super_native_extensions
   system_theme
   url_launcher_linux
+  volume_controller
   window_manager
   window_to_front
   xdg_icons

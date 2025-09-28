@@ -10,6 +10,9 @@ import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
+import '../../player/player_manager.dart';
+import '../../player/view/player_control_mixin.dart';
+import '../../player/view/player_full_view.dart';
 import '../chat_download_manager.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_image.dart';
@@ -22,7 +25,7 @@ import 'chat_message_reply_header.dart';
 import 'chat_text_message.dart';
 import 'localized_display_event_text.dart';
 
-class ChatMessageBubbleContent extends StatelessWidget {
+class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
   const ChatMessageBubbleContent({
     super.key,
     required this.event,
@@ -171,13 +174,20 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                         (MessageTypes.Video, true) => ChatImage(
                                           fit: BoxFit.contain,
                                           event: event,
-                                          onTap: () => showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                ChatMessageImageFullScreenDialog(
-                                                  event: event,
-                                                ),
-                                          ),
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  const PlayerFullView(),
+                                            );
+                                            di<PlayerManager>().updateViewMode(
+                                              fullMode: true,
+                                            );
+                                            playMatrixMedia(
+                                              context,
+                                              event: event,
+                                            );
+                                          },
                                         ),
                                         (MessageTypes.Location, _) => ChatMap(
                                           event: event,
@@ -203,16 +213,18 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                                       .spaceBetween,
                                               spacing: kMediumPadding,
                                               children: [
-                                                Row(
-                                                  spacing: kMediumPadding,
-                                                  children: [
-                                                    ChatMessageMediaAvatar(
-                                                      event: event,
-                                                    ),
-                                                    Text(
-                                                      event.attachmentMimetype,
-                                                    ),
-                                                  ],
+                                                ChatMessageMediaAvatar(
+                                                  event: event,
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    event.fileName ??
+                                                        event
+                                                            .attachmentMimetype,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 3,
+                                                  ),
                                                 ),
                                                 IconButton(
                                                   tooltip: l10n.downloadFile,

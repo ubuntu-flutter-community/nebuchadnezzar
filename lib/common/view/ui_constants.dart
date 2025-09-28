@@ -1,6 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 const kTinyPadding = 2.5;
@@ -35,4 +33,9 @@ const windowOptions = WindowOptions(
   size: Size(1024, 800),
   minimumSize: Size(400, 600),
   center: true,
+);
+
+var playerButtonStyle = IconButton.styleFrom(
+  foregroundColor: Colors.white,
+  backgroundColor: Colors.transparent,
 );

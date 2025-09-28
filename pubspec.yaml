@@ -12,6 +12,12 @@ dependencies:
   adaptive_dialog: ^2.3.0
   animated_emoji: ^3.1.0
   async: ^2.13.0
+  audio_metadata_reader: ^1.4.2
+  audio_service: ^0.18.12
+  audio_service_mpris:
+    git:
+      url: https://github.com/Feichtmeier/audio-service-mpris
+      ref: ad6f743b73e320670449026fa1852d9978438bb9
   cached_network_image: ^3.4.1
   collection: ^1.18.0
   cross_file: ^0.3.4+2
@@ -39,15 +45,28 @@ dependencies:
   future_loading_dialog: ^0.3.0
   handy_window: ^0.4.0
   html: ^0.15.4
-  intl: ^0.19.0
+  intl: ^0.20.2
   latlong2: ^0.9.1
   linkify: ^5.0.0
   liquid_progress_indicator_v2: ^0.5.0
   listen_it: ^5.0.0
   local_notifier: ^0.1.6
   matrix: ^2.0.1
+  media_kit:
+    git:
+      url: https://github.com/media-kit/media-kit
+      path: media_kit
+  media_kit_libs_video:
+    git:
+      url: https://github.com/media-kit/media-kit
+      path: libs/universal/media_kit_libs_video
+  media_kit_video:
+    git:
+      url: https://github.com/media-kit/media-kit
+      path: media_kit_video
   mesh: ^0.5.0
   mime: ^2.0.0
+  opus_caf_converter_dart: ^1.0.1
   path: ^1.9.0
   path_provider: ^2.1.4
   phoenix_theme:
@@ -81,7 +100,21 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
-  intl: ^0.20.2
+  media_kit:
+    git:
+      url: https://github.com/media-kit/media-kit
+      path: media_kit
+      ref: c9617f570b8c0ba02857e721997f78c053a856c1
+  media_kit_libs_video:
+    git:
+      url: https://github.com/media-kit/media-kit
+      path: libs/universal/media_kit_libs_video
+      ref: c9617f570b8c0ba02857e721997f78c053a856c1
+  media_kit_video:
+    git:
+      url: https://github.com/media-kit/media-kit
+      path: media_kit_video
+      ref: c9617f570b8c0ba02857e721997f78c053a856c1
 
 flutter:
   generate: true

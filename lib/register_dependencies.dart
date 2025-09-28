@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:window_manager/window_manager.dart';
@@ -26,6 +28,7 @@ import 'encryption/encryption_manager.dart';
 import 'events/chat_download_manager.dart';
 import 'events/chat_download_service.dart';
 import 'extensions/client_x.dart';
+import 'player/player_manager.dart';
 import 'settings/account_manager.dart';
 import 'settings/settings_manager.dart';
 import 'settings/settings_service.dart';
@@ -164,5 +167,21 @@ void registerDependencies() {
     )
     ..registerLazySingleton<CreateRoomManager>(
       () => CreateRoomManager(client: di<Client>()),
+    )
+    ..registerLazySingleton<VideoController>(() {
+      MediaKit.ensureInitialized();
+      return VideoController(
+        Player(
+          configuration: const PlayerConfiguration(title: AppConfig.appName),
+        ),
+      );
+    }, dispose: (s) => s.player.dispose())
+    ..registerSingletonAsync<PlayerManager>(
+      () async {
+        final playerService = PlayerManager(controller: di<VideoController>());
+        return playerService;
+      },
+      // dependsOn: [VideoController],
+      dispose: (s) async => s.dispose(),
     );
 }
