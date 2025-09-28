@@ -43,10 +43,13 @@ class PlayerManager {
 
   Playlist get playlist => _player.state.playlist;
 
-  Stream<Media?> get currentMediaStream =>
-      playlistStream.map((e) => e.medias.firstOrNull);
+  Stream<Media> get currentMediaStream => _player.stream.duration.map(
+    (e) => _player.state.playlist.medias[_player.state.playlist.index],
+  );
 
-  Media? get currentMedia => _player.state.playlist.medias.firstOrNull;
+  Media? get currentMedia => _player.state.playlist.medias.isEmpty
+      ? null
+      : _player.state.playlist.medias[_player.state.playlist.index];
 
   PlaylistMode get playlistMode => _player.state.playlistMode;
 

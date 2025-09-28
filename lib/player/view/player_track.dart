@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../extensions/media_x.dart';
 import '../player_manager.dart';
 
 class PlayerTrack extends StatelessWidget with WatchItMixin {
@@ -65,17 +65,24 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
     final duration = watchStream(
       (PlayerManager p) => p.durationStream,
       initialValue: di<PlayerManager>().duration,
+      preserveState: false,
     ).data;
 
     final position = watchStream(
       (PlayerManager p) => p.positionStream,
       initialValue: Duration.zero,
+      preserveState: false,
     ).data;
 
     final media = watchStream(
       (PlayerManager p) => p.currentMediaStream,
       initialValue: di<PlayerManager>().currentMedia,
+      preserveState: false,
     ).data;
+
+    if (media == null) {
+      return const SizedBox.shrink();
+    }
 
     return Row(
       children: [
@@ -86,10 +93,16 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                media?.uri == null
-                    ? 'No media playing'
-                    : basename(media!.uri.toString()),
+                media.artist,
                 maxLines: 2,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Colors.white,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(
+                media.title,
+                maxLines: 1,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: Colors.white,
                   overflow: TextOverflow.ellipsis,
