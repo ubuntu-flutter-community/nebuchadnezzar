@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/theme.dart';
 import '../../extensions/media_x.dart';
 import '../player_manager.dart';
 
@@ -51,7 +52,7 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
         thumbShape: thumbShape,
         overlayShape: thumbShape,
         trackShape: const RectangularSliderTrackShape() as SliderTrackShape,
-        trackHeight: 4.0,
+        trackHeight: playerTrackHeight,
         activeTrackColor: Colors.white,
         inactiveTrackColor: Colors.white24,
         secondaryActiveTrackColor: Colors.white38,

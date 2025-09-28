@@ -173,3 +173,7 @@ Color blendColor(Color baseColor, Color blendColor, double amount) {
     (baseColor.blue * (1 - amount) + blendColor.blue * amount).round(),
   );
 }
+
+const bottomPlayerHeight = 80.0;
+
+const playerTrackHeight = 4.0;

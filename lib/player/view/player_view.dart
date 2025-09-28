@@ -35,7 +35,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       hoverColor: context.colorScheme.primary.withAlpha(80),
       onTap: () => togglePlayerFullMode(context),
       child: SizedBox(
-        height: 80,
+        height: bottomPlayerHeight,
         child: Material(
           color: blendColor(Colors.black, color ?? Colors.black, 0.2),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
