@@ -3118,5 +3118,7 @@
   "@shareKeysWithDirectlyVerifiedDevicesOnly": {},
   "joinRules": "Join rules",
   "showTheseEventsInTheChat": "Show these events in the chat",
-  "@showTheseEventsInTheChat": {}
+  "@showTheseEventsInTheChat": {},
+  "playMedia": "Play media",
+  "@playMedia": {}
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../player_manager.dart';
 import 'player_control_mixin.dart';
@@ -21,6 +22,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
 
     const firstChild = SizedBox.shrink();
     final secondChild = InkWell(
+      hoverColor: context.colorScheme.primary.withAlpha(80),
       onTap: () => togglePlayerFullMode(context),
       child: SizedBox(
         height: 80,

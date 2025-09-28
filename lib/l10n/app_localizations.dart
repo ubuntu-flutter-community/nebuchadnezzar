@@ -4233,6 +4233,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show these events in the chat'**
   String get showTheseEventsInTheChat;
+
+  /// No description provided for @playMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Play media'**
+  String get playMedia;
 }
 
 class _AppLocalizationsDelegate

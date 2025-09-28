@@ -2435,4 +2435,7 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get showTheseEventsInTheChat => 'Show these events in the chat';
+
+  @override
+  String get playMedia => 'Play media';
 }

@@ -10,9 +10,22 @@ import '../player_manager.dart';
 import 'player_control_mixin.dart';
 import 'player_view.dart';
 
-class PlayerFullView extends StatelessWidget
-    with WatchItMixin, PlayerControlMixin {
+class PlayerFullView extends StatefulWidget with WatchItStatefulWidgetMixin {
   const PlayerFullView({super.key});
+
+  @override
+  State<PlayerFullView> createState() => _PlayerFullViewState();
+}
+
+class _PlayerFullViewState extends State<PlayerFullView>
+    with PlayerControlMixin {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,18 +87,25 @@ class PlayerFullView extends StatelessWidget
                             padding: isVideo
                                 ? EdgeInsets.zero
                                 : const EdgeInsets.all(kMediumPadding),
-                            child: ListView.builder(
+                            child: ReorderableListView.builder(
+                              onReorder: (oldIndex, newIndex) {
+                                if (newIndex > oldIndex) {
+                                  newIndex -= 1;
+                                }
+                                di<PlayerManager>().move(oldIndex, newIndex);
+                              },
+                              scrollController: _scrollController,
                               itemCount: playlist.medias.length,
                               itemBuilder: (context, index) {
                                 final media = playlist.medias[index];
                                 return Padding(
+                                  key: ValueKey(media.uri),
                                   padding: isVideo
                                       ? EdgeInsets.zero
                                       : const EdgeInsets.only(
                                           bottom: kSmallPadding,
                                         ),
                                   child: ListTile(
-                                    key: ValueKey(media.uri),
                                     shape: isVideo
                                         ? const RoundedRectangleBorder()
                                         : null,
@@ -97,10 +117,18 @@ class PlayerFullView extends StatelessWidget
                                     selectedColor:
                                         context.theme.colorScheme.primary,
                                     trailing: playlist.medias.length > 1
-                                        ? IconButton(
-                                            onPressed: () => di<PlayerManager>()
-                                                .removeFromPlaylist(index),
-                                            icon: const Icon(Icons.delete),
+                                        ? Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: kSmallPadding,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () =>
+                                                  di<PlayerManager>()
+                                                      .removeFromPlaylist(
+                                                        index,
+                                                      ),
+                                              icon: const Icon(Icons.delete),
+                                            ),
                                           )
                                         : null,
                                   ),
