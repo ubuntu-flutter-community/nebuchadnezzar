@@ -5,17 +5,38 @@ import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:collection/collection.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:mime/mime.dart';
-import 'package:path/path.dart';
 import 'package:path/path.dart' as p;
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:radio_browser_api/radio_browser_api.dart';
 
 import '../common/platforms.dart';
 
 extension MediaX on Media {
   static final _audioMetadataCache = <String, AudioMetadata?>{};
   static final _audioAlbumArtUriCache = <String, Uri?>{};
+  static final _uuidToMediaCache = <String, Media>{};
+  static final _mediaToStationCache = <Media, Station>{};
 
-  AudioMetadata? get _metadata {
+  static Media fromStation(Station station) {
+    if (_uuidToMediaCache.containsKey(station.stationUUID)) {
+      return _uuidToMediaCache[station.stationUUID]!;
+    }
+
+    final media = Media(station.urlResolved ?? station.url);
+
+    _uuidToMediaCache[station.stationUUID] = media;
+    _mediaToStationCache[media] = station;
+
+    return media;
+  }
+
+  String get stationId =>
+      _mediaToStationCache[this]?.stationUUID ?? uri.toString();
+
+  bool get isLocal => !uri.toString().startsWith('http');
+
+  AudioMetadata? get _localMetadata {
     if (_audioMetadataCache.containsKey(uri.toString())) {
       return _audioMetadataCache[uri.toString()];
     }
@@ -34,34 +55,48 @@ extension MediaX on Media {
     return null;
   }
 
-  String get artist => _metadata?.artist ?? 'Unknown Artist';
+  String get artist =>
+      (isLocal ? _localMetadata?.artist : _mediaToStationCache[this]?.name) ??
+      'Unknown Artist';
 
-  String? get album => _metadata?.album;
+  String get album =>
+      (isLocal
+          ? _localMetadata?.album
+          : _mediaToStationCache[this]?.tags ?? '') ??
+      'Unknown Album';
 
   String get title =>
-      _metadata?.title ?? basenameWithoutExtension(uri.toString());
+      (isLocal && _localMetadata?.title != null
+          ? _localMetadata?.title
+          : _mediaToStationCache[this]?.language) ??
+      basenameWithoutExtension(uri.toString());
 
-  Duration? get duration => _metadata?.duration;
+  Duration? get duration => _localMetadata?.duration;
 
-  Uint8List? get albumArt {
-    final data = _metadata;
+  Uint8List? get localAlbumArt {
+    final data = _localMetadata;
     if (data == null) return null;
     return data.pictures.firstWhereOrNull((e) => e.bytes.isNotEmpty)?.bytes;
   }
 
-  String get albumId =>
-      '${artist}_${album ?? 'unknown_album'}'.replaceAll(' ', '_');
+  String? get remoteAlbumArt => _mediaToStationCache[this]?.favicon;
 
-  Future<Uri?> getAlbumArtUri({Media? media}) async {
-    if (_audioAlbumArtUriCache.containsKey(media?.albumId)) {
-      return _audioAlbumArtUriCache[media!.albumId];
+  String get albumId => '${artist}_$album'.replaceAll(' ', '_');
+
+  Future<Uri?> getAlbumArtUri(Media media) async {
+    if (!media.isLocal && remoteAlbumArt != null) {
+      return Uri.tryParse(remoteAlbumArt!);
     }
 
-    final newData = media?.albumArt;
-    if (newData != null && media?.albumId != null) {
+    if (_audioAlbumArtUriCache.containsKey(media.albumId)) {
+      return _audioAlbumArtUriCache[media.albumId];
+    }
+
+    final newData = media.localAlbumArt;
+    if (newData != null) {
       final File newFile = await _safeTempCover(
         imageData: newData,
-        key: media!.albumId,
+        key: media.albumId,
       );
 
       var artUri = Uri.file(newFile.path, windows: Platforms.isWindows);

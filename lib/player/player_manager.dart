@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
+import 'package:yaru/yaru.dart';
 
 import '../common/logging.dart';
 import '../extensions/media_x.dart';
@@ -34,18 +35,29 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   VideoController get videoController => _controller;
 
   final playerViewState = SafeValueNotifier<PlayerViewState>(
-    const PlayerViewState(fullMode: false, showQueue: true),
+    const PlayerViewState(fullMode: false, showPlayerExplorer: true),
   );
 
-  void updateViewMode({bool? fullMode, bool? showQueue, Color? color}) {
+  void updateViewMode({
+    bool? fullMode,
+    bool? showPlayerExplorer,
+    int? explorerIndex,
+    Color? color,
+    String? remoteSourceArtUrl,
+    String? remoteSourceTitle,
+  }) {
     playerViewState.value = playerViewState.value.copyWith(
       fullMode: fullMode,
-      showQueue: showQueue,
+      showPlayerExplorer: showPlayerExplorer,
+      explorerIndex: explorerIndex,
       color: color,
+      remoteSourceArtUrl: remoteSourceArtUrl,
+      remoteSourceTitle: remoteSourceTitle,
     );
   }
 
   Player get _player => _controller.player;
+  Player get player => _player;
 
   Stream<Duration> get positionStream => _player.stream.position.map((e) {
     playbackState.add(playbackState.value.copyWith(updatePosition: position));
@@ -91,21 +103,26 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
 
   Playlist get playlist => _player.state.playlist;
 
-  Stream<Media> get currentMediaStream =>
-      _player.stream.duration.asyncMap((e) async {
-        var media = _player.state.playlist.medias[_player.state.playlist.index];
-        mediaItem.add(
-          MediaItem(
-            id: media.toString(),
-            title: media.title,
-            artist: media.artist,
-            artUri: await media.getAlbumArtUri(media: media),
-            duration: media.duration,
-          ),
-        );
-        await _setLocalColor(media);
-        return media;
-      });
+  Stream<Media> get currentMediaStream => _player.stream.duration.asyncMap((
+    e,
+  ) async {
+    var media = _player.state.playlist.medias[_player.state.playlist.index];
+    mediaItem.add(
+      MediaItem(
+        id: playerViewState.value.remoteSourceArtUrl ?? media.toString(),
+        title: media.isLocal || playerViewState.value.remoteSourceTitle == null
+            ? media.title
+            : playerViewState.value.remoteSourceTitle!,
+        artist: media.artist,
+        artUri: playerViewState.value.remoteSourceArtUrl == null
+            ? await media.getAlbumArtUri(media)
+            : Uri.tryParse(playerViewState.value.remoteSourceArtUrl!),
+        duration: media.duration,
+      ),
+    );
+    await _setLocalColor(media);
+    return media;
+  });
 
   Media? get currentMedia => _player.state.playlist.medias.isEmpty
       ? null
@@ -135,6 +152,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     bool play = true,
   }) async {
     if (mediaList.isEmpty) return;
+    updateViewMode(remoteSourceArtUrl: mediaList.firstOrNull?.remoteAlbumArt);
     await _player.open(Playlist(mediaList, index: index));
   }
 
@@ -204,14 +222,25 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
 
   Future<void> _setLocalColor(Media media) async {
     try {
-      final art = media.albumArt;
+      final art = media.localAlbumArt;
 
       if (art != null) {
         final colorScheme = await ColorScheme.fromImageProvider(
-          provider: MemoryImage(media.albumArt!),
+          provider: MemoryImage(media.localAlbumArt!),
         );
         updateViewMode(color: colorScheme.primary);
       }
+    } on Exception catch (e) {
+      printMessageInDebugMode(e);
+    }
+  }
+
+  Future<void> setRemoteColorFromImageProvider(ImageProvider provider) async {
+    try {
+      final colorScheme = await ColorScheme.fromImageProvider(
+        provider: provider,
+      );
+      updateViewMode(color: colorScheme.primary.scale(saturation: 1));
     } on Exception catch (e) {
       printMessageInDebugMode(e);
     }

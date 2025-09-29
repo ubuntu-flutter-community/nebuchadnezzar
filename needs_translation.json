@@ -14,7 +14,19 @@
     "showTheseEventsInTheChat",
     "playMedia",
     "appendToQueue",
-    "appendedToQueue"
+    "appendedToQueue",
+    "queue",
+    "clearQueue",
+    "queueCleared",
+    "radioBrowser",
+    "selectStation",
+    "noStationFound",
+    "favorites",
+    "addToFavorites",
+    "removeFromFavorites",
+    "favoriteAdded",
+    "favoriteRemoved",
+    "notSupportedByServer"
   ],
 
   "sv": [
@@ -37,6 +49,18 @@
     "showTheseEventsInTheChat",
     "playMedia",
     "appendToQueue",
-    "appendedToQueue"
+    "appendedToQueue",
+    "queue",
+    "clearQueue",
+    "queueCleared",
+    "radioBrowser",
+    "selectStation",
+    "noStationFound",
+    "favorites",
+    "addToFavorites",
+    "removeFromFavorites",
+    "favoriteAdded",
+    "favoriteRemoved",
+    "notSupportedByServer"
   ]
 }

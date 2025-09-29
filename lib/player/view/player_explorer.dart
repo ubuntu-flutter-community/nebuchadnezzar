@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+
+import '../../common/view/ui_constants.dart';
+import '../../l10n/l10n.dart';
+import '../../radio/view/radio_browser.dart';
+import 'player_queue.dart';
+
+class PlayerExplorer extends StatefulWidget {
+  const PlayerExplorer({super.key});
+
+  @override
+  State<PlayerExplorer> createState() => _PlayerExplorerState();
+}
+
+class _PlayerExplorerState extends State<PlayerExplorer>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.only(right: kBigPadding),
+      child: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Tab(text: l10n.queue),
+              Tab(text: l10n.radioBrowser),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: const [PlayerQueue(), RadioBrowser()],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

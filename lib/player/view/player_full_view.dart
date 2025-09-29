@@ -10,7 +10,7 @@ import '../../common/view/ui_constants.dart';
 import '../player_manager.dart';
 import 'player_album_art.dart';
 import 'player_control_mixin.dart';
-import 'player_queue.dart';
+import 'player_explorer.dart';
 import 'player_track.dart';
 import 'player_view.dart';
 
@@ -20,8 +20,9 @@ class PlayerFullView extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final showQueue = watchValue(
-      (PlayerManager m) => m.playerViewState.select((e) => e.showQueue),
+    final showPlayerExplorer = watchValue(
+      (PlayerManager m) =>
+          m.playerViewState.select((e) => e.showPlayerExplorer),
     );
 
     final isVideo =
@@ -46,7 +47,9 @@ class PlayerFullView extends StatelessWidget
 
     final isPortrait = !context.showSideBar;
 
-    final bool showQueueFinal = context.showSideBar ? showQueue : false;
+    final bool showQueueFinal = context.showSideBar
+        ? showPlayerExplorer
+        : false;
 
     final iconColor = getPlayerIconColor(context.theme, color);
 
@@ -71,7 +74,7 @@ class PlayerFullView extends StatelessWidget
                       color: iconColor,
                     ),
                     onPressed: () => di<PlayerManager>().updateViewMode(
-                      showQueue: !showQueueFinal,
+                      showPlayerExplorer: !showQueueFinal,
                     ),
                   ),
                 Padding(
@@ -116,11 +119,10 @@ class PlayerFullView extends StatelessWidget
                         ],
                       ),
                     ),
-                  if (showQueueFinal) const Expanded(child: PlayerQueue()),
+                  if (showQueueFinal) const Expanded(child: PlayerExplorer()),
                 ],
               ),
             ),
-
             if (!isVideo) const PlayerView(),
           ],
         ),

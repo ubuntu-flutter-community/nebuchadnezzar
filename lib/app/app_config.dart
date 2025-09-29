@@ -4,4 +4,6 @@ class AppConfig {
   static const appId = '$appName.$orgName';
   static const kAppTitle = 'Nebuchadnezzar';
   static const String appOpenUrlScheme = 'im.nebuchadnezzar';
+  static const String repoUrl =
+      'https://github.com/ubuntu-flutter-community/nebuchadnezzar';
 }

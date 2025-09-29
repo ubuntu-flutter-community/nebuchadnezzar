@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
@@ -29,7 +30,9 @@ import 'encryption/encryption_manager.dart';
 import 'events/chat_download_manager.dart';
 import 'events/chat_download_service.dart';
 import 'extensions/client_x.dart';
+import 'online_art/online_art_service.dart';
 import 'player/player_manager.dart';
+import 'radio/radio_service.dart';
 import 'settings/account_manager.dart';
 import 'settings/settings_manager.dart';
 import 'settings/settings_service.dart';
@@ -177,6 +180,18 @@ void registerDependencies() {
         ),
       );
     }, dispose: (s) => s.player.dispose())
+    ..registerLazySingleton<Dio>(() => Dio(), dispose: (s) => s.close())
+    ..registerLazySingleton<OnlineArtService>(
+      () => OnlineArtService(dio: di<Dio>()),
+      dispose: (s) => s.dispose(),
+    )
+    ..registerLazySingleton<RadioService>(
+      () => RadioService(
+        onlineArtService: di<OnlineArtService>(),
+        playerManager: di<PlayerManager>(),
+      ),
+      dispose: (s) => s.dispose(),
+    )
     ..registerSingletonAsync<PlayerManager>(
       () async => AudioService.init(
         config: AudioServiceConfig(

@@ -154,6 +154,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  basic_utils:
+    dependency: "direct main"
+    description:
+      name: basic_utils
+      sha256: "548047bef0b3b697be19fa62f46de54d99c9019a69fb7db92c69e19d87f633c7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.8.2"
   binarize:
     dependency: transitive
     description:
@@ -1450,6 +1458,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
+      sha256: "92aa3841d083cc4b0f4709b5c74fd6409a3e6ba833ffc7dc6a8fee096366acf5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
   pool:
     dependency: transitive
     description:
@@ -1490,6 +1506,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  radio_browser_api:
+    dependency: "direct main"
+    description:
+      name: radio_browser_api
+      sha256: "73da0aa774ebfb28315d7c4590f4b231105772860fe1a4ba5c20ee05cf0e8d63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0+1"
   random_string:
     dependency: transitive
     description:

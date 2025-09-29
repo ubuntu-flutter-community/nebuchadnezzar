@@ -124,6 +124,10 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
 
     final textTheme = context.textTheme;
 
+    final remoteTitle = watchValue(
+      (PlayerManager p) => p.playerViewState.select((e) => e.remoteSourceTitle),
+    );
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: crossAxisAlignment,
@@ -137,7 +141,7 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
           ),
         ),
         Text(
-          media.title,
+          remoteTitle ?? media.title,
           maxLines: 1,
           style: (titleStyle ?? textTheme.labelSmall)?.copyWith(
             color: textColor,
