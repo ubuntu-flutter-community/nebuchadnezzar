@@ -15,6 +15,7 @@ import '../../common/view/ui_constants.dart';
 import '../../encryption/encryption_manager.dart';
 import '../../encryption/view/key_verification_dialog.dart';
 import '../../notification/chat_notification_handler.dart';
+import '../../player/view/player_view.dart';
 import 'chat_master_panel.dart';
 
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
@@ -125,6 +126,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
               )
             : const Center(child: Progress()),
       ),
+      bottomNavigationBar: const PlayerView(),
     );
   }
 }

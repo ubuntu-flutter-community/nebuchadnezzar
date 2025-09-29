@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:math';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -161,4 +163,43 @@ Config emojiPickerConfig({
       ),
     ),
   );
+}
+
+Color blendColor(Color baseColor, Color blendColor, double amount) {
+  return Color.fromARGB(
+    (baseColor.alpha * (1 - amount) + blendColor.alpha * amount).round(),
+    (baseColor.red * (1 - amount) + blendColor.red * amount).round(),
+    (baseColor.green * (1 - amount) + blendColor.green * amount).round(),
+    (baseColor.blue * (1 - amount) + blendColor.blue * amount).round(),
+  );
+}
+
+const bottomPlayerHeight = 80.0;
+
+const playerTrackHeight = 4.0;
+
+Color getPlayerBg(
+  ThemeData theme,
+  Color? playerAccent, {
+  double blendAmount = 0.3,
+  double saturation = -0.5,
+}) {
+  final colorScheme = theme.colorScheme;
+  final isLight = colorScheme.isLight;
+  final bgBaseColor = isLight ? colorScheme.surface : Colors.black;
+  final accent =
+      playerAccent?.scale(saturation: saturation) ?? theme.colorScheme.primary;
+
+  return blendColor(bgBaseColor, accent, blendAmount);
+}
+
+Color getPlayerIconColor(ThemeData theme, Color? playerAccent) {
+  final colorScheme = theme.colorScheme;
+  final isLight = colorScheme.isLight;
+
+  if (isLight) {
+    return colorScheme.onSurface;
+  } else {
+    return Colors.white;
+  }
 }

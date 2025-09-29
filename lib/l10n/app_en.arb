@@ -3118,5 +3118,42 @@
   "@shareKeysWithDirectlyVerifiedDevicesOnly": {},
   "joinRules": "Join rules",
   "showTheseEventsInTheChat": "Show these events in the chat",
-  "@showTheseEventsInTheChat": {}
+  "@showTheseEventsInTheChat": {},
+  "playMedia": "Play media",
+  "@playMedia": {},
+  "appendToQueue": "Append to queue",
+  "@appendToQueue": {},
+  "appendedToQueue": "Appended to queue: {title}",
+  "@appendedToQueue": {
+    "type": "text",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "queue": "Queue",
+  "@queue": {},
+  "clearQueue": "Clear queue",
+  "@clearQueue": {},
+  "queueCleared": "Queue cleared",
+  "@queueCleared": {},
+  "radioBrowser": "Radio browser",
+  "@radioBrowser": {},
+  "selectStation": "Select station",
+  "@selectStation": {},
+  "noStationFound": "No station found",
+  "@noStationFound": {},
+  "favorites": "Favorites",
+  "@favorites": {},
+  "addToFavorites": "Add to favorites",
+  "@addToFavorites": {},
+  "removeFromFavorites": "Remove from favorites",
+  "@removeFromFavorites": {},
+  "favoriteAdded": "Favorite added",
+  "@favoriteAdded": {},
+  "favoriteRemoved": "Favorite removed",
+  "@favoriteRemoved": {},
+  "notSupportedByServer": "Not supported by server",
+  "@notSupportedByServer": {}
 }

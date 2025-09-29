@@ -21,6 +21,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     this.width = imageWidth,
     this.onTap,
     this.showDescription = true,
+    this.onlyImage = false,
   });
 
   final Event event;
@@ -30,6 +31,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
   final BoxFit? fit;
   final VoidCallback? onTap;
   final bool showDescription;
+  final bool onlyImage;
 
   static const double imageWidth = 370.0;
   static const double imageHeight = 270.0;
@@ -48,6 +50,36 @@ class ChatImage extends StatelessWidget with WatchItMixin {
       return const Center(child: Icon(YaruIcons.image_missing, size: 45));
     }
 
+    final image = SizedBox(
+      height: theHeight,
+      width: theWidth,
+      child: maybeImage != null
+          ? event.isSvgImage
+                ? SvgPicture.memory(
+                    maybeImage,
+                    fit: theFit,
+                    height: theHeight,
+                    width: theWidth,
+                  )
+                : Image.memory(
+                    maybeImage,
+                    fit: theFit,
+                    height: theHeight,
+                    width: theWidth,
+                  )
+          : ChatImageFuture(
+              event: event,
+              width: theWidth,
+              height: theHeight,
+              fit: theFit,
+              getThumbnail: event.hasThumbnail,
+            ),
+    );
+
+    if (onlyImage) {
+      return image;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
       child: ClipRRect(
@@ -59,30 +91,17 @@ class ChatImage extends StatelessWidget with WatchItMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                height: theHeight,
-                width: theWidth,
-                child: maybeImage != null
-                    ? event.isSvgImage
-                          ? SvgPicture.memory(
-                              maybeImage,
-                              fit: theFit,
-                              height: theHeight,
-                              width: theWidth,
-                            )
-                          : Image.memory(
-                              maybeImage,
-                              fit: theFit,
-                              height: theHeight,
-                              width: theWidth,
-                            )
-                    : ChatImageFuture(
-                        event: event,
-                        width: theWidth,
-                        height: theHeight,
-                        fit: theFit,
-                        getThumbnail: event.hasThumbnail,
-                      ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  image,
+                  if (event.isVideo)
+                    const Icon(
+                      YaruIcons.video,
+                      size: 55,
+                      color: Colors.white70,
+                    ),
+                ],
               ),
               if (showDescription &&
                   event.fileDescription != null &&

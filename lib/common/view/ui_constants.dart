@@ -1,6 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
 const kTinyPadding = 2.5;
@@ -17,7 +15,7 @@ const kCardPadding = 15.0;
 
 const kSideBarWith = 280.0;
 
-const kShowSideBarThreshHold = 600.0;
+const kShowSideBarThreshHold = 700.0;
 
 const kLoginFormWidth = 350.0;
 
@@ -35,4 +33,9 @@ const windowOptions = WindowOptions(
   size: Size(1024, 800),
   minimumSize: Size(400, 600),
   center: true,
+);
+
+var playerButtonStyle = IconButton.styleFrom(
+  foregroundColor: Colors.white,
+  backgroundColor: Colors.transparent,
 );

@@ -11,7 +11,22 @@
     "shareKeysWithCrossVerifiedDevicesIfEnabled",
     "shareKeysWithDirectlyVerifiedDevicesOnly",
     "joinRules",
-    "showTheseEventsInTheChat"
+    "showTheseEventsInTheChat",
+    "playMedia",
+    "appendToQueue",
+    "appendedToQueue",
+    "queue",
+    "clearQueue",
+    "queueCleared",
+    "radioBrowser",
+    "selectStation",
+    "noStationFound",
+    "favorites",
+    "addToFavorites",
+    "removeFromFavorites",
+    "favoriteAdded",
+    "favoriteRemoved",
+    "notSupportedByServer"
   ],
 
   "sv": [
@@ -31,6 +46,21 @@
     "shareKeysWithCrossVerifiedDevicesIfEnabled",
     "shareKeysWithDirectlyVerifiedDevicesOnly",
     "joinRules",
-    "showTheseEventsInTheChat"
+    "showTheseEventsInTheChat",
+    "playMedia",
+    "appendToQueue",
+    "appendedToQueue",
+    "queue",
+    "clearQueue",
+    "queueCleared",
+    "radioBrowser",
+    "selectStation",
+    "noStationFound",
+    "favorites",
+    "addToFavorites",
+    "removeFromFavorites",
+    "favoriteAdded",
+    "favoriteRemoved",
+    "notSupportedByServer"
   ]
 }

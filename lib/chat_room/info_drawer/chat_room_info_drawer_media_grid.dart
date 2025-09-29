@@ -10,8 +10,10 @@ import '../../common/view/ui_constants.dart';
 import '../../events/chat_download_manager.dart';
 import '../../events/view/chat_image.dart';
 import '../../events/view/chat_message_image_full_screen_dialog.dart';
+import '../../events/view/chat_message_media_avatar.dart';
 import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
+import '../../player/view/player_control_mixin.dart';
 import '../timeline/timeline_manager.dart';
 import '../timeline/timeline_x.dart';
 
@@ -78,7 +80,8 @@ class _ChatRoomInfoDrawerMediaGridTabsState
   );
 }
 
-class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
+class ChatRoomInfoMediaGrid extends StatelessWidget
+    with WatchItMixin, PlayerControlMixin {
   ChatRoomInfoMediaGrid({
     super.key,
     required this.room,
@@ -125,89 +128,67 @@ class ChatRoomInfoMediaGrid extends StatelessWidget with WatchItMixin {
       return const SizedBox.shrink();
     }
 
-    return NotificationListener<ScrollEndNotification>(
-      onNotification: (notification) {
-        di<TimelineManager>().requestHistory(
-          timeline,
-          filter: StateFilter(types: [EventTypes.Message]),
-          historyCount: 1000,
-        );
+    return Center(
+      child: NotificationListener<ScrollEndNotification>(
+        onNotification: (notification) {
+          di<TimelineManager>().requestHistory(
+            timeline,
+            filter: StateFilter(types: [EventTypes.Message]),
+            historyCount: 1000,
+          );
 
-        return true;
-      },
-      child: Stack(
-        children: [
-          GridView.builder(
-            padding: const EdgeInsets.only(
-              left: kBigPadding,
-              right: kBigPadding,
-              bottom: 3 * kBigPadding,
-            ),
-            itemCount: events.length,
-            itemBuilder: (context, i) {
-              final event = events[i];
-
-              return switch (messageType) {
-                MessageTypes.Image => ChatImage(
-                  height: 90,
-                  fit: BoxFit.cover,
-                  showDescription: false,
-                  event: event,
-                  onTap: event.isSvgImage
-                      ? null
-                      : () => showDialog(
-                          context: context,
-                          builder: (context) =>
-                              ChatMessageImageFullScreenDialog(event: event),
-                        ),
-                ),
-                _ => Center(
-                  child: IconButton.outlined(
-                    tooltip: context.l10n.downloadFile,
-                    onPressed: () => di<ChatDownloadManager>().safeFile(
-                      event: event,
-                      dialogTitle: l10n.saveFile,
-                      confirmButtonText: l10n.saveFile,
-                    ),
-                    icon: switch (messageType) {
-                      MessageTypes.Audio => const Icon(YaruIcons.music_note),
-                      MessageTypes.File => const Icon(YaruIcons.document),
-                      MessageTypes.Video => const Icon(YaruIcons.video),
-                      _ => const Placeholder(),
-                    },
-                  ),
-                ),
-              };
-            },
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: switch (messageType) {
-                MessageTypes.Audio ||
-                MessageTypes.File ||
-                MessageTypes.Video => 4,
-                _ => 2,
-              },
-              mainAxisExtent: switch (messageType) {
-                MessageTypes.Audio ||
-                MessageTypes.File ||
-                MessageTypes.Video => 80,
-                _ => 100,
-              },
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
+          return true;
+        },
+        child: ListView.separated(
+          padding: const EdgeInsets.only(
+            left: kMediumPadding,
+            right: kMediumPadding,
           ),
-          Positioned(
-            bottom: 0,
-            left: 10,
-            right: 10,
-            child: Material(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: ChatLoadMoreHistoryButton(timeline: timeline),
+          itemCount: events.length,
+          separatorBuilder: (context, index) => const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Divider(height: 0, thickness: 1),
+          ),
+          itemBuilder: (context, i) {
+            final event = events[i];
+
+            return ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: kSmallPadding,
+                horizontal: kMediumPadding,
               ),
-            ),
-          ),
-        ],
+              title: Text(
+                event.fileName ?? event.fileDescription ?? 'Unknown',
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: context.theme.textTheme.bodySmall,
+              ),
+              onTap: switch (messageType) {
+                MessageTypes.Audio || MessageTypes.Video =>
+                  () => playMatrixMedia(context, event: event),
+                MessageTypes.Image => () => showDialog(
+                  context: context,
+                  builder: (context) =>
+                      ChatMessageImageFullScreenDialog(event: event),
+                ),
+                _ => () => di<ChatDownloadManager>().safeFile(
+                  event: event,
+                  dialogTitle: l10n.saveFile,
+                  confirmButtonText: l10n.saveFile,
+                ),
+              },
+              minLeadingWidth: 50,
+              leading: event.isImage
+                  ? ChatImage(
+                      event: event,
+                      dimension: 50,
+                      showDescription: false,
+                      onlyImage: true,
+                    )
+                  : ChatMessageMediaAvatar(event: event),
+            );
+          },
+        ),
       ),
     );
   }

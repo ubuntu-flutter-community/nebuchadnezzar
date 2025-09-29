@@ -16,6 +16,9 @@ platforms:
   amd64:
   arm64:
 
+environment:
+  LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/caca:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/vdpau:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/mfx:$SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/blas:$SNAP/gnome-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lapack
+
 apps:
   nebuchadnezzar:
     command: bin/nebuchadnezzar
@@ -24,8 +27,38 @@ apps:
       - home
       - network
       - network-status
+      - audio-playback
+    slots:
+      - mpris
+
+slots:
+  dbus-musicpod:
+    interface: dbus
+    bus: session
+    name: org.feichtmeier.Nebuchadnezzar
 
 parts:
+  mpv:
+    source: https://github.com/mpv-player/mpv.git
+    source-tag: "v0.40.0"
+    plugin: meson
+    meson-parameters:
+      - --prefix=/usr
+      - --buildtype=release
+      - -Dlibmpv=true
+    build-packages:
+      - curl
+      - libavcodec-dev
+      - libavfilter-dev
+      - libass-dev
+      - libx264-dev
+      - libvorbis-dev
+      - libjpeg-turbo8-dev
+      - libasound2-dev
+      - libplacebo-dev
+    prime:
+      - usr/lib/*/libmpv*
+
   flutter-git:
     plugin: nil
     source: .
@@ -46,9 +79,11 @@ parts:
     override-prime: ""
 
   nebuchadnezzar:
-    after: [flutter-git]
+    after: [flutter-git, mpv]
     source: .
     plugin: nil
+    build-environment:
+      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:/snap/gnome-46-2404-sdk/current/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:/snap/gnome-46-2404-sdk/current/usr/lib:/snap/gnome-46-2404-sdk/current/usr/lib/vala-current:/snap/gnome-46-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pulseaudio${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     override-build: |
       set -eux
       curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -68,6 +103,78 @@ parts:
       - libsecret-1-0
       - libjsoncpp25
       - libpciaccess0
-
+      - libaom3
+      - libass9
+      - libblas3
+      - libbluray2
+      - libbs2b0
+      - libchromaprint1
+      - libcodec2-1.2
+      - libflite1
+      - libgme0
+      - libgsm1
+      - liblapack3
+      - liblilv-0-0
+      - libmysofa1
+      - libnorm1
+      - libnuma1
+      - libopenmpt0
+      - libpgm-5.3-0
+      - libpocketsphinx3
+      - librabbitmq4
+      - librubberband2
+      - libserd-0-0
+      - libshine3
+      - libsnappy1v5
+      - libsodium23
+      - libsord-0-0
+      - libsoxr0
+      - libsphinxbase3
+      - libsratom-0-0
+      - libssh-gcrypt-4
+      - libudfread0
+      - libva-drm2
+      - libva-x11-2
+      - libvdpau1
+      - libvidstab1.1
+      - libx265-199
+      - libxvidcore4
+      - libzimg2
+      - libzmq5
+      - libzvbi0
+      - libavfilter9
+      - libavformat60
+      - libpostproc57
+      - libswscale7
+      - libsrt1.5-gnutls
+      - ocl-icd-libopencl1
+      - libplacebo338
+      - on amd64:
+          - libmfx1
     prime:
-      - usr/lib/*/*.so*
+      - usr/lib/*/blas/libblas.so*
+      - usr/lib/*/lapack/liblapack.so*
+      - usr/lib/*/libaom.so*
+      - usr/lib/*/libass.so*
+      - usr/lib/*/libbluray.so*
+      - usr/lib/*/libjson*.so*
+      - usr/lib/*/libsecret*.so*
+      - usr/lib/*/libpciaccess*.so*
+      - usr/lib/*/libav*.so*
+      - usr/lib/*/libplacebo*.so*
+      - usr/lib/*/libunibreak*.so*
+      - usr/lib/*/libpostproc*.so*
+      - usr/lib/*/libbs2*.so*
+      - usr/lib/*/libfftw*.so*
+      - usr/lib/*/libflite*.so*
+      - usr/lib/*/liblilv*.so*
+      - usr/lib/*/libmysofa*.so*
+      - usr/lib/*/lib*sphinx*.so*
+      - usr/lib/*/librubberband*.so*
+      - usr/lib/*/libsamplerate*.so*
+      - usr/lib/*/libserd*.so*
+      - usr/lib/*/libsord*.so*
+      - usr/lib/*/libsrat*.so*
+      - usr/lib/*/libvidst*.so*
+      - usr/lib/*/libzimg*.so*
+      - usr/lib/*/libzix*.so*

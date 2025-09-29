@@ -4233,6 +4233,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show these events in the chat'**
   String get showTheseEventsInTheChat;
+
+  /// No description provided for @playMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Play media'**
+  String get playMedia;
+
+  /// No description provided for @appendToQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Append to queue'**
+  String get appendToQueue;
+
+  /// No description provided for @appendedToQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Appended to queue: {title}'**
+  String appendedToQueue(String title);
+
+  /// No description provided for @queue.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue'**
+  String get queue;
+
+  /// No description provided for @clearQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear queue'**
+  String get clearQueue;
+
+  /// No description provided for @queueCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue cleared'**
+  String get queueCleared;
+
+  /// No description provided for @radioBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Radio browser'**
+  String get radioBrowser;
+
+  /// No description provided for @selectStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Select station'**
+  String get selectStation;
+
+  /// No description provided for @noStationFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No station found'**
+  String get noStationFound;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @favoriteAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite added'**
+  String get favoriteAdded;
+
+  /// No description provided for @favoriteRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite removed'**
+  String get favoriteRemoved;
+
+  /// No description provided for @notSupportedByServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported by server'**
+  String get notSupportedByServer;
 }
 
 class _AppLocalizationsDelegate

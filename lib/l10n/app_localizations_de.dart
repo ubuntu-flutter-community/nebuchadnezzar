@@ -2421,4 +2421,51 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get showTheseEventsInTheChat => 'Show these events in the chat';
+
+  @override
+  String get playMedia => 'Play media';
+
+  @override
+  String get appendToQueue => 'Append to queue';
+
+  @override
+  String appendedToQueue(String title) {
+    return 'Appended to queue: $title';
+  }
+
+  @override
+  String get queue => 'Queue';
+
+  @override
+  String get clearQueue => 'Clear queue';
+
+  @override
+  String get queueCleared => 'Queue cleared';
+
+  @override
+  String get radioBrowser => 'Radio browser';
+
+  @override
+  String get selectStation => 'Select station';
+
+  @override
+  String get noStationFound => 'No station found';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String get favoriteAdded => 'Favorite added';
+
+  @override
+  String get favoriteRemoved => 'Favorite removed';
+
+  @override
+  String get notSupportedByServer => 'Not supported by server';
 }
