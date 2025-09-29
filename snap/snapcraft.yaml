@@ -153,3 +153,19 @@ parts:
       - usr/lib/*/libpciaccess*.so*
       - usr/lib/*/libav*.so*
       - usr/lib/*/libplacebo*.so*
+      - usr/lib/*/libunibreak*.so*
+      - usr/lib/*/libpostproc*.so*
+      - usr/lib/*/libbs2*.so*
+      - usr/lib/*/libfftw*.so*
+      - usr/lib/*/libflite*.so*
+      - usr/lib/*/liblilv*.so*
+      - usr/lib/*/libmysofa*.so*
+      - usr/lib/*/lib*sphinx*.so*
+      - usr/lib/*/librubberband*.so*
+      - usr/lib/*/libsamplerate*.so*
+      - usr/lib/*/libserd*.so*
+      - usr/lib/*/libsord*.so*
+      - usr/lib/*/libsrat*.so*
+      - usr/lib/*/libvidst*.so*
+      - usr/lib/*/libzimg*.so*
+      - usr/lib/*/libzix*.so*
