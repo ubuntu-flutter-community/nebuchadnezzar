@@ -11,10 +11,16 @@ extension PushRuleStateX on PushRuleState {
     PushRuleState.mentionsOnly => '${l10n.notifyMeFor}: ${l10n.mention}',
   };
 
-  Icon getIcon(ColorScheme colorScheme) => switch (this) {
-    PushRuleState.mentionsOnly => const Icon(YaruIcons.speaker_high),
-    PushRuleState.notify => const Icon(YaruIcons.speaker_high_filled),
-    PushRuleState.dontNotify => const Icon(YaruIcons.speaker_muted),
+  Widget getIcon(ColorScheme colorScheme) => switch (this) {
+    PushRuleState.mentionsOnly => const Icon(YaruIcons.notification),
+    PushRuleState.notify => const Icon(YaruIcons.notification_filled),
+    PushRuleState.dontNotify => Stack(
+      alignment: Alignment.center,
+      children: [
+        const Icon(YaruIcons.notification),
+        Icon(YaruIcons.window_close, size: 10, color: colorScheme.onSurface),
+      ],
+    ),
   };
 
   IconData getIconData() => switch (this) {
