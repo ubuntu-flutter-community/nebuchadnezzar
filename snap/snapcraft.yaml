@@ -27,6 +27,7 @@ apps:
       - home
       - network
       - network-status
+      - audio-playback
 
 parts:
   mpv:
