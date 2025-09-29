@@ -81,7 +81,13 @@ mixin PlayerControlMixin {
         await di<PlayerManager>().addToPlaylist(media);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Added to queue "${media.albumId}"')),
+            SnackBar(
+              content: Text(
+                context.l10n.appendedToQueue(
+                  '${media.artist} - ${media.title}',
+                ),
+              ),
+            ),
           );
         }
       } else {

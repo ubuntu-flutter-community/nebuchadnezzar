@@ -14,15 +14,10 @@ import 'player_queue.dart';
 import 'player_track.dart';
 import 'player_view.dart';
 
-class PlayerFullView extends StatefulWidget with WatchItStatefulWidgetMixin {
+class PlayerFullView extends StatelessWidget
+    with WatchItMixin, PlayerControlMixin {
   const PlayerFullView({super.key});
 
-  @override
-  State<PlayerFullView> createState() => _PlayerFullViewState();
-}
-
-class _PlayerFullViewState extends State<PlayerFullView>
-    with PlayerControlMixin {
   @override
   Widget build(BuildContext context) {
     final showQueue = watchValue(

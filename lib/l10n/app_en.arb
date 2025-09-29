@@ -3121,5 +3121,15 @@
   "@showTheseEventsInTheChat": {},
   "playMedia": "Play media",
   "@playMedia": {},
-  "appendToQueue": "Append to queue"
+  "appendToQueue": "Append to queue",
+  "@appendToQueue": {},
+  "appendedToQueue": "Appended to queue: {title}",
+  "@appendedToQueue": {
+    "type": "text",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  }
 }

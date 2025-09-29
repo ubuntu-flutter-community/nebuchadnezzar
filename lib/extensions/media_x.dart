@@ -49,7 +49,8 @@ extension MediaX on Media {
     return data.pictures.firstWhereOrNull((e) => e.bytes.isNotEmpty)?.bytes;
   }
 
-  String get albumId => '${artist}_${album ?? 'unknown_album'}';
+  String get albumId =>
+      '${artist}_${album ?? 'unknown_album'}'.replaceAll(' ', '_');
 
   Future<Uri?> getAlbumArtUri({Media? media}) async {
     if (_audioAlbumArtUriCache.containsKey(media?.albumId)) {

@@ -2427,4 +2427,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appendToQueue => 'Append to queue';
+
+  @override
+  String appendedToQueue(String title) {
+    return 'Appended to queue: $title';
+  }
 }

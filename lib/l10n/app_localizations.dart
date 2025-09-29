@@ -4245,6 +4245,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Append to queue'**
   String get appendToQueue;
+
+  /// No description provided for @appendedToQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Appended to queue: {title}'**
+  String appendedToQueue(String title);
 }
 
 class _AppLocalizationsDelegate

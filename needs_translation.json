@@ -13,7 +13,8 @@
     "joinRules",
     "showTheseEventsInTheChat",
     "playMedia",
-    "appendToQueue"
+    "appendToQueue",
+    "appendedToQueue"
   ],
 
   "sv": [
@@ -35,6 +36,7 @@
     "joinRules",
     "showTheseEventsInTheChat",
     "playMedia",
-    "appendToQueue"
+    "appendToQueue",
+    "appendedToQueue"
   ]
 }
