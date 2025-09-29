@@ -28,6 +28,14 @@ apps:
       - network
       - network-status
       - audio-playback
+    slots:
+      - mpris
+
+slots:
+  dbus-musicpod:
+    interface: dbus
+    bus: session
+    name: org.feichtmeier.Nebuchadnezzar
 
 parts:
   mpv:
