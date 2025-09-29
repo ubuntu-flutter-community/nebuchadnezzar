@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:listen_it/listen_it.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../player_manager.dart';
-import 'player_album_art.dart';
+import 'player_bottom_album_art.dart';
 import 'player_control_mixin.dart';
 import 'player_main_controls.dart';
 import 'player_track.dart';
+import 'player_volume_popup.dart';
 
 class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
   const PlayerView({super.key});
@@ -30,14 +32,26 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       (PlayerManager p) => p.playerViewState.select((e) => e.color),
     );
 
+    final colorScheme = context.colorScheme;
+
     const firstChild = SizedBox.shrink();
+
+    final iconColor = getPlayerIconColor(context.theme, color);
+
+    final bgColor = getPlayerBg(
+      context.theme,
+      color,
+      blendAmount: 0.4,
+      saturation: -0.1,
+    );
+
     final secondChild = InkWell(
-      hoverColor: context.colorScheme.primary.withAlpha(80),
+      hoverColor: colorScheme.primary.withAlpha(80),
       onTap: () => togglePlayerFullMode(context),
       child: SizedBox(
         height: bottomPlayerHeight,
         child: Material(
-          color: blendColor(Colors.black, color ?? Colors.black, 0.2),
+          color: bgColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
           child: Column(
             children: [
@@ -47,23 +61,49 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
                   mainAxisAlignment: MainAxisAlignment.center,
                   spacing: kMediumPadding,
                   children: [
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 300),
-                      opacity: isFullMode ? 0.0 : 1.0,
-                      child: PlayerAlbumArt(media: media),
+                    if (isFullMode)
+                      SizedBox.square(
+                        dimension: bottomPlayerHeight - playerTrackHeight,
+                        child: Center(
+                          child: IconButton(
+                            onPressed: () => togglePlayerFullMode(context),
+                            icon: Icon(
+                              YaruIcons.fullscreen_exit,
+                              color: iconColor,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      PlayerBottomAlbumArt(media: media),
+                    if (context.showSideBar)
+                      SizedBox(
+                        width: 120,
+                        child: PlayerTrackInfo(textColor: iconColor),
+                      ),
+                    Expanded(
+                      flex: 5,
+                      child: PlayerMainControls(
+                        iconColor: iconColor,
+                        selectedColor:
+                            color?.scale(
+                              saturation: 1,
+                              lightness: colorScheme.isDark ? 0.3 : -0.2,
+                            ) ??
+                            colorScheme.primary,
+                      ),
                     ),
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 300),
-                      opacity: isFullMode ? 0.0 : 1.0,
-                      child: const PlayerTrackInfo(),
-                    ),
-                    const Expanded(flex: 5, child: PlayerMainControls()),
+                    PlayerVolumePopup(iconColor: iconColor),
                     IconButton(
                       style: playerButtonStyle,
-                      icon: const Icon(Icons.stop, color: Colors.white),
-                      onPressed: di<PlayerManager>().stop,
+                      icon: Icon(Icons.stop, color: iconColor),
+                      onPressed: () {
+                        di<PlayerManager>().stop();
+                        di<PlayerManager>().updateViewMode(fullMode: false);
+                        Navigator.of(context).maybePop();
+                      },
                     ),
-                    const SizedBox(width: kSmallPadding),
+                    const SizedBox(width: kMediumPadding),
                   ],
                 ),
               ),

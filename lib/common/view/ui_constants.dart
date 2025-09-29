@@ -15,7 +15,7 @@ const kCardPadding = 15.0;
 
 const kSideBarWith = 280.0;
 
-const kShowSideBarThreshHold = 600.0;
+const kShowSideBarThreshHold = 700.0;
 
 const kLoginFormWidth = 350.0;
 

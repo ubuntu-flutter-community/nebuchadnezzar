@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/platforms.dart';
+import '../../extensions/media_x.dart';
 import '../../l10n/l10n.dart';
 import '../player_manager.dart';
 import 'player_full_view.dart';
@@ -30,7 +31,8 @@ mixin PlayerControlMixin {
   Future<void> playMatrixMedia(
     BuildContext context, {
     required Event event,
-    bool addInQueue = true,
+    bool addInQueue = false,
+    bool play = true,
   }) async {
     File? file;
     MatrixFile? matrixFile;
@@ -74,10 +76,17 @@ mixin PlayerControlMixin {
     }
 
     if (file != null) {
-      await di<PlayerManager>().setPlaylist([
-        Media(file.path),
-        if (addInQueue) ...di<PlayerManager>().playlist.medias,
-      ], play: true);
+      final media = Media(file.path);
+      if (addInQueue) {
+        await di<PlayerManager>().addToPlaylist(media);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Added to queue "${media.albumId}"')),
+          );
+        }
+      } else {
+        await di<PlayerManager>().setPlaylist([media], play: play);
+      }
     }
   }
 }

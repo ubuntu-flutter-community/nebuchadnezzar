@@ -241,6 +241,21 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                     YaruIcons.download,
                                                   ),
                                                 ),
+                                                if (event.messageType ==
+                                                        MessageTypes.Audio ||
+                                                    event.messageType ==
+                                                        MessageTypes.Video)
+                                                  IconButton(
+                                                    onPressed: () =>
+                                                        playMatrixMedia(
+                                                          context,
+                                                          event: event,
+                                                          addInQueue: true,
+                                                        ),
+                                                    icon: const Icon(
+                                                      YaruIcons.music_queue,
+                                                    ),
+                                                  ),
                                               ],
                                             ),
                                           ),

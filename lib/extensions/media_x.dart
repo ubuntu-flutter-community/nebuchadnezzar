@@ -6,11 +6,16 @@ import 'package:collection/collection.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+
+import '../common/platforms.dart';
 
 extension MediaX on Media {
   static final _audioMetadataCache = <String, AudioMetadata?>{};
+  static final _audioAlbumArtUriCache = <String, Uri?>{};
 
-  AudioMetadata? get metadata {
+  AudioMetadata? get _metadata {
     if (_audioMetadataCache.containsKey(uri.toString())) {
       return _audioMetadataCache[uri.toString()];
     }
@@ -29,17 +34,59 @@ extension MediaX on Media {
     return null;
   }
 
-  String get artist => metadata?.artist ?? 'Unknown Artist';
+  String get artist => _metadata?.artist ?? 'Unknown Artist';
 
-  String? get album => metadata?.album;
+  String? get album => _metadata?.album;
 
   String get title =>
-      metadata?.title ?? basenameWithoutExtension(uri.toString());
+      _metadata?.title ?? basenameWithoutExtension(uri.toString());
+
+  Duration? get duration => _metadata?.duration;
 
   Uint8List? get albumArt {
-    final data = metadata;
+    final data = _metadata;
     if (data == null) return null;
     return data.pictures.firstWhereOrNull((e) => e.bytes.isNotEmpty)?.bytes;
+  }
+
+  String get albumId => '${artist}_${album ?? 'unknown_album'}';
+
+  Future<Uri?> getAlbumArtUri({Media? media}) async {
+    if (_audioAlbumArtUriCache.containsKey(media?.albumId)) {
+      return _audioAlbumArtUriCache[media!.albumId];
+    }
+
+    final newData = media?.albumArt;
+    if (newData != null && media?.albumId != null) {
+      final File newFile = await _safeTempCover(
+        imageData: newData,
+        key: media!.albumId,
+      );
+
+      var artUri = Uri.file(newFile.path, windows: Platforms.isWindows);
+
+      _audioAlbumArtUriCache[media.albumId] = artUri;
+      return artUri;
+    }
+
+    return null;
+  }
+
+  Future<File> _safeTempCover({
+    required String key,
+    required Uint8List imageData,
+  }) async {
+    final workingDir = await getTemporaryDirectory();
+
+    final imagesDir = p.join(workingDir.path, 'images');
+
+    if (!(await Directory(imagesDir).exists())) {
+      await Directory(imagesDir).create();
+    }
+
+    final file = File(p.join(imagesDir, '$key.png'));
+    final newFile = await file.writeAsBytes(imageData);
+    return newFile;
   }
 }
 

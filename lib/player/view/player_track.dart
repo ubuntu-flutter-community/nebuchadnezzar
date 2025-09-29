@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
@@ -15,6 +17,10 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
       (PlayerManager p) => p.durationStream,
       initialValue: di<PlayerManager>().duration,
     ).data;
+
+    final color = watchValue(
+      (PlayerManager p) => p.playerViewState.select((e) => e.color),
+    );
 
     final position = watchStream(
       (PlayerManager p) => p.positionStream,
@@ -45,6 +51,9 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
       disabledThumbRadius: 0,
     );
 
+    final trackColor = context.colorScheme.isDark
+        ? Colors.white
+        : blendColor(color ?? context.colorScheme.primary, Colors.white, 0.2);
     return SliderTheme(
       data: context.theme.sliderTheme.copyWith(
         thumbColor: Colors.white,
@@ -53,13 +62,14 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
         overlayShape: thumbShape,
         trackShape: const RectangularSliderTrackShape() as SliderTrackShape,
         trackHeight: playerTrackHeight,
-        activeTrackColor: Colors.white,
-        inactiveTrackColor: Colors.white24,
-        secondaryActiveTrackColor: Colors.white38,
+        activeTrackColor: trackColor.scale(saturation: 0.2),
+        inactiveTrackColor: trackColor.withAlpha(80),
+        secondaryActiveTrackColor: trackColor.withAlpha(120),
       ),
       child: Slider(
+        min: 0,
         max: sliderActive ? duration.inSeconds.toDouble() : 1.0,
-        value: sliderActive ? position.inSeconds.toDouble() : 0,
+        value: sliderActive ? position.inSeconds.toDouble() : 0.0,
         secondaryTrackValue: bufferActive
             ? bufferedPosition.inSeconds.toDouble()
             : null,
@@ -72,7 +82,9 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
 }
 
 class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
-  const PlayerTrackInfo({super.key});
+  const PlayerTrackInfo({super.key, required this.textColor});
+
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -98,38 +110,31 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
       return const SizedBox.shrink();
     }
 
-    return Row(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 120,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                media.artist,
-                maxLines: 2,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.white,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text(
-                media.title,
-                maxLines: 1,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.white,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text(
-                '${position?.toString().split('.').first ?? '0:00:00'} / ${duration?.toString().split('.').first ?? '0:00:00'}',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Colors.white70,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+        Text(
+          media.artist,
+          maxLines: 2,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: textColor,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Text(
+          media.title,
+          maxLines: 1,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: textColor,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Text(
+          '${position?.toString().split('.').first ?? '0:00:00'} / ${duration?.toString().split('.').first ?? '0:00:00'}',
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: textColor,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],

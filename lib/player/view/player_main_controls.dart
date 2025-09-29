@@ -3,12 +3,18 @@ import 'package:media_kit/media_kit.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../player_manager.dart';
 
 class PlayerMainControls extends StatelessWidget {
-  const PlayerMainControls({super.key});
+  const PlayerMainControls({
+    super.key,
+    required this.iconColor,
+    required this.selectedColor,
+  });
+
+  final Color iconColor;
+  final Color selectedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -16,26 +22,36 @@ class PlayerMainControls extends StatelessWidget {
       spacing: kMediumPadding,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const PlayerShuffleButton(),
+        PlayerShuffleButton(iconColor: iconColor, selectedColor: selectedColor),
         IconButton(
           style: playerButtonStyle,
-          icon: const Icon(YaruIcons.skip_backward, color: Colors.white),
-          onPressed: di<PlayerManager>().previous,
+          icon: Icon(YaruIcons.skip_backward, color: iconColor),
+          onPressed: di<PlayerManager>().skipToPrevious,
         ),
-        const PlayerIsPlayingButton(),
+        PlayerIsPlayingButton(iconColor: iconColor),
         IconButton(
           style: playerButtonStyle,
-          icon: const Icon(YaruIcons.skip_forward, color: Colors.white),
-          onPressed: di<PlayerManager>().next,
+          icon: Icon(YaruIcons.skip_forward, color: iconColor),
+          onPressed: di<PlayerManager>().skipToNext,
         ),
-        const PlayerPlaylistModeButton(),
+        PlayerPlaylistModeButton(
+          iconColor: iconColor,
+          selectedColor: selectedColor,
+        ),
       ],
     );
   }
 }
 
 class PlayerShuffleButton extends StatelessWidget with WatchItMixin {
-  const PlayerShuffleButton({super.key});
+  const PlayerShuffleButton({
+    super.key,
+    required this.iconColor,
+    required this.selectedColor,
+  });
+
+  final Color iconColor;
+  final Color selectedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -48,17 +64,21 @@ class PlayerShuffleButton extends StatelessWidget with WatchItMixin {
         true;
     return IconButton(
       style: playerButtonStyle,
-      icon: Icon(
-        YaruIcons.shuffle,
-        color: shuffle ? context.colorScheme.primary : Colors.white,
-      ),
+      icon: Icon(YaruIcons.shuffle, color: shuffle ? selectedColor : iconColor),
       onPressed: () => di<PlayerManager>().toggleShuffle(),
     );
   }
 }
 
 class PlayerPlaylistModeButton extends StatelessWidget with WatchItMixin {
-  const PlayerPlaylistModeButton({super.key});
+  const PlayerPlaylistModeButton({
+    super.key,
+    required this.iconColor,
+    required this.selectedColor,
+  });
+
+  final Color iconColor;
+  final Color selectedColor;
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +96,8 @@ class PlayerPlaylistModeButton extends StatelessWidget with WatchItMixin {
           _ => YaruIcons.repeat,
         },
         color: switch (playlistMode) {
-          PlaylistMode.single ||
-          PlaylistMode.loop => context.colorScheme.primary,
-          _ => Colors.white,
+          PlaylistMode.single || PlaylistMode.loop => selectedColor,
+          _ => iconColor,
         },
       ),
       onPressed: () => di<PlayerManager>().changePlaylistMode(),
@@ -87,7 +106,9 @@ class PlayerPlaylistModeButton extends StatelessWidget with WatchItMixin {
 }
 
 class PlayerIsPlayingButton extends StatelessWidget with WatchItMixin {
-  const PlayerIsPlayingButton({super.key});
+  const PlayerIsPlayingButton({super.key, required this.iconColor});
+
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +122,7 @@ class PlayerIsPlayingButton extends StatelessWidget with WatchItMixin {
       style: playerButtonStyle,
       icon: Icon(
         isPlaying == true ? YaruIcons.media_pause : YaruIcons.media_play,
-        color: Colors.white,
+        color: iconColor,
       ),
       onPressed: di<PlayerManager>().playOrPause,
     );

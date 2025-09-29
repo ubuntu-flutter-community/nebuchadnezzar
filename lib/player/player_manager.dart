@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -7,9 +8,27 @@ import '../common/logging.dart';
 import '../extensions/media_x.dart';
 import 'view/player_view_state.dart';
 
-class PlayerManager {
+class PlayerManager extends BaseAudioHandler with SeekHandler {
   PlayerManager({required VideoController controller})
-    : _controller = controller;
+    : _controller = controller {
+    playbackState.add(
+      PlaybackState(
+        playing: false,
+        systemActions: {
+          MediaAction.seek,
+          MediaAction.seekBackward,
+          MediaAction.seekForward,
+        },
+        controls: [
+          MediaControl.skipToPrevious,
+          MediaControl.rewind,
+          MediaControl.play,
+          MediaControl.fastForward,
+          MediaControl.skipToNext,
+        ],
+      ),
+    );
+  }
 
   final VideoController _controller;
   VideoController get videoController => _controller;
@@ -28,17 +47,39 @@ class PlayerManager {
 
   Player get _player => _controller.player;
 
-  Stream<Duration> get positionStream => _player.stream.position;
+  Stream<Duration> get positionStream => _player.stream.position.map((e) {
+    playbackState.add(playbackState.value.copyWith(updatePosition: position));
+    return e;
+  });
 
   Duration get position => _player.state.position;
 
   Stream<Duration> get bufferedPositionStream => _player.stream.buffer;
 
-  Stream<Duration> get durationStream => _player.stream.duration;
+  Stream<Duration> get durationStream => _player.stream.duration.map((e) {
+    if (mediaItem.value != null) {
+      mediaItem.add(mediaItem.value!.copyWith(duration: duration));
+    }
+    return e;
+  });
 
   Duration get duration => _player.state.duration;
 
-  Stream<bool> get isPlayingStream => _player.stream.playing;
+  Stream<bool> get isPlayingStream => _player.stream.playing.map((e) {
+    playbackState.add(
+      playbackState.value.copyWith(
+        playing: isPlaying,
+        controls: [
+          MediaControl.skipToPrevious,
+          isPlaying ? MediaControl.pause : MediaControl.play,
+
+          MediaControl.skipToNext,
+        ],
+        processingState: AudioProcessingState.ready,
+      ),
+    );
+    return e;
+  });
 
   bool get isPlaying => _player.state.playing;
 
@@ -53,6 +94,15 @@ class PlayerManager {
   Stream<Media> get currentMediaStream =>
       _player.stream.duration.asyncMap((e) async {
         var media = _player.state.playlist.medias[_player.state.playlist.index];
+        mediaItem.add(
+          MediaItem(
+            id: media.toString(),
+            title: media.title,
+            artist: media.artist,
+            artUri: await media.getAlbumArtUri(media: media),
+            duration: media.duration,
+          ),
+        );
         await _setLocalColor(media);
         return media;
       });
@@ -102,21 +152,31 @@ class PlayerManager {
 
   Future<void> move(int from, int to) => _player.move(from, to);
 
+  @override
   Future<void> play() async => _player.play();
 
+  @override
   Future<void> pause() async => _player.pause();
 
   Future<void> playOrPause() => _player.playOrPause();
 
+  @override
   Future<void> stop() async => _player.stop();
 
+  @override
   Future<void> seek(Duration position) async => _player.seek(position);
 
   Future<void> setVolume(double volume) async => _player.setVolume(volume);
 
-  Future<void> next() async => _player.next();
+  Stream<double> get volumeStream => _player.stream.volume;
 
-  Future<void> previous() async => _player.previous();
+  double get volume => _player.state.volume;
+
+  @override
+  Future<void> skipToNext() async => _player.next();
+
+  @override
+  Future<void> skipToPrevious() async => _player.previous();
 
   Future<void> setShuffle(bool shuffle) async => _player.setShuffle(shuffle);
 

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
@@ -177,10 +178,19 @@ void registerDependencies() {
       );
     }, dispose: (s) => s.player.dispose())
     ..registerSingletonAsync<PlayerManager>(
-      () async {
-        final playerService = PlayerManager(controller: di<VideoController>());
-        return playerService;
-      },
+      () async => AudioService.init(
+        config: AudioServiceConfig(
+          androidNotificationOngoing: false,
+          androidStopForegroundOnPause: false,
+          androidNotificationChannelName: AppConfig.appName,
+          androidNotificationChannelId:
+              Platforms.isAndroid || Platforms.isWindows
+              ? AppConfig.appId
+              : null,
+          androidNotificationChannelDescription: 'MusicPod Media Controls',
+        ),
+        builder: () => PlayerManager(controller: di<VideoController>()),
+      ),
       // dependsOn: [VideoController],
       dispose: (s) async => s.dispose(),
     );

@@ -177,3 +177,29 @@ Color blendColor(Color baseColor, Color blendColor, double amount) {
 const bottomPlayerHeight = 80.0;
 
 const playerTrackHeight = 4.0;
+
+Color getPlayerBg(
+  ThemeData theme,
+  Color? playerAccent, {
+  double blendAmount = 0.3,
+  double saturation = -0.5,
+}) {
+  final colorScheme = theme.colorScheme;
+  final isLight = colorScheme.isLight;
+  final bgBaseColor = isLight ? colorScheme.surface : Colors.black;
+  final accent =
+      playerAccent?.scale(saturation: saturation) ?? theme.colorScheme.primary;
+
+  return blendColor(bgBaseColor, accent, blendAmount);
+}
+
+Color getPlayerIconColor(ThemeData theme, Color? playerAccent) {
+  final colorScheme = theme.colorScheme;
+  final isLight = colorScheme.isLight;
+
+  if (isLight) {
+    return colorScheme.onSurface;
+  } else {
+    return Colors.white;
+  }
+}
