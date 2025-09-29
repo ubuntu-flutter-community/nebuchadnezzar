@@ -3120,5 +3120,6 @@
   "showTheseEventsInTheChat": "Show these events in the chat",
   "@showTheseEventsInTheChat": {},
   "playMedia": "Play media",
-  "@playMedia": {}
+  "@playMedia": {},
+  "appendToQueue": "Append to queue"
 }

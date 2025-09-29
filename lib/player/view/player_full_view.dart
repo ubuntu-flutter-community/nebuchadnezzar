@@ -110,7 +110,13 @@ class _PlayerFullViewState extends State<PlayerFullView>
                           ),
                           if (isPortrait) ...[
                             const SizedBox(height: kBigPadding),
-                            PlayerTrackInfo(textColor: iconColor),
+                            PlayerTrackInfo(
+                              textColor: iconColor,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              artistStyle: context.textTheme.bodySmall,
+                              titleStyle: context.textTheme.bodyLarge,
+                              durationStyle: context.textTheme.bodyMedium,
+                            ),
                           ],
                         ],
                       ),

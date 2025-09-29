@@ -54,15 +54,23 @@ class ChatMessageMediaAvatar extends StatelessWidget with PlayerControlMixin {
                   ),
                 ),
               },
-        child: CircleAvatar(
-          backgroundColor: avatarFallbackColor(context.colorScheme),
-          radius: kAvatarDefaultSize / 2,
-          child: switch (event.messageType) {
-            MessageTypes.Audio => const Icon(YaruIcons.media_play),
-            MessageTypes.Video => const Icon(YaruIcons.video_filled),
-            MessageTypes.File => const Icon(YaruIcons.document_filled),
-            _ => const Icon(YaruIcons.document_filled),
+        child: Tooltip(
+          message: switch (event.messageType) {
+            MessageTypes.Audio => l10n.playMedia,
+            MessageTypes.Video => l10n.playMedia,
+            MessageTypes.File => l10n.saveFile,
+            _ => '',
           },
+          child: CircleAvatar(
+            backgroundColor: avatarFallbackColor(context.colorScheme),
+            radius: kAvatarDefaultSize / 2,
+            child: switch (event.messageType) {
+              MessageTypes.Audio => const Icon(YaruIcons.media_play),
+              MessageTypes.Video => const Icon(YaruIcons.video_filled),
+              MessageTypes.File => const Icon(YaruIcons.document_filled),
+              _ => const Icon(YaruIcons.document_filled),
+            },
+          ),
         ),
       ),
     );

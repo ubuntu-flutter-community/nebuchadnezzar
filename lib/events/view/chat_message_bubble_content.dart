@@ -246,6 +246,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                     event.messageType ==
                                                         MessageTypes.Video)
                                                   IconButton(
+                                                    tooltip: l10n.appendToQueue,
                                                     onPressed: () =>
                                                         playMatrixMedia(
                                                           context,

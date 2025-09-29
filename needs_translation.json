@@ -12,7 +12,8 @@
     "shareKeysWithDirectlyVerifiedDevicesOnly",
     "joinRules",
     "showTheseEventsInTheChat",
-    "playMedia"
+    "playMedia",
+    "appendToQueue"
   ],
 
   "sv": [
@@ -33,6 +34,7 @@
     "shareKeysWithDirectlyVerifiedDevicesOnly",
     "joinRules",
     "showTheseEventsInTheChat",
-    "playMedia"
+    "playMedia",
+    "appendToQueue"
   ]
 }

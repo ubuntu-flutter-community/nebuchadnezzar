@@ -4239,6 +4239,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Play media'**
   String get playMedia;
+
+  /// No description provided for @appendToQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Append to queue'**
+  String get appendToQueue;
 }
 
 class _AppLocalizationsDelegate

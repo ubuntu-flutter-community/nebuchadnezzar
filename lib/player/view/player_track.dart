@@ -5,6 +5,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
+import '../../extensions/duration_x.dart';
 import '../../extensions/media_x.dart';
 import '../player_manager.dart';
 
@@ -82,9 +83,20 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
 }
 
 class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
-  const PlayerTrackInfo({super.key, required this.textColor});
+  const PlayerTrackInfo({
+    super.key,
+    required this.textColor,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.artistStyle,
+    this.titleStyle,
+    this.durationStyle,
+  });
 
   final Color textColor;
+  final CrossAxisAlignment crossAxisAlignment;
+  final TextStyle? artistStyle;
+  final TextStyle? titleStyle;
+  final TextStyle? durationStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +108,7 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
 
     final position = watchStream(
       (PlayerManager p) => p.positionStream,
-      initialValue: Duration.zero,
+      initialValue: di<PlayerManager>().position,
       preserveState: false,
     ).data;
 
@@ -110,14 +122,16 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
       return const SizedBox.shrink();
     }
 
+    final textTheme = context.textTheme;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: crossAxisAlignment,
       children: [
         Text(
           media.artist,
           maxLines: 2,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          style: (artistStyle ?? textTheme.labelSmall)?.copyWith(
             color: textColor,
             overflow: TextOverflow.ellipsis,
           ),
@@ -125,14 +139,14 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
         Text(
           media.title,
           maxLines: 1,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          style: (titleStyle ?? textTheme.labelSmall)?.copyWith(
             color: textColor,
             overflow: TextOverflow.ellipsis,
           ),
         ),
         Text(
-          '${position?.toString().split('.').first ?? '0:00:00'} / ${duration?.toString().split('.').first ?? '0:00:00'}',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          '${(position ?? Duration.zero).formattedTime} / ${(duration ?? Duration.zero).formattedTime}',
+          style: (durationStyle ?? textTheme.labelSmall)?.copyWith(
             color: textColor,
             overflow: TextOverflow.ellipsis,
           ),

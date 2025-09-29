@@ -2424,4 +2424,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playMedia => 'Play media';
+
+  @override
+  String get appendToQueue => 'Append to queue';
 }
