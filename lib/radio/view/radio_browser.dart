@@ -3,6 +3,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/view/safe_network_image.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/media_x.dart';
@@ -59,9 +60,7 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
         const SizedBox(height: kMediumPadding),
         TextField(
           decoration: InputDecoration(
-            fillColor: Colors.transparent,
             labelText: context.l10n.search,
-            border: const OutlineInputBorder(),
             suffixIcon: IconButton(
               style: textFieldSuffixStyle,
               icon: const Icon(YaruIcons.edit_clear),
@@ -94,8 +93,25 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
                   return ListTile(
                     key: ValueKey(media.stationId),
                     title: Text(media.artist),
+                    minLeadingWidth: 40,
+                    leading: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: SafeNetworkImage(
+                          url: media.remoteAlbumArt,
+                          width: 40,
+                          height: 40,
+                        ),
+                      ),
+                    ),
                     subtitle: Text(
-                      media.album.split(',').map((e) => e.trim()).join(', '),
+                      media.album
+                          .split(',')
+                          .map((e) => e.trim())
+                          .take(5)
+                          .join(', '),
                     ),
                     onTap: () => di<PlayerManager>().setPlaylist([media]),
                   );

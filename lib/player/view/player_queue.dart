@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:listen_it/listen_it.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -39,13 +38,7 @@ class _PlayerQueueState extends State<PlayerQueue> {
       preserveState: false,
     ).data;
 
-    final color =
-        watchValue(
-          (PlayerManager p) => p.playerViewState.select((e) => e.color),
-        ) ??
-        context.colorScheme.primary;
-
-    final iconColor = getPlayerIconColor(context.theme, color);
+    final iconColor = getPlayerIconColor(context.theme);
     return Padding(
       padding: const EdgeInsets.all(kBigPadding),
       child: Column(

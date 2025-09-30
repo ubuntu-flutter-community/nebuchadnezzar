@@ -36,13 +36,14 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
 
     const firstChild = SizedBox.shrink();
 
-    final iconColor = getPlayerIconColor(context.theme, color);
+    final theme = context.theme;
+    final iconColor = getPlayerIconColor(theme);
 
     final bgColor = getPlayerBg(
-      context.theme,
+      theme,
       color,
       blendAmount: 0.4,
-      saturation: -0.1,
+      saturation: colorScheme.isLight ? -0.7 : -0.5,
     );
 
     final secondChild = InkWell(
@@ -88,7 +89,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
                         selectedColor:
                             color?.scale(
                               saturation: 1,
-                              lightness: colorScheme.isDark ? 0.3 : -0.2,
+                              lightness: colorScheme.isDark ? 0.3 : 0.1,
                             ) ??
                             colorScheme.primary,
                       ),

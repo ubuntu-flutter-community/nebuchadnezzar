@@ -51,10 +51,36 @@ class PlayerFullView extends StatelessWidget
         ? showPlayerExplorer
         : false;
 
-    final iconColor = getPlayerIconColor(context.theme, color);
+    final theme = context.theme;
+    final colorScheme = context.colorScheme;
 
-    return DialogTheme(
-      backgroundColor: getPlayerBg(context.theme, color),
+    final iconColor = getPlayerIconColor(theme);
+
+    return Theme(
+      data: theme.copyWith(
+        colorScheme: theme.colorScheme.copyWith(
+          primary: color,
+          outline: iconColor,
+        ),
+        inputDecorationTheme: theme.inputDecorationTheme.copyWith(
+          fillColor: Colors.transparent,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: color),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: iconColor.withAlpha(150)),
+          ),
+          border: OutlineInputBorder(borderSide: BorderSide(color: iconColor)),
+        ),
+        dialogTheme: context.theme.dialogTheme.copyWith(
+          backgroundColor: getPlayerBg(
+            theme,
+            color,
+            saturation: colorScheme.isLight ? -0.8 : -0.6,
+          ),
+        ),
+      ),
+
       child: Dialog.fullscreen(
         child: Column(
           children: [
