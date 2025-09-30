@@ -108,7 +108,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   ) async {
     var media = _player.state.playlist.medias[_player.state.playlist.index];
     mediaItem.add(
-      mediaItem.value?.copyWith(
+      MediaItem(
         id: playerViewState.value.remoteSourceArtUrl ?? media.toString(),
         title: media.isLocal || playerViewState.value.remoteSourceTitle == null
             ? media.title
