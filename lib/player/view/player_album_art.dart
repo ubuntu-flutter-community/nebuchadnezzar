@@ -43,13 +43,7 @@ class PlayerAlbumArt extends StatelessWidget {
       return SizedBox(
         width: dim,
         height: dim,
-        child: PlayerRemoteSourceImage(
-          height: dim,
-          width: dim,
-          fit: fit,
-          fallBackIcon: const Icon(YaruIcons.music_note),
-          errorIcon: const Icon(YaruIcons.music_note),
-        ),
+        child: PlayerRemoteSourceImage(height: dim, width: dim, fit: fit),
       );
     }
 
@@ -63,41 +57,52 @@ class PlayerRemoteSourceImage extends StatelessWidget with WatchItMixin {
     required this.height,
     required this.width,
     required this.fit,
-    required this.fallBackIcon,
-    required this.errorIcon,
   });
 
   final double height;
   final double width;
   final BoxFit? fit;
-  final Widget fallBackIcon;
-  final Widget errorIcon;
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.theme;
-
     final remoteSourceArtUrl = watchValue(
       (PlayerManager p) =>
           p.playerViewState.select((e) => e.remoteSourceArtUrl),
     );
 
-    return Container(
-      color: theme.cardColor.scale(
-        lightness: theme.colorScheme.isLight ? -0.15 : 0.3,
+    final color = watchValue(
+      (PlayerManager p) => p.playerViewState.select((e) => e.color),
+    );
+
+    return SafeNetworkImage(
+      placeholder: (context, url) => Center(
+        child: SizedBox(
+          width: width * 0.3,
+          height: width * 0.3,
+          child: CircularProgressIndicator(
+            color: color?.withValues(alpha: 0.5),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              color ?? getPlayerIconColor(context.theme),
+            ),
+          ),
+        ),
+      ),
+      onImageLoaded: di<PlayerManager>().setRemoteColorFromImageProvider,
+      url: remoteSourceArtUrl,
+      filterQuality: FilterQuality.medium,
+      fit: fit ?? BoxFit.scaleDown,
+      fallBackIcon: Icon(
+        YaruIcons.music_note,
+        size: width * 0.8,
+        color: color ?? getPlayerIconColor(context.theme),
+      ),
+      errorIcon: Icon(
+        YaruIcons.music_note,
+        size: width * 0.8,
+        color: color ?? getPlayerIconColor(context.theme),
       ),
       height: height,
       width: width,
-      child: SafeNetworkImage(
-        onImageLoaded: di<PlayerManager>().setRemoteColorFromImageProvider,
-        url: remoteSourceArtUrl,
-        filterQuality: FilterQuality.medium,
-        fit: fit ?? BoxFit.scaleDown,
-        fallBackIcon: fallBackIcon,
-        errorIcon: errorIcon,
-        height: height,
-        width: width,
-      ),
     );
   }
 }

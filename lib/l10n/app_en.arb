@@ -3155,5 +3155,11 @@
   "favoriteRemoved": "Favorite removed",
   "@favoriteRemoved": {},
   "notSupportedByServer": "Not supported by server",
-  "@notSupportedByServer": {}
+  "@notSupportedByServer": {},
+  "radioStation": "Radio station",
+  "@radioStation": {},
+  "radioStations": "Radio stations",
+  "@radioStations": {},
+  "noRadioBrowserConnected": "No Radio Browser connected",
+  "@noRadioBrowserConnected": {}
 }

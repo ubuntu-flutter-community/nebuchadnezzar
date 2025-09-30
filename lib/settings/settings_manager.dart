@@ -40,4 +40,15 @@ class SettingsManager extends SafeChangeNotifier {
   int get shareKeysWithIndex => _settingsService.shareKeysWithIndex;
   void setShareKeysWithIndex(int value) =>
       _settingsService.setShareKeysWithIndex(value);
+
+  List<String> get favoriteStations => _settingsService.favoriteStations;
+  Future<void> setFavoriteStations(List<String> value) async =>
+      _settingsService.setFavoriteStations(value);
+
+  bool isFavoriteStation(String stationUuid) =>
+      _settingsService.isFavoriteStation(stationUuid);
+  Future<void> addFavoriteStation(String stationUuid) async =>
+      _settingsService.addFavoriteStation(stationUuid);
+  Future<void> removeFavoriteStation(String stationUuid) async =>
+      _settingsService.removeFavoriteStation(stationUuid);
 }

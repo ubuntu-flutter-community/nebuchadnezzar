@@ -25,6 +25,7 @@ class SafeNetworkImage extends StatelessWidget {
     this.httpHeaders,
     this.errorListener,
     this.onImageLoaded,
+    this.placeholder,
   });
 
   final String? url;
@@ -37,6 +38,7 @@ class SafeNetworkImage extends StatelessWidget {
   final Map<String, String>? httpHeaders;
   final void Function(Object)? errorListener;
   final Function(ImageProvider imageProvider)? onImageLoaded;
+  final Widget Function(BuildContext, String)? placeholder;
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +79,7 @@ class SafeNetworkImage extends StatelessWidget {
         httpHeaders: httpHeaders,
         cacheManager: Platforms.isLinux ? XdgCacheManager() : null,
         imageUrl: url!,
+        placeholder: placeholder,
         imageBuilder: (context, imageProvider) {
           onImageLoaded?.call(imageProvider);
           return Image(

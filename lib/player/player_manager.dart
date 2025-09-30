@@ -46,13 +46,20 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     String? remoteSourceArtUrl,
     String? remoteSourceTitle,
   }) {
+    String? remoteMediaFallbackArt;
+    String? remoteMediaFallbackTitle;
+
+    if (currentMedia != null && !currentMedia!.isLocal) {
+      remoteMediaFallbackArt = mediaItem.value?.artUri?.toString();
+      remoteMediaFallbackTitle = mediaItem.value?.title;
+    }
     playerViewState.value = playerViewState.value.copyWith(
       fullMode: fullMode,
       showPlayerExplorer: showPlayerExplorer,
       explorerIndex: explorerIndex,
       color: color,
-      remoteSourceArtUrl: remoteSourceArtUrl,
-      remoteSourceTitle: remoteSourceTitle,
+      remoteSourceArtUrl: remoteSourceArtUrl ?? remoteMediaFallbackArt,
+      remoteSourceTitle: remoteSourceTitle ?? remoteMediaFallbackTitle,
     );
   }
 
@@ -152,7 +159,10 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     bool play = true,
   }) async {
     if (mediaList.isEmpty) return;
-    updateViewMode(remoteSourceArtUrl: mediaList.firstOrNull?.remoteAlbumArt);
+    updateViewMode(
+      remoteSourceArtUrl: mediaList.firstOrNull?.remoteAlbumArt,
+      remoteSourceTitle: mediaList.firstOrNull?.title,
+    );
     await _player.open(Playlist(mediaList, index: index));
   }
 

@@ -47,10 +47,6 @@ class PlayerFullView extends StatelessWidget
 
     final isPortrait = !context.showSideBar;
 
-    final bool showQueueFinal = context.showSideBar
-        ? showPlayerExplorer
-        : false;
-
     final theme = context.theme;
     final colorScheme = context.colorScheme;
 
@@ -62,15 +58,26 @@ class PlayerFullView extends StatelessWidget
           primary: color,
           outline: iconColor,
         ),
+        textSelectionTheme: theme.textSelectionTheme.copyWith(
+          cursorColor: color,
+          selectionColor: color.withAlpha(100),
+          selectionHandleColor: color,
+        ),
         inputDecorationTheme: theme.inputDecorationTheme.copyWith(
           fillColor: Colors.transparent,
+
           focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(kYaruButtonRadius),
             borderSide: BorderSide(color: color),
           ),
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(kYaruButtonRadius),
             borderSide: BorderSide(color: iconColor.withAlpha(150)),
           ),
-          border: OutlineInputBorder(borderSide: BorderSide(color: iconColor)),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: iconColor),
+            borderRadius: BorderRadius.circular(kYaruButtonRadius),
+          ),
         ),
         dialogTheme: context.theme.dialogTheme.copyWith(
           backgroundColor: getPlayerBg(
@@ -90,19 +97,18 @@ class PlayerFullView extends StatelessWidget
               border: BorderSide.none,
               isClosable: false,
               actions: [
-                if (!isPortrait)
-                  IconButton(
-                    isSelected: showQueueFinal,
-                    icon: Icon(
-                      showQueueFinal
-                          ? YaruIcons.sidebar_hide_right
-                          : YaruIcons.sidebar_hide_filled,
-                      color: iconColor,
-                    ),
-                    onPressed: () => di<PlayerManager>().updateViewMode(
-                      showPlayerExplorer: !showQueueFinal,
-                    ),
+                IconButton(
+                  isSelected: showPlayerExplorer,
+                  icon: Icon(
+                    showPlayerExplorer
+                        ? YaruIcons.music_queue_filled
+                        : YaruIcons.music_queue,
+                    color: iconColor,
                   ),
+                  onPressed: () => di<PlayerManager>().updateViewMode(
+                    showPlayerExplorer: !showPlayerExplorer,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(kSmallPadding),
                   child: IconButton(
@@ -115,37 +121,39 @@ class PlayerFullView extends StatelessWidget
             Expanded(
               child: Row(
                 children: [
-                  if (isVideo)
-                    Expanded(
-                      flex: 2,
-                      child: Video(
-                        controller: di<PlayerManager>().videoController,
-                      ),
-                    )
-                  else
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          PlayerAlbumArt(
-                            media: media,
-                            dimension: 300,
-                            fit: BoxFit.fitHeight,
-                          ),
-                          if (isPortrait) ...[
-                            const SizedBox(height: kBigPadding),
-                            PlayerTrackInfo(
-                              textColor: iconColor,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              artistStyle: context.textTheme.bodySmall,
-                              titleStyle: context.textTheme.bodyLarge,
-                              durationStyle: context.textTheme.bodyMedium,
+                  if (!isPortrait || (isPortrait && !showPlayerExplorer))
+                    if (isVideo)
+                      Expanded(
+                        flex: 2,
+                        child: Video(
+                          controller: di<PlayerManager>().videoController,
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            PlayerAlbumArt(
+                              media: media,
+                              dimension: 300,
+                              fit: BoxFit.fitHeight,
                             ),
+                            if (isPortrait) ...[
+                              const SizedBox(height: kBigPadding),
+                              PlayerTrackInfo(
+                                textColor: iconColor,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                artistStyle: context.textTheme.bodySmall,
+                                titleStyle: context.textTheme.bodyLarge,
+                                durationStyle: context.textTheme.bodyMedium,
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
-                    ),
-                  if (showQueueFinal) const Expanded(child: PlayerExplorer()),
+                  if (showPlayerExplorer)
+                    const Expanded(child: PlayerExplorer()),
                 ],
               ),
             ),
