@@ -1,12 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:listen_it/listen_it.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:phoenix_theme/phoenix_theme.dart';
 import 'package:watch_it/watch_it.dart';
 
+import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/media_x.dart';
+import '../../l10n/l10n.dart';
 import '../../player/player_manager.dart';
 import '../../settings/settings_manager.dart';
 import '../radio_service.dart';
@@ -85,17 +89,54 @@ class _RadioFavoritesListState extends State<RadioFavoritesList> {
           itemCount: favorites.length,
           itemBuilder: (context, index) {
             final media = favorites[index];
-            return ListTile(
-              key: ValueKey(media.stationId),
-              title: Text(media.title),
-              minLeadingWidth: kDefaultTileLeadingDimension,
-              leading: RemoteMediaListTileImage(media: media),
-              trailing: RadioBrowserStationStarButton(media: media),
-              onTap: () => di<PlayerManager>().setPlaylist([media]),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: kSmallPadding),
+              child: _RadioFavoriteListTile(
+                key: ValueKey(media.stationId),
+                media: media,
+              ),
             );
           },
         );
       },
+    );
+  }
+}
+
+class _RadioFavoriteListTile extends StatelessWidget with WatchItMixin {
+  const _RadioFavoriteListTile({super.key, required this.media});
+
+  final Media media;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCurrentlyPlaying =
+        watchStream(
+          (PlayerManager p) => p.playlistStream,
+          initialValue: di<PlayerManager>().playlist,
+          preserveState: false,
+        ).data?.medias.asMap().entries.any(
+          (entry) =>
+              entry.value.uri == media.uri &&
+              entry.key == di<PlayerManager>().playlistIndex,
+        ) ??
+        false;
+
+    final selectedColor = watchValue(
+      (PlayerManager p) => p.playerViewState.select((e) => e.color),
+    );
+
+    return ListTile(
+      title: Text(media.title),
+      subtitle: Text(media.getRemoteTags(5) ?? context.l10n.radioStation),
+      minLeadingWidth: kDefaultTileLeadingDimension,
+      leading: RemoteMediaListTileImage(media: media),
+      trailing: RadioBrowserStationStarButton(media: media),
+      selected: isCurrentlyPlaying,
+      selectedColor: context.colorScheme.isLight
+          ? Colors.black
+          : selectedColor?.scale(lightness: 0.3, saturation: 0.3),
+      onTap: () => di<PlayerManager>().setPlaylist([media]),
     );
   }
 }
