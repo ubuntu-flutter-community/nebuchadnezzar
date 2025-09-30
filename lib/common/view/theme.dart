@@ -193,7 +193,7 @@ Color getPlayerBg(
   return blendColor(bgBaseColor, accent, blendAmount);
 }
 
-Color getPlayerIconColor(ThemeData theme, Color? playerAccent) {
+Color getPlayerIconColor(ThemeData theme) {
   final colorScheme = theme.colorScheme;
   final isLight = colorScheme.isLight;
 

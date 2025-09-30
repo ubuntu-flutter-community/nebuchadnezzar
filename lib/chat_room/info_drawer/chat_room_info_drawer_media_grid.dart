@@ -48,8 +48,8 @@ class _ChatRoomInfoDrawerMediaGridTabsState
   Widget build(BuildContext context) => Column(
     spacing: kMediumPadding,
     children: [
-      TabBar(
-        controller: _controller,
+      YaruTabBar(
+        tabController: _controller,
         tabs: [
           const Tab(icon: Icon(YaruIcons.image)),
           const Tab(icon: Icon(YaruIcons.video)),
