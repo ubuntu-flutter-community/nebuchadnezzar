@@ -28,7 +28,7 @@ class _PlayerExplorerState extends State<PlayerExplorer>
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Padding(
-      padding: const EdgeInsets.only(right: kBigPadding),
+      padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
       child: Column(
         children: [
           YaruTabBar(
