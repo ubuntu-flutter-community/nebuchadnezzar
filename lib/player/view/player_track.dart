@@ -152,7 +152,7 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
       crossAxisAlignment: crossAxisAlignment,
       children: [
         Text(
-          media.artist,
+          media.isLocal ? media.artist : media.title,
           maxLines: 2,
           style: (artistStyle ?? textTheme.labelSmall)?.copyWith(
             color: textColor,
