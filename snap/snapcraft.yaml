@@ -38,7 +38,7 @@ apps:
       - mpris
 
 slots:
-  dbus-musicpod:
+  dbus-nebuchadnezzar:
     interface: dbus
     bus: session
     name: org.feichtmeier.Nebuchadnezzar
