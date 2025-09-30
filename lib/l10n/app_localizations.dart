@@ -4323,6 +4323,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not supported by server'**
   String get notSupportedByServer;
+
+  /// No description provided for @radioStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Radio station'**
+  String get radioStation;
+
+  /// No description provided for @radioStations.
+  ///
+  /// In en, this message translates to:
+  /// **'Radio stations'**
+  String get radioStations;
+
+  /// No description provided for @noRadioBrowserConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'No Radio Browser connected'**
+  String get noRadioBrowserConnected;
 }
 
 class _AppLocalizationsDelegate

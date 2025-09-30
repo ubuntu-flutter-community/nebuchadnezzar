@@ -26,6 +26,8 @@ class RadioService {
   Stream<bool> get propertiesChanged => _propertiesChangedController.stream;
   String? get connectedHost =>
       _tags == null || _tags!.isEmpty ? null : _radioBrowserApi?.host;
+  Stream<bool> get hostConnectionChanges =>
+      propertiesChanged.map((_) => connectedHost != null).distinct();
 
   Future<void> init({bool observePlayer = true}) async {
     if (observePlayer) {

@@ -4,6 +4,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/theme.dart';
 import '../../extensions/duration_x.dart';
 import '../../extensions/media_x.dart';
@@ -55,30 +56,48 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
     final trackColor = context.colorScheme.isDark
         ? Colors.white
         : blendColor(color ?? context.colorScheme.primary, Colors.white, 0.2);
-    return SliderTheme(
-      data: context.theme.sliderTheme.copyWith(
-        thumbColor: Colors.white,
-        minThumbSeparation: 0,
-        thumbShape: thumbShape,
-        overlayShape: thumbShape,
-        trackShape: const RectangularSliderTrackShape() as SliderTrackShape,
-        trackHeight: playerTrackHeight,
-        activeTrackColor: trackColor.scale(saturation: 0.2),
-        inactiveTrackColor: trackColor.withAlpha(80),
-        secondaryActiveTrackColor: trackColor.withAlpha(120),
-      ),
-      child: Slider(
-        min: 0,
-        max: sliderActive ? duration.inSeconds.toDouble() : 1.0,
-        value: sliderActive ? position.inSeconds.toDouble() : 0.0,
-        secondaryTrackValue: bufferActive
-            ? bufferedPosition.inSeconds.toDouble()
-            : null,
-        onChanged: (value) {
-          di<PlayerManager>().seek(Duration(seconds: value.toInt()));
-        },
-      ),
-    );
+
+    final isPlaying =
+        watchStream(
+          (PlayerManager p) => p.isPlayingStream,
+          initialValue: di<PlayerManager>().isPlaying,
+          preserveState: false,
+        ).data ??
+        false;
+
+    return (duration?.inSeconds != null && duration!.inSeconds < 10) &&
+            isPlaying
+        ? LinearProgress(
+            value: null,
+            trackHeight: playerTrackHeight,
+            color: trackColor.withValues(alpha: 0.8),
+            backgroundColor: trackColor.withValues(alpha: 0.4),
+          )
+        : SliderTheme(
+            data: context.theme.sliderTheme.copyWith(
+              thumbColor: Colors.white,
+              minThumbSeparation: 0,
+              thumbShape: thumbShape,
+              overlayShape: thumbShape,
+              trackShape:
+                  const RectangularSliderTrackShape() as SliderTrackShape,
+              trackHeight: playerTrackHeight,
+              activeTrackColor: trackColor.scale(saturation: 0.2),
+              inactiveTrackColor: trackColor.withAlpha(80),
+              secondaryActiveTrackColor: trackColor.withAlpha(120),
+            ),
+            child: Slider(
+              min: 0,
+              max: sliderActive ? duration.inSeconds.toDouble() : 1.0,
+              value: sliderActive ? position.inSeconds.toDouble() : 0.0,
+              secondaryTrackValue: bufferActive
+                  ? bufferedPosition.inSeconds.toDouble()
+                  : null,
+              onChanged: (value) {
+                di<PlayerManager>().seek(Duration(seconds: value.toInt()));
+              },
+            ),
+          );
   }
 }
 
@@ -141,7 +160,7 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
           ),
         ),
         Text(
-          remoteTitle ?? media.title,
+          media.isLocal ? media.title : remoteTitle ?? media.title,
           maxLines: 1,
           style: (titleStyle ?? textTheme.labelSmall)?.copyWith(
             color: textColor,

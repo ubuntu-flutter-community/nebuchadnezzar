@@ -62,15 +62,26 @@ class PlayerFullView extends StatelessWidget
           primary: color,
           outline: iconColor,
         ),
+        textSelectionTheme: theme.textSelectionTheme.copyWith(
+          cursorColor: color,
+          selectionColor: color.withAlpha(100),
+          selectionHandleColor: color,
+        ),
         inputDecorationTheme: theme.inputDecorationTheme.copyWith(
           fillColor: Colors.transparent,
+
           focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(kYaruButtonRadius),
             borderSide: BorderSide(color: color),
           ),
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(kYaruButtonRadius),
             borderSide: BorderSide(color: iconColor.withAlpha(150)),
           ),
-          border: OutlineInputBorder(borderSide: BorderSide(color: iconColor)),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: iconColor),
+            borderRadius: BorderRadius.circular(kYaruButtonRadius),
+          ),
         ),
         dialogTheme: context.theme.dialogTheme.copyWith(
           backgroundColor: getPlayerBg(

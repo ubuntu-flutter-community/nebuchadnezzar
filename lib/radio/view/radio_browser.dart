@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/safe_network_image.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/media_x.dart';
@@ -11,8 +12,11 @@ import '../../l10n/l10n.dart';
 import '../../player/player_manager.dart';
 import '../../player/view/player_control_mixin.dart';
 import '../radio_service.dart';
+import 'radio_browser_station_star_button.dart';
+import 'radio_host_not_connected_content.dart';
+import 'remote_media_list_tile_image.dart';
 
-class RadioBrowser extends StatefulWidget {
+class RadioBrowser extends StatefulWidget with WatchItStatefulWidgetMixin {
   const RadioBrowser({super.key});
 
   @override
@@ -22,16 +26,21 @@ class RadioBrowser extends StatefulWidget {
 class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
   late Future<List<Media>> _future;
   final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    _future = _loadMedia();
+
+    if (di<RadioService>().connectedHost != null) {
+      _future = _loadMedia();
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -54,6 +63,25 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
 
   @override
   Widget build(BuildContext context) {
+    final radioHostConnected =
+        watchStream(
+          (RadioService m) => m.hostConnectionChanges,
+          initialValue: di<RadioService>().connectedHost != null,
+          preserveState: false,
+        ).data ??
+        false;
+
+    if (!radioHostConnected) {
+      return RadioHostNotConnectedContent(
+        onRetry: () async {
+          await di<RadioService>().init();
+          setState(() {
+            _future = _loadMedia();
+          });
+        },
+      );
+    }
+
     return Column(
       spacing: kMediumPadding,
       children: [
@@ -73,9 +101,14 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
             ),
           ),
           controller: _searchController,
-          onChanged: (value) => setState(() {
-            _future = _loadMedia(name: value.isEmpty ? null : value);
-          }),
+          onChanged: (value) {
+            if (_debounce?.isActive ?? false) _debounce!.cancel();
+            _debounce = Timer(const Duration(milliseconds: 500), () {
+              setState(() {
+                _future = _loadMedia(name: value.isEmpty ? null : value);
+              });
+            });
+          },
         ),
         Expanded(
           child: FutureBuilder(
@@ -92,28 +125,14 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
                   final media = snapshot.data![index];
                   return ListTile(
                     key: ValueKey(media.stationId),
-                    title: Text(media.artist),
-                    minLeadingWidth: 40,
-                    leading: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: SafeNetworkImage(
-                          url: media.remoteAlbumArt,
-                          width: 40,
-                          height: 40,
-                        ),
-                      ),
-                    ),
+                    title: Text(media.title),
+                    minLeadingWidth: kDefaultTileLeadingDimension,
+                    leading: RemoteMediaListTileImage(media: media),
                     subtitle: Text(
-                      media.album
-                          .split(',')
-                          .map((e) => e.trim())
-                          .take(5)
-                          .join(', '),
+                      media.getRemoteTags(5) ?? context.l10n.radioStation,
                     ),
                     onTap: () => di<PlayerManager>().setPlaylist([media]),
+                    trailing: RadioBrowserStationStarButton(media: media),
                   );
                 },
                 itemCount: snapshot.data!.length,

@@ -6,6 +6,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/media_x.dart';
+import '../../l10n/l10n.dart';
 import '../player_manager.dart';
 
 class PlayerQueue extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -83,7 +84,10 @@ class _PlayerQueueState extends State<PlayerQueue> {
                             leading: Text('${index + 1}'),
                             title: Text(media.title),
                             subtitle: Text(
-                              media.artist,
+                              media.isLocal
+                                  ? media.artist
+                                  : media.getRemoteTags(5) ??
+                                        context.l10n.radioStation,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

@@ -108,7 +108,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   ) async {
     var media = _player.state.playlist.medias[_player.state.playlist.index];
     mediaItem.add(
-      MediaItem(
+      mediaItem.value?.copyWith(
         id: playerViewState.value.remoteSourceArtUrl ?? media.toString(),
         title: media.isLocal || playerViewState.value.remoteSourceTitle == null
             ? media.title
@@ -152,7 +152,10 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     bool play = true,
   }) async {
     if (mediaList.isEmpty) return;
-    updateViewMode(remoteSourceArtUrl: mediaList.firstOrNull?.remoteAlbumArt);
+    updateViewMode(
+      remoteSourceArtUrl: mediaList.firstOrNull?.remoteAlbumArt,
+      remoteSourceTitle: mediaList.firstOrNull?.title,
+    );
     await _player.open(Playlist(mediaList, index: index));
   }
 

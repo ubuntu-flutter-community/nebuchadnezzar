@@ -4,6 +4,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../radio/view/radio_browser.dart';
+import '../../radio/view/radio_favorites_list.dart';
 import 'player_queue.dart';
 
 class PlayerExplorer extends StatefulWidget {
@@ -20,7 +21,7 @@ class _PlayerExplorerState extends State<PlayerExplorer>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -35,12 +36,17 @@ class _PlayerExplorerState extends State<PlayerExplorer>
             tabs: [
               Tab(text: l10n.queue),
               Tab(text: l10n.radioBrowser),
+              Tab(text: l10n.favorites),
             ],
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [PlayerQueue(), RadioBrowser()],
+              children: const [
+                PlayerQueue(),
+                RadioBrowser(),
+                RadioFavoritesList(),
+              ],
             ),
           ),
         ],

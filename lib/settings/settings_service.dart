@@ -66,6 +66,28 @@ class SettingsService {
     _sharedPreferences.setInt(SettingKeys.shareKeysWith, value).then(notify);
   }
 
+  List<String> get favoriteStations =>
+      _sharedPreferences.getStringList(SettingKeys.favoriteStations) ?? [];
+  bool isFavoriteStation(String stationUuid) =>
+      favoriteStations.contains(stationUuid);
+  Future<void> setFavoriteStations(List<String> value) async =>
+      _sharedPreferences
+          .setStringList(SettingKeys.favoriteStations, value)
+          .then(notify);
+  Future<void> addFavoriteStation(String stationUuid) async {
+    if (favoriteStations.contains(stationUuid)) return;
+    final stations = List<String>.from(favoriteStations);
+    stations.add(stationUuid);
+    await setFavoriteStations(stations);
+  }
+
+  Future<void> removeFavoriteStation(String stationUuid) async {
+    if (!favoriteStations.contains(stationUuid)) return;
+    final stations = List<String>.from(favoriteStations);
+    stations.remove(stationUuid);
+    await setFavoriteStations(stations);
+  }
+
   Future<void> dispose() async => _propertiesChangedController.close();
 }
 
@@ -75,4 +97,5 @@ class SettingKeys {
   static const String defaultReactions = 'defaultReactions';
   static const String themeModeIndex = 'themeModeIndex';
   static const String shareKeysWith = 'shareKeysWith';
+  static const String favoriteStations = 'favoriteStations';
 }

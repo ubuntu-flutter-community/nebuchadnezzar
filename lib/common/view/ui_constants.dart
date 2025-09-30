@@ -39,3 +39,5 @@ var playerButtonStyle = IconButton.styleFrom(
   foregroundColor: Colors.white,
   backgroundColor: Colors.transparent,
 );
+
+const kDefaultTileLeadingDimension = 40.0;

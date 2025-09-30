@@ -2482,4 +2482,13 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get notSupportedByServer => 'Not supported by server';
+
+  @override
+  String get radioStation => 'Radio station';
+
+  @override
+  String get radioStations => 'Radio stations';
+
+  @override
+  String get noRadioBrowserConnected => 'No Radio Browser connected';
 }

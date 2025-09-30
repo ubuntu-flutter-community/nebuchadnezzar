@@ -16,6 +16,9 @@ extension MediaX on Media {
   static final _audioMetadataCache = <String, AudioMetadata?>{};
   static final _audioAlbumArtUriCache = <String, Uri?>{};
   static final _uuidToMediaCache = <String, Media>{};
+  static Media? getMediaByUuid(String uuid) => _uuidToMediaCache[uuid];
+  static void addToCache(Media media) =>
+      _uuidToMediaCache[media.stationId] = media;
   static final _mediaToStationCache = <Media, Station>{};
 
   static Media fromStation(Station station) {
@@ -56,19 +59,30 @@ extension MediaX on Media {
   }
 
   String get artist =>
-      (isLocal ? _localMetadata?.artist : _mediaToStationCache[this]?.name) ??
+      (isLocal
+          ? _localMetadata?.artist
+          : '${_mediaToStationCache[this]?.bitrate ?? 0} kbps') ??
       'Unknown Artist';
 
-  String get album =>
+  String get album => _localMetadata?.album ?? 'Unknown Album';
+
+  String get genre =>
       (isLocal
-          ? _localMetadata?.album
-          : _mediaToStationCache[this]?.tags ?? '') ??
-      'Unknown Album';
+          ? _localMetadata?.genres.join(', ')
+          : _mediaToStationCache[this]?.tags) ??
+      'Unknown Genre';
+
+  String? get remoteTagsFull =>
+      isLocal ? null : genre.split(',').map((e) => e.trim()).join(', ');
+
+  String? getRemoteTags(int count) => isLocal
+      ? null
+      : genre.split(',').map((e) => e.trim()).take(count).join(', ');
 
   String get title =>
       (isLocal && _localMetadata?.title != null
           ? _localMetadata?.title
-          : _mediaToStationCache[this]?.language) ??
+          : _mediaToStationCache[this]?.name.toString()) ??
       basenameWithoutExtension(uri.toString());
 
   Duration? get duration => _localMetadata?.duration;

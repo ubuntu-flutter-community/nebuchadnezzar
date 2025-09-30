@@ -26,7 +26,10 @@
     "removeFromFavorites",
     "favoriteAdded",
     "favoriteRemoved",
-    "notSupportedByServer"
+    "notSupportedByServer",
+    "radioStation",
+    "radioStations",
+    "noRadioBrowserConnected"
   ],
 
   "sv": [
@@ -61,6 +64,9 @@
     "removeFromFavorites",
     "favoriteAdded",
     "favoriteRemoved",
-    "notSupportedByServer"
+    "notSupportedByServer",
+    "radioStation",
+    "radioStations",
+    "noRadioBrowserConnected"
   ]
 }
