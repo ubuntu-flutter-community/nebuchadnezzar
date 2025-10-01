@@ -48,7 +48,7 @@ class SafeNetworkImage extends StatelessWidget {
           Icon(YaruIcons.user, size: height != null ? height! * 0.7 : null),
     );
 
-    if (url == null) return fallBack;
+    if (url == null || url!.endsWith('.ico')) return fallBack;
 
     try {
       if (url!.endsWith('.svg')) {

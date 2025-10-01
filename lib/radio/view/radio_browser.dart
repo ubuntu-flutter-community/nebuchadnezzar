@@ -5,6 +5,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/media_x.dart';
@@ -23,21 +24,26 @@ class RadioBrowser extends StatefulWidget {
   State<RadioBrowser> createState() => _RadioBrowserState();
 }
 
+final _searchDraft = ValueNotifier('');
+
 class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
   late Future<List<Media>> _future;
-  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController(
+    text: _searchDraft.value,
+  );
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    _future = _loadMedia();
+    _future = _loadMedia(name: _searchController.text);
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     _debounce?.cancel();
+    _searchDraft.value = _searchController.text;
     super.dispose();
   }
 
@@ -112,6 +118,15 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
                 );
               } else if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.data!.isEmpty) {
+                return Center(
+                  child: Text(
+                    context.l10n.nothingFound,
+                    style: context.textTheme.bodyLarge,
+                  ),
+                );
               }
 
               return ListView.builder(
