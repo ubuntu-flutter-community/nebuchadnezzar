@@ -11,7 +11,7 @@ import '../player_manager.dart';
 import 'player_album_art.dart';
 import 'player_control_mixin.dart';
 import 'player_explorer.dart';
-import 'player_track.dart';
+import 'player_track_info.dart';
 import 'player_view.dart';
 
 class PlayerFullView extends StatelessWidget
@@ -124,7 +124,6 @@ class PlayerFullView extends StatelessWidget
                   if (!isPortrait || (isPortrait && !showPlayerExplorer))
                     if (isVideo)
                       Expanded(
-                        flex: 2,
                         child: Video(
                           controller: di<PlayerManager>().videoController,
                         ),
@@ -139,14 +138,15 @@ class PlayerFullView extends StatelessWidget
                               dimension: 300,
                               fit: BoxFit.fitHeight,
                             ),
-                            if (isPortrait) ...[
+                            if (isPortrait ||
+                                (!isPortrait && !showPlayerExplorer)) ...[
                               const SizedBox(height: kBigPadding),
                               PlayerTrackInfo(
                                 textColor: iconColor,
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                artistStyle: context.textTheme.bodySmall,
+                                artistStyle: context.textTheme.bodyMedium,
                                 titleStyle: context.textTheme.bodyLarge,
-                                durationStyle: context.textTheme.bodyMedium,
+                                durationStyle: context.textTheme.bodySmall,
                               ),
                             ],
                           ],

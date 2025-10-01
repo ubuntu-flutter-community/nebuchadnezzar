@@ -47,7 +47,7 @@ class _CreateOrEditRoomNameTextFieldState
                 (EditRoomService m) =>
                     m.getJoinedRoomCanChangeNameStream(widget.room!),
                 initialValue: widget.room!.canChangeName,
-                preserveState: true,
+                preserveState: false,
               ).data ??
               false;
 
@@ -57,7 +57,7 @@ class _CreateOrEditRoomNameTextFieldState
         : watchStream(
                 (EditRoomService m) => m.getJoinedRoomNameStream(widget.room!),
                 initialValue: widget.room!.name,
-                preserveState: true,
+                preserveState: false,
               ).data ??
               widget.room!.name;
 

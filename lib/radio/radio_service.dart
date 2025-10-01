@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:basic_utils/basic_utils.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
+import 'package:synchronized/synchronized.dart';
 
 import '../common/logging.dart';
+import '../common/platforms.dart';
 import '../extensions/string_x.dart';
 import '../online_art/online_art_service.dart';
 import '../player/data/mpv_metadata.dart';
+import '../player/observe_property.dart';
 import '../player/player_manager.dart';
 
 class RadioService {
@@ -29,18 +31,19 @@ class RadioService {
   Stream<bool> get hostConnectionChanges =>
       propertiesChanged.map((_) => connectedHost != null).distinct();
 
-  bool _observingMpvMetadata = false;
-  Future<void> init({bool observePlayer = true}) async {
-    if (observePlayer && !_observingMpvMetadata) {
+  final _initLock = Lock();
+  Future<void> init() => _initLock.synchronized(() => _init());
+
+  Future<void> _init() async {
+    if (!Platforms.isWeb) {
       try {
-        await (_playerManager.player.platform as NativePlayer).observeProperty(
-          'metadata',
-          _onMpvMetadata,
+        await observeProperty(
+          property: 'metadata',
+          player: _playerManager.player,
+          listener: _onMpvMetadata,
         );
-        _observingMpvMetadata = true;
       } on Exception catch (e, s) {
         printMessageInDebugMode(e, s);
-        _observingMpvMetadata = false;
       }
     }
 
@@ -98,15 +101,15 @@ class RadioService {
 
   final Map<String, Station> _cache = {};
   Future<Station?> getStationByUUID(String uuid) async {
-    if (_cache.containsKey(uuid)) {
-      return _cache[uuid];
-    }
-
     if (_radioBrowserApi == null) {
       await init();
       if (connectedHost == null) {
         return null;
       }
+    }
+
+    if (_cache.containsKey(uuid)) {
+      return _cache[uuid];
     }
 
     try {
@@ -265,11 +268,7 @@ class RadioService {
 
   Future<void> dispose() async {
     await _propertiesChangedController.close();
-    if (_observingMpvMetadata) {
-      await (_playerManager.player.platform as NativePlayer).unobserveProperty(
-        'metadata',
-      );
-    }
+    await observeProperty(property: 'metadata', player: _playerManager.player);
   }
 
   //

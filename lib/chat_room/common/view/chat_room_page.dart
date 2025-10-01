@@ -95,7 +95,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                       widget.room.isDirectChat && invitedUsers.isNotEmpty,
                 ),
             initialValue: widget.room.isUnacceptedDirectChat,
-            preserveState: true,
+            preserveState: false,
           ).data;
 
     return DropRegion(

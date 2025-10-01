@@ -18,8 +18,7 @@ import 'radio_browser_station_star_button.dart';
 import 'radio_host_not_connected_content.dart';
 import 'remote_media_list_tile_image.dart';
 
-class RadioFavoritesList extends StatefulWidget
-    with WatchItStatefulWidgetMixin {
+class RadioFavoritesList extends StatefulWidget {
   const RadioFavoritesList({super.key});
 
   @override
@@ -45,7 +44,6 @@ class _RadioFavoritesListState extends State<RadioFavoritesList> {
           final station = await di<RadioService>().getStationByUUID(stationId);
           if (station != null) {
             media = MediaX.fromStation(station);
-            MediaX.addToCache(media);
           }
         }
         return Future.value(media);
@@ -55,28 +53,17 @@ class _RadioFavoritesListState extends State<RadioFavoritesList> {
 
   @override
   Widget build(BuildContext context) {
-    final radioHostConnected =
-        watchStream(
-          (RadioService m) => m.hostConnectionChanges,
-          initialValue: di<RadioService>().connectedHost != null,
-          preserveState: true,
-        ).data ??
-        false;
-
-    if (!radioHostConnected) {
-      return RadioHostNotConnectedContent(
-        onRetry: () async {
-          await di<RadioService>().init();
-          setState(() => _future = _loadFavorites());
-        },
-      );
-    }
-
     return FutureBuilder<List<Media>>(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return RadioHostNotConnectedContent(
+            message: 'Error: ${snapshot.error}',
+            onRetry: () async {
+              await di<RadioService>().init();
+              setState(() => _future = _loadFavorites());
+            },
+          );
         }
 
         if (!snapshot.hasData) {
@@ -92,7 +79,7 @@ class _RadioFavoritesListState extends State<RadioFavoritesList> {
             return Padding(
               padding: const EdgeInsets.only(bottom: kSmallPadding),
               child: _RadioFavoriteListTile(
-                key: ValueKey(media.stationId),
+                key: ValueKey(media.stationId ?? media.uri),
                 media: media,
               ),
             );

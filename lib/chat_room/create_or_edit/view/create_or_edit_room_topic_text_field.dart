@@ -42,7 +42,7 @@ class _CreateOrEditRoomTopicTextFieldState
                 (EditRoomService m) =>
                     m.getJoinedRoomCanChangeTopicStream(widget.room!),
                 initialValue: widget.room!.canChangeTopic,
-                preserveState: true,
+                preserveState: false,
               ).data ??
               false;
 
@@ -53,7 +53,7 @@ class _CreateOrEditRoomTopicTextFieldState
         : watchStream(
                 (EditRoomService m) => m.getJoinedRoomTopicStream(widget.room!),
                 initialValue: widget.room!.topic,
-                preserveState: true,
+                preserveState: false,
               ).data ??
               widget.room!.topic;
 

@@ -174,10 +174,6 @@ Color blendColor(Color baseColor, Color blendColor, double amount) {
   );
 }
 
-const bottomPlayerHeight = 80.0;
-
-const playerTrackHeight = 4.0;
-
 Color getPlayerBg(
   ThemeData theme,
   Color? playerAccent, {

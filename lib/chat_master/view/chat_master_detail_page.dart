@@ -126,7 +126,7 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
               )
             : const Center(child: Progress()),
       ),
-      bottomNavigationBar: const RepaintBoundary(child: PlayerView()),
+      bottomNavigationBar: const PlayerView(),
     );
   }
 }

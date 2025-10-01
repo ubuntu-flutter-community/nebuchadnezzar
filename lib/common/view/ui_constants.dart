@@ -19,6 +19,12 @@ const kShowSideBarThreshHold = 700.0;
 
 const kLoginFormWidth = 350.0;
 
+const kBottomPlayerHeight = 80.0;
+
+const kPlayerInfoWidth = 160.0;
+
+const kPlayerTrackHeight = 4.0;
+
 const Duration kAvatarAnimationDuration = Duration(milliseconds: 250);
 const Curve kAvatarAnimationCurve = Curves.easeInOut;
 const kTypingAvatarSize = 20.0;

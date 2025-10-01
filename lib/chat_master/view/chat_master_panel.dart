@@ -60,23 +60,41 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
                     context: context,
                     builder: (context) => const ChatSettingsDialog(),
                   ),
-                  trailing: IconButton(
-                    tooltip: l10n.playMedia,
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const PlayerFullView(),
-                      );
-                      di<PlayerManager>().updateState(fullMode: true);
-                    },
-                    icon: const Icon(YaruIcons.media_play),
-                  ),
+                  trailing: const _OpenEmptyPlayerButton(),
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _OpenEmptyPlayerButton extends StatelessWidget with WatchItMixin {
+  const _OpenEmptyPlayerButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final currentMedia = watchStream(
+      (PlayerManager p) => p.currentMediaStream,
+      initialValue: di<PlayerManager>().currentMedia,
+    ).data;
+
+    if (currentMedia != null) {
+      return const SizedBox.shrink();
+    }
+
+    return IconButton(
+      tooltip: context.l10n.playMedia,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => const PlayerFullView(),
+        );
+        di<PlayerManager>().updateState(fullMode: true);
+      },
+      icon: const Icon(YaruIcons.media_play),
     );
   }
 }

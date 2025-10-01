@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/view/theme.dart';
+import '../../common/view/ui_constants.dart';
 import 'player_album_art.dart';
 import 'player_control_mixin.dart';
 
@@ -29,8 +29,8 @@ class _PlayerBottomAlbumArtState extends State<PlayerBottomAlbumArt>
           PlayerAlbumArt(media: widget.media),
           if (_hovering)
             Container(
-              width: bottomPlayerHeight - playerTrackHeight,
-              height: bottomPlayerHeight - playerTrackHeight,
+              width: kBottomPlayerHeight - kPlayerTrackHeight,
+              height: kBottomPlayerHeight - kPlayerTrackHeight,
               color: Colors.black.withAlpha(100),
               child: Center(
                 child: IconButton(
