@@ -29,12 +29,19 @@ class RadioService {
   Stream<bool> get hostConnectionChanges =>
       propertiesChanged.map((_) => connectedHost != null).distinct();
 
+  bool _observingMpvMetadata = false;
   Future<void> init({bool observePlayer = true}) async {
-    if (observePlayer) {
-      await (_playerManager.player.platform as NativePlayer).observeProperty(
-        'metadata',
-        _onMpvMetadata,
-      );
+    if (observePlayer && !_observingMpvMetadata) {
+      try {
+        await (_playerManager.player.platform as NativePlayer).observeProperty(
+          'metadata',
+          _onMpvMetadata,
+        );
+        _observingMpvMetadata = true;
+      } on Exception catch (e, s) {
+        printMessageInDebugMode(e, s);
+        _observingMpvMetadata = false;
+      }
     }
 
     if (connectedHost != null && _tags?.isNotEmpty == true) {
@@ -258,9 +265,11 @@ class RadioService {
 
   Future<void> dispose() async {
     await _propertiesChangedController.close();
-    await (_playerManager.player.platform as NativePlayer).unobserveProperty(
-      'metadata',
-    );
+    if (_observingMpvMetadata) {
+      await (_playerManager.player.platform as NativePlayer).unobserveProperty(
+        'metadata',
+      );
+    }
   }
 
   //
@@ -313,13 +322,13 @@ class RadioService {
     return validHistoryElement;
   }
 
-  Future<void> _processParsedIcyTitle(String parsedIcyTitle) async =>
-      _playerManager.updateViewMode(
-        remoteSourceTitle: parsedIcyTitle,
-        remoteSourceArtUrl: await _onlineArtService.fetchAlbumArt(
-          parsedIcyTitle,
-        ),
-      );
+  Future<void> _processParsedIcyTitle(String parsedIcyTitle) async {
+    final fetchAlbumArt = await _onlineArtService.fetchAlbumArt(parsedIcyTitle);
+    return _playerManager.updateState(
+      remoteSourceTitle: parsedIcyTitle,
+      remoteSourceArtUrl: fetchAlbumArt,
+    );
+  }
 
   final Map<String, MpvMetaData> _radioHistory = {};
   Map<String, MpvMetaData> get radioHistory => _radioHistory;

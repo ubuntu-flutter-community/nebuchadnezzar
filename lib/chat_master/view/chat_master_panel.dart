@@ -9,6 +9,8 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../../player/player_manager.dart';
+import '../../player/view/player_full_view.dart';
 import '../../settings/view/chat_settings_dialog.dart';
 import 'chat_master_list_filter_bar.dart';
 import 'chat_master_settings_tile_avatar.dart';
@@ -57,6 +59,17 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
                   onTap: () => showDialog(
                     context: context,
                     builder: (context) => const ChatSettingsDialog(),
+                  ),
+                  trailing: IconButton(
+                    tooltip: l10n.playMedia,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => const PlayerFullView(),
+                      );
+                      di<PlayerManager>().updateState(fullMode: true);
+                    },
+                    icon: const Icon(YaruIcons.media_play),
                   ),
                 ),
               ],

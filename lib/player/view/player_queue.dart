@@ -30,13 +30,13 @@ class _PlayerQueueState extends State<PlayerQueue> {
     final playlist = watchStream(
       (PlayerManager p) => p.playlistStream,
       initialValue: di<PlayerManager>().playlist,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     final playlistIndex = watchStream(
       (PlayerManager p) => p.playlistIndexStream,
       initialValue: di<PlayerManager>().playlistIndex,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     final iconColor = getPlayerIconColor(context.theme);

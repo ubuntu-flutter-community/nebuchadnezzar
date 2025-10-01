@@ -31,10 +31,7 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
   @override
   void initState() {
     super.initState();
-
-    if (di<RadioService>().connectedHost != null) {
-      _future = _loadMedia();
-    }
+    _future = _loadMedia();
   }
 
   @override
@@ -67,7 +64,7 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
         watchStream(
           (RadioService m) => m.hostConnectionChanges,
           initialValue: di<RadioService>().connectedHost != null,
-          preserveState: false,
+          preserveState: true,
         ).data ??
         false;
 

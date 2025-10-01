@@ -25,7 +25,7 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
         : watchStream(
                 (EditRoomService m) => m.getIsRoomEncryptedStream(room),
                 initialValue: room!.encrypted,
-                preserveState: false,
+                preserveState: true,
               ).data ??
               room!.encrypted;
 
@@ -36,7 +36,7 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
         : watchStream(
                 (EditRoomService m) => m.getCanChangeEncryptionStream(room),
                 initialValue: room!.canChangeStateEvent(EventTypes.Encryption),
-                preserveState: false,
+                preserveState: true,
               ).data ??
               false;
 

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:listen_it/listen_it.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:phoenix_theme/phoenix_theme.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
@@ -59,7 +59,7 @@ class _RadioFavoritesListState extends State<RadioFavoritesList> {
         watchStream(
           (RadioService m) => m.hostConnectionChanges,
           initialValue: di<RadioService>().connectedHost != null,
-          preserveState: false,
+          preserveState: true,
         ).data ??
         false;
 
@@ -114,7 +114,7 @@ class _RadioFavoriteListTile extends StatelessWidget with WatchItMixin {
         watchStream(
           (PlayerManager p) => p.playlistStream,
           initialValue: di<PlayerManager>().playlist,
-          preserveState: false,
+          preserveState: true,
         ).data?.medias.asMap().entries.any(
           (entry) =>
               entry.value.uri == media.uri &&

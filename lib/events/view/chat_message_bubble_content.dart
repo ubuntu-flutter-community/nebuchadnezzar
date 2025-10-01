@@ -180,7 +180,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                               builder: (context) =>
                                                   const PlayerFullView(),
                                             );
-                                            di<PlayerManager>().updateViewMode(
+                                            di<PlayerManager>().updateState(
                                               fullMode: true,
                                             );
                                             playMatrixMedia(

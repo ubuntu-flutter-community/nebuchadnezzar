@@ -59,7 +59,7 @@ class PlayerShuffleButton extends StatelessWidget with WatchItMixin {
         watchStream(
           (PlayerManager p) => p.shuffleStream,
           initialValue: di<PlayerManager>().shuffle,
-          preserveState: false,
+          preserveState: true,
         ).data ==
         true;
     return IconButton(
@@ -85,7 +85,7 @@ class PlayerPlaylistModeButton extends StatelessWidget with WatchItMixin {
     final playlistMode = watchStream(
       (PlayerManager p) => p.playlistModeStream,
       initialValue: di<PlayerManager>().playlistMode,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     return IconButton(
@@ -115,7 +115,7 @@ class PlayerIsPlayingButton extends StatelessWidget with WatchItMixin {
     final isPlaying = watchStream(
       (PlayerManager p) => p.isPlayingStream,
       initialValue: di<PlayerManager>().isPlaying,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     return IconButton(

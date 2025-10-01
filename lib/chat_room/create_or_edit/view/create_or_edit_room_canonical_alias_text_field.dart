@@ -45,7 +45,7 @@ class _CreateOrEditRoomCanonicalAliasTextFieldState
           (EditRoomService m) =>
               m.getCanChangeCanonicalAliasStream(widget.room),
           initialValue: widget.room.canChangeCanonicalAlias,
-          preserveState: false,
+          preserveState: true,
         ).data ??
         false;
 
@@ -55,7 +55,7 @@ class _CreateOrEditRoomCanonicalAliasTextFieldState
           (EditRoomService m) =>
               m.getJoinedRoomCanonicalAliasStream(widget.room),
           initialValue: widget.room.canonicalAlias,
-          preserveState: false,
+          preserveState: true,
         ).data ??
         widget.room.canonicalAlias;
     final homeServer = di<AuthenticationService>().homeServerName;

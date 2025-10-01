@@ -29,14 +29,14 @@ class PlayerFullView extends StatelessWidget
         watchStream(
           (PlayerManager p) => p.isVideoStream,
           initialValue: di<PlayerManager>().isVideo,
-          preserveState: false,
+          preserveState: true,
         ).data ??
         false;
 
     final media = watchStream(
       (PlayerManager p) => p.currentMediaStream,
       initialValue: di<PlayerManager>().currentMedia,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     final color =
@@ -105,7 +105,7 @@ class PlayerFullView extends StatelessWidget
                         : YaruIcons.music_queue,
                     color: iconColor,
                   ),
-                  onPressed: () => di<PlayerManager>().updateViewMode(
+                  onPressed: () => di<PlayerManager>().updateState(
                     showPlayerExplorer: !showPlayerExplorer,
                   ),
                 ),

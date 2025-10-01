@@ -6,8 +6,10 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/theme.dart';
+import '../../common/view/ui_constants.dart';
 import '../../extensions/duration_x.dart';
 import '../../extensions/media_x.dart';
+import '../../radio/view/radio_browser_station_star_button.dart';
 import '../player_manager.dart';
 
 class PlayerTrack extends StatelessWidget with WatchItMixin {
@@ -61,43 +63,45 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
         watchStream(
           (PlayerManager p) => p.isPlayingStream,
           initialValue: di<PlayerManager>().isPlaying,
-          preserveState: false,
+          preserveState: true,
         ).data ??
         false;
 
-    return (duration?.inSeconds != null && duration!.inSeconds < 10) &&
-            isPlaying
-        ? LinearProgress(
-            value: null,
-            trackHeight: playerTrackHeight,
-            color: trackColor.withValues(alpha: 0.8),
-            backgroundColor: trackColor.withValues(alpha: 0.4),
-          )
-        : SliderTheme(
-            data: context.theme.sliderTheme.copyWith(
-              thumbColor: Colors.white,
-              minThumbSeparation: 0,
-              thumbShape: thumbShape,
-              overlayShape: thumbShape,
-              trackShape:
-                  const RectangularSliderTrackShape() as SliderTrackShape,
+    return RepaintBoundary(
+      child:
+          (duration?.inSeconds != null && duration!.inSeconds < 10) && isPlaying
+          ? LinearProgress(
+              value: null,
               trackHeight: playerTrackHeight,
-              activeTrackColor: trackColor.scale(saturation: 0.2),
-              inactiveTrackColor: trackColor.withAlpha(80),
-              secondaryActiveTrackColor: trackColor.withAlpha(120),
+              color: trackColor.withValues(alpha: 0.8),
+              backgroundColor: trackColor.withValues(alpha: 0.4),
+            )
+          : SliderTheme(
+              data: context.theme.sliderTheme.copyWith(
+                thumbColor: Colors.white,
+                minThumbSeparation: 0,
+                thumbShape: thumbShape,
+                overlayShape: thumbShape,
+                trackShape:
+                    const RectangularSliderTrackShape() as SliderTrackShape,
+                trackHeight: playerTrackHeight,
+                activeTrackColor: trackColor.scale(saturation: 0.2),
+                inactiveTrackColor: trackColor.withAlpha(80),
+                secondaryActiveTrackColor: trackColor.withAlpha(120),
+              ),
+              child: Slider(
+                min: 0,
+                max: sliderActive ? duration.inSeconds.toDouble() : 1.0,
+                value: sliderActive ? position.inSeconds.toDouble() : 0.0,
+                secondaryTrackValue: bufferActive
+                    ? bufferedPosition.inSeconds.toDouble()
+                    : null,
+                onChanged: (value) {
+                  di<PlayerManager>().seek(Duration(seconds: value.toInt()));
+                },
+              ),
             ),
-            child: Slider(
-              min: 0,
-              max: sliderActive ? duration.inSeconds.toDouble() : 1.0,
-              value: sliderActive ? position.inSeconds.toDouble() : 0.0,
-              secondaryTrackValue: bufferActive
-                  ? bufferedPosition.inSeconds.toDouble()
-                  : null,
-              onChanged: (value) {
-                di<PlayerManager>().seek(Duration(seconds: value.toInt()));
-              },
-            ),
-          );
+    );
   }
 }
 
@@ -122,19 +126,19 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
     final duration = watchStream(
       (PlayerManager p) => p.durationStream,
       initialValue: di<PlayerManager>().duration,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     final position = watchStream(
       (PlayerManager p) => p.positionStream,
       initialValue: di<PlayerManager>().position,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     final media = watchStream(
       (PlayerManager p) => p.currentMediaStream,
       initialValue: di<PlayerManager>().currentMedia,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     if (media == null) {
@@ -147,33 +151,46 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
       (PlayerManager p) => p.playerViewState.select((e) => e.remoteSourceTitle),
     );
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: crossAxisAlignment,
+    return Row(
+      spacing: kSmallPadding,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          media.isLocal ? media.artist : media.title,
-          maxLines: 2,
-          style: (artistStyle ?? textTheme.labelSmall)?.copyWith(
-            color: textColor,
-            overflow: TextOverflow.ellipsis,
+        Flexible(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: crossAxisAlignment,
+            children: [
+              Text(
+                media.isLocal ? media.artist : media.title,
+                maxLines: 1,
+                style: (artistStyle ?? textTheme.labelSmall)?.copyWith(
+                  color: textColor,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(
+                media.isLocal ? media.title : remoteTitle ?? media.title,
+                maxLines: 1,
+                style: (titleStyle ?? textTheme.labelSmall)?.copyWith(
+                  color: textColor,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(
+                width: 120,
+                height: 16,
+                child: Text(
+                  '${(position ?? Duration.zero).formattedTime} / ${(duration ?? Duration.zero).formattedTime}',
+                  style: (durationStyle ?? textTheme.labelSmall)?.copyWith(
+                    color: textColor,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        Text(
-          media.isLocal ? media.title : remoteTitle ?? media.title,
-          maxLines: 1,
-          style: (titleStyle ?? textTheme.labelSmall)?.copyWith(
-            color: textColor,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        Text(
-          '${(position ?? Duration.zero).formattedTime} / ${(duration ?? Duration.zero).formattedTime}',
-          style: (durationStyle ?? textTheme.labelSmall)?.copyWith(
-            color: textColor,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+        if (!media.isLocal) RadioBrowserStationStarButton(media: media),
       ],
     );
   }
