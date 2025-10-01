@@ -5,6 +5,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/safe_network_image.dart';
 import '../../common/view/theme.dart';
 import '../../extensions/media_x.dart';
@@ -79,8 +80,10 @@ class PlayerRemoteSourceImage extends StatelessWidget with WatchItMixin {
         child: SizedBox(
           width: width * 0.3,
           height: width * 0.3,
-          child: CircularProgressIndicator(
-            color: color?.withValues(alpha: 0.5),
+          child: Progress(
+            color: (color ?? getPlayerIconColor(context.theme)).withValues(
+              alpha: 0.5,
+            ),
             valueColor: AlwaysStoppedAnimation<Color>(
               color ?? getPlayerIconColor(context.theme),
             ),

@@ -21,7 +21,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
     final media = watchStream(
       (PlayerManager p) => p.currentMediaStream,
       initialValue: di<PlayerManager>().currentMedia,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     final isFullMode = watchValue(
@@ -100,7 +100,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
                       icon: Icon(Icons.stop, color: iconColor),
                       onPressed: () {
                         di<PlayerManager>().stop();
-                        di<PlayerManager>().updateViewMode(fullMode: false);
+                        di<PlayerManager>().updateState(fullMode: false);
                         Navigator.of(context).maybePop();
                       },
                     ),
@@ -114,13 +114,15 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       ),
     );
 
-    return AnimatedCrossFade(
-      firstChild: firstChild,
-      secondChild: secondChild,
-      crossFadeState: media == null
-          ? CrossFadeState.showFirst
-          : CrossFadeState.showSecond,
-      duration: const Duration(milliseconds: 300),
+    return RepaintBoundary(
+      child: AnimatedCrossFade(
+        firstChild: firstChild,
+        secondChild: secondChild,
+        crossFadeState: media == null
+            ? CrossFadeState.showFirst
+            : CrossFadeState.showSecond,
+        duration: const Duration(milliseconds: 300),
+      ),
     );
   }
 }

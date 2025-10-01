@@ -23,7 +23,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
     final canChangeJoinRules =
         watchStream(
           (EditRoomService m) => m.getCanChangeJoinRulesStream(room),
-          preserveState: false,
+          preserveState: true,
           initialValue: room.canChangeJoinRules,
         ).data ??
         room.canChangeJoinRules;
@@ -31,7 +31,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
     final joinRules =
         watchStream(
           (EditRoomService m) => m.getJoinedRoomJoinRulesStream(room),
-          preserveState: false,
+          preserveState: true,
           initialValue: room.joinRules,
         ).data ??
         JoinRules.private;

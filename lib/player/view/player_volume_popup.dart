@@ -16,7 +16,7 @@ class PlayerVolumePopup extends StatelessWidget with WatchItMixin {
     final volume = watchStream(
       (PlayerManager p) => p.volumeStream,
       initialValue: di<PlayerManager>().volume,
-      preserveState: false,
+      preserveState: true,
     ).data;
 
     return PopupMenuButton(
@@ -43,7 +43,7 @@ class PlayerVolumeSlider extends StatelessWidget with WatchItMixin {
     final volume = watchStream(
       (PlayerManager p) => p.volumeStream,
       initialValue: di<PlayerManager>().volume,
-      preserveState: false,
+      preserveState: true,
     ).data;
     return RotatedBox(
       quarterTurns: 3,

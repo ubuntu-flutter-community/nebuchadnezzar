@@ -1409,15 +1409,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
-  phoenix_theme:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "7d22aba2841e522bf4c140e60e4a60f33c8f5aa6"
-      resolved-ref: "7d22aba2841e522bf4c140e60e4a60f33c8f5aa6"
-      url: "https://github.com/ubuntu-flutter-community/phoenix_theme"
-    source: git
-    version: "1.0.1"
   photo_view:
     dependency: "direct main"
     description:

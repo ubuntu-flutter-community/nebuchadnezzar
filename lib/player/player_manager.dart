@@ -38,30 +38,21 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     const PlayerViewState(fullMode: false, showPlayerExplorer: true),
   );
 
-  void updateViewMode({
+  void updateState({
     bool? fullMode,
     bool? showPlayerExplorer,
     int? explorerIndex,
     Color? color,
     String? remoteSourceArtUrl,
     String? remoteSourceTitle,
-  }) {
-    String? remoteMediaFallbackArt;
-    String? remoteMediaFallbackTitle;
-
-    if (currentMedia != null && !currentMedia!.isLocal) {
-      remoteMediaFallbackArt = mediaItem.value?.artUri?.toString();
-      remoteMediaFallbackTitle = mediaItem.value?.title;
-    }
-    playerViewState.value = playerViewState.value.copyWith(
-      fullMode: fullMode,
-      showPlayerExplorer: showPlayerExplorer,
-      explorerIndex: explorerIndex,
-      color: color,
-      remoteSourceArtUrl: remoteSourceArtUrl ?? remoteMediaFallbackArt,
-      remoteSourceTitle: remoteSourceTitle ?? remoteMediaFallbackTitle,
-    );
-  }
+  }) => playerViewState.value = playerViewState.value.copyWith(
+    fullMode: fullMode,
+    showPlayerExplorer: showPlayerExplorer,
+    explorerIndex: explorerIndex,
+    color: color,
+    remoteSourceArtUrl: remoteSourceArtUrl,
+    remoteSourceTitle: remoteSourceTitle,
+  );
 
   Player get _player => _controller.player;
   Player get player => _player;
@@ -69,18 +60,19 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   Stream<Duration> get positionStream => _player.stream.position.map((e) {
     playbackState.add(playbackState.value.copyWith(updatePosition: position));
     return e;
-  });
+  }).distinct();
 
   Duration get position => _player.state.position;
 
-  Stream<Duration> get bufferedPositionStream => _player.stream.buffer;
+  Stream<Duration> get bufferedPositionStream =>
+      _player.stream.buffer.distinct();
 
   Stream<Duration> get durationStream => _player.stream.duration.map((e) {
     if (mediaItem.value != null) {
       mediaItem.add(mediaItem.value!.copyWith(duration: duration));
     }
     return e;
-  });
+  }).distinct();
 
   Duration get duration => _player.state.duration;
 
@@ -98,13 +90,14 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
       ),
     );
     return e;
-  });
+  }).distinct();
 
   bool get isPlaying => _player.state.playing;
 
-  Stream<Playlist> get playlistStream => _player.stream.playlist;
+  Stream<Playlist> get playlistStream => _player.stream.playlist.distinct();
 
-  Stream<int> get playlistIndexStream => playlistStream.map((e) => e.index);
+  Stream<int> get playlistIndexStream =>
+      playlistStream.map((e) => e.index).distinct();
 
   int get playlistIndex => _player.state.playlist.index;
 
@@ -129,7 +122,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     );
     await _setLocalColor(media);
     return media;
-  });
+  }).distinct();
 
   Media? get currentMedia => _player.state.playlist.medias.isEmpty
       ? null
@@ -137,17 +130,20 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
 
   PlaylistMode get playlistMode => _player.state.playlistMode;
 
-  Stream<PlaylistMode> get playlistModeStream => _player.stream.playlistMode;
+  Stream<PlaylistMode> get playlistModeStream =>
+      _player.stream.playlistMode.distinct();
 
   Stream<bool> get shuffleStream => _player.stream.shuffle;
 
   bool get shuffle => _player.state.shuffle;
 
-  Stream<bool> get isVideoStream => _player.stream.tracks.map(
-    (tracks) =>
-        tracks.video.isNotEmpty &&
-        tracks.video.any((e) => e.fps != null && e.fps! > 1),
-  );
+  Stream<bool> get isVideoStream => _player.stream.tracks
+      .map(
+        (tracks) =>
+            tracks.video.isNotEmpty &&
+            tracks.video.any((e) => e.fps != null && e.fps! > 1),
+      )
+      .distinct();
 
   bool get isVideo =>
       _player.state.tracks.video.isNotEmpty &&
@@ -159,7 +155,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     bool play = true,
   }) async {
     if (mediaList.isEmpty) return;
-    updateViewMode(
+    updateState(
       remoteSourceArtUrl: mediaList.firstOrNull?.remoteAlbumArt,
       remoteSourceTitle: mediaList.firstOrNull?.title,
     );
@@ -238,7 +234,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
         final colorScheme = await ColorScheme.fromImageProvider(
           provider: MemoryImage(media.localAlbumArt!),
         );
-        updateViewMode(color: colorScheme.primary);
+        updateState(color: colorScheme.primary);
       }
     } on Exception catch (e) {
       printMessageInDebugMode(e);
@@ -250,7 +246,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
       final colorScheme = await ColorScheme.fromImageProvider(
         provider: provider,
       );
-      updateViewMode(color: colorScheme.primary.scale(saturation: 1));
+      updateState(color: colorScheme.primary.scale(saturation: 1));
     } on Exception catch (e) {
       printMessageInDebugMode(e);
     }
