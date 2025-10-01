@@ -22,7 +22,7 @@ class ChatSpaceFilter extends StatelessWidget with WatchItMixin {
         watchStream(
           (ChatManager m) => m.spacesStream,
           initialValue: chatManager.spaces,
-          preserveState: true,
+          preserveState: false,
         ).data ??
         chatManager.spaces;
 

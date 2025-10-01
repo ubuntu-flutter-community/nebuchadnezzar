@@ -17,8 +17,7 @@ extension MediaX on Media {
   static final _audioAlbumArtUriCache = <String, Uri?>{};
   static final _uuidToMediaCache = <String, Media>{};
   static Media? getMediaByUuid(String uuid) => _uuidToMediaCache[uuid];
-  static void addToCache(Media media) =>
-      _uuidToMediaCache[media.stationId] = media;
+
   static final _mediaToStationCache = <Media, Station>{};
 
   static Media fromStation(Station station) {
@@ -34,8 +33,7 @@ extension MediaX on Media {
     return media;
   }
 
-  String get stationId =>
-      _mediaToStationCache[this]?.stationUUID ?? uri.toString();
+  String? get stationId => _mediaToStationCache[this]?.stationUUID;
 
   bool get isLocal => !uri.toString().startsWith('http');
 

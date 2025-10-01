@@ -13,7 +13,7 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
         watchStream(
           (ChatManager m) => m.syncStream.map((_) => m.filteredRooms),
           initialValue: di<ChatManager>().filteredRooms,
-          preserveState: true,
+          preserveState: false,
         ).data ??
         di<ChatManager>().filteredRooms;
     watchPropertyValue((ChatManager m) => m.filteredRoomsQuery);

@@ -29,7 +29,7 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
                 (EditRoomService m) =>
                     m.getJoinedRoomHistoryVisibilityStream(room!),
                 initialValue: room!.historyVisibility,
-                preserveState: true,
+                preserveState: false,
               ).data ??
               room!.historyVisibility;
 
@@ -39,7 +39,7 @@ class ChatRoomHistoryVisibilityDropDown extends StatelessWidget
                 (EditRoomService m) =>
                     m.getCanChangeHistoryVisibilityStream(room!),
                 initialValue: room!.canChangeHistoryVisibility,
-                preserveState: true,
+                preserveState: false,
               ).data ??
               false;
 

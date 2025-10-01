@@ -14,12 +14,12 @@ class RadioBrowserStationStarButton extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final isFavorite = watchPropertyValue(
-      (SettingsManager s) => s.isFavoriteStation(media.stationId),
+      (SettingsManager s) => s.isFavoriteStation(media.stationId!),
     );
     return IconButton(
       onPressed: () => isFavorite
-          ? di<SettingsManager>().removeFavoriteStation(media.stationId)
-          : di<SettingsManager>().addFavoriteStation(media.stationId),
+          ? di<SettingsManager>().removeFavoriteStation(media.stationId!)
+          : di<SettingsManager>().addFavoriteStation(media.stationId!),
       icon: Icon(isFavorite ? YaruIcons.star_filled : YaruIcons.star),
     );
   }

@@ -16,7 +16,7 @@ import 'radio_browser_station_star_button.dart';
 import 'radio_host_not_connected_content.dart';
 import 'remote_media_list_tile_image.dart';
 
-class RadioBrowser extends StatefulWidget with WatchItStatefulWidgetMixin {
+class RadioBrowser extends StatefulWidget {
   const RadioBrowser({super.key});
 
   @override
@@ -60,32 +60,15 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
 
   @override
   Widget build(BuildContext context) {
-    final radioHostConnected =
-        watchStream(
-          (RadioService m) => m.hostConnectionChanges,
-          initialValue: di<RadioService>().connectedHost != null,
-          preserveState: true,
-        ).data ??
-        false;
-
-    if (!radioHostConnected) {
-      return RadioHostNotConnectedContent(
-        onRetry: () async {
-          await di<RadioService>().init();
-          setState(() {
-            _future = _loadMedia();
-          });
-        },
-      );
-    }
-
     return Column(
       spacing: kMediumPadding,
       children: [
         const SizedBox(height: kMediumPadding),
         TextField(
           decoration: InputDecoration(
+            hint: Text(context.l10n.search),
             labelText: context.l10n.search,
+            prefixIcon: const Icon(YaruIcons.search),
             suffixIcon: IconButton(
               style: textFieldSuffixStyle,
               icon: const Icon(YaruIcons.edit_clear),
@@ -112,7 +95,21 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
             future: _future,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                return Center(
+                  child: Column(
+                    children: [
+                      RadioHostNotConnectedContent(
+                        message: 'Error: ${snapshot.error}',
+                        onRetry: () async {
+                          await di<RadioService>().init();
+                          setState(() {
+                            _future = _loadMedia();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                );
               } else if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }

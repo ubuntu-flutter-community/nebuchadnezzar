@@ -11,6 +11,7 @@ import 'player_bottom_album_art.dart';
 import 'player_control_mixin.dart';
 import 'player_main_controls.dart';
 import 'player_track.dart';
+import 'player_track_info.dart';
 import 'player_volume_popup.dart';
 
 class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
@@ -50,7 +51,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       hoverColor: colorScheme.primary.withAlpha(80),
       onTap: () => togglePlayerFullMode(context),
       child: SizedBox(
-        height: bottomPlayerHeight,
+        height: kBottomPlayerHeight,
         child: Material(
           color: bgColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
@@ -64,7 +65,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
                   children: [
                     if (isFullMode)
                       SizedBox.square(
-                        dimension: bottomPlayerHeight - playerTrackHeight,
+                        dimension: kBottomPlayerHeight - kPlayerTrackHeight,
                         child: Center(
                           child: IconButton(
                             onPressed: () => togglePlayerFullMode(context),
@@ -79,7 +80,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
                       PlayerBottomAlbumArt(media: media),
                     if (context.showSideBar)
                       SizedBox(
-                        width: 120,
+                        width: kPlayerInfoWidth,
                         child: PlayerTrackInfo(textColor: iconColor),
                       ),
                     Expanded(

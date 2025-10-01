@@ -24,7 +24,7 @@ class ChatRoomPermissions extends StatelessWidget with WatchItMixin {
         watchStream(
           (EditRoomService m) => m.canChangePowerLevels(room),
           initialValue: room.canChangePowerLevel,
-          preserveState: true,
+          preserveState: false,
         ).data ??
         room.canChangePowerLevel;
 

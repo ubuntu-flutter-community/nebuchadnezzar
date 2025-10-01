@@ -7,9 +7,6 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../extensions/duration_x.dart';
-import '../../extensions/media_x.dart';
-import '../../radio/view/radio_browser_station_star_button.dart';
 import '../player_manager.dart';
 
 class PlayerTrack extends StatelessWidget with WatchItMixin {
@@ -72,7 +69,7 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
           (duration?.inSeconds != null && duration!.inSeconds < 10) && isPlaying
           ? LinearProgress(
               value: null,
-              trackHeight: playerTrackHeight,
+              trackHeight: kPlayerTrackHeight,
               color: trackColor.withValues(alpha: 0.8),
               backgroundColor: trackColor.withValues(alpha: 0.4),
             )
@@ -84,7 +81,7 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
                 overlayShape: thumbShape,
                 trackShape:
                     const RectangularSliderTrackShape() as SliderTrackShape,
-                trackHeight: playerTrackHeight,
+                trackHeight: kPlayerTrackHeight,
                 activeTrackColor: trackColor.scale(saturation: 0.2),
                 inactiveTrackColor: trackColor.withAlpha(80),
                 secondaryActiveTrackColor: trackColor.withAlpha(120),
@@ -101,97 +98,6 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
                 },
               ),
             ),
-    );
-  }
-}
-
-class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
-  const PlayerTrackInfo({
-    super.key,
-    required this.textColor,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-    this.artistStyle,
-    this.titleStyle,
-    this.durationStyle,
-  });
-
-  final Color textColor;
-  final CrossAxisAlignment crossAxisAlignment;
-  final TextStyle? artistStyle;
-  final TextStyle? titleStyle;
-  final TextStyle? durationStyle;
-
-  @override
-  Widget build(BuildContext context) {
-    final duration = watchStream(
-      (PlayerManager p) => p.durationStream,
-      initialValue: di<PlayerManager>().duration,
-      preserveState: true,
-    ).data;
-
-    final position = watchStream(
-      (PlayerManager p) => p.positionStream,
-      initialValue: di<PlayerManager>().position,
-      preserveState: true,
-    ).data;
-
-    final media = watchStream(
-      (PlayerManager p) => p.currentMediaStream,
-      initialValue: di<PlayerManager>().currentMedia,
-      preserveState: true,
-    ).data;
-
-    if (media == null) {
-      return const SizedBox.shrink();
-    }
-
-    final textTheme = context.textTheme;
-
-    final remoteTitle = watchValue(
-      (PlayerManager p) => p.playerViewState.select((e) => e.remoteSourceTitle),
-    );
-
-    return Row(
-      spacing: kSmallPadding,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Flexible(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: crossAxisAlignment,
-            children: [
-              Text(
-                media.isLocal ? media.artist : media.title,
-                maxLines: 1,
-                style: (artistStyle ?? textTheme.labelSmall)?.copyWith(
-                  color: textColor,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Text(
-                media.isLocal ? media.title : remoteTitle ?? media.title,
-                maxLines: 1,
-                style: (titleStyle ?? textTheme.labelSmall)?.copyWith(
-                  color: textColor,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              SizedBox(
-                width: 120,
-                height: 16,
-                child: Text(
-                  '${(position ?? Duration.zero).formattedTime} / ${(duration ?? Duration.zero).formattedTime}',
-                  style: (durationStyle ?? textTheme.labelSmall)?.copyWith(
-                    color: textColor,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (!media.isLocal) RadioBrowserStationStarButton(media: media),
-      ],
     );
   }
 }

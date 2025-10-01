@@ -21,7 +21,7 @@ class ChatRoomEncryptionStatusButton extends StatelessWidget with WatchItMixin {
         watchStream(
           (EditRoomService m) => m.getIsRoomEncryptedStream(room),
           initialValue: room.encrypted,
-          preserveState: true,
+          preserveState: false,
         ).data ??
         room.encrypted;
 

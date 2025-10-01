@@ -8,6 +8,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/safe_network_image.dart';
 import '../../common/view/theme.dart';
+import '../../common/view/ui_constants.dart';
 import '../../extensions/media_x.dart';
 import '../player_manager.dart';
 
@@ -25,7 +26,7 @@ class PlayerAlbumArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dim = dimension ?? bottomPlayerHeight - playerTrackHeight;
+    final dim = dimension ?? kBottomPlayerHeight - kPlayerTrackHeight;
 
     if (media != null) {
       if (media!.isLocal && media?.localAlbumArt != null) {
@@ -48,7 +49,11 @@ class PlayerAlbumArt extends StatelessWidget {
       );
     }
 
-    return Icon(YaruIcons.music_note, color: Colors.white, size: dim * 0.8);
+    return Icon(
+      YaruIcons.music_note,
+      color: getPlayerIconColor(context.theme),
+      size: dim * 0.8,
+    );
   }
 }
 
@@ -75,21 +80,21 @@ class PlayerRemoteSourceImage extends StatelessWidget with WatchItMixin {
       (PlayerManager p) => p.playerViewState.select((e) => e.color),
     );
 
+    final playerIconColor = color ?? getPlayerIconColor(context.theme);
+
     return SafeNetworkImage(
-      placeholder: (context, url) => Center(
-        child: SizedBox(
-          width: width * 0.3,
-          height: width * 0.3,
-          child: Progress(
-            color: (color ?? getPlayerIconColor(context.theme)).withValues(
-              alpha: 0.5,
-            ),
-            valueColor: AlwaysStoppedAnimation<Color>(
-              color ?? getPlayerIconColor(context.theme),
+      placeholder: (context, url) {
+        return Center(
+          child: SizedBox(
+            width: width * 0.3,
+            height: width * 0.3,
+            child: Progress(
+              color: playerIconColor.withValues(alpha: 0.5),
+              valueColor: AlwaysStoppedAnimation<Color>(playerIconColor),
             ),
           ),
-        ),
-      ),
+        );
+      },
       onImageLoaded: di<PlayerManager>().setRemoteColorFromImageProvider,
       url: remoteSourceArtUrl,
       filterQuality: FilterQuality.medium,
@@ -97,12 +102,12 @@ class PlayerRemoteSourceImage extends StatelessWidget with WatchItMixin {
       fallBackIcon: Icon(
         YaruIcons.music_note,
         size: width * 0.8,
-        color: color ?? getPlayerIconColor(context.theme),
+        color: playerIconColor,
       ),
       errorIcon: Icon(
         YaruIcons.music_note,
         size: width * 0.8,
-        color: color ?? getPlayerIconColor(context.theme),
+        color: playerIconColor,
       ),
       height: height,
       width: width,
