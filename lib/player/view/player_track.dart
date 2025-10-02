@@ -60,7 +60,7 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
         watchStream(
           (PlayerManager p) => p.isPlayingStream,
           initialValue: di<PlayerManager>().isPlaying,
-          preserveState: true,
+          preserveState: false,
         ).data ??
         false;
 

@@ -101,7 +101,7 @@ class _RadioFavoriteListTile extends StatelessWidget with WatchItMixin {
         watchStream(
           (PlayerManager p) => p.playlistStream,
           initialValue: di<PlayerManager>().playlist,
-          preserveState: true,
+          preserveState: false,
         ).data?.medias.asMap().entries.any(
           (entry) =>
               entry.value.uri == media.uri &&
