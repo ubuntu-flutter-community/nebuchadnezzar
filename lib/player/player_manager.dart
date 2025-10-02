@@ -50,7 +50,9 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     showPlayerExplorer: showPlayerExplorer,
     explorerIndex: explorerIndex,
     color: color,
-    remoteSourceArtUrl: remoteSourceArtUrl,
+    remoteSourceArtUrl: remoteSourceArtUrl?.endsWith('.ico') == true
+        ? null
+        : remoteSourceArtUrl,
     remoteSourceTitle: remoteSourceTitle,
   );
 
