@@ -29,14 +29,14 @@ class PlayerFullView extends StatelessWidget
         watchStream(
           (PlayerManager p) => p.isVideoStream,
           initialValue: di<PlayerManager>().isVideo,
-          preserveState: true,
+          preserveState: false,
         ).data ??
         false;
 
     final media = watchStream(
       (PlayerManager p) => p.currentMediaStream,
       initialValue: di<PlayerManager>().currentMedia,
-      preserveState: true,
+      preserveState: false,
     ).data;
 
     final color =
