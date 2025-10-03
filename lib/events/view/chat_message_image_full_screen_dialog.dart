@@ -17,6 +17,7 @@ import '../../extensions/date_time_x.dart';
 import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 import '../chat_download_manager.dart';
+import 'chat_message_attachment_indicator.dart';
 
 class ChatMessageImageFullScreenDialog extends StatefulWidget {
   const ChatMessageImageFullScreenDialog({super.key, required this.event});
@@ -106,7 +107,7 @@ class _ChatMessageImageFullScreenDialogState
               dialogTitle: l10n.saveFile,
               confirmButtonText: l10n.saveFile,
             ),
-            icon: const Icon(YaruIcons.download),
+            icon: ChatMessageAttachmentIndicator(event: widget.event),
           ),
         ],
       ),

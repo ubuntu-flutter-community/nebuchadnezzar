@@ -26,8 +26,6 @@ class ChatDownloadService {
     return path != null && File(path).existsSync() ? path : null;
   }
 
-  Future<void> init() async {}
-
   Future<void> safeFile({
     required Event event,
     required String confirmButtonText,

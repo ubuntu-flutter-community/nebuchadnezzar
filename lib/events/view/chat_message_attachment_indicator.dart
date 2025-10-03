@@ -10,12 +10,10 @@ class ChatMessageAttachmentIndicator extends StatelessWidget with WatchItMixin {
   const ChatMessageAttachmentIndicator({
     super.key,
     required this.event,
-    this.iconSize = 15.0,
     this.color,
   });
 
   final Event event;
-  final double iconSize;
   final Color? color;
 
   @override
@@ -31,9 +29,8 @@ class ChatMessageAttachmentIndicator extends StatelessWidget with WatchItMixin {
             child: Icon(
               YaruIcons.download_filled,
               color: context.colorScheme.primary,
-              size: iconSize,
             ),
           )
-        : Icon(YaruIcons.download, size: iconSize, color: color);
+        : Icon(YaruIcons.download, color: color);
   }
 }
