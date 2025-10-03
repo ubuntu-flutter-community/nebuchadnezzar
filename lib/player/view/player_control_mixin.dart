@@ -31,7 +31,6 @@ mixin PlayerControlMixin {
   Future<void> playMatrixMedia(
     BuildContext context, {
     required Event event,
-
     bool newPlaylist = true,
   }) async {
     File? file;
