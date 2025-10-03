@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../extensions/media_x.dart';
+import '../../player/data/station_media.dart';
 import '../../settings/settings_manager.dart';
 
 class RadioBrowserStationStarButton extends StatelessWidget with WatchItMixin {
   const RadioBrowserStationStarButton({super.key, required this.media});
 
-  final Media media;
+  final StationMedia media;
 
   @override
   Widget build(BuildContext context) {
     final isFavorite = watchPropertyValue(
-      (SettingsManager s) => s.isFavoriteStation(media.stationId!),
+      (SettingsManager s) => s.isFavoriteStation(media.id),
     );
     return IconButton(
       onPressed: () => isFavorite
-          ? di<SettingsManager>().removeFavoriteStation(media.stationId!)
-          : di<SettingsManager>().addFavoriteStation(media.stationId!),
+          ? di<SettingsManager>().removeFavoriteStation(media.id)
+          : di<SettingsManager>().addFavoriteStation(media.id),
       icon: Icon(isFavorite ? YaruIcons.star_filled : YaruIcons.star),
     );
   }

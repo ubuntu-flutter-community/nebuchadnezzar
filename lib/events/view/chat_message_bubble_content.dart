@@ -170,7 +170,6 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                       ),
                                                 ),
                                         ),
-                                        // TODO: #5
                                         (MessageTypes.Video, true) => ChatImage(
                                           fit: BoxFit.contain,
                                           event: event,
@@ -196,7 +195,6 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                           onReplyOriginClick:
                                               onReplyOriginClick,
                                         ),
-                                        // TODO: #5
                                         (
                                           MessageTypes.Audio ||
                                               MessageTypes.File ||
@@ -251,7 +249,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                         playMatrixMedia(
                                                           context,
                                                           event: event,
-                                                          addInQueue: true,
+                                                          newPlaylist: false,
                                                         ),
                                                     icon: const Icon(
                                                       YaruIcons.music_queue,

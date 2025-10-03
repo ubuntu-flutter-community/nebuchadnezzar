@@ -7,6 +7,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
+import '../data/unique_media.dart';
 import '../player_manager.dart';
 import 'player_album_art.dart';
 import 'player_control_mixin.dart';
@@ -134,7 +135,7 @@ class PlayerFullView extends StatelessWidget
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             PlayerAlbumArt(
-                              media: media,
+                              media: media as UniqueMedia,
                               dimension: 300,
                               fit: BoxFit.fitHeight,
                             ),

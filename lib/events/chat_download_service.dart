@@ -28,7 +28,6 @@ class ChatDownloadService {
 
   Future<void> init() async {}
 
-  // TODO: use dio to download then decrypt with client, to show the download progress
   Future<void> safeFile({
     required Event event,
     required String confirmButtonText,

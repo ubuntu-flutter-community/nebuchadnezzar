@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/safe_network_image.dart';
 import '../../common/view/ui_constants.dart';
-import '../../extensions/media_x.dart';
+import '../../player/data/station_media.dart';
 
 class RemoteMediaListTileImage extends StatelessWidget {
   const RemoteMediaListTileImage({super.key, required this.media});
 
-  final Media media;
+  final StationMedia media;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +18,7 @@ class RemoteMediaListTileImage extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
         child: SafeNetworkImage(
           fallBackIcon: const Icon(YaruIcons.radio),
-          url: media.remoteAlbumArt,
+          url: media.artUrl,
           width: kDefaultTileLeadingDimension,
           height: kDefaultTileLeadingDimension,
         ),
