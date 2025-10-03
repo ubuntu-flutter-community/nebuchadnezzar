@@ -4341,6 +4341,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Radio Browser connected'**
   String get noRadioBrowserConnected;
+
+  /// No description provided for @appendMediaToQueueDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} is already inside the queue. Do you want to append it to the end of the queue?'**
+  String appendMediaToQueueDescription(String title);
+
+  /// No description provided for @appendMediaToQueueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Append media to queue'**
+  String get appendMediaToQueueTitle;
+
+  /// No description provided for @appendMediaToQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'Append media to queue: {title}'**
+  String appendMediaToQueue(String title);
+
+  /// No description provided for @playNowButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Play now'**
+  String get playNowButton;
+
+  /// No description provided for @appendMediaToQueueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Append to queue'**
+  String get appendMediaToQueueButton;
 }
 
 class _AppLocalizationsDelegate

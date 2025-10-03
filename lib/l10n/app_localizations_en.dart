@@ -2477,4 +2477,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noRadioBrowserConnected => 'No Radio Browser connected';
+
+  @override
+  String appendMediaToQueueDescription(String title) {
+    return '$title is already inside the queue. Do you want to append it to the end of the queue?';
+  }
+
+  @override
+  String get appendMediaToQueueTitle => 'Append media to queue';
+
+  @override
+  String appendMediaToQueue(String title) {
+    return 'Append media to queue: $title';
+  }
+
+  @override
+  String get playNowButton => 'Play now';
+
+  @override
+  String get appendMediaToQueueButton => 'Append to queue';
 }

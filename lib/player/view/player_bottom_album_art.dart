@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/ui_constants.dart';
+import '../data/unique_media.dart';
 import 'player_album_art.dart';
 import 'player_control_mixin.dart';
 
 class PlayerBottomAlbumArt extends StatefulWidget {
   const PlayerBottomAlbumArt({super.key, required this.media});
 
-  final Media? media;
+  final UniqueMedia? media;
 
   @override
   State<PlayerBottomAlbumArt> createState() => _PlayerBottomAlbumArtState();

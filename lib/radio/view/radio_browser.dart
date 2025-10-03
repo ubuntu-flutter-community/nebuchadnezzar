@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../extensions/media_x.dart';
 import '../../l10n/l10n.dart';
+import '../../player/data/station_media.dart';
 import '../../player/player_manager.dart';
 import '../../player/view/player_control_mixin.dart';
 import '../radio_service.dart';
@@ -27,7 +26,7 @@ class RadioBrowser extends StatefulWidget {
 final _searchDraft = ValueNotifier('');
 
 class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
-  late Future<List<Media>> _future;
+  late Future<List<StationMedia>> _future;
   final TextEditingController _searchController = TextEditingController(
     text: _searchDraft.value,
   );
@@ -47,7 +46,7 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
     super.dispose();
   }
 
-  Future<List<Media>> _loadMedia({
+  Future<List<StationMedia>> _loadMedia({
     String? country,
     String? name,
     String? state,
@@ -61,7 +60,7 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
       tag: tag,
       language: language,
     );
-    return result?.map((e) => MediaX.fromStation(e)).toList() ?? [];
+    return result?.map((e) => StationMedia.fromStation(e)).toList() ?? [];
   }
 
   @override
@@ -133,13 +132,11 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
                 itemBuilder: (context, index) {
                   final media = snapshot.data![index];
                   return ListTile(
-                    key: ValueKey(media.stationId),
-                    title: Text(media.title),
+                    key: ValueKey(media.id),
+                    title: Text(media.title ?? context.l10n.radioStation),
                     minLeadingWidth: kDefaultTileLeadingDimension,
                     leading: RemoteMediaListTileImage(media: media),
-                    subtitle: Text(
-                      media.getRemoteTags(5) ?? context.l10n.radioStation,
-                    ),
+                    subtitle: Text(media.genres.take(5).toList().join(', ')),
                     onTap: () => di<PlayerManager>().setPlaylist([media]),
                     trailing: RadioBrowserStationStarButton(media: media),
                   );

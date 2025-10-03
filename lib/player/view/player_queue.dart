@@ -5,8 +5,9 @@ import 'package:yaru/yaru.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../extensions/media_x.dart';
 import '../../l10n/l10n.dart';
+import '../data/local_media.dart';
+import '../data/unique_media.dart';
 import '../player_manager.dart';
 
 class PlayerQueue extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -27,9 +28,9 @@ class _PlayerQueueState extends State<PlayerQueue> {
 
   @override
   Widget build(BuildContext context) {
-    final playlist = watchStream(
-      (PlayerManager p) => p.playlistStream,
-      initialValue: di<PlayerManager>().playlist,
+    final medias = watchStream(
+      (PlayerManager p) => p.playlistStream.map((e) => e.medias).distinct(),
+      initialValue: di<PlayerManager>().playlist.medias,
       preserveState: true,
     ).data;
 
@@ -44,11 +45,11 @@ class _PlayerQueueState extends State<PlayerQueue> {
       padding: const EdgeInsets.all(kBigPadding),
       child: Column(
         spacing: kBigPadding,
-        children: playlist?.medias == null || playlist!.medias.isEmpty
+        children: medias == null || medias.isEmpty
             ? []
             : [
                 Text(
-                  'Queue: ${playlist.medias.length} items',
+                  'Queue: ${medias.length} items',
                   style: TextStyle(color: iconColor),
                 ),
                 Expanded(
@@ -73,26 +74,31 @@ class _PlayerQueueState extends State<PlayerQueue> {
                         di<PlayerManager>().move(oldIndex, newIndex);
                       },
                       scrollController: _scrollController,
-                      itemCount: playlist.medias.length,
+                      itemCount: medias.length,
                       itemBuilder: (context, index) {
-                        final media = playlist.medias[index];
+                        final media = medias[index];
                         return Padding(
                           key: ValueKey(media.uri + index.toString()),
                           padding: const EdgeInsets.only(bottom: kSmallPadding),
                           child: ListTile(
                             onTap: () => di<PlayerManager>().jump(index),
                             leading: Text('${index + 1}'),
-                            title: Text(media.title),
+                            title: Text(
+                              (media as UniqueMedia).title ?? 'Unknown',
+                            ),
                             subtitle: Text(
-                              media.isLocal
-                                  ? media.artist
-                                  : media.getRemoteTags(5) ??
-                                        context.l10n.radioStation,
+                              (media is LocalMedia
+                                      ? media.artist
+                                      : media.genres
+                                            .take(5)
+                                            .join(', ')
+                                            .toString()) ??
+                                  context.l10n.radioStation,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             selected: playlistIndex == index,
-                            trailing: playlist.medias.length > 1
+                            trailing: medias.length > 1
                                 ? Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [

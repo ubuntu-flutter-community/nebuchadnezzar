@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:listen_it/listen_it.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -9,7 +8,8 @@ import '../../common/view/common_widgets.dart';
 import '../../common/view/safe_network_image.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../extensions/media_x.dart';
+import '../data/local_media.dart';
+import '../data/unique_media.dart';
 import '../player_manager.dart';
 
 class PlayerAlbumArt extends StatelessWidget {
@@ -20,7 +20,7 @@ class PlayerAlbumArt extends StatelessWidget {
     this.fit = BoxFit.cover,
   });
 
-  final Media? media;
+  final UniqueMedia? media;
   final double? dimension;
   final BoxFit fit;
 
@@ -29,12 +29,12 @@ class PlayerAlbumArt extends StatelessWidget {
     final dim = dimension ?? kBottomPlayerHeight - kPlayerTrackHeight;
 
     if (media != null) {
-      if (media!.isLocal && media?.localAlbumArt != null) {
+      if ((media! is LocalMedia) && media?.artData != null) {
         return SizedBox(
           width: dim,
           height: dim,
           child: Image.memory(
-            media!.localAlbumArt!,
+            media!.artData!,
             width: dim,
             height: dim,
             fit: fit,

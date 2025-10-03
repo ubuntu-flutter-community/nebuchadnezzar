@@ -17,6 +17,7 @@ import '../chat_download_manager.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_image.dart';
 import 'chat_map.dart';
+import 'chat_message_attachment_indicator.dart';
 import 'chat_message_image_full_screen_dialog.dart';
 import 'chat_message_media_avatar.dart';
 import 'chat_message_menu.dart';
@@ -170,7 +171,6 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                       ),
                                                 ),
                                         ),
-                                        // TODO: #5
                                         (MessageTypes.Video, true) => ChatImage(
                                           fit: BoxFit.contain,
                                           event: event,
@@ -196,7 +196,6 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                           onReplyOriginClick:
                                               onReplyOriginClick,
                                         ),
-                                        // TODO: #5
                                         (
                                           MessageTypes.Audio ||
                                               MessageTypes.File ||
@@ -237,9 +236,10 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                             confirmButtonText:
                                                                 l10n.saveFile,
                                                           ),
-                                                  icon: const Icon(
-                                                    YaruIcons.download,
-                                                  ),
+                                                  icon:
+                                                      ChatMessageAttachmentIndicator(
+                                                        event: event,
+                                                      ),
                                                 ),
                                                 if (event.messageType ==
                                                         MessageTypes.Audio ||
@@ -251,7 +251,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                         playMatrixMedia(
                                                           context,
                                                           event: event,
-                                                          addInQueue: true,
+                                                          newPlaylist: false,
                                                         ),
                                                     icon: const Icon(
                                                       YaruIcons.music_queue,

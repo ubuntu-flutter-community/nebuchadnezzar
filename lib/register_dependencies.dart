@@ -118,15 +118,11 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
-    ..registerSingletonAsync<ChatDownloadService>(
-      () async {
-        final service = ChatDownloadService(
-          client: di<Client>(),
-          preferences: di<SharedPreferences>(),
-        );
-        await service.init();
-        return service;
-      },
+    ..registerSingletonWithDependencies<ChatDownloadService>(
+      () => ChatDownloadService(
+        client: di<Client>(),
+        preferences: di<SharedPreferences>(),
+      ),
       dispose: (s) => s.dispose(),
       dependsOn: [Client, SharedPreferences],
     )

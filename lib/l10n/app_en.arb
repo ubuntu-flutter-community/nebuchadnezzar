@@ -3161,5 +3161,28 @@
   "radioStations": "Radio stations",
   "@radioStations": {},
   "noRadioBrowserConnected": "No Radio Browser connected",
-  "@noRadioBrowserConnected": {}
+  "@noRadioBrowserConnected": {},
+  "appendMediaToQueueDescription": "{title} is already inside the queue. Do you want to append it to the end of the queue?",
+  "@appendMediaToQueueDescription": {
+    "type": "text",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "appendMediaToQueueTitle": "Append media to queue",
+  "@appendMediaToQueueTitle": {},
+  "appendMediaToQueue": "Append media to queue: {title}",
+  "@appendMediaToQueue": {
+    "type": "text",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "playNowButton": "Play now",
+  "@playNowButton": {},
+  "appendMediaToQueueButton": "Append to queue"
 }

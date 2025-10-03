@@ -29,7 +29,12 @@
     "notSupportedByServer",
     "radioStation",
     "radioStations",
-    "noRadioBrowserConnected"
+    "noRadioBrowserConnected",
+    "appendMediaToQueueDescription",
+    "appendMediaToQueueTitle",
+    "appendMediaToQueue",
+    "playNowButton",
+    "appendMediaToQueueButton"
   ],
 
   "sv": [
@@ -67,6 +72,11 @@
     "notSupportedByServer",
     "radioStation",
     "radioStations",
-    "noRadioBrowserConnected"
+    "noRadioBrowserConnected",
+    "appendMediaToQueueDescription",
+    "appendMediaToQueueTitle",
+    "appendMediaToQueue",
+    "playNowButton",
+    "appendMediaToQueueButton"
   ]
 }

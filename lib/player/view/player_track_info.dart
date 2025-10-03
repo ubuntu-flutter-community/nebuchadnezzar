@@ -5,8 +5,9 @@ import 'package:watch_it/watch_it.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/duration_x.dart';
-import '../../extensions/media_x.dart';
 import '../../radio/view/radio_browser_station_star_button.dart';
+import '../data/local_media.dart';
+import '../data/station_media.dart';
 import '../player_manager.dart';
 
 class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
@@ -53,7 +54,7 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
             crossAxisAlignment: crossAxisAlignment,
             children: [
               Text(
-                media.isLocal ? media.artist : media.title,
+                (media is LocalMedia ? media.artist : media.title) ?? 'Unknown',
                 maxLines: 1,
                 style: (artistStyle ?? textTheme.labelSmall)?.copyWith(
                   color: textColor,
@@ -61,7 +62,9 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
                 ),
               ),
               Text(
-                media.isLocal ? media.title : remoteTitle ?? media.title,
+                (media is LocalMedia ? media.title : remoteTitle) ??
+                    media.title ??
+                    'Unknown',
                 maxLines: 1,
                 style: (titleStyle ?? textTheme.labelSmall)?.copyWith(
                   color: textColor,
@@ -75,7 +78,7 @@ class PlayerTrackInfo extends StatelessWidget with WatchItMixin {
             ],
           ),
         ),
-        if (!media.isLocal) RadioBrowserStationStarButton(media: media),
+        if (media is StationMedia) RadioBrowserStationStarButton(media: media),
       ],
     );
   }

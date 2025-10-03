@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../common/platforms.dart';
-import '../../extensions/media_x.dart';
+import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
+import '../data/local_media.dart';
 import '../player_manager.dart';
 import 'player_full_view.dart';
 
@@ -31,8 +31,7 @@ mixin PlayerControlMixin {
   Future<void> playMatrixMedia(
     BuildContext context, {
     required Event event,
-    bool addInQueue = false,
-    bool play = true,
+    bool newPlaylist = true,
   }) async {
     File? file;
     MatrixFile? matrixFile;
@@ -76,8 +75,11 @@ mixin PlayerControlMixin {
     }
 
     if (file != null) {
-      final media = Media(file.path);
-      if (addInQueue) {
+      final media = LocalMedia(file.path);
+
+      if (newPlaylist) {
+        await di<PlayerManager>().setPlaylist([media]);
+      } else if (!di<PlayerManager>().playlist.medias.contains(media)) {
         await di<PlayerManager>().addToPlaylist(media);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -91,7 +93,31 @@ mixin PlayerControlMixin {
           );
         }
       } else {
-        await di<PlayerManager>().setPlaylist([media], play: play);
+        if (context.mounted) {
+          await ConfirmationDialog.show(
+            context: context,
+            title: Text(context.l10n.appendMediaToQueueTitle),
+            content: Text(
+              context.l10n.appendMediaToQueueDescription(
+                '${media.artist} - ${media.title}',
+              ),
+            ),
+            onConfirm: () async {
+              await di<PlayerManager>().addToPlaylist(media);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      context.l10n.appendedToQueue(
+                        '${media.artist} - ${media.title}',
+                      ),
+                    ),
+                  ),
+                );
+              }
+            },
+          );
+        }
       }
     }
   }
