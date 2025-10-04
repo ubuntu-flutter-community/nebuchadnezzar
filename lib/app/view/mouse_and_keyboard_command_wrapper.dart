@@ -16,7 +16,9 @@ class MouseAndKeyboardCommandWrapper extends StatelessWidget {
   Widget build(BuildContext context) => Shortcuts(
     shortcuts: <LogicalKeySet, Intent>{
       LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyV):
-          const _PasteIntent(),
+          const _PasteIntent(), //For Mac
+      LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyV):
+          const _PasteIntent(), // For Windows/Linux
     },
     child: Actions(
       actions: <Type, Action<Intent>>{
