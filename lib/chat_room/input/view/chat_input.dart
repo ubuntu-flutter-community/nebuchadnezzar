@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -9,10 +11,10 @@ import 'package:yaru/yaru.dart';
 import '../../../common/chat_manager.dart';
 import '../../../common/logging.dart';
 import '../../../common/view/common_widgets.dart';
-import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../common/view/chat_typing_indicator.dart';
+import '../../create_or_edit/edit_room_service.dart';
 import '../draft_manager.dart';
 import 'chat_attachment_draft_panel.dart';
 import 'chat_input_emoji_picker.dart';
@@ -38,6 +40,10 @@ class _ChatInputState extends State<ChatInput> {
     );
     _sendNode = FocusNode(
       onKeyEvent: (node, event) {
+        di<DraftManager>().setCursorPosition(
+          roomId: widget.room.id,
+          position: _sendController.selection.baseOffset,
+        );
         // Check if the "@"-Key has been pressed
         if (_sendController.text.contains('@')) {
           printMessageInDebugMode('@ key pressed');
@@ -56,7 +62,7 @@ class _ChatInputState extends State<ChatInput> {
             );
 
         if (enterPressedWithoutShift) {
-          send();
+          send(context);
           return KeyEventResult.handled;
         } else if (event is KeyRepeatEvent) {
           // Disable holding enter
@@ -75,14 +81,33 @@ class _ChatInputState extends State<ChatInput> {
     super.dispose();
   }
 
-  Future<void> send() async => di<DraftManager>().send(
-    room: widget.room,
-    onFail: (error) => showSnackBar(context, content: Text(error)),
-    onSuccess: () {
-      _sendController.clear();
-      _sendNode.requestFocus();
-    },
-  );
+  Future<void> send(BuildContext context) async =>
+      di<DraftManager>().filesDrafts.containsKey(widget.room.id) &&
+          di<DraftManager>().filesDrafts[widget.room.id]!.isNotEmpty
+      ? showFutureLoadingDialog(
+          context: context,
+          title: context.l10n.sendingAttachment,
+          future: () => di<DraftManager>()
+              .send(room: widget.room)
+              .timeout(const Duration(seconds: 30)),
+          barrierDismissible: true,
+          backLabel: context.l10n.close,
+          onError: (error) {
+            if (error is TimeoutException) {
+              return context.l10n.oopsSomethingWentWrong;
+            }
+            return error.toString();
+          },
+        ).then((res) {
+          if (res.isValue) {
+            _sendController.clear();
+            _sendNode.requestFocus();
+          }
+        })
+      : di<DraftManager>().send(room: widget.room).then((_) {
+          _sendController.clear();
+          _sendNode.requestFocus();
+        });
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +120,6 @@ class _ChatInputState extends State<ChatInput> {
     final archiveActive = watchPropertyValue(
       (ChatManager m) => m.archiveActive,
     );
-    final sending = watchPropertyValue((DraftManager m) => m.sending);
 
     final replyEvent = watchPropertyValue((DraftManager m) => m.replyEvent);
     final editEvent = watchPropertyValue(
@@ -105,7 +129,19 @@ class _ChatInputState extends State<ChatInput> {
     final draft = watchPropertyValue(
       (DraftManager m) => m.getTextDraft(widget.room.id),
     );
+
     _sendController.text = draft ?? '';
+
+    final cursorPosition = watchPropertyValue(
+      (DraftManager m) => m.getCursorPosition(widget.room.id),
+    );
+    if (cursorPosition != null &&
+        cursorPosition <= _sendController.text.length) {
+      _sendController.selection = TextSelection.fromPosition(
+        TextPosition(offset: cursorPosition),
+      );
+    }
+
     _sendNode.requestFocus();
 
     var transform = Transform.rotate(
@@ -177,13 +213,23 @@ class _ChatInputState extends State<ChatInput> {
                   controller: _sendController,
                   enabled: !archiveActive && !unAcceptedDirectChat,
                   autofocus: true,
+
                   onChanged: (v) {
                     draftManager.setTextDraft(
                       roomId: widget.room.id,
                       draft: v,
                       notify: false,
                     );
-                    widget.room.setTyping(v.isNotEmpty, timeout: 500);
+                    draftManager.setCursorPosition(
+                      roomId: widget.room.id,
+                      position: _sendController.selection.baseOffset,
+                    );
+                    unawaited(
+                      di<EditRoomService>().setTyping(
+                        widget.room,
+                        v.isNotEmpty,
+                      ),
+                    );
                   },
                   decoration: InputDecoration(
                     hintText: unAcceptedDirectChat
@@ -198,14 +244,11 @@ class _ChatInputState extends State<ChatInput> {
                             padding: EdgeInsets.zero,
                             onPressed:
                                 attaching ||
-                                    sending ||
                                     archiveActive ||
                                     unAcceptedDirectChat
                                 ? null
                                 : () => draftManager.addAttachment(
                                     widget.room.id,
-                                    onFail: (error) =>
-                                        showErrorSnackBar(context, error),
                                   ),
                             icon: attaching
                                 ? const Center(
@@ -219,7 +262,6 @@ class _ChatInputState extends State<ChatInput> {
                           ChatInputEmojiPicker(
                             onEmojiSelected:
                                 attaching ||
-                                    sending ||
                                     archiveActive ||
                                     unAcceptedDirectChat
                                 ? null
@@ -230,6 +272,11 @@ class _ChatInputState extends State<ChatInput> {
                                       roomId: widget.room.id,
                                       draft: _sendController.text,
                                       notify: true,
+                                    );
+                                    draftManager.setCursorPosition(
+                                      roomId: widget.room.id,
+                                      position:
+                                          _sendController.selection.baseOffset,
                                     );
                                     _sendNode.requestFocus();
                                   },
@@ -245,12 +292,9 @@ class _ChatInputState extends State<ChatInput> {
                           padding: EdgeInsets.zero,
                           icon: transform,
                           onPressed:
-                              attaching ||
-                                  sending ||
-                                  archiveActive ||
-                                  unAcceptedDirectChat
+                              attaching || archiveActive || unAcceptedDirectChat
                               ? null
-                              : send,
+                              : () async => send(context),
                         ),
                       ],
                     ),

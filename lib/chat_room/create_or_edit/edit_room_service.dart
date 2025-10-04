@@ -20,6 +20,14 @@ class EditRoomService {
   Stream<JoinedRoomUpdate?> _getJoinedRoomUpdate(String? roomId) =>
       _joinedUpdateStream.map((e) => e.rooms?.join?[roomId]);
 
+  Future<void> setTyping(Room room, bool isTyping) async {
+    try {
+      await room.setTyping(isTyping, timeout: 500);
+    } catch (e, s) {
+      printMessageInDebugMode(e, s);
+    }
+  }
+
   // ROOM NAME
 
   Stream<String> getJoinedRoomNameStream(Room room) =>

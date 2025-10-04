@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
@@ -5,6 +6,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 import 'package:video_compress/video_compress.dart';
@@ -23,14 +26,6 @@ class DraftManager extends SafeChangeNotifier {
   final Client _client;
   final LocalImageService _localImageService;
 
-  bool _sending = false;
-  bool get sending => _sending;
-  void _setSending(bool value) {
-    if (value == _sending) return;
-    _sending = value;
-    notifyListeners();
-  }
-
   Event? _replyEvent;
   Event? get replyEvent => _replyEvent;
   void setReplyEvent(Event? event) {
@@ -48,19 +43,10 @@ class DraftManager extends SafeChangeNotifier {
   int get maxUploadSize => _mediaConfig?.mUploadSize ?? 100 * 1000 * 1000;
   MediaConfig? _mediaConfig;
 
-  Future<void> send({
-    required Room room,
-    String? text,
-    required Function(String error) onFail,
-    required Function() onSuccess,
-  }) async {
-    if (_sending) return;
-    _setSending(true);
-
+  Future<void> send({required Room room, String? text}) async {
     try {
       await room.setTyping(false);
     } on Exception catch (e, s) {
-      onFail(e.toString());
       printMessageInDebugMode(e, s);
     }
 
@@ -74,24 +60,35 @@ class DraftManager extends SafeChangeNotifier {
         String? eventId;
         MatrixFile? compressedFile;
         try {
-          if (getCompressFile(roomId: room.id, file: matrixFile)) {
+          if (getCompressFile(roomId: room.id, file: matrixFile) ||
+              matrixFile.bytes.length > maxUploadSize) {
             _mediaConfig ??= await _client.getConfig();
             compressedFile = await MatrixImageFile.shrink(
               bytes: matrixFile.bytes,
               name: matrixFile.name,
               mimeType: matrixFile.mimeType,
-              maxDimension: 2500,
+              maxDimension: maxUploadSize,
               nativeImplementations: _client.nativeImplementations,
             );
+          }
+
+          MatrixImageFile? thumbnail;
+
+          if (matrixFile is MatrixVideoFile && xFile != null) {
+            try {
+              thumbnail = await getVideoThumbnail(xFile);
+            } on Exception catch (e) {
+              printMessageInDebugMode(e);
+            }
+          } else {
+            thumbnail = null;
           }
 
           eventId = await room.sendFileEvent(
             compressedFile ?? matrixFile,
             inReplyTo: replyEvent,
             editEventId: _editEvents[room.id]?.eventId,
-            thumbnail: matrixFile.mimeType.startsWith('video') && xFile != null
-                ? await getVideoThumbnail(xFile)
-                : null,
+            thumbnail: thumbnail,
             extraContent: textDraft.isNotEmpty && textDraft != 'null'
                 ? {'body': textDraft}
                 : null,
@@ -100,9 +97,7 @@ class DraftManager extends SafeChangeNotifier {
             _matrixFilesToXFile.remove(matrixFile);
             removeCompress(roomId: room.id, file: matrixFile);
           }
-          onSuccess();
         } on Exception catch (e, s) {
-          onFail(e.toString());
           printMessageInDebugMode(e, s);
         }
       }
@@ -115,7 +110,6 @@ class DraftManager extends SafeChangeNotifier {
           editEventId: _editEvents[room.id]?.eventId,
         );
       } on Exception catch (e, s) {
-        onFail(e.toString());
         printMessageInDebugMode(e, s);
       }
       if (eventId == null) {
@@ -123,11 +117,17 @@ class DraftManager extends SafeChangeNotifier {
       }
     }
 
-    _sending = false;
     _replyEvent = null;
     _editEvents[room.id] = null;
 
     notifyListeners();
+  }
+
+  final Map<String, int> _cursorPositions = {};
+  int? getCursorPosition(String roomId) => _cursorPositions[roomId];
+  void setCursorPosition({required String roomId, required int position}) {
+    _cursorPositions[roomId] = position;
+    // notifyListeners();
   }
 
   final Map<String, String> _textDrafts = {};
@@ -137,8 +137,21 @@ class DraftManager extends SafeChangeNotifier {
     required String roomId,
     required String draft,
     required bool notify,
+    bool insertAtCursor = false,
   }) {
-    _textDrafts[roomId] = draft;
+    if (insertAtCursor && _cursorPositions[roomId] != null) {
+      final pos = _cursorPositions[roomId];
+      final oldDraft = _textDrafts[roomId] ?? '';
+      final newDraft =
+          oldDraft.substring(0, pos!) +
+          draft +
+          oldDraft.substring(pos, oldDraft.length);
+      _textDrafts[roomId] = newDraft;
+      _cursorPositions[roomId] = pos + draft.length;
+    } else {
+      _textDrafts[roomId] = draft;
+    }
+
     if (notify) {
       notifyListeners();
     }
@@ -170,6 +183,7 @@ class DraftManager extends SafeChangeNotifier {
     if (files.contains(file)) {
       files.remove(file);
       _filesDrafts.update(roomId, (value) => files);
+      _matrixFilesToXFile.remove(file);
       notifyListeners();
     }
     if (getFilesDraft(roomId).isEmpty) {
@@ -217,7 +231,6 @@ class DraftManager extends SafeChangeNotifier {
   final Map<MatrixFile, XFile> _matrixFilesToXFile = {};
   Future<void> addAttachment(
     String roomId, {
-    required Function(String error) onFail,
     List<XFile>? existingFiles,
   }) async {
     setAttaching(true);
@@ -245,38 +258,45 @@ class DraftManager extends SafeChangeNotifier {
 
     // TODO(Feichtmeier): add svg send support
     for (var xFile in xFiles!.where((e) => !e.path.contains('.svg'))) {
-      final mime = xFile.mimeType;
-      final bytes = await xFile.readAsBytes();
-      MatrixFile matrixFile;
-      if (mime?.startsWith('image') == true) {
-        matrixFile = MatrixImageFile(
-          bytes: bytes,
-          name: xFile.name,
-          mimeType: mime,
-        );
-      } else if (mime?.startsWith('video') == true) {
-        matrixFile = MatrixVideoFile(
-          bytes: bytes,
-          name: xFile.name,
-          mimeType: mime,
-        );
-        _matrixFilesToXFile.update(
-          matrixFile,
-          (v) => xFile,
-          ifAbsent: () => xFile,
-        );
-      } else {
-        matrixFile = MatrixFile.fromMimeType(
-          bytes: bytes,
-          name: xFile.name,
-          mimeType: mime,
-        );
-      }
+      MatrixFile matrixFile = await _createMatrixFileFromXFile(xFile);
 
       addFileToDraft(roomId: roomId, file: matrixFile);
     }
 
     setAttaching(false);
+  }
+
+  Future<MatrixFile> _createMatrixFileFromXFile(
+    XFile xFile, [
+    Uint8List? data,
+    String? name,
+    String? mimeType,
+  ]) async {
+    final mime = mimeType ?? xFile.mimeType;
+    final bytes = data ?? await xFile.readAsBytes();
+    final fileName = name ?? xFile.name;
+    MatrixFile matrixFile;
+    if (mime?.startsWith('image') == true) {
+      matrixFile = MatrixImageFile(
+        bytes: bytes,
+        name: fileName,
+        mimeType: mime,
+      );
+    } else if (mime?.startsWith('video') == true) {
+      matrixFile = MatrixVideoFile(
+        bytes: bytes,
+        name: fileName,
+        mimeType: mime,
+      );
+      _matrixFilesToXFile[matrixFile] = xFile;
+    } else {
+      matrixFile = MatrixFile.fromMimeType(
+        bytes: bytes,
+        name: fileName,
+        mimeType: mime,
+      );
+    }
+    return matrixFile;
   }
 
   static const int max = 1200;
@@ -346,23 +366,34 @@ class DraftManager extends SafeChangeNotifier {
     if (reader.items.isEmpty) {
       return Future.value([]);
     }
+    if (reader.canProvide(Formats.plainText) &&
+        binaryFormats.none((format) => reader.canProvide(format))) {
+      final text = await reader.readValue(Formats.plainText);
+      setTextDraft(
+        roomId: roomId,
+        draft: text ?? '',
+        notify: true,
+        insertAtCursor: true,
+      );
+      return Future.value([]);
+    } else {
+      if (reader.items.none(
+        (item) => binaryFormats.any((format) => item.canProvide(format)),
+      )) {
+        return Future.error(noSupportedFormatFoundInClipboard);
+      }
 
-    if (reader.items.none(
-      (item) => availableFormats.any((format) => item.canProvide(format)),
-    )) {
-      return Future.error(noSupportedFormatFoundInClipboard);
-    }
-
-    return Future.wait(
-      availableFormats.map(
-        (format) => _processClipboardReader(
-          roomId: roomId,
-          format: format,
-          reader: reader,
-          fileIsTooLarge: fileIsTooLarge,
+      return Future.wait(
+        binaryFormats.map(
+          (format) => _processClipboardReader(
+            roomId: roomId,
+            format: format,
+            reader: reader,
+            fileIsTooLarge: fileIsTooLarge,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   Future<void> _processClipboardReader({
@@ -380,18 +411,28 @@ class DraftManager extends SafeChangeNotifier {
 
         final data = await dataReaderFile.readAll();
 
-        setAttaching(true);
+        if (data.isEmpty) {
+          return Future.value(null);
+        }
 
-        addFileToDraft(
-          roomId: roomId,
-          file: MatrixFile.fromMimeType(
-            bytes: Uint8List.fromList(data),
-            name: dataReaderFile.fileName ?? 'clipboard',
-            mimeType: format.mimeTypes?.firstOrNull,
-          ),
+        final tempDir = await getTemporaryDirectory();
+        final tempFile = File(p.join(tempDir.path, dataReaderFile.fileName));
+        await tempFile.writeAsBytes(data);
+
+        await addAttachment(
+          roomId,
+          existingFiles: [
+            XFile(
+              tempFile.path,
+              name: dataReaderFile.fileName ?? 'clipboard',
+              mimeType:
+                  format.mimeTypes?.firstOrNull ??
+                  lookupMimeType(tempFile.path),
+            ),
+          ],
         );
 
-        setAttaching(false);
+        await tempFile.delete();
 
         return Future.value(null);
       });
@@ -399,7 +440,7 @@ class DraftManager extends SafeChangeNotifier {
   }
 }
 
-Set<SimpleFileFormat> get availableFormats => {
+Set<SimpleFileFormat> get binaryFormats => {
   Formats.jpeg,
   Formats.png,
   Formats.gif,

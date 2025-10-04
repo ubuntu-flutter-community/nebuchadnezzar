@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:mime/mime.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -113,9 +114,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
                 await di<DraftManager>().addAttachment(
                   widget.room.id,
-                  onFail: (error) =>
-                      showSnackBar(context, content: Text(error)),
-                  existingFiles: [XFile.fromData(file.readAsBytesSync())],
+                  existingFiles: [
+                    XFile(
+                      value.toFilePath(),
+                      name: file.path.split(Platform.pathSeparator).last,
+                      mimeType: lookupMimeType(file.path),
+                    ),
+                  ],
                 );
               },
               onError: (e) =>
