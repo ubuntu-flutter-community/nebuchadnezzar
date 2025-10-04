@@ -4371,6 +4371,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Append to queue'**
   String get appendMediaToQueueButton;
+
+  /// No description provided for @clipboardNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Clipboard not available'**
+  String get clipboardNotAvailable;
+
+  /// No description provided for @noSupportedFormatFoundInClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'No supported format found in clipboard'**
+  String get noSupportedFormatFoundInClipboard;
+
+  /// No description provided for @fileIsTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'File is too large'**
+  String get fileIsTooLarge;
 }
 
 class _AppLocalizationsDelegate

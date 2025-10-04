@@ -3184,5 +3184,8 @@
   },
   "playNowButton": "Play now",
   "@playNowButton": {},
-  "appendMediaToQueueButton": "Append to queue"
+  "appendMediaToQueueButton": "Append to queue",
+  "clipboardNotAvailable": "Clipboard not available",
+  "noSupportedFormatFoundInClipboard": "No supported format found in clipboard",
+  "fileIsTooLarge": "File is too large"
 }
