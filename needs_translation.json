@@ -34,7 +34,10 @@
     "appendMediaToQueueTitle",
     "appendMediaToQueue",
     "playNowButton",
-    "appendMediaToQueueButton"
+    "appendMediaToQueueButton",
+    "clipboardNotAvailable",
+    "noSupportedFormatFoundInClipboard",
+    "fileIsTooLarge"
   ],
 
   "sv": [
@@ -77,6 +80,9 @@
     "appendMediaToQueueTitle",
     "appendMediaToQueue",
     "playNowButton",
-    "appendMediaToQueueButton"
+    "appendMediaToQueueButton",
+    "clipboardNotAvailable",
+    "noSupportedFormatFoundInClipboard",
+    "fileIsTooLarge"
   ]
 }

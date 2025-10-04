@@ -7,6 +7,7 @@ import 'package:super_drag_and_drop/super_drag_and_drop.dart';
 import 'package:watch_it/watch_it.dart';
 
 import '../../../app/view/error_page.dart';
+import '../../../app/view/mouse_and_keyboard_command_wrapper.dart';
 import '../../../common/chat_manager.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
@@ -98,100 +99,104 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             preserveState: false,
           ).data;
 
-    return DropRegion(
-      formats: Formats.standardFormats,
-      hitTestBehavior: HitTestBehavior.opaque,
-      onPerformDrop: (e) async {
-        for (var item in e.session.items.take(5)) {
-          item.dataReader?.getValue(
-            Formats.fileUri,
-            (value) async {
-              if (value == null) return;
-              final file = File.fromUri(value);
+    return MouseAndKeyboardCommandWrapper(
+      child: DropRegion(
+        formats: Formats.standardFormats,
+        hitTestBehavior: HitTestBehavior.opaque,
+        onPerformDrop: (e) async {
+          for (var item in e.session.items.take(5)) {
+            item.dataReader?.getValue(
+              Formats.fileUri,
+              (value) async {
+                if (value == null) return;
+                final file = File.fromUri(value);
 
-              await di<DraftManager>().addAttachment(
-                widget.room.id,
-                onFail: (error) => showSnackBar(context, content: Text(error)),
-                existingFiles: [XFile.fromData(file.readAsBytesSync())],
-              );
-            },
-            onError: (e) => showSnackBar(context, content: Text(e.toString())),
-          );
-        }
-      },
-      onDropOver: (event) {
-        if (event.session.allowedOperations.contains(DropOperation.copy)) {
-          return DropOperation.copy;
-        } else {
-          return DropOperation.none;
-        }
-      },
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Scaffold(
-            key: chatRoomScaffoldKey,
-            endDrawer: ChatRoomInfoDrawer(room: widget.room),
-            appBar: ChatRoomTitleBar(room: widget.room),
-            bottomNavigationBar:
-                widget.room.isArchived ||
-                    unAcceptedDirectChat != false ||
-                    widget.room.isSpace
-                ? null
-                : ChatInput(
-                    key: ValueKey('${widget.room.id}input'),
-                    room: widget.room,
-                  ),
-            body: unAcceptedDirectChat == null
-                ? const Center(child: Progress())
-                : unAcceptedDirectChat == true
-                ? const ChatRoomUnacceptedDirectChatBody()
-                : FutureBuilder<Timeline>(
-                    key: ValueKey(widget.room.id),
-                    future: _timelineFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return ErrorBody(error: snapshot.error.toString());
-                      }
-                      if (snapshot.hasData) {
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                            bottom: kMediumPadding,
-                          ),
-                          child: ChatRoomTimelineList(
-                            timeline: snapshot.data!,
-                            listKey: _roomListKey,
-                          ),
-                        );
-                      } else {
-                        return const Center(child: Progress());
-                      }
-                    },
-                  ),
-          ),
-          if (updating &&
-              chatRoomScaffoldKey.currentState?.isEndDrawerOpen != true)
-            Positioned(
-              top: 4 * kBigPadding,
-              child: RepaintBoundary(
-                child: CircleAvatar(
-                  backgroundColor: getMonochromeBg(
-                    theme: context.theme,
-                    factor: 3,
-                    darkFactor: 4,
-                  ),
-                  maxRadius: 15,
-                  child: SizedBox.square(
-                    dimension: 18,
-                    child: Progress(
-                      strokeWidth: 2,
-                      color: colorScheme.onSurface,
+                await di<DraftManager>().addAttachment(
+                  widget.room.id,
+                  onFail: (error) =>
+                      showSnackBar(context, content: Text(error)),
+                  existingFiles: [XFile.fromData(file.readAsBytesSync())],
+                );
+              },
+              onError: (e) =>
+                  showSnackBar(context, content: Text(e.toString())),
+            );
+          }
+        },
+        onDropOver: (event) {
+          if (event.session.allowedOperations.contains(DropOperation.copy)) {
+            return DropOperation.copy;
+          } else {
+            return DropOperation.none;
+          }
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Scaffold(
+              key: chatRoomScaffoldKey,
+              endDrawer: ChatRoomInfoDrawer(room: widget.room),
+              appBar: ChatRoomTitleBar(room: widget.room),
+              bottomNavigationBar:
+                  widget.room.isArchived ||
+                      unAcceptedDirectChat != false ||
+                      widget.room.isSpace
+                  ? null
+                  : ChatInput(
+                      key: ValueKey('${widget.room.id}input'),
+                      room: widget.room,
+                    ),
+              body: unAcceptedDirectChat == null
+                  ? const Center(child: Progress())
+                  : unAcceptedDirectChat == true
+                  ? const ChatRoomUnacceptedDirectChatBody()
+                  : FutureBuilder<Timeline>(
+                      key: ValueKey(widget.room.id),
+                      future: _timelineFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return ErrorBody(error: snapshot.error.toString());
+                        }
+                        if (snapshot.hasData) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: kMediumPadding,
+                            ),
+                            child: ChatRoomTimelineList(
+                              timeline: snapshot.data!,
+                              listKey: _roomListKey,
+                            ),
+                          );
+                        } else {
+                          return const Center(child: Progress());
+                        }
+                      },
+                    ),
+            ),
+            if (updating &&
+                chatRoomScaffoldKey.currentState?.isEndDrawerOpen != true)
+              Positioned(
+                top: 4 * kBigPadding,
+                child: RepaintBoundary(
+                  child: CircleAvatar(
+                    backgroundColor: getMonochromeBg(
+                      theme: context.theme,
+                      factor: 3,
+                      darkFactor: 4,
+                    ),
+                    maxRadius: 15,
+                    child: SizedBox.square(
+                      dimension: 18,
+                      child: Progress(
+                        strokeWidth: 2,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

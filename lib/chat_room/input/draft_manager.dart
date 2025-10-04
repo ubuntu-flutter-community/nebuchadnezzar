@@ -1,8 +1,12 @@
+import 'dart:typed_data';
+
+import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
+import 'package:super_clipboard/super_clipboard.dart';
 import 'package:video_compress/video_compress.dart';
 
 import '../../common/local_image_service.dart';
@@ -299,8 +303,6 @@ class DraftManager extends SafeChangeNotifier {
     );
   }
 
-  // final Map<MatrixVideoFile, XFile> _fileMap = {};
-
   Future<MatrixImageFile?> getVideoThumbnail(XFile xFile) async {
     if (!(Platforms.isMobile || Platforms.isMacOS)) return null;
 
@@ -323,4 +325,87 @@ class DraftManager extends SafeChangeNotifier {
 
   bool isMessageSelected({required String eventId}) =>
       _selectedMessages[eventId] ?? false;
+
+  Future<List<void>> addAttachMentFromClipboard(
+    String roomId, {
+    required String clipboardNotAvailable,
+    required String noSupportedFormatFoundInClipboard,
+    required String fileIsTooLarge,
+  }) async {
+    final clipboard = SystemClipboard.instance;
+    if (clipboard == null) {
+      return Future.error(clipboardNotAvailable);
+    }
+    ClipboardReader reader;
+    try {
+      reader = await clipboard.read();
+    } on Exception catch (e) {
+      return Future.error(e.toString());
+    }
+
+    if (reader.items.isEmpty) {
+      return Future.value([]);
+    }
+
+    if (reader.items.none(
+      (item) => availableFormats.any((format) => item.canProvide(format)),
+    )) {
+      return Future.error(noSupportedFormatFoundInClipboard);
+    }
+
+    return Future.wait(
+      availableFormats.map(
+        (format) => _processClipboardReader(
+          roomId: roomId,
+          format: format,
+          reader: reader,
+          fileIsTooLarge: fileIsTooLarge,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _processClipboardReader({
+    required String roomId,
+    required SimpleFileFormat format,
+    required ClipboardReader reader,
+    required String fileIsTooLarge,
+  }) async {
+    if (reader.canProvide(format)) {
+      reader.getFile(format, (dataReaderFile) async {
+        if (dataReaderFile.fileSize == null ||
+            dataReaderFile.fileSize! > maxUploadSize) {
+          return Future.error(fileIsTooLarge);
+        }
+
+        final data = await dataReaderFile.readAll();
+
+        setAttaching(true);
+
+        addFileToDraft(
+          roomId: roomId,
+          file: MatrixFile.fromMimeType(
+            bytes: Uint8List.fromList(data),
+            name: dataReaderFile.fileName ?? 'clipboard',
+            mimeType: format.mimeTypes?.firstOrNull,
+          ),
+        );
+
+        setAttaching(false);
+
+        return Future.value(null);
+      });
+    }
+  }
 }
+
+Set<SimpleFileFormat> get availableFormats => {
+  Formats.jpeg,
+  Formats.png,
+  Formats.gif,
+  Formats.tiff,
+  Formats.bmp,
+  Formats.mp3,
+  Formats.mp4,
+  Formats.pdf,
+};

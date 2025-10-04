@@ -2510,4 +2510,14 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get appendMediaToQueueButton => 'Append to queue';
+
+  @override
+  String get clipboardNotAvailable => 'Clipboard not available';
+
+  @override
+  String get noSupportedFormatFoundInClipboard =>
+      'No supported format found in clipboard';
+
+  @override
+  String get fileIsTooLarge => 'File is too large';
 }

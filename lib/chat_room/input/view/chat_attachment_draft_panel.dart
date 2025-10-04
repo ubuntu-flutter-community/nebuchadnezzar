@@ -21,6 +21,7 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
     final draftFilesL = watchPropertyValue(
       (DraftManager m) => m.getFilesDraft(roomId).length,
     );
+
     final sending = watchPropertyValue((DraftManager m) => m.sending);
 
     if (!attaching && draftFilesL == 0) return const SizedBox.shrink();
