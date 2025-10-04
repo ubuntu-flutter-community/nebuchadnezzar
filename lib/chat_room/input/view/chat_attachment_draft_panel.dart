@@ -22,49 +22,42 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
       (DraftManager m) => m.getFilesDraft(roomId).length,
     );
 
-    final sending = watchPropertyValue((DraftManager m) => m.sending);
-
     if (!attaching && draftFilesL == 0) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
       child: SizedBox(
         height: ChatPendingAttachment.dimension,
-        child: Opacity(
-          opacity: sending ? 0.5 : 1,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: ChatPendingAttachment.dimension,
-                mainAxisExtent: ChatPendingAttachment.dimension,
-              ),
-              reverse: true,
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
-              scrollDirection: Axis.horizontal,
-              itemCount: draftFilesL,
-              itemBuilder: (context, index) {
-                final file = draftFiles.elementAt(index);
-                return AnimatedContainer(
-                  duration: const Duration(seconds: 1),
-                  child: ChatPendingAttachment(
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: ChatPendingAttachment.dimension,
+              mainAxisExtent: ChatPendingAttachment.dimension,
+            ),
+            reverse: true,
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
+            scrollDirection: Axis.horizontal,
+            itemCount: draftFilesL,
+            itemBuilder: (context, index) {
+              final file = draftFiles.elementAt(index);
+              return AnimatedContainer(
+                duration: const Duration(seconds: 1),
+                child: ChatPendingAttachment(
+                  roomId: roomId,
+                  onToggleCompress: () => di<DraftManager>().toggleCompress(
                     roomId: roomId,
-                    onToggleCompress: () => di<DraftManager>().toggleCompress(
-                      roomId: roomId,
-                      file: file,
-                    ),
-                    onTap: sending
-                        ? null
-                        : () => di<DraftManager>().removeFileFromDraft(
-                            roomId: roomId,
-                            file: file,
-                          ),
                     file: file,
                   ),
-                );
-              },
-            ),
+                  onTap: () => di<DraftManager>().removeFileFromDraft(
+                    roomId: roomId,
+                    file: file,
+                  ),
+                  file: file,
+                ),
+              );
+            },
           ),
         ),
       ),
