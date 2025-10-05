@@ -4,6 +4,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
@@ -95,7 +96,7 @@ class PlayerFullView extends StatelessWidget
               title: Text('Media Player', style: TextStyle(color: iconColor)),
               backgroundColor: Colors.transparent,
               border: BorderSide.none,
-              isClosable: false,
+              isClosable: !Platforms.isMacOS,
               actions: [
                 IconButton(
                   isSelected: showPlayerExplorer,
