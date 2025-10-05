@@ -109,7 +109,7 @@ class LocalMedia extends UniqueMedia {
     required Uint8List imageData,
   }) async {
     final tempDir = Platforms.isLinux
-        ? cacheHome.path
+        ? configHome.path
         : (await getTemporaryDirectory()).path;
 
     final imagesDir = p.join(tempDir, '${AppConfig.appName}_temp_images');
