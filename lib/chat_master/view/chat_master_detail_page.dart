@@ -10,7 +10,6 @@ import '../../chat_room/common/view/chat_room_page.dart';
 import '../../common/chat_manager.dart';
 import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
-import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../encryption/encryption_manager.dart';
 import '../../encryption/view/key_verification_dialog.dart';
@@ -20,21 +19,8 @@ import 'chat_master_panel.dart';
 
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
-class ChatMasterDetailPage extends StatefulWidget
-    with WatchItStatefulWidgetMixin {
+class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
   const ChatMasterDetailPage({super.key});
-
-  @override
-  State<ChatMasterDetailPage> createState() => _ChatMasterDetailPageState();
-}
-
-class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
-  late final Future<void> _initAfterEncryptionSetup;
-  @override
-  void initState() {
-    super.initState();
-    _initAfterEncryptionSetup = di<ChatManager>().initAfterEncryptionSetup();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,32 +85,23 @@ class _ChatMasterDetailPageState extends State<ChatMasterDetailPage> {
       endDrawer: Platforms.isMacOS
           ? const Drawer(child: ChatMasterSidePanel())
           : null,
-      body: FutureBuilder(
-        future: _initAfterEncryptionSetup,
-        builder: (context, snapshot) =>
-            snapshot.connectionState == ConnectionState.done
-            ? Row(
-                children: [
-                  if (context.showSideBar) ...[
-                    const SizedBox(
-                      width: kSideBarWith,
-                      child: ChatMasterSidePanel(),
-                    ),
-                  ],
-                  if (context.showSideBar)
-                    const VerticalDivider(width: 0, thickness: 0),
-                  if (selectedRoom == null)
-                    const Expanded(child: ChatNoSelectedRoomPage())
-                  else
-                    Expanded(
-                      child: ChatRoomPage(
-                        key: ValueKey('${selectedRoom.id} $isArchivedRoom'),
-                        room: selectedRoom,
-                      ),
-                    ),
-                ],
-              )
-            : const Center(child: Progress()),
+      body: Row(
+        children: [
+          if (context.showSideBar) ...[
+            const SizedBox(width: kSideBarWith, child: ChatMasterSidePanel()),
+          ],
+          if (context.showSideBar)
+            const VerticalDivider(width: 0, thickness: 0),
+          if (selectedRoom == null)
+            const Expanded(child: ChatNoSelectedRoomPage())
+          else
+            Expanded(
+              child: ChatRoomPage(
+                key: ValueKey('${selectedRoom.id} $isArchivedRoom'),
+                room: selectedRoom,
+              ),
+            ),
+        ],
       ),
       bottomNavigationBar: const PlayerView(),
     );

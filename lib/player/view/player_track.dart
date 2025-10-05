@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:listen_it/listen_it.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -14,36 +13,17 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final duration = watchStream(
-      (PlayerManager p) => p.durationStream,
-      initialValue: di<PlayerManager>().duration,
-    ).data;
+    final duration = watchValue((PlayerManager p) => p.duration);
 
-    final color = watchValue(
-      (PlayerManager p) => p.playerViewState.select((e) => e.color),
-    );
+    final position = watchValue((PlayerManager p) => p.position);
 
-    final position = watchStream(
-      (PlayerManager p) => p.positionStream,
-      initialValue: Duration.zero,
-    ).data;
+    final buffer = watchValue((PlayerManager p) => p.buffer);
 
-    final bufferedPosition = watchStream(
-      (PlayerManager p) => p.bufferedPositionStream,
-      initialValue: Duration.zero,
-    ).data;
-
-    final sliderActive =
-        duration != null &&
-        position != null &&
-        duration.inSeconds > position.inSeconds;
+    final sliderActive = duration.inSeconds > position.inSeconds;
 
     final bufferActive =
-        bufferedPosition != null &&
-        position != null &&
-        duration != null &&
-        bufferedPosition.inSeconds >= 0 &&
-        bufferedPosition.inSeconds <=
+        buffer.inSeconds >= 0 &&
+        buffer.inSeconds <=
             (sliderActive ? duration.inSeconds.toDouble() : 1.0);
 
     const thumbShape = RoundSliderThumbShape(
@@ -52,21 +32,17 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
       disabledThumbRadius: 0,
     );
 
-    final trackColor = context.colorScheme.isDark
-        ? Colors.white
-        : blendColor(color ?? context.colorScheme.primary, Colors.white, 0.2);
+    final trackColor = getPlayerIconColor(context.theme);
 
     final isPlaying =
         watchStream(
           (PlayerManager p) => p.isPlayingStream,
           initialValue: di<PlayerManager>().isPlaying,
-          preserveState: false,
         ).data ??
         false;
 
     return RepaintBoundary(
-      child:
-          (duration?.inSeconds != null && duration!.inSeconds < 10) && isPlaying
+      child: (duration.inSeconds < 10) && isPlaying
           ? LinearProgress(
               value: null,
               trackHeight: kPlayerTrackHeight,
@@ -83,15 +59,15 @@ class PlayerTrack extends StatelessWidget with WatchItMixin {
                     const RectangularSliderTrackShape() as SliderTrackShape,
                 trackHeight: kPlayerTrackHeight,
                 activeTrackColor: trackColor.scale(saturation: 0.2),
-                inactiveTrackColor: trackColor.withAlpha(80),
-                secondaryActiveTrackColor: trackColor.withAlpha(120),
+                inactiveTrackColor: trackColor.withAlpha(50),
+                secondaryActiveTrackColor: trackColor.withAlpha(80),
               ),
               child: Slider(
                 min: 0,
                 max: sliderActive ? duration.inSeconds.toDouble() : 1.0,
                 value: sliderActive ? position.inSeconds.toDouble() : 0.0,
                 secondaryTrackValue: bufferActive
-                    ? bufferedPosition.inSeconds.toDouble()
+                    ? buffer.inSeconds.toDouble()
                     : null,
                 onChanged: (value) {
                   di<PlayerManager>().seek(Duration(seconds: value.toInt()));
