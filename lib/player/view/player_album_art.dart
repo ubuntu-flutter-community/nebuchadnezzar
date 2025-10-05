@@ -76,6 +76,11 @@ class PlayerRemoteSourceImage extends StatelessWidget with WatchItMixin {
           p.playerViewState.select((e) => e.remoteSourceArtUrl),
     );
 
+    final artUrl = watchStream(
+      (PlayerManager p) => p.currentMediaStream.map((e) => e.artUrl),
+      initialValue: di<PlayerManager>().currentMedia?.artUrl,
+    ).data;
+
     final color = watchValue(
       (PlayerManager p) => p.playerViewState.select((e) => e.color),
     );
@@ -96,7 +101,7 @@ class PlayerRemoteSourceImage extends StatelessWidget with WatchItMixin {
         );
       },
       onImageLoaded: di<PlayerManager>().setRemoteColorFromImageProvider,
-      url: remoteSourceArtUrl,
+      url: remoteSourceArtUrl ?? artUrl,
       filterQuality: FilterQuality.medium,
       fit: fit ?? BoxFit.scaleDown,
       fallBackIcon: Icon(

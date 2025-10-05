@@ -8,7 +8,6 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:yaru/yaru.dart';
 
 import '../common/logging.dart';
-import '../extensions/string_x.dart';
 import 'data/local_media.dart';
 import 'data/unique_media.dart';
 import 'view/player_view_state.dart';
@@ -56,6 +55,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     Color? color,
     String? remoteSourceArtUrl,
     String? remoteSourceTitle,
+    bool resetRemoteSource = false,
   }) {
     final previousArtUri = mediaItem.value?.artUri;
     final artUri =
@@ -64,22 +64,32 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
             : Uri.tryParse(remoteSourceArtUrl)) ??
         previousArtUri;
 
-    playerViewState.value = playerViewState.value.copyWith(
-      fullMode: fullMode,
-      showPlayerExplorer: showPlayerExplorer,
-      explorerIndex: explorerIndex,
-      color: color,
-      remoteSourceArtUrl: artUri.toString(),
-      remoteSourceTitle: remoteSourceTitle,
-    );
+    if (resetRemoteSource) {
+      playerViewState.value = PlayerViewState(
+        fullMode: fullMode ?? playerViewState.value.fullMode,
+        showPlayerExplorer:
+            showPlayerExplorer ?? playerViewState.value.showPlayerExplorer,
+        explorerIndex: explorerIndex ?? playerViewState.value.explorerIndex,
+        color: color,
+        remoteSourceArtUrl: null,
+        remoteSourceTitle: null,
+      );
+    } else {
+      playerViewState.value = playerViewState.value.copyWith(
+        fullMode: fullMode,
+        showPlayerExplorer: showPlayerExplorer,
+        explorerIndex: explorerIndex,
+        color: color,
+        remoteSourceArtUrl: remoteSourceArtUrl,
+        remoteSourceTitle: remoteSourceTitle,
+      );
+    }
 
-    if (remoteSourceTitle != null) {
-      final split = remoteSourceTitle.splitByDash;
+    if (remoteSourceTitle != null && mediaItem.value != null) {
       mediaItem.add(
-        MediaItem(
-          id: remoteSourceTitle,
+        mediaItem.value?.copyWith(
           title: remoteSourceTitle,
-          artist: currentMedia?.artist ?? split.artist,
+          artist: currentMedia?.artist,
           artUri: artUri,
         ),
       );
@@ -200,13 +210,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
 
   Future<void> setPlaylist(List<UniqueMedia> mediaList, {int index = 0}) async {
     if (mediaList.isEmpty) return;
-    updateState(
-      remoteSourceArtUrl:
-          mediaList.elementAtOrNull(index)?.artUrl?.endsWith('.ico') == true
-          ? null
-          : mediaList.elementAtOrNull(index)?.artUrl,
-      remoteSourceTitle: mediaList.elementAtOrNull(index)?.title,
-    );
+    updateState(resetRemoteSource: true);
     await _player.open(Playlist(mediaList, index: index));
   }
 
