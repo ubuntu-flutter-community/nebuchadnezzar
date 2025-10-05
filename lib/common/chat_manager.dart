@@ -13,6 +13,10 @@ class ChatManager extends SafeChangeNotifier {
   // The matrix dart SDK client
   final Client _client;
 
+  SyncStatusUpdate? get syncStatusUpdate => _client.onSyncStatus.value;
+  Stream<SyncStatusUpdate> get syncStatusUpdateStream =>
+      _client.onSyncStatus.stream;
+
   // Room management
   /// The list of all rooms the user is participating or invited.
   List<Room> get _rooms => _client.rooms;
@@ -156,13 +160,4 @@ class ChatManager extends SafeChangeNotifier {
     }
     setSelectedRoom(null);
   }
-
-  Future initAfterEncryptionSetup() async => Future.wait<Future<dynamic>?>(
-    Iterable.castFrom(<Future<dynamic>?>[
-      _client.roomsLoading,
-      _client.accountDataLoading,
-      _client.userDeviceKeysLoading,
-      _client.firstSyncReceived,
-    ]),
-  );
 }

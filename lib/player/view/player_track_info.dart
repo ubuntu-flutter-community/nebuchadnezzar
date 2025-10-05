@@ -97,24 +97,12 @@ class PlayerTrackProgressTimeText extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     final textTheme = context.textTheme;
-    final position = watchStream(
-      (PlayerManager p) => p.positionStream,
-      initialValue: di<PlayerManager>().position,
-      preserveState: true,
-    ).data;
+    final duration = watchValue((PlayerManager p) => p.duration);
 
-    final duration = watchStream(
-      (PlayerManager p) => p.durationStream,
-      initialValue: di<PlayerManager>().duration,
-      preserveState: true,
-    ).data;
+    final position = watchValue((PlayerManager p) => p.position);
 
-    final positionWidth = (position?.inHours != null && position!.inHours > 0)
-        ? 48.0
-        : 35.0;
-    final durationWidth = (duration?.inHours != null && duration!.inHours > 0)
-        ? 48.0
-        : 35.0;
+    final positionWidth = (position.inHours > 0) ? 48.0 : 35.0;
+    final durationWidth = (duration.inHours > 0) ? 48.0 : 35.0;
 
     const slashWidth = 5.0;
 
@@ -130,7 +118,7 @@ class PlayerTrackProgressTimeText extends StatelessWidget with WatchItMixin {
               width: positionWidth,
               height: height,
               child: Text(
-                (position ?? Duration.zero).formattedTime,
+                position.formattedTime,
                 style: (durationStyle ?? textTheme.labelSmall)?.copyWith(
                   color: textColor,
                   overflow: TextOverflow.ellipsis,
@@ -148,7 +136,7 @@ class PlayerTrackProgressTimeText extends StatelessWidget with WatchItMixin {
               width: durationWidth,
               height: height,
               child: Text(
-                (duration ?? Duration.zero).formattedTime,
+                duration.formattedTime,
                 style: (durationStyle ?? textTheme.labelSmall)?.copyWith(
                   color: textColor,
                   overflow: TextOverflow.ellipsis,
