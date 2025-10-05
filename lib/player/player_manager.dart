@@ -6,6 +6,7 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:yaru/yaru.dart';
 
 import '../common/logging.dart';
+import '../extensions/string_x.dart';
 import 'data/local_media.dart';
 import 'data/unique_media.dart';
 import 'view/player_view_state.dart';
@@ -46,16 +47,32 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     Color? color,
     String? remoteSourceArtUrl,
     String? remoteSourceTitle,
-  }) => playerViewState.value = playerViewState.value.copyWith(
-    fullMode: fullMode,
-    showPlayerExplorer: showPlayerExplorer,
-    explorerIndex: explorerIndex,
-    color: color,
-    remoteSourceArtUrl: remoteSourceArtUrl?.endsWith('.ico') == true
+  }) {
+    final art = remoteSourceArtUrl?.endsWith('.ico') == true
         ? null
-        : remoteSourceArtUrl,
-    remoteSourceTitle: remoteSourceTitle,
-  );
+        : remoteSourceArtUrl;
+    playerViewState.value = playerViewState.value.copyWith(
+      fullMode: fullMode,
+      showPlayerExplorer: showPlayerExplorer,
+      explorerIndex: explorerIndex,
+      color: color,
+      remoteSourceArtUrl: art,
+      remoteSourceTitle: remoteSourceTitle,
+    );
+
+    if (remoteSourceTitle != null) {
+      final uri = Uri.tryParse(art ?? '');
+      final split = remoteSourceTitle.splitByDash;
+      mediaItem.add(
+        MediaItem(
+          id: remoteSourceTitle,
+          title: remoteSourceTitle,
+          artist: currentMedia?.artist ?? split.artist,
+          artUri: uri,
+        ),
+      );
+    }
+  }
 
   Player get _player => _controller.player;
   Player get player => _player;
@@ -107,21 +124,8 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   Playlist get playlist => _player.state.playlist;
 
   Stream<UniqueMedia> get currentMediaStream =>
-      _player.stream.duration.asyncMap((e) async {
-        final media =
-            _player.state.playlist.medias[_player.state.playlist.index]
-                as UniqueMedia;
-
-        final id = playerViewState.value.remoteSourceArtUrl ?? media.id;
-
-        final title =
-            (media is LocalMedia ||
-                    (playerViewState.value.remoteSourceTitle == null)
-                ? media.title
-                : playerViewState.value.remoteSourceTitle) ??
-            media.id;
-
-        final artist = media.artist;
+      _player.stream.playlist.asyncMap((playlist) async {
+        final media = playlist.medias[playlist.index] as UniqueMedia;
 
         final artUri =
             media is LocalMedia ||
@@ -131,16 +135,19 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
 
         mediaItem.add(
           MediaItem(
-            id: id,
-            title: title,
-            artist: artist,
+            id: media.id,
+            title: media.title ?? media.uri.toString(),
+            artist: media.artist,
+            album: media.collectionName,
+            duration: media.duration ?? duration,
             artUri: artUri,
-            duration: e,
           ),
         );
+
         if (media is LocalMedia) {
           await _setLocalColor(media);
         }
+
         return media;
       }).distinct();
 
@@ -173,7 +180,10 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   Future<void> setPlaylist(List<UniqueMedia> mediaList, {int index = 0}) async {
     if (mediaList.isEmpty) return;
     updateState(
-      remoteSourceArtUrl: mediaList.elementAtOrNull(index)?.artUrl,
+      remoteSourceArtUrl:
+          mediaList.elementAtOrNull(index)?.artUrl?.endsWith('.ico') == true
+          ? null
+          : mediaList.elementAtOrNull(index)?.artUrl,
       remoteSourceTitle: mediaList.elementAtOrNull(index)?.title,
     );
     await _player.open(Playlist(mediaList, index: index));
