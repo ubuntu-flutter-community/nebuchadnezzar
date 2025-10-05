@@ -6,7 +6,9 @@ import 'package:collection/collection.dart';
 import 'package:path/path.dart' as p;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:xdg_directories/xdg_directories.dart';
 
+import '../../app/app_config.dart';
 import '../../common/platforms.dart';
 import '../../extensions/media_file_x.dart';
 import 'unique_media.dart';
@@ -106,9 +108,11 @@ class LocalMedia extends UniqueMedia {
     required String key,
     required Uint8List imageData,
   }) async {
-    final workingDir = await getTemporaryDirectory();
+    final tempDir = Platforms.isLinux
+        ? cacheHome.path
+        : (await getTemporaryDirectory()).path;
 
-    final imagesDir = p.join(workingDir.path, 'images');
+    final imagesDir = p.join(tempDir, '${AppConfig.appName}_temp_images');
 
     if (!(await Directory(imagesDir).exists())) {
       await Directory(imagesDir).create();
