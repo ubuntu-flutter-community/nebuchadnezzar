@@ -5,6 +5,7 @@ import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -90,7 +91,9 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
             if (_debounce?.isActive ?? false) _debounce!.cancel();
             _debounce = Timer(const Duration(milliseconds: 500), () {
               setState(() {
-                _future = _loadMedia(name: value.isEmpty ? null : value);
+                _future = value.isEmpty
+                    ? Future.value([])
+                    : _loadMedia(name: value.isEmpty ? null : value);
               });
             });
           },
@@ -115,14 +118,18 @@ class _RadioBrowserState extends State<RadioBrowser> with PlayerControlMixin {
                     ],
                   ),
                 );
-              } else if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: Progress());
               }
 
               if (snapshot.data!.isEmpty) {
                 return Center(
                   child: Text(
-                    context.l10n.nothingFound,
+                    _searchController.text.isEmpty
+                        ? ''
+                        : context.l10n.nothingFound,
                     style: context.textTheme.bodyLarge,
                   ),
                 );
