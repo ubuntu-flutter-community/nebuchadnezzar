@@ -17,7 +17,7 @@ class StationMedia extends UniqueMedia {
   String get id => station.stationUUID;
 
   @override
-  String? get title => station.name;
+  String? get title => station.name.trim();
 
   static StationMedia fromStation(Station station) {
     final media = StationMedia(
@@ -50,13 +50,13 @@ class StationMedia extends UniqueMedia {
   int? get bitrate => station.bitrate;
 
   @override
-  String? get collectionName => throw UnimplementedError();
+  String? get collectionName => null;
 
   @override
   DateTime? get creationDateTime => station.lastCheckTime;
 
   @override
-  Duration? get duration => throw UnimplementedError();
+  Duration? get duration => null;
 
   @override
   List<String> get genres {
@@ -71,5 +71,5 @@ class StationMedia extends UniqueMedia {
   String? get language => station.language;
 
   @override
-  List<String>? get performers => throw UnimplementedError();
+  List<String>? get performers => null;
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
@@ -6,7 +8,6 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:yaru/yaru.dart';
 
 import '../common/logging.dart';
-import '../extensions/string_x.dart';
 import 'data/local_media.dart';
 import 'data/unique_media.dart';
 import 'view/player_view_state.dart';
@@ -31,6 +32,13 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
         ],
       ),
     );
+    _positionSubscription = controller.player.stream.position.listen(
+      _setPosition,
+    );
+    _durationSubscription = controller.player.stream.duration.listen(
+      _setDuration,
+    );
+    _bufferedSubscription = controller.player.stream.buffer.listen(_setBuffer);
   }
 
   final VideoController _controller;
@@ -47,28 +55,42 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     Color? color,
     String? remoteSourceArtUrl,
     String? remoteSourceTitle,
+    bool resetRemoteSource = false,
   }) {
-    final art = remoteSourceArtUrl?.endsWith('.ico') == true
-        ? null
-        : remoteSourceArtUrl;
-    playerViewState.value = playerViewState.value.copyWith(
-      fullMode: fullMode,
-      showPlayerExplorer: showPlayerExplorer,
-      explorerIndex: explorerIndex,
-      color: color,
-      remoteSourceArtUrl: art,
-      remoteSourceTitle: remoteSourceTitle,
-    );
+    final previousArtUri = mediaItem.value?.artUri;
+    final artUri =
+        (remoteSourceArtUrl == null
+            ? previousArtUri
+            : Uri.tryParse(remoteSourceArtUrl)) ??
+        previousArtUri;
 
-    if (remoteSourceTitle != null) {
-      final uri = Uri.tryParse(art ?? '');
-      final split = remoteSourceTitle.splitByDash;
+    if (resetRemoteSource) {
+      playerViewState.value = PlayerViewState(
+        fullMode: fullMode ?? playerViewState.value.fullMode,
+        showPlayerExplorer:
+            showPlayerExplorer ?? playerViewState.value.showPlayerExplorer,
+        explorerIndex: explorerIndex ?? playerViewState.value.explorerIndex,
+        color: color,
+        remoteSourceArtUrl: null,
+        remoteSourceTitle: null,
+      );
+    } else {
+      playerViewState.value = playerViewState.value.copyWith(
+        fullMode: fullMode,
+        showPlayerExplorer: showPlayerExplorer,
+        explorerIndex: explorerIndex,
+        color: color,
+        remoteSourceArtUrl: remoteSourceArtUrl,
+        remoteSourceTitle: remoteSourceTitle,
+      );
+    }
+
+    if (remoteSourceTitle != null && mediaItem.value != null) {
       mediaItem.add(
-        MediaItem(
-          id: remoteSourceTitle,
+        mediaItem.value?.copyWith(
           title: remoteSourceTitle,
-          artist: currentMedia?.artist ?? split.artist,
-          artUri: uri,
+          artist: currentMedia?.artist,
+          artUri: artUri,
         ),
       );
     }
@@ -77,24 +99,33 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   Player get _player => _controller.player;
   Player get player => _player;
 
-  Stream<Duration> get positionStream => _player.stream.position.map((e) {
-    playbackState.add(playbackState.value.copyWith(updatePosition: position));
-    return e;
-  }).distinct();
+  StreamSubscription<Duration>? _positionSubscription;
+  final _position = SafeValueNotifier(Duration.zero);
+  SafeValueNotifier<Duration> get position => _position;
+  void _setPosition(Duration value) {
+    playbackState.add(playbackState.value.copyWith(updatePosition: value));
+    if (value.inSeconds == _position.value.inSeconds) return;
+    _position.value = value;
+  }
 
-  Duration get position => _player.state.position;
+  StreamSubscription<Duration>? _bufferedSubscription;
+  final _buffer = SafeValueNotifier(Duration.zero);
+  SafeValueNotifier<Duration> get buffer => _buffer;
+  void _setBuffer(Duration value) {
+    if (value.inSeconds == _buffer.value.inSeconds) return;
+    _buffer.value = value;
+  }
 
-  Stream<Duration> get bufferedPositionStream =>
-      _player.stream.buffer.distinct();
-
-  Stream<Duration> get durationStream => _player.stream.duration.map((e) {
+  StreamSubscription<Duration>? _durationSubscription;
+  final _duration = SafeValueNotifier<Duration>(Duration.zero);
+  SafeValueNotifier<Duration> get duration => _duration;
+  void _setDuration(Duration d) {
     if (mediaItem.value != null) {
-      mediaItem.add(mediaItem.value!.copyWith(duration: duration));
+      mediaItem.add(mediaItem.value!.copyWith(duration: d));
     }
-    return e;
-  }).distinct();
-
-  Duration get duration => _player.state.duration;
+    if (d.inSeconds == _duration.value.inSeconds) return;
+    _duration.value = d;
+  }
 
   Stream<bool> get isPlayingStream => _player.stream.playing.map((e) {
     playbackState.add(
@@ -139,7 +170,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
             title: media.title ?? media.uri.toString(),
             artist: media.artist,
             album: media.collectionName,
-            duration: media.duration ?? duration,
+            duration: media.duration ?? duration.value,
             artUri: artUri,
           ),
         );
@@ -179,13 +210,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
 
   Future<void> setPlaylist(List<UniqueMedia> mediaList, {int index = 0}) async {
     if (mediaList.isEmpty) return;
-    updateState(
-      remoteSourceArtUrl:
-          mediaList.elementAtOrNull(index)?.artUrl?.endsWith('.ico') == true
-          ? null
-          : mediaList.elementAtOrNull(index)?.artUrl,
-      remoteSourceTitle: mediaList.elementAtOrNull(index)?.title,
-    );
+    updateState(resetRemoteSource: true);
     await _player.open(Playlist(mediaList, index: index));
   }
 
@@ -224,7 +249,13 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   Future<void> skipToNext() async => _player.next();
 
   @override
-  Future<void> skipToPrevious() async => _player.previous();
+  Future<void> skipToPrevious() async {
+    if (position.value.inSeconds < 10) {
+      await seek(Duration.zero);
+      return;
+    }
+    return _player.previous();
+  }
 
   Future<void> setShuffle(bool shuffle) async => _player.setShuffle(shuffle);
 
@@ -248,7 +279,12 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   Future<void> setPlaylistMode(PlaylistMode mode) async =>
       _player.setPlaylistMode(mode);
 
-  Future<void> dispose() async => _player.dispose();
+  Future<void> dispose() async {
+    await _positionSubscription?.cancel();
+    await _durationSubscription?.cancel();
+    await _bufferedSubscription?.cancel();
+    await _player.dispose();
+  }
 
   Future<void> _setLocalColor(LocalMedia media) async {
     try {
