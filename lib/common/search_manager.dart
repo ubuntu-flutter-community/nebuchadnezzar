@@ -41,8 +41,8 @@ class SearchManager extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  List<SpaceRoomsChunk>? _spaceSearch = [];
-  List<SpaceRoomsChunk>? get spaceSearch => _spaceSearch;
+  List<PublishedRoomsChunk>? _spaceSearch = [];
+  List<PublishedRoomsChunk>? get spaceSearch => _spaceSearch;
   void resetSpaceSearch() {
     _spaceSearch = [];
     notifyListeners();
@@ -93,7 +93,7 @@ class SearchManager extends SafeChangeNotifier {
     return searchUserDirectoryResponse?.results;
   }
 
-  Future<List<PublicRoomsChunk>> findPublicRoomChunks(
+  Future<List<PublishedRoomsChunk>> findPublicRoomChunks(
     String searchQuery, {
     required Function(String error) onFail,
   }) async {
@@ -115,7 +115,7 @@ class SearchManager extends SafeChangeNotifier {
         final roomId = response.roomId;
         if (roomId != null) {
           roomSearchResult.chunk.add(
-            PublicRoomsChunk(
+            PublishedRoomsChunk(
               avatarUrl: _client.getRoomById(roomId)?.avatar,
               name: searchQuery,
               guestCanJoin: false,
