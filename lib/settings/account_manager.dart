@@ -151,7 +151,9 @@ class AccountManager {
   Future<void> setDisplayName({required String name}) async {
     if (_client.userID == null) return;
     try {
-      await _client.setDisplayName(_client.userID!, name);
+      await _client.setProfileField(_client.userID!, 'displayname', {
+        'displayname': name,
+      });
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
