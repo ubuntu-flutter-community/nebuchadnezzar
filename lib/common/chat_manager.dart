@@ -49,7 +49,14 @@ class ChatManager extends SafeChangeNotifier {
           .where((r) => r.roomId != null)
           .map((r) => _client.getRoomById(r.roomId!))
           .whereNot((r) => r == null)
-          .where((r) => r!.isArchived == archiveActive),
+          .where((r) => r!.isArchived == archiveActive)
+          .sorted(
+            (a, b) => a?.isFavourite == true && b?.isFavourite == false
+                ? -1
+                : a?.isFavourite == true && b?.isFavourite == true
+                ? 0
+                : 1,
+          ),
     ).toList();
   }
 

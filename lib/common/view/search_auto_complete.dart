@@ -26,7 +26,7 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
     final label =
         '${context.l10n.search} ${searchType == SearchType.spaces ? context.l10n.spaces : context.l10n.publicRooms}';
 
-    return Autocomplete<PublicRoomsChunk>(
+    return Autocomplete<PublishedRoomsChunk>(
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) =>
               TextField(

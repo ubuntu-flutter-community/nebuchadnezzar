@@ -58,7 +58,7 @@ class ChatRoomSearchDialog extends StatefulWidget {
 }
 
 class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
-  late Future<List<PublicRoomsChunk>> _future;
+  late Future<List<PublishedRoomsChunk>> _future;
 
   @override
   void initState() {

@@ -415,7 +415,7 @@ class EditRoomService {
     }
   }
 
-  Future<Room?> knockOrJoinRoomChunk(PublicRoomsChunk chunk) async {
+  Future<Room?> knockOrJoinRoomChunk(PublishedRoomsChunk chunk) async {
     final knock = chunk.joinRule == 'knock';
 
     String? roomId;
