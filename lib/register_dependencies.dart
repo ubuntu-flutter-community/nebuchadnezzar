@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show Colors;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
@@ -42,9 +43,20 @@ void registerDependencies() {
     di.registerSingletonAsync<WindowManager>(() async {
       final wm = WindowManager.instance;
       await wm.ensureInitialized();
-      wm
-        ..setMinimumSize(const Size(500, 700))
-        ..setSize(const Size(950, 820));
+      await wm.waitUntilReadyToShow(
+        const WindowOptions(
+          backgroundColor: Colors.transparent,
+          size: Size(950, 820),
+          minimumSize: Size(500, 700),
+          skipTaskbar: false,
+          titleBarStyle: TitleBarStyle.hidden,
+        ),
+        () async {
+          await windowManager.show();
+          await windowManager.focus();
+        },
+      );
+
       return wm;
     });
   }
