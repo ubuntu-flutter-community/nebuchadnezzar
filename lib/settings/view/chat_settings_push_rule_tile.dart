@@ -95,12 +95,19 @@ class ChatSettingsPushRuleTile extends StatelessWidget {
                 ),
               ],
             ),
-            SelectableText(
-              _prettyJson(rule.toJson()),
-              style: TextStyle(
-                color: context.theme.colorScheme.link,
-                fontSize: 12,
-                fontFeatures: [const FontFeature.tabularFigures()],
+            Container(
+              decoration: BoxDecoration(
+                color: context.theme.colorScheme.link.withAlpha(15),
+                borderRadius: BorderRadius.circular(kMediumPadding),
+              ),
+              padding: const EdgeInsets.all(kMediumPadding),
+              child: SelectableText(
+                _prettyJson(rule.toJson()),
+                style: TextStyle(
+                  color: context.theme.colorScheme.link,
+                  fontSize: 12,
+                  fontFeatures: [const FontFeature.tabularFigures()],
+                ),
               ),
             ),
           ],
