@@ -26,41 +26,74 @@ class ChatSettingsPushRuleTile extends StatelessWidget {
   final PushRuleKind kind;
 
   @override
-  Widget build(BuildContext context) => ListTile(
-    contentPadding: const EdgeInsets.only(
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(
+      bottom: kMediumPadding,
       left: kMediumPadding,
       right: kBigPadding,
-      bottom: kSmallPadding,
     ),
-    title: YaruExpandable(
+    child: YaruExpandable(
       expandButtonPosition: YaruExpandableButtonPosition.start,
-      header: Text(rule.getPushRuleName(context.l10n)),
+      header: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(rule.getPushRuleName(context.l10n)),
+          Row(
+            spacing: kSmallPadding,
+            children: [
+              IconButton(
+                onPressed: () async => ConfirmationDialog.show(
+                  context: context,
+                  content: Text(
+                    context.l10n.deletePushRuleDescription(
+                      rule.getPushRuleName(context.l10n),
+                    ),
+                  ),
+                  title: Text(
+                    context.l10n.deletePushRuleTitle(
+                      rule.getPushRuleName(context.l10n),
+                    ),
+                  ),
+                  onConfirm: () async {
+                    await di<AccountManager>().deletePushRule(
+                      kind,
+                      rule.ruleId,
+                    );
+                    await di<AccountManager>().pushRuleUpdateFuture;
+                  },
+                ),
+                icon: const Icon(YaruIcons.trash),
+              ),
+              Switch(
+                value: rule.enabled,
+                onChanged: di<AccountManager>().getDisabledRule(rule.ruleId)
+                    ? null
+                    : (_) => showFutureLoadingDialog(
+                        context: context,
+                        future: () =>
+                            di<AccountManager>().togglePushRule(kind, rule),
+                      ),
+              ),
+            ],
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(kSmallPadding),
+        padding: const EdgeInsets.symmetric(
+          vertical: kSmallPadding,
+          horizontal: kBigPadding,
+        ),
         child: Column(
-          spacing: kSmallPadding,
+          spacing: kBigPadding,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextButton.icon(
-              onPressed: () async => ConfirmationDialog.show(
-                context: context,
-                content: Text(
-                  context.l10n.deletePushRuleDescription(
-                    rule.getPushRuleName(context.l10n),
-                  ),
+            Row(
+              children: [
+                Text(
+                  rule.getPushRuleDescription(context.l10n),
+                  style: context.textTheme.labelMedium,
                 ),
-                title: Text(
-                  context.l10n.deletePushRuleTitle(
-                    rule.getPushRuleName(context.l10n),
-                  ),
-                ),
-                onConfirm: () async {
-                  await di<AccountManager>().deletePushRule(kind, rule.ruleId);
-                  await di<AccountManager>().pushRuleUpdateFuture;
-                },
-              ),
-              label: Text(context.l10n.delete),
-              icon: const Icon(YaruIcons.trash),
+              ],
             ),
             SelectableText(
               _prettyJson(rule.toJson()),
@@ -73,15 +106,6 @@ class ChatSettingsPushRuleTile extends StatelessWidget {
           ],
         ),
       ),
-    ),
-    trailing: Switch(
-      value: rule.enabled,
-      onChanged: di<AccountManager>().getDisabledRule(rule.ruleId)
-          ? null
-          : (_) => showFutureLoadingDialog(
-              context: context,
-              future: () => di<AccountManager>().togglePushRule(kind, rule),
-            ),
     ),
   );
 
