@@ -3187,5 +3187,72 @@
   "appendMediaToQueueButton": "Append to queue",
   "clipboardNotAvailable": "Clipboard not available",
   "noSupportedFormatFoundInClipboard": "No supported format found in clipboard",
-  "fileIsTooLarge": "File is too large"
+  "fileIsTooLarge": "File is too large",
+  "notificationRuleContainsUserName": "Contains User Name",
+  "notificationRuleMaster": "Master",
+  "notificationRuleSuppressNotices": "Suppress Notices",
+  "notificationRuleInviteForMe": "Invitation for me",
+  "notificationRuleMemberEvent": "Member Event",
+  "notificationRuleIsUserMention": "User Mention",
+  "notificationRuleContainsDisplayName": "Contains Display Name",
+  "notificationRuleIsRoomMention": "Room Mention",
+  "notificationRuleRoomnotif": "Room Notification",
+  "notificationRuleTombstone": "Tombstone",
+  "notificationRuleReaction": "Reaction",
+  "notificationRuleRoomServerAcl": "Room Server ACL",
+  "notificationRuleSuppressEdits": "Suppress Edits",
+  "notificationRuleCall": "Call",
+  "notificationRuleEncryptedRoomOneToOne": "Encrypted Room (One-to-One)",
+  "notificationRuleRoomOneToOne": "Room (One-to-One)",
+  "notificationRuleMessage": "Message",
+  "notificationRuleEncrypted": "Encrypted",
+  "notificationRuleServerAcl": "Server ACL",
+  "notificationRuleJitsi": "Jitsi",
+  "notificationRuleContainsUserNameDescription": "Username is contained in the content",
+  "notificationRuleMasterDescription": "Master notification",
+  "notificationRuleSuppressNoticesDescription": "Suppress notices",
+  "notificationRuleInviteForMeDescription": "Invitation for me",
+  "notificationRuleMemberEventDescription": "Member event",
+  "notificationRuleIsUserMentionDescription": "User mention",
+  "notificationRuleContainsDisplayNameDescription": "Contains display name",
+  "notificationRuleIsRoomMentionDescription": "Room mention",
+  "notificationRuleRoomnotifDescription": "Room notification",
+  "notificationRuleTombstoneDescription": "Tombstone",
+  "notificationRuleReactionDescription": "Reaction",
+  "notificationRuleRoomServerAclDescription": "Room server ACL",
+  "notificationRuleSuppressEditsDescription": "Suppress edits",
+  "notificationRuleCallDescription": "Call",
+  "notificationRuleEncryptedRoomOneToOneDescription": "Encrypted Room (One-to-One)",
+  "notificationRuleRoomOneToOneDescription": "Room (One-to-One)",
+  "notificationRuleMessageDescription": "Message",
+  "notificationRuleEncryptedDescription": "Encrypted",
+  "notificationRuleServerAclDescription": "Server ACL",
+  "notificationRuleJitsiDescription": "Jitsi",
+  "unknownPushRule": "Custom push rule {ruleId}",
+  "@unknownPushRule": {
+    "type": "text",
+    "placeholders": {
+      "ruleId": {}
+    }
+  },
+  "contentNotificationSettings": "Content notification settings",
+  "generalNotificationSettings": "General notification settings",
+  "roomNotificationSettings": "Room notification settings",
+  "userSpecificNotificationSettings": "User-specific notification settings",
+  "otherNotificationSettings": "Other notification settings",
+  "deletePushRuleTitle": "Delete push rule {ruleName}?",
+  "@deletePushRuleTitle": {
+    "type": "text",
+    "placeholders": {
+      "ruleName": {}
+    }
+  },
+  "deletePushRuleDescription": "Do you really want to delete the push rule {ruleName}? This action cannot be undone.",
+  "@deletePushRuleDescription": {
+    "type": "text",
+    "placeholders": {
+      "ruleName": {}
+    }
+  },
+  "pusherDevices": "Pusher Devices"
 }

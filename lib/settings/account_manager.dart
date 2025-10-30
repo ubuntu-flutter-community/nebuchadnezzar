@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../common/logging.dart';
 import '../common/platforms.dart';
@@ -55,6 +56,16 @@ class AccountManager {
 
   Future<void> deleteDevice(String id) async {
     try {
+      final accountManageUrl = _client.wellKnown?.additionalProperties
+          .tryGetMap<String, Object?>('org.matrix.msc2965.authentication')
+          ?.tryGet<String>('account');
+      final uri = accountManageUrl == null
+          ? null
+          : Uri.tryParse(accountManageUrl);
+      if (uri != null) {
+        await launchUrl(uri);
+        return;
+      }
       await _client.uiaRequestBackground((auth) async {
         await _client.deleteDevice(id, auth: auth);
       });
@@ -162,4 +173,73 @@ class AccountManager {
 
   Stream<Profile?> get myProfileStream =>
       _client.onUserProfileUpdate.stream.asyncMap((u) async => getMyProfile());
+
+  PushRuleSet? get globalPushRules => _client.globalPushRules;
+
+  bool get allPushNotificationsMuted => _client.allPushNotificationsMuted;
+
+  bool getDisabledRule(String ruleId) =>
+      ruleId != '.m.rule.master' && allPushNotificationsMuted;
+
+  Stream<SyncUpdate> get pushRulesStream => _client.onSync.stream.where(
+    (syncUpdate) =>
+        syncUpdate.accountData?.any(
+          (accountData) => accountData.type == 'm.push_rules',
+        ) ??
+        false,
+  );
+
+  Stream<List<Pusher>?> get pusherStream =>
+      _client.onSync.stream.asyncMap((e) async => _client.getPushers());
+
+  late Future<List<Pusher>?> pushersFuture;
+  void getPushers() => pushersFuture = _client.getPushers();
+
+  Future<SyncUpdate> get pushRuleUpdateFuture => _client.onSync.stream
+      .where(
+        (syncUpdate) =>
+            syncUpdate.accountData?.any(
+              (accountData) => accountData.type == 'm.push_rules',
+            ) ??
+            false,
+      )
+      .first;
+
+  Future<SyncUpdate> togglePushRule(
+    PushRuleKind kind,
+    PushRule pushRule,
+  ) async {
+    try {
+      await _client.setPushRuleEnabled(
+        kind,
+        pushRule.ruleId,
+        !pushRule.enabled,
+      );
+      return pushRuleUpdateFuture;
+    } catch (e, s) {
+      return Future.error('Unable to toggle push rule', s);
+    }
+  }
+
+  Future<SyncUpdate> deletePushRule(PushRuleKind kind, String ruleId) async {
+    try {
+      await _client.deletePushRule(kind, ruleId);
+      return pushRuleUpdateFuture;
+    } catch (e, s) {
+      return Future.error('Unable to delete push rule', s);
+    }
+  }
+
+  List<({PushRuleKind kind, List<PushRule> rules})> get pushCategories {
+    return [
+      if (globalPushRules?.override?.isNotEmpty ?? false)
+        (rules: globalPushRules?.override ?? [], kind: PushRuleKind.override),
+      if (globalPushRules?.content?.isNotEmpty ?? false)
+        (rules: globalPushRules?.content ?? [], kind: PushRuleKind.content),
+      if (globalPushRules?.sender?.isNotEmpty ?? false)
+        (rules: globalPushRules?.sender ?? [], kind: PushRuleKind.sender),
+      if (globalPushRules?.underride?.isNotEmpty ?? false)
+        (rules: globalPushRules?.underride ?? [], kind: PushRuleKind.underride),
+    ];
+  }
 }

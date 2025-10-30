@@ -33,12 +33,14 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
     required this.timeline,
     required this.onReplyOriginClick,
     required this.eventPosition,
+    this.color,
   });
 
   final Event event;
   final Timeline timeline;
   final Future<void> Function(Event event) onReplyOriginClick;
   final EventPosition eventPosition;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -93,10 +95,12 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                               horizontal: kMediumPadding,
                             ),
                             decoration: BoxDecoration(
-                              color: getTileColor(
-                                event.isUserEvent,
-                                context.theme,
-                              ),
+                              color:
+                                  color ??
+                                  getTileColor(
+                                    event.isUserEvent,
+                                    context.theme,
+                                  ),
                               borderRadius: switch (eventPosition) {
                                 EventPosition.middle => BorderRadius.circular(
                                   kBubbleRadiusValue,

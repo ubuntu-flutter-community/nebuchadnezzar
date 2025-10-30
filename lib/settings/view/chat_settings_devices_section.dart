@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:yaru/yaru.dart';
@@ -7,6 +6,7 @@ import 'package:yaru/yaru.dart';
 import '../../app/view/error_page.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
+import '../../common/view/confirm.dart';
 import '../../extensions/date_time_x.dart';
 import '../../l10n/l10n.dart';
 import '../account_manager.dart';
@@ -99,9 +99,12 @@ class _DeviceTile extends StatelessWidget {
       ),
       trailing: !isOwnDevice
           ? IconButton(
-              onPressed: () => showFutureLoadingDialog(
+              onPressed: () => ConfirmationDialog.show(
                 context: context,
-                future: () =>
+                title: Text(
+                  '${context.l10n.delete} ${context.l10n.device} ${device.displayName ?? device.deviceId}',
+                ),
+                onConfirm: () =>
                     di<AccountManager>().deleteDevice(device.deviceId),
               ),
               icon: Icon(YaruIcons.trash, color: context.colorScheme.error),

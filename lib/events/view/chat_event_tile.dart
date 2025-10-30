@@ -15,12 +15,14 @@ class ChatEventTile extends StatelessWidget {
     required this.timeline,
     required this.onReplyOriginClick,
     required this.eventPosition,
+    this.color,
   });
 
   final Event event;
   final EventPosition eventPosition;
   final Timeline timeline;
   final Future<void> Function(Event) onReplyOriginClick;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class ChatEventTile extends StatelessWidget {
       timeline: timeline,
       onReplyOriginClick: onReplyOriginClick,
       eventPosition: eventPosition,
+      color: color,
     );
   }
 }
