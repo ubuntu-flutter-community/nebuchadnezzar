@@ -2506,4 +2506,162 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fileIsTooLarge => 'File is too large';
+
+  @override
+  String get notificationRuleContainsUserName => 'Contains User Name';
+
+  @override
+  String get notificationRuleMaster => 'Master';
+
+  @override
+  String get notificationRuleSuppressNotices => 'Suppress Notices';
+
+  @override
+  String get notificationRuleInviteForMe => 'Invitation for me';
+
+  @override
+  String get notificationRuleMemberEvent => 'Member Event';
+
+  @override
+  String get notificationRuleIsUserMention => 'User Mention';
+
+  @override
+  String get notificationRuleContainsDisplayName => 'Contains Display Name';
+
+  @override
+  String get notificationRuleIsRoomMention => 'Room Mention';
+
+  @override
+  String get notificationRuleRoomnotif => 'Room Notification';
+
+  @override
+  String get notificationRuleTombstone => 'Tombstone';
+
+  @override
+  String get notificationRuleReaction => 'Reaction';
+
+  @override
+  String get notificationRuleRoomServerAcl => 'Room Server ACL';
+
+  @override
+  String get notificationRuleSuppressEdits => 'Suppress Edits';
+
+  @override
+  String get notificationRuleCall => 'Call';
+
+  @override
+  String get notificationRuleEncryptedRoomOneToOne =>
+      'Encrypted Room (One-to-One)';
+
+  @override
+  String get notificationRuleRoomOneToOne => 'Room (One-to-One)';
+
+  @override
+  String get notificationRuleMessage => 'Message';
+
+  @override
+  String get notificationRuleEncrypted => 'Encrypted';
+
+  @override
+  String get notificationRuleServerAcl => 'Server ACL';
+
+  @override
+  String get notificationRuleJitsi => 'Jitsi';
+
+  @override
+  String get notificationRuleContainsUserNameDescription =>
+      'Username is contained in the content';
+
+  @override
+  String get notificationRuleMasterDescription => 'Master notification';
+
+  @override
+  String get notificationRuleSuppressNoticesDescription => 'Suppress notices';
+
+  @override
+  String get notificationRuleInviteForMeDescription => 'Invitation for me';
+
+  @override
+  String get notificationRuleMemberEventDescription => 'Member event';
+
+  @override
+  String get notificationRuleIsUserMentionDescription => 'User mention';
+
+  @override
+  String get notificationRuleContainsDisplayNameDescription =>
+      'Contains display name';
+
+  @override
+  String get notificationRuleIsRoomMentionDescription => 'Room mention';
+
+  @override
+  String get notificationRuleRoomnotifDescription => 'Room notification';
+
+  @override
+  String get notificationRuleTombstoneDescription => 'Tombstone';
+
+  @override
+  String get notificationRuleReactionDescription => 'Reaction';
+
+  @override
+  String get notificationRuleRoomServerAclDescription => 'Room server ACL';
+
+  @override
+  String get notificationRuleSuppressEditsDescription => 'Suppress edits';
+
+  @override
+  String get notificationRuleCallDescription => 'Call';
+
+  @override
+  String get notificationRuleEncryptedRoomOneToOneDescription =>
+      'Encrypted Room (One-to-One)';
+
+  @override
+  String get notificationRuleRoomOneToOneDescription => 'Room (One-to-One)';
+
+  @override
+  String get notificationRuleMessageDescription => 'Message';
+
+  @override
+  String get notificationRuleEncryptedDescription => 'Encrypted';
+
+  @override
+  String get notificationRuleServerAclDescription => 'Server ACL';
+
+  @override
+  String get notificationRuleJitsiDescription => 'Jitsi';
+
+  @override
+  String unknownPushRule(Object ruleId) {
+    return 'Custom push rule $ruleId';
+  }
+
+  @override
+  String get contentNotificationSettings => 'Content notification settings';
+
+  @override
+  String get generalNotificationSettings => 'General notification settings';
+
+  @override
+  String get roomNotificationSettings => 'Room notification settings';
+
+  @override
+  String get userSpecificNotificationSettings =>
+      'User-specific notification settings';
+
+  @override
+  String get otherNotificationSettings => 'Other notification settings';
+
+  @override
+  String deletePushRuleTitle(Object ruleName) {
+    return 'Delete push rule $ruleName?';
+  }
+
+  @override
+  String deletePushRuleDescription(Object ruleName) {
+    return 'Do you really want to delete the push rule $ruleName? This action cannot be undone.';
+  }
+
+  @override
+  String get pusherDevices => 'Pusher Devices';
 }

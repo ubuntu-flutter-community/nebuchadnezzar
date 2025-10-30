@@ -4389,6 +4389,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'File is too large'**
   String get fileIsTooLarge;
+
+  /// No description provided for @notificationRuleContainsUserName.
+  ///
+  /// In en, this message translates to:
+  /// **'Contains User Name'**
+  String get notificationRuleContainsUserName;
+
+  /// No description provided for @notificationRuleMaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Master'**
+  String get notificationRuleMaster;
+
+  /// No description provided for @notificationRuleSuppressNotices.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppress Notices'**
+  String get notificationRuleSuppressNotices;
+
+  /// No description provided for @notificationRuleInviteForMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation for me'**
+  String get notificationRuleInviteForMe;
+
+  /// No description provided for @notificationRuleMemberEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Member Event'**
+  String get notificationRuleMemberEvent;
+
+  /// No description provided for @notificationRuleIsUserMention.
+  ///
+  /// In en, this message translates to:
+  /// **'User Mention'**
+  String get notificationRuleIsUserMention;
+
+  /// No description provided for @notificationRuleContainsDisplayName.
+  ///
+  /// In en, this message translates to:
+  /// **'Contains Display Name'**
+  String get notificationRuleContainsDisplayName;
+
+  /// No description provided for @notificationRuleIsRoomMention.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Mention'**
+  String get notificationRuleIsRoomMention;
+
+  /// No description provided for @notificationRuleRoomnotif.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Notification'**
+  String get notificationRuleRoomnotif;
+
+  /// No description provided for @notificationRuleTombstone.
+  ///
+  /// In en, this message translates to:
+  /// **'Tombstone'**
+  String get notificationRuleTombstone;
+
+  /// No description provided for @notificationRuleReaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reaction'**
+  String get notificationRuleReaction;
+
+  /// No description provided for @notificationRuleRoomServerAcl.
+  ///
+  /// In en, this message translates to:
+  /// **'Room Server ACL'**
+  String get notificationRuleRoomServerAcl;
+
+  /// No description provided for @notificationRuleSuppressEdits.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppress Edits'**
+  String get notificationRuleSuppressEdits;
+
+  /// No description provided for @notificationRuleCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get notificationRuleCall;
+
+  /// No description provided for @notificationRuleEncryptedRoomOneToOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted Room (One-to-One)'**
+  String get notificationRuleEncryptedRoomOneToOne;
+
+  /// No description provided for @notificationRuleRoomOneToOne.
+  ///
+  /// In en, this message translates to:
+  /// **'Room (One-to-One)'**
+  String get notificationRuleRoomOneToOne;
+
+  /// No description provided for @notificationRuleMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get notificationRuleMessage;
+
+  /// No description provided for @notificationRuleEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted'**
+  String get notificationRuleEncrypted;
+
+  /// No description provided for @notificationRuleServerAcl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server ACL'**
+  String get notificationRuleServerAcl;
+
+  /// No description provided for @notificationRuleJitsi.
+  ///
+  /// In en, this message translates to:
+  /// **'Jitsi'**
+  String get notificationRuleJitsi;
+
+  /// No description provided for @notificationRuleContainsUserNameDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Username is contained in the content'**
+  String get notificationRuleContainsUserNameDescription;
+
+  /// No description provided for @notificationRuleMasterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Master notification'**
+  String get notificationRuleMasterDescription;
+
+  /// No description provided for @notificationRuleSuppressNoticesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppress notices'**
+  String get notificationRuleSuppressNoticesDescription;
+
+  /// No description provided for @notificationRuleInviteForMeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation for me'**
+  String get notificationRuleInviteForMeDescription;
+
+  /// No description provided for @notificationRuleMemberEventDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Member event'**
+  String get notificationRuleMemberEventDescription;
+
+  /// No description provided for @notificationRuleIsUserMentionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'User mention'**
+  String get notificationRuleIsUserMentionDescription;
+
+  /// No description provided for @notificationRuleContainsDisplayNameDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Contains display name'**
+  String get notificationRuleContainsDisplayNameDescription;
+
+  /// No description provided for @notificationRuleIsRoomMentionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Room mention'**
+  String get notificationRuleIsRoomMentionDescription;
+
+  /// No description provided for @notificationRuleRoomnotifDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Room notification'**
+  String get notificationRuleRoomnotifDescription;
+
+  /// No description provided for @notificationRuleTombstoneDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tombstone'**
+  String get notificationRuleTombstoneDescription;
+
+  /// No description provided for @notificationRuleReactionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Reaction'**
+  String get notificationRuleReactionDescription;
+
+  /// No description provided for @notificationRuleRoomServerAclDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Room server ACL'**
+  String get notificationRuleRoomServerAclDescription;
+
+  /// No description provided for @notificationRuleSuppressEditsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppress edits'**
+  String get notificationRuleSuppressEditsDescription;
+
+  /// No description provided for @notificationRuleCallDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get notificationRuleCallDescription;
+
+  /// No description provided for @notificationRuleEncryptedRoomOneToOneDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted Room (One-to-One)'**
+  String get notificationRuleEncryptedRoomOneToOneDescription;
+
+  /// No description provided for @notificationRuleRoomOneToOneDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Room (One-to-One)'**
+  String get notificationRuleRoomOneToOneDescription;
+
+  /// No description provided for @notificationRuleMessageDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get notificationRuleMessageDescription;
+
+  /// No description provided for @notificationRuleEncryptedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypted'**
+  String get notificationRuleEncryptedDescription;
+
+  /// No description provided for @notificationRuleServerAclDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Server ACL'**
+  String get notificationRuleServerAclDescription;
+
+  /// No description provided for @notificationRuleJitsiDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Jitsi'**
+  String get notificationRuleJitsiDescription;
+
+  /// No description provided for @unknownPushRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom push rule {ruleId}'**
+  String unknownPushRule(Object ruleId);
+
+  /// No description provided for @contentNotificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Content notification settings'**
+  String get contentNotificationSettings;
+
+  /// No description provided for @generalNotificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'General notification settings'**
+  String get generalNotificationSettings;
+
+  /// No description provided for @roomNotificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Room notification settings'**
+  String get roomNotificationSettings;
+
+  /// No description provided for @userSpecificNotificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'User-specific notification settings'**
+  String get userSpecificNotificationSettings;
+
+  /// No description provided for @otherNotificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Other notification settings'**
+  String get otherNotificationSettings;
+
+  /// No description provided for @deletePushRuleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete push rule {ruleName}?'**
+  String deletePushRuleTitle(Object ruleName);
+
+  /// No description provided for @deletePushRuleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to delete the push rule {ruleName}? This action cannot be undone.'**
+  String deletePushRuleDescription(Object ruleName);
+
+  /// No description provided for @pusherDevices.
+  ///
+  /// In en, this message translates to:
+  /// **'Pusher Devices'**
+  String get pusherDevices;
 }
 
 class _AppLocalizationsDelegate

@@ -12,6 +12,7 @@ class ChatMessageBubble extends StatelessWidget {
     required this.timeline,
     required this.onReplyOriginClick,
     required this.eventPosition,
+    this.color,
   });
 
   final Event event;
@@ -21,6 +22,8 @@ class ChatMessageBubble extends StatelessWidget {
 
   static const maxWidth = 450.0;
   static const minWidth = 205.0;
+
+  final Color? color;
 
   @override
   Widget build(BuildContext context) => Align(
@@ -43,6 +46,7 @@ class ChatMessageBubble extends StatelessWidget {
           bottom: kSmallPadding,
         ),
         child: ChatMessageBubbleContent(
+          color: color,
           eventPosition: eventPosition,
           event: event,
           timeline: timeline,
