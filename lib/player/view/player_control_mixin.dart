@@ -5,7 +5,7 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import '../../common/platforms.dart';
 import '../../common/view/confirm.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:listen_it/listen_it.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
@@ -77,7 +76,7 @@ class PlayerRemoteSourceImage extends StatelessWidget with WatchItMixin {
     );
 
     final artUrl = watchStream(
-      (PlayerManager p) => p.currentMediaStream.map((e) => e.artUrl),
+      (PlayerManager p) => p.currentMediaStream.map((e) => e?.artUrl),
       initialValue: di<PlayerManager>().currentMedia?.artUrl,
     ).data;
 

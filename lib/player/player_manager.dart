@@ -8,7 +8,6 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:yaru/yaru.dart';
 
 import '../common/logging.dart';
-import 'data/local_media.dart';
 import 'data/unique_media.dart';
 import 'view/player_view_state.dart';
 
@@ -150,19 +149,28 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   Stream<int> get playlistIndexStream =>
       playlistStream.map((e) => e.index).distinct();
 
+  Stream<List<UniqueMedia>> get mediasStream => playlistStream
+      .map((e) => e.medias.whereType<UniqueMedia>().toList())
+      .distinct();
+
+  List<UniqueMedia> get medias =>
+      playlist.medias.whereType<UniqueMedia>().toList();
+
   int get playlistIndex => _player.state.playlist.index;
 
   Playlist get playlist => _player.state.playlist;
 
-  Stream<UniqueMedia> get currentMediaStream =>
+  Stream<UniqueMedia?> get currentMediaStream =>
       _player.stream.playlist.asyncMap((playlist) async {
+        if (playlist.medias.isEmpty) return null;
         final media = playlist.medias[playlist.index] as UniqueMedia;
 
-        final artUri =
-            media is LocalMedia ||
-                playerViewState.value.remoteSourceArtUrl == null
-            ? await media.artUri
-            : Uri.tryParse(playerViewState.value.remoteSourceArtUrl!);
+        final Uri? artUri;
+        if (playerViewState.value.remoteSourceArtUrl != null) {
+          artUri = Uri.tryParse(playerViewState.value.remoteSourceArtUrl!);
+        } else {
+          artUri = await media.artUri;
+        }
 
         mediaItem.add(
           MediaItem(
@@ -175,9 +183,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
           ),
         );
 
-        if (media is LocalMedia) {
-          await _setLocalColor(media);
-        }
+        await _setLocalColor(media);
 
         return media;
       }).distinct();
@@ -185,7 +191,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   UniqueMedia? get currentMedia => _player.state.playlist.medias.isEmpty
       ? null
       : _player.state.playlist.medias[_player.state.playlist.index]
-            as UniqueMedia;
+            as UniqueMedia?;
 
   PlaylistMode get playlistMode => _player.state.playlistMode;
 
@@ -208,10 +214,14 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
       _player.state.tracks.video.isNotEmpty &&
       _player.state.tracks.video.any((e) => e.fps != null && e.fps! > 1);
 
-  Future<void> setPlaylist(List<UniqueMedia> mediaList, {int index = 0}) async {
+  Future<void> setPlaylist(
+    List<UniqueMedia> mediaList, {
+    int index = 0,
+    bool play = true,
+  }) async {
     if (mediaList.isEmpty) return;
     updateState(resetRemoteSource: true);
-    await _player.open(Playlist(mediaList, index: index));
+    await _player.open(Playlist(mediaList, index: index), play: play);
   }
 
   Future<void> addToPlaylist(UniqueMedia media) async => _player.add(media);
@@ -248,12 +258,15 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
   @override
   Future<void> skipToNext() async => _player.next();
 
+  bool _firstClick = true;
   @override
   Future<void> skipToPrevious() async {
-    if (position.value.inSeconds < 10) {
+    if (position.value.inSeconds < 10 && _firstClick) {
       await seek(Duration.zero);
+      _firstClick = false;
       return;
     }
+    _firstClick = true;
     return _player.previous();
   }
 
@@ -286,7 +299,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     await _player.dispose();
   }
 
-  Future<void> _setLocalColor(LocalMedia media) async {
+  Future<void> _setLocalColor(UniqueMedia media) async {
     try {
       final art = media.artData;
 

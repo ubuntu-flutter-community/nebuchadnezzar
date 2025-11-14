@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:watch_it/watch_it.dart';
-import 'package:yaru/yaru.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../l10n/l10n.dart';
-import '../data/local_media.dart';
-import '../data/unique_media.dart';
+import '../../extensions/string_x.dart';
 import '../player_manager.dart';
 
 class PlayerQueue extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -29,8 +26,8 @@ class _PlayerQueueState extends State<PlayerQueue> {
   @override
   Widget build(BuildContext context) {
     final medias = watchStream(
-      (PlayerManager p) => p.playlistStream.map((e) => e.medias).distinct(),
-      initialValue: di<PlayerManager>().playlist.medias,
+      (PlayerManager p) => p.mediasStream,
+      initialValue: di<PlayerManager>().medias,
       preserveState: true,
     ).data;
 
@@ -84,16 +81,11 @@ class _PlayerQueueState extends State<PlayerQueue> {
                             onTap: () => di<PlayerManager>().jump(index),
                             leading: Text('${index + 1}'),
                             title: Text(
-                              (media as UniqueMedia).title ?? 'Unknown',
+                              media.title?.unEscapeHtml ?? 'Unknown',
+                              maxLines: 2,
                             ),
                             subtitle: Text(
-                              (media is LocalMedia
-                                      ? media.artist
-                                      : media.genres
-                                            .take(5)
-                                            .join(', ')
-                                            .toString()) ??
-                                  context.l10n.radioStation,
+                              media.artist ?? 'Unknown',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -119,7 +111,7 @@ class _PlayerQueueState extends State<PlayerQueue> {
                                         key: ValueKey(index),
                                         index: index,
                                         child: Icon(
-                                          YaruIcons.drag_handle,
+                                          Icons.drag_handle,
                                           color: iconColor,
                                         ),
                                       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../l10n/l10n.dart';

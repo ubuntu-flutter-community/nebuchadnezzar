@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:listen_it/listen_it.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/platforms.dart';

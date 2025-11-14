@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import '../../chat_room/input/draft_manager.dart';
 import '../../common/chat_manager.dart';

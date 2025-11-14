@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../../common/view/chat_user_search_auto_complete.dart';

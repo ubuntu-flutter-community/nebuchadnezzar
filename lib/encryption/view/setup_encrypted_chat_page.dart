@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/encryption.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import '../../app/view/splash_page.dart';
 import '../../authentication/authentication_service.dart';
