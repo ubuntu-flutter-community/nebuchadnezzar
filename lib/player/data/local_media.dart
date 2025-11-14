@@ -14,7 +14,13 @@ import '../../extensions/media_file_x.dart';
 import 'unique_media.dart';
 
 class LocalMedia extends UniqueMedia {
-  LocalMedia(super.path);
+  LocalMedia(
+    super.path, {
+    super.extras,
+    super.httpHeaders,
+    super.start,
+    super.end,
+  });
 
   @override
   String get id => artist == null
@@ -122,4 +128,7 @@ class LocalMedia extends UniqueMedia {
     final newFile = await file.writeAsBytes(imageData);
     return newFile;
   }
+
+  @override
+  String? get collectionArtUrl => null;
 }

@@ -10,7 +10,7 @@ import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app/app_config.dart';
@@ -46,6 +46,7 @@ void registerDependencies() {
       await wm.waitUntilReadyToShow(
         const WindowOptions(
           backgroundColor: Colors.transparent,
+          center: true,
           size: Size(950, 820),
           minimumSize: Size(500, 700),
           skipTaskbar: false,

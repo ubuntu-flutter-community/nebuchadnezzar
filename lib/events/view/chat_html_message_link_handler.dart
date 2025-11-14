@@ -3,7 +3,7 @@ import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:matrix/matrix_api_lite/generated/model.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:flutter_it/flutter_it.dart';
 
 import '../../app/view/error_page.dart';
 import '../../chat_room/create_or_edit/edit_room_service.dart';

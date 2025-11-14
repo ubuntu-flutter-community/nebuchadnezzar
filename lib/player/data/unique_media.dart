@@ -3,7 +3,15 @@ import 'dart:typed_data';
 import 'package:media_kit/media_kit.dart';
 
 abstract class UniqueMedia extends Media {
-  UniqueMedia(super.resource);
+  UniqueMedia(
+    super.resource, {
+    super.extras,
+    super.httpHeaders,
+    super.start,
+    super.end,
+  });
+
+  String get resource => super.uri;
 
   String get id;
 
@@ -26,6 +34,8 @@ abstract class UniqueMedia extends Media {
   List<String> get genres;
 
   String? get artUrl;
+
+  String? get collectionArtUrl;
 
   Uint8List? get artData;
 

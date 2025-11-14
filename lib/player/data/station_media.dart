@@ -5,7 +5,14 @@ import 'package:radio_browser_api/radio_browser_api.dart';
 import 'unique_media.dart';
 
 class StationMedia extends UniqueMedia {
-  StationMedia(super.resource, {required this.station});
+  StationMedia(
+    super.resource, {
+    required this.station,
+    super.extras,
+    super.httpHeaders,
+    super.start,
+    super.end,
+  });
 
   final Station station;
 
@@ -72,4 +79,7 @@ class StationMedia extends UniqueMedia {
 
   @override
   List<String>? get performers => null;
+
+  @override
+  String? get collectionArtUrl => null;
 }

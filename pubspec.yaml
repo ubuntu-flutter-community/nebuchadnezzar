@@ -34,6 +34,7 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   flutter_highlighter: ^0.1.1
   flutter_html: ^3.0.0-beta.2
+  flutter_it: ^1.0.2
   flutter_linkify: ^6.0.0
   flutter_localizations:
     sdk: flutter
@@ -49,7 +50,6 @@ dependencies:
   latlong2: ^0.9.1
   linkify: ^5.0.0
   liquid_progress_indicator_v2: ^0.5.0
-  listen_it: ^5.0.0
   local_notifier: ^0.1.6
   matrix: ^3.0.1
   media_kit:
@@ -85,7 +85,6 @@ dependencies:
   universal_html: ^2.2.4
   url_launcher: ^6.3.1
   video_compress: ^3.1.3
-  watch_it: ^1.7.0
   window_manager: ^0.5.1
   xdg_directories: ^1.1.0
   xdg_icons: ^0.1.0
