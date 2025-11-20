@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
@@ -10,80 +8,39 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../player/data/station_media.dart';
 import '../../player/player_manager.dart';
-import '../../settings/settings_manager.dart';
-import '../radio_service.dart';
+import '../radio_manager.dart';
 import 'radio_browser_station_star_button.dart';
 import 'radio_host_not_connected_content.dart';
 import 'remote_media_list_tile_image.dart';
 
-class RadioFavoritesList extends StatefulWidget {
+class RadioFavoritesList extends StatelessWidget with WatchItMixin {
   const RadioFavoritesList({super.key});
 
   @override
-  State<RadioFavoritesList> createState() => _RadioFavoritesListState();
-}
-
-class _RadioFavoritesListState extends State<RadioFavoritesList> {
-  Future<List<StationMedia>>? _future;
-
-  @override
-  void initState() {
-    super.initState();
-    _future = _loadFavorites();
-  }
-
-  Future<List<StationMedia>> _loadFavorites() async {
-    final favoriteStations = di<SettingsManager>().favoriteStations;
-    return Future.wait(
-      favoriteStations.map((stationId) async {
-        StationMedia? media;
-        media = StationMedia.getCachedStationMedia(stationId);
-        if (media == null) {
-          final station = await di<RadioService>().getStationByUUID(stationId);
-          if (station != null) {
-            media = StationMedia.fromStation(station);
-          }
-        }
-        return Future.value(media);
-      }),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<StationMedia>>(
-      future: _future,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return RadioHostNotConnectedContent(
-            message: 'Error: ${snapshot.error}',
-            onRetry: () async {
-              await di<RadioService>().init();
-              setState(() => _future = _loadFavorites());
-            },
+    callOnce((_) => di<RadioManager>().favoriteStationsCommand.run());
+    return watchValue(
+      (RadioManager s) => s.favoriteStationsCommand.results,
+    ).toWidget(
+      onData: (favorites, _) => ListView.builder(
+        padding: const EdgeInsets.only(top: kBigPadding),
+        itemCount: favorites.length,
+        itemBuilder: (context, index) {
+          final media = favorites[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: kSmallPadding),
+            child: _RadioFavoriteListTile(
+              key: ValueKey(media.id),
+              media: media,
+            ),
           );
-        }
-
-        if (!snapshot.hasData) {
-          return const Center(child: Progress());
-        }
-
-        final favorites = snapshot.data!;
-        return ListView.builder(
-          padding: const EdgeInsets.only(top: kBigPadding),
-          itemCount: favorites.length,
-          itemBuilder: (context, index) {
-            final media = favorites[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: kSmallPadding),
-              child: _RadioFavoriteListTile(
-                key: ValueKey(media.id),
-                media: media,
-              ),
-            );
-          },
-        );
-      },
+        },
+      ),
+      whileRunning: (_, _) => const Center(child: Progress()),
+      onError: (error, _, _) => RadioHostNotConnectedContent(
+        message: 'Error: $error',
+        onRetry: di<RadioManager>().favoriteStationsCommand.run,
+      ),
     );
   }
 }

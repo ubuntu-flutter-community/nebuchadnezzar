@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:media_kit/media_kit.dart';
 
-abstract interface class UniqueMedia extends Media {
+abstract class UniqueMedia extends Media {
   UniqueMedia(
     super.resource, {
     super.extras,
@@ -11,6 +11,8 @@ abstract interface class UniqueMedia extends Media {
     super.end,
   });
 
+  // Since in case of radio stations, the URI may be given to multiple stations,
+  // we need a unique identifier that is not the URI.
   String get id;
 
   String? get title;

@@ -175,7 +175,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
         mediaItem.add(
           MediaItem(
             id: media.id,
-            title: media.title ?? media.uri.toString(),
+            title: media.title ?? media.id.toString(),
             artist: media.artist,
             album: media.collectionName,
             duration: media.duration ?? duration.value,
@@ -233,7 +233,6 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     bool play = true,
   }) async {
     if (mediaList.isEmpty) return;
-    _oldPlaylistMedias = List<UniqueMedia>.from(mediaList);
     updateState(resetRemoteSource: true);
     await _player.open(Playlist(mediaList, index: index), play: play);
   }

@@ -15,6 +15,29 @@ class SettingsService {
 
   final FlutterSecureStorage _secureStorage;
   final SharedPreferences _sharedPreferences;
+
+  String? getString(String key) => _sharedPreferences.getString(key);
+
+  List<String>? getStringList(String key) =>
+      _sharedPreferences.getStringList(key);
+
+  bool? getBool(String key) => _sharedPreferences.getBool(key);
+
+  double? getDouble(String key) => _sharedPreferences.getDouble(key);
+
+  int? getInt(String key) => _sharedPreferences.getInt(key);
+
+  Future<bool> setValue(String key, dynamic value) => switch (value) {
+    (bool _) => _sharedPreferences.setBool(key, value),
+    (String _) => _sharedPreferences.setString(key, value),
+    (int _) => _sharedPreferences.setInt(key, value),
+    (double _) => _sharedPreferences.setDouble(key, value),
+    (List<String> _) => _sharedPreferences.setStringList(key, value),
+    _ => Future.error('Unsupported value type: ${value.runtimeType}'),
+  };
+
+  // TODO: Convert to commands in SettingsManager and remove _propertiesChangedController
+
   final _propertiesChangedController = StreamController<bool>.broadcast();
   Stream<bool> get propertiesChanged => _propertiesChangedController.stream;
   void notify(bool saved) {

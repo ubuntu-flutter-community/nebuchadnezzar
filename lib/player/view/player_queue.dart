@@ -75,7 +75,7 @@ class _PlayerQueueState extends State<PlayerQueue> {
                       itemBuilder: (context, index) {
                         final media = medias[index];
                         return Padding(
-                          key: ValueKey(media.uri + index.toString()),
+                          key: ValueKey(media.id + index.toString()),
                           padding: const EdgeInsets.only(bottom: kSmallPadding),
                           child: ListTile(
                             onTap: () => di<PlayerManager>().jump(index),
