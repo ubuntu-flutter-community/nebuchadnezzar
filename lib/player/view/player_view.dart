@@ -22,6 +22,7 @@ class PlayerView extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       (PlayerManager p) => p.currentMediaStream,
       initialValue: di<PlayerManager>().currentMedia,
       preserveState: false,
+      allowStreamChange: true,
     ).data;
 
     final isFullMode = watchValue(

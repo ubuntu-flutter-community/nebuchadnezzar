@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../player/data/station_media.dart';
+import '../../player/data/unique_media.dart';
 import '../../settings/settings_manager.dart';
 
 class RadioBrowserStationStarButton extends StatelessWidget with WatchItMixin {
   const RadioBrowserStationStarButton({super.key, required this.media});
 
-  final StationMedia media;
+  final UniqueMedia media;
 
   @override
   Widget build(BuildContext context) {

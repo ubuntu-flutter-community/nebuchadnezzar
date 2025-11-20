@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:media_kit/media_kit.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
 
 import 'unique_media.dart';
 
-class StationMedia extends UniqueMedia {
+class StationMedia extends Media implements UniqueMedia {
   StationMedia(
     super.resource, {
     required this.station,

@@ -3,12 +3,12 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/safe_network_image.dart';
 import '../../common/view/ui_constants.dart';
-import '../../player/data/station_media.dart';
+import '../../player/data/unique_media.dart';
 
 class RemoteMediaListTileImage extends StatelessWidget {
   const RemoteMediaListTileImage({super.key, required this.media});
 
-  final StationMedia media;
+  final UniqueMedia media;
 
   @override
   Widget build(BuildContext context) {

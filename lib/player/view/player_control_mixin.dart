@@ -79,7 +79,7 @@ mixin PlayerControlMixin {
 
       if (newPlaylist) {
         await di<PlayerManager>().setPlaylist([media]);
-      } else if (!di<PlayerManager>().playlist.medias.contains(media)) {
+      } else if (!di<PlayerManager>().medias.contains(media)) {
         await di<PlayerManager>().addToPlaylist(media);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

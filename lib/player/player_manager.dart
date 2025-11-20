@@ -140,18 +140,16 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
       ),
     );
     return e;
-  }).distinct();
+  });
 
   bool get isPlaying => _player.state.playing;
 
-  Stream<Playlist> get playlistStream => _player.stream.playlist.distinct();
+  Stream<Playlist> get _playlistStream => _player.stream.playlist;
 
-  Stream<int> get playlistIndexStream =>
-      playlistStream.map((e) => e.index).distinct();
+  Stream<int> get playlistIndexStream => _playlistStream.map((e) => e.index);
 
-  Stream<List<UniqueMedia>> get mediasStream => playlistStream
-      .map((e) => e.medias.whereType<UniqueMedia>().toList())
-      .distinct();
+  Stream<List<UniqueMedia>> get mediasStream =>
+      _playlistStream.map((e) => e.medias.whereType<UniqueMedia>().toList());
 
   List<UniqueMedia> get medias =>
       playlist.medias.whereType<UniqueMedia>().toList();
@@ -162,8 +160,10 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
 
   Stream<UniqueMedia?> get currentMediaStream =>
       _player.stream.playlist.asyncMap((playlist) async {
-        if (playlist.medias.isEmpty) return null;
-        final media = playlist.medias[playlist.index] as UniqueMedia;
+        if (playlist.medias.whereType<UniqueMedia>().isEmpty) return null;
+        final media = playlist.medias
+            .whereType<UniqueMedia>()
+            .toList()[playlist.index];
 
         final Uri? artUri;
         if (playerViewState.value.remoteSourceArtUrl != null) {
@@ -186,29 +186,42 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
         await _setLocalColor(media);
 
         return media;
-      }).distinct();
+      });
 
-  UniqueMedia? get currentMedia => _player.state.playlist.medias.isEmpty
+  UniqueMedia? get currentMedia =>
+      _player.state.playlist.medias.whereType<UniqueMedia>().isEmpty
       ? null
-      : _player.state.playlist.medias[_player.state.playlist.index]
+      : _player.state.playlist.medias
+                .whereType<UniqueMedia>()
+                .toList()[_player.state.playlist.index]
             as UniqueMedia?;
 
   PlaylistMode get playlistMode => _player.state.playlistMode;
 
-  Stream<PlaylistMode> get playlistModeStream =>
-      _player.stream.playlistMode.distinct();
+  Stream<PlaylistMode> get playlistModeStream => _player.stream.playlistMode;
 
-  Stream<bool> get shuffleStream => _player.stream.shuffle;
+  final shuffle = SafeValueNotifier<bool>(false);
+  var _oldPlaylistMedias = <UniqueMedia>[];
+  void toggleShuffle() {
+    shuffle.value = !shuffle.value;
+    final currentPlaylist = playlist;
 
-  bool get shuffle => _player.state.shuffle;
+    final medias = currentPlaylist.medias.whereType<UniqueMedia>().toList();
+    if (shuffle.value) {
+      _oldPlaylistMedias = List<UniqueMedia>.from(medias);
+      medias.shuffle();
+    } else {
+      medias.clear();
+      medias.addAll(_oldPlaylistMedias);
+    }
+    setPlaylist(medias);
+  }
 
-  Stream<bool> get isVideoStream => _player.stream.tracks
-      .map(
-        (tracks) =>
-            tracks.video.isNotEmpty &&
-            tracks.video.any((e) => e.fps != null && e.fps! > 1),
-      )
-      .distinct();
+  Stream<bool> get isVideoStream => _player.stream.tracks.map(
+    (tracks) =>
+        tracks.video.isNotEmpty &&
+        tracks.video.any((e) => e.fps != null && e.fps! > 1),
+  );
 
   bool get isVideo =>
       _player.state.tracks.video.isNotEmpty &&
@@ -220,6 +233,7 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     bool play = true,
   }) async {
     if (mediaList.isEmpty) return;
+    _oldPlaylistMedias = List<UniqueMedia>.from(mediaList);
     updateState(resetRemoteSource: true);
     await _player.open(Playlist(mediaList, index: index), play: play);
   }
@@ -269,11 +283,6 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     _firstClick = true;
     return _player.previous();
   }
-
-  Future<void> setShuffle(bool shuffle) async => _player.setShuffle(shuffle);
-
-  Future<void> toggleShuffle() async =>
-      _player.setShuffle(!_player.state.shuffle);
 
   Future<void> changePlaylistMode() async {
     final currentMode = _player.state.playlistMode;
