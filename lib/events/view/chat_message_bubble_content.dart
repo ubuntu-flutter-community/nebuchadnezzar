@@ -133,10 +133,8 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                       .calcDisplayname(),
                                   style: textTheme.labelSmall,
                                 ),
-                                if ({
-                                  RelationshipTypes.reply,
-                                  RelationshipTypes.thread,
-                                }.contains(event.relationshipType))
+
+                                if (event.inReplyToEventId() != null)
                                   ChatMessageReplyHeader(
                                     event: event,
                                     timeline: timeline,
