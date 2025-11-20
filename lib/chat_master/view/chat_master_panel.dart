@@ -79,6 +79,8 @@ class _OpenEmptyPlayerButton extends StatelessWidget with WatchItMixin {
     final currentMedia = watchStream(
       (PlayerManager p) => p.currentMediaStream,
       initialValue: di<PlayerManager>().currentMedia,
+      preserveState: false,
+      allowStreamChange: true,
     ).data;
 
     if (currentMedia != null) {

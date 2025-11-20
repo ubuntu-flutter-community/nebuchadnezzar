@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_room/timeline/chat_thread_dialog.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
@@ -134,7 +135,10 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                   style: textTheme.labelSmall,
                                 ),
 
-                                if (event.inReplyToEventId() != null)
+                                if (event.inReplyToEventId(
+                                      includingFallback: false,
+                                    ) !=
+                                    null)
                                   ChatMessageReplyHeader(
                                     event: event,
                                     timeline: timeline,
@@ -267,6 +271,31 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                           messageStyle: messageStyle,
                                         ),
                                       },
+                                if (event
+                                    .aggregatedEvents(
+                                      timeline,
+                                      RelationshipTypes.thread,
+                                    )
+                                    .isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: kTinyPadding,
+                                    ),
+                                    child: InkWell(
+                                      onTap: () => showDialog(
+                                        context: context,
+                                        builder: (context) => ChatThreadDialog(
+                                          event: event,
+                                          timeline: timeline,
+                                          onReplyOriginClick:
+                                              onReplyOriginClick,
+                                        ),
+                                      ),
+                                      child: const Badge(
+                                        label: Text('Thread >'),
+                                      ),
+                                    ),
+                                  ),
                                 if (!event.redacted)
                                   Padding(
                                     padding: const EdgeInsets.only(

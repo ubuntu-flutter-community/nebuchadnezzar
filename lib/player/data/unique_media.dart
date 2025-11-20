@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:media_kit/media_kit.dart';
 
-abstract class UniqueMedia extends Media {
+abstract interface class UniqueMedia extends Media {
   UniqueMedia(
     super.resource, {
     super.extras,
@@ -10,8 +10,6 @@ abstract class UniqueMedia extends Media {
     super.start,
     super.end,
   });
-
-  String get resource => super.uri;
 
   String get id;
 

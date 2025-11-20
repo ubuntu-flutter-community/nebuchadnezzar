@@ -31,13 +31,14 @@ class ChatManager extends SafeChangeNotifier {
   String? _filteredRoomsQuery;
   String? get filteredRoomsQuery => _filteredRoomsQuery;
   void setFilteredRoomsQuery(String? value) {
-    if (value == _filteredRoomsQuery) return;
     _filteredRoomsQuery = value;
     notifyListeners();
   }
 
+  final Set<String> _hiddenRooms = {'settings_______'};
   List<Room> get _activeOrArchivedRoomsOrSpaces {
     final theRooms = (archiveActive ? _archivedRooms : _rooms)
+        .where((e) => !_hiddenRooms.contains(e.id))
         .where(roomsFilter?.filter ?? (e) => true)
         .toList();
     if (roomsFilter != RoomsFilter.spaces || activeSpace == null) {
@@ -59,6 +60,9 @@ class ChatManager extends SafeChangeNotifier {
           ),
     ).toList();
   }
+
+  Stream<List<Room>> get filteredRoomsStream =>
+      syncStream.map((_) => filteredRooms);
 
   List<Room> get filteredRooms => _activeOrArchivedRoomsOrSpaces
       .where(

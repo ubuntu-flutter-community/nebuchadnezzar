@@ -43,6 +43,18 @@ class DraftManager extends SafeChangeNotifier {
   int get maxUploadSize => _mediaConfig?.mUploadSize ?? 100 * 1000 * 1000;
   MediaConfig? _mediaConfig;
 
+  String? _threadRootEventId;
+  String? get threadRootEventId => _threadRootEventId;
+  void setThreadRootEventId(String? eventId) {
+    _threadRootEventId = eventId;
+  }
+
+  String? _threadLastEventId;
+  String? get threadLastEventId => _threadLastEventId;
+  void setThreadLastEventId(String? eventId) {
+    _threadLastEventId = eventId;
+  }
+
   Future<void> send({required Room room, String? text}) async {
     try {
       await room.setTyping(false);
@@ -108,6 +120,8 @@ class DraftManager extends SafeChangeNotifier {
           textDraft.trim(),
           inReplyTo: replyEvent,
           editEventId: _editEvents[room.id]?.eventId,
+          threadRootEventId: _threadRootEventId,
+          threadLastEventId: _threadLastEventId,
         );
       } on Exception catch (e, s) {
         printMessageInDebugMode(e, s);

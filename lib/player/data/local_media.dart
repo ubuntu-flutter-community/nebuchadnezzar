@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:audio_metadata_reader/audio_metadata_reader.dart';
 import 'package:collection/collection.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart' as p;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,7 +14,7 @@ import '../../common/platforms.dart';
 import '../../extensions/media_file_x.dart';
 import 'unique_media.dart';
 
-class LocalMedia extends UniqueMedia {
+class LocalMedia extends Media implements UniqueMedia {
   LocalMedia(
     super.path, {
     super.extras,
