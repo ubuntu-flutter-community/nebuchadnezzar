@@ -33,6 +33,7 @@ import 'events/chat_download_service.dart';
 import 'extensions/client_x.dart';
 import 'online_art/online_art_service.dart';
 import 'player/player_manager.dart';
+import 'radio/radio_manager.dart';
 import 'radio/radio_service.dart';
 import 'settings/account_manager.dart';
 import 'settings/settings_manager.dart';
@@ -200,6 +201,12 @@ void registerDependencies() {
         playerManager: di<PlayerManager>(),
       ),
       dispose: (s) => s.dispose(),
+    )
+    ..registerLazySingleton<RadioManager>(
+      () => RadioManager(
+        settingsService: di<SettingsService>(),
+        radioService: di<RadioService>(),
+      ),
     )
     ..registerSingletonAsync<PlayerManager>(
       () async => AudioService.init(
