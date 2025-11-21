@@ -6,10 +6,10 @@ import 'package:yaru/yaru.dart';
 import '../../app/app_config.dart';
 import '../../common/constants.dart';
 import '../../common/view/theme.dart';
-import '../../extensions/safe_value_notifier_extension.dart';
+import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/l10n.dart';
+import '../authentication_capsule.dart';
 import '../authentication_manager.dart';
-import 'authentication_mixin.dart';
 import 'chat_login_page_scaffold.dart';
 
 class ChatMatrixIdLoginPage extends StatefulWidget
@@ -20,32 +20,49 @@ class ChatMatrixIdLoginPage extends StatefulWidget
   State<ChatMatrixIdLoginPage> createState() => _ChatMatrixIdLoginPageState();
 }
 
-class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage>
-    with AuthenticationMixin {
+class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
   final TextEditingController _homeServerController = TextEditingController(
     text: defaultHomeServer,
   );
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> onPressed(BuildContext context) async => login(
-    context,
-    loginMethod: LoginType.mLoginPassword,
-    homeServer: _homeServerController.text.trim(),
-    username: _usernameController.text.trim(),
-    password: _passwordController.text,
-  );
+  Future<void> onPressed(BuildContext context) async =>
+      di<AuthenticationManager>().loginCommand.run(
+        LoginCapsule(
+          loginMethod: LoginType.mLoginPassword,
+          homeServer: _homeServerController.text.trim(),
+          username: _usernameController.text.trim(),
+          password: _passwordController.text,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
     final processingAccess = watchValue(
-      (AuthenticationManager s) => s.processingAccess,
+      (AuthenticationManager s) => s.loginCommand.isRunning,
+    );
+
+    final errors = watchValue(
+      (AuthenticationManager s) => s.loginCommand.errors,
     );
 
     final showPassword = watchValue(
       (AuthenticationManager s) => s.showPassword,
+    );
+
+    registerHandler(
+      select: (AuthenticationManager m) => m.loginCommand,
+      handler: (context, userId, cancel) {
+        if (userId != null && context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const CheckEncryptionSetupPage()),
+            (route) => false,
+          );
+        }
+      },
     );
 
     return ChatLoginPageScaffold(
@@ -59,6 +76,15 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage>
           autocorrect: false,
           textInputAction: TextInputAction.next,
           decoration: InputDecoration(
+            error: errors?.error != null
+                ? Row(
+                    children: [
+                      const Icon(Icons.error),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(errors!.error.toString())),
+                    ],
+                  )
+                : null,
             prefixText: 'https://',
             labelText: l10n.homeserver,
           ),
@@ -86,8 +112,7 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage>
               isSelected: showPassword,
               padding: EdgeInsets.zero,
               style: textFieldSuffixStyle,
-              onPressed: () =>
-                  di<AuthenticationManager>().showPassword.toggle(),
+              onPressed: () => di<AuthenticationManager>().toggleShowPassword(),
               icon: Icon(showPassword ? YaruIcons.eye_filled : YaruIcons.eye),
             ),
           ),

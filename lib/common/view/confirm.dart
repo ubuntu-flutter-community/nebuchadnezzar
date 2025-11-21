@@ -25,9 +25,10 @@ class ConfirmationDialog<T> extends StatefulWidget {
     this.confirmEnabled = true,
     this.contentPadding,
     this.titlePadding,
+    this.loading = false,
   });
-  final Future<T> Function()? onConfirm;
-  final Future<T> Function()? onCancel;
+  final dynamic Function()? onConfirm;
+  final dynamic Function()? onCancel;
   final List<Widget>? additionalActions;
   final Widget? title;
   final Widget? content;
@@ -39,10 +40,10 @@ class ConfirmationDialog<T> extends StatefulWidget {
   final EdgeInsetsGeometry? contentPadding;
   final bool confirmEnabled;
   final EdgeInsetsGeometry? titlePadding;
-
+  final bool loading;
   static Future<T?> show<T>({
     required BuildContext context,
-    required Future<T> Function() onConfirm,
+    required dynamic Function() onConfirm,
     Widget? title,
     Widget? content,
     String? confirmLabel,
@@ -52,8 +53,9 @@ class ConfirmationDialog<T> extends StatefulWidget {
     bool scrollable = false,
     List<Widget>? additionalActions,
     EdgeInsetsGeometry? contentPadding,
-    Future<T> Function()? onCancel,
+    dynamic Function()? onCancel,
     bool showCancel = true,
+    bool loading = false,
   }) => showDialog<T>(
     context: context,
     barrierDismissible: barrierDismissible,
@@ -70,6 +72,7 @@ class ConfirmationDialog<T> extends StatefulWidget {
       contentPadding: contentPadding,
       onCancel: onCancel,
       showCancel: showCancel,
+      loading: loading,
     ),
   );
 
@@ -80,6 +83,22 @@ class ConfirmationDialog<T> extends StatefulWidget {
 class _ConfirmationDialogState<T> extends State<ConfirmationDialog<T>> {
   bool _loading = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loading = widget.loading;
+  }
+
+  @override
+  void didUpdateWidget(covariant ConfirmationDialog<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.loading != widget.loading) {
+      setState(() {
+        _loading = widget.loading;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -30,7 +30,23 @@ class AuthenticationService {
 
   final int _timeoutSeconds = 65;
 
-  Future<void> login({
+  Future<bool> checkIfLoginTypeIsSupported(
+    String loginType,
+    String homeServer,
+  ) async {
+    final (_, _, loginFlows, _) = await _client.checkHomeserver(
+      Uri.https(homeServer, ''),
+    );
+
+    return loginFlows.supportsFlow(loginType);
+  }
+
+  /// Logs in a user using the specified [loginMethod].
+  ///
+  /// For [LoginType.mLoginPassword], [homeServer], [username], and [password]
+  /// must be provided.
+  /// For [LoginType.mLoginToken], only [homeServer] must be provided.
+  Future<String?> login({
     required String loginMethod,
     String homeServer = defaultHomeServer,
     String? username,
@@ -60,7 +76,7 @@ class AuthenticationService {
     };
   }
 
-  Future<void> _userNamePasswordLogin({
+  Future<String?> _userNamePasswordLogin({
     required String homeServer,
     required String username,
     required String password,
@@ -68,7 +84,7 @@ class AuthenticationService {
     try {
       await _client.checkHomeserver(Uri.https(homeServer, ''));
 
-      await _client
+      final response = await _client
           .login(
             LoginType.mLoginPassword,
             password: password,
@@ -78,12 +94,14 @@ class AuthenticationService {
                 : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
           .timeout(const Duration(seconds: 30));
+
+      return response.userId;
     } on Exception {
       rethrow;
     }
   }
 
-  Future<void> _singleSingOnLogin({required String homeServer}) async {
+  Future<String?> _singleSingOnLogin({required String homeServer}) async {
     try {
       final redirectUrl = Platforms.isWeb
           ? Uri.parse(
@@ -118,7 +136,7 @@ class AuthenticationService {
         throw Exception('Login token not received from SSO.');
       }
 
-      await _client
+      final response = await _client
           .login(
             LoginType.mLoginToken,
             token: token,
@@ -127,6 +145,8 @@ class AuthenticationService {
                 : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
           )
           .timeout(Duration(seconds: _timeoutSeconds));
+
+      return response.userId;
     } on Exception {
       rethrow;
     }
@@ -141,4 +161,18 @@ class AuthenticationService {
       rethrow;
     }
   }
+}
+
+extension LoginFlowX on List<LoginFlow> {
+  bool supportsFlow(String flowType) => any((flow) => flow.type == flowType);
+
+  bool get supportsSso => supportsFlow(LoginTypeX.mLoginSso);
+
+  bool get supportsPasswordLogin => supportsFlow(LoginType.mLoginPassword);
+
+  bool get supportsTokenLogin => supportsFlow(LoginType.mLoginToken);
+}
+
+class LoginTypeX extends LoginType {
+  static const mLoginSso = 'm.login.sso';
 }
