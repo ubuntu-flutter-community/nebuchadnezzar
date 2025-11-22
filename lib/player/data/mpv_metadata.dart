@@ -43,16 +43,15 @@ class MpvMetaData {
   }
 
   Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
-
-    result.addAll({'icy-br': icyBr});
-    result.addAll({'icy-genre': icyGenre});
-    result.addAll({'icy-name': icyName});
-    result.addAll({'icy-url': icyUrl});
-    result.addAll({'icy-audio-info': icyAudioInfo});
-    result.addAll({'icy-pub': icyPub});
-    result.addAll({'icy-description': icyDescription});
-    result.addAll({'icy-title': icyTitle});
+    final result = <String, dynamic>{}
+      ..addAll({'icy-br': icyBr})
+      ..addAll({'icy-genre': icyGenre})
+      ..addAll({'icy-name': icyName})
+      ..addAll({'icy-url': icyUrl})
+      ..addAll({'icy-audio-info': icyAudioInfo})
+      ..addAll({'icy-pub': icyPub})
+      ..addAll({'icy-description': icyDescription})
+      ..addAll({'icy-title': icyTitle});
 
     return result;
   }

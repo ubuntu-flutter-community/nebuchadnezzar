@@ -51,8 +51,8 @@ class ChatMessageReactions extends StatelessWidget {
       }
     }
 
-    final reactionList = reactionMap.values.toList();
-    reactionList.sort((a, b) => b.count - a.count > 0 ? 1 : -1);
+    final reactionList = reactionMap.values.toList()
+      ..sort((a, b) => b.count - a.count > 0 ? 1 : -1);
 
     return Wrap(
       spacing: kSmallPadding,

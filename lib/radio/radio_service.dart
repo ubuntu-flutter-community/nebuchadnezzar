@@ -286,7 +286,7 @@ class RadioService {
       return;
     }
 
-    _setMpvMetaData(newData.copyWith(icyTitle: parsedIcyTitle));
+    await _setMpvMetaData(newData.copyWith(icyTitle: parsedIcyTitle));
   }
 
   MpvMetaData? _mpvMetaData;

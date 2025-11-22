@@ -18,10 +18,10 @@ mixin PlayerControlMixin {
   Future<void> togglePlayerFullMode(BuildContext context) async {
     if (di<PlayerManager>().playerViewState.value.fullMode) {
       di<PlayerManager>().updateState(fullMode: false);
-      Navigator.of(context).maybePop();
+      await Navigator.of(context).maybePop();
     } else {
       di<PlayerManager>().updateState(fullMode: true);
-      showDialog(
+      await showDialog(
         context: context,
         builder: (context) => const PlayerFullView(),
       );

@@ -88,21 +88,23 @@ Future<void> uiaRequestHandler({
         final url = Uri.parse(
           '${client.homeserver}/_matrix/client/r0/auth/$stage/fallback/web?session=${uiaRequest.session}',
         );
-        launchUrlString(url.toString());
+        await launchUrlString(url.toString());
 
-        await showOkCancelAlertDialog(
-          context: context,
-          title: l10n.pleaseFollowInstructionsOnWeb,
-          okLabel: l10n.next,
-        ).then((result) {
-          if (result == OkCancelResult.ok) {
-            uiaRequest.completeStage(
-              AuthenticationData(type: stage, session: uiaRequest.session),
-            );
-          } else {
-            uiaRequest.cancel();
-          }
-        });
+        if (context.mounted) {
+          await showOkCancelAlertDialog(
+            context: context,
+            title: l10n.pleaseFollowInstructionsOnWeb,
+            okLabel: l10n.next,
+          ).then((result) {
+            if (result == OkCancelResult.ok) {
+              uiaRequest.completeStage(
+                AuthenticationData(type: stage, session: uiaRequest.session),
+              );
+            } else {
+              uiaRequest.cancel();
+            }
+          });
+        }
     }
   } catch (e, s) {
     Logs().e('Error while background UIA', e, s);

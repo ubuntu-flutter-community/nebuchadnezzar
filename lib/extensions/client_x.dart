@@ -63,7 +63,7 @@ extension ClientX on Client {
       return database;
     } catch (e, s) {
       Logs().wtf('Unable to construct database!', e, s);
-      database?.delete().catchError(
+      await database?.delete().catchError(
         (e, s) => Logs().wtf(
           'Unable to delete database, after failed construction',
           e,
@@ -123,7 +123,7 @@ extension ClientX on Client {
     required FlutterSecureStorage secureStorage,
   }) async {
     if (Platforms.isWeb) {
-      html.window.navigator.storage?.persist();
+      await html.window.navigator.storage?.persist();
       return MatrixSdkDatabase.init(clientName);
     }
 
@@ -200,12 +200,12 @@ extension ClientX on Client {
       password = await secureStorage.read(key: passwordStorageKey);
       if (password == null) throw MissingPluginException();
     } on MissingPluginException catch (e) {
-      const FlutterSecureStorage()
+      await const FlutterSecureStorage()
           .delete(key: passwordStorageKey)
           .catchError((_) {});
       Logs().w('Database encryption is not supported on this platform', e);
     } catch (e, s) {
-      const FlutterSecureStorage()
+      await const FlutterSecureStorage()
           .delete(key: passwordStorageKey)
           .catchError((_) {});
       Logs().w('Unable to init database encryption', e, s);

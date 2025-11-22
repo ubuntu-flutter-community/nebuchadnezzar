@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
@@ -7,6 +8,7 @@ import 'package:yaru/yaru.dart';
 import '../../chat_room/create_or_edit/edit_room_service.dart';
 import '../../chat_room/titlebar/chat_room_notification_button.dart';
 import '../../common/chat_manager.dart';
+import '../../common/rooms_filter.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../l10n/l10n.dart';
@@ -91,7 +93,7 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                     style: context.textTheme.bodyMedium,
                   ),
                 ),
-                ...[
+                if (di<ChatManager>().roomsFilter == RoomsFilter.spaces) ...[
                   MenuItemButton(
                     onPressed: () => showDialog(
                       context: context,
@@ -100,16 +102,21 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                     leadingIcon: const Icon(YaruIcons.plus),
                     child: Text(context.l10n.addToSpace),
                   ),
-
-                  MenuItemButton(
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (context) =>
-                          RemoveFromSpaceDialog(room: widget.room),
+                  if (di<ChatManager>().spaces.firstWhereOrNull(
+                        (space) => space.spaceChildren
+                            .map((c) => c.roomId)
+                            .contains(widget.room.id),
+                      ) !=
+                      null)
+                    MenuItemButton(
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) =>
+                            RemoveFromSpaceDialog(room: widget.room),
+                      ),
+                      leadingIcon: const Icon(YaruIcons.minus),
+                      child: Text(context.l10n.removeFromSpace),
                     ),
-                    leadingIcon: const Icon(YaruIcons.minus),
-                    child: Text(context.l10n.removeFromSpace),
-                  ),
                 ],
               ],
         child: widget.child,

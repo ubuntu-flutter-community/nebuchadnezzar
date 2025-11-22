@@ -216,11 +216,10 @@ extension EventX on Event {
 
   Future<void> togglePinned() async {
     if (pinned) {
-      final newPinned = List<String>.from(room.pinnedEventIds);
-      newPinned.remove(eventId);
-      room.setPinnedEvents(newPinned);
+      final newPinned = List<String>.from(room.pinnedEventIds)..remove(eventId);
+      await room.setPinnedEvents(newPinned);
     } else {
-      room.setPinnedEvents([...room.pinnedEventIds, eventId]);
+      await room.setPinnedEvents([...room.pinnedEventIds, eventId]);
     }
   }
 

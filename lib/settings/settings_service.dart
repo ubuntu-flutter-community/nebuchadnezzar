@@ -99,15 +99,13 @@ class SettingsService {
           .then(notify);
   Future<void> addFavoriteStation(String stationUuid) async {
     if (favoriteStations.contains(stationUuid)) return;
-    final stations = List<String>.from(favoriteStations);
-    stations.add(stationUuid);
+    final stations = List<String>.from(favoriteStations)..add(stationUuid);
     await setFavoriteStations(stations);
   }
 
   Future<void> removeFavoriteStation(String stationUuid) async {
     if (!favoriteStations.contains(stationUuid)) return;
-    final stations = List<String>.from(favoriteStations);
-    stations.remove(stationUuid);
+    final stations = List<String>.from(favoriteStations)..remove(stationUuid);
     await setFavoriteStations(stations);
   }
 

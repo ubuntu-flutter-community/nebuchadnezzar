@@ -79,26 +79,24 @@ class ChatEventSeenByAvatar extends StatelessWidget {
   final User user;
 
   @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: user.displayName ?? user.id,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(15),
-        onTap: () async {
-          final profile = await di<SearchManager>().lookupProfile(user.id);
-          if (context.mounted) {
-            showDialog(
-              context: context,
-              builder: (context) => ChatProfileDialog(userId: profile.userId),
-            );
-          }
-        },
-        child: ChatAvatar(
-          avatarUri: user.avatarUrl,
-          fallBackIconSize: 10,
-          dimension: 15,
-        ),
+  Widget build(BuildContext context) => Tooltip(
+    message: user.displayName ?? user.id,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(15),
+      onTap: () async {
+        final profile = await di<SearchManager>().lookupProfile(user.id);
+        if (context.mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => ChatProfileDialog(userId: profile.userId),
+          );
+        }
+      },
+      child: ChatAvatar(
+        avatarUri: user.avatarUrl,
+        fallBackIconSize: 10,
+        dimension: 15,
       ),
-    );
-  }
+    ),
+  );
 }
