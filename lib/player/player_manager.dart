@@ -211,8 +211,9 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
       _oldPlaylistMedias = List<UniqueMedia>.from(medias);
       medias.shuffle();
     } else {
-      medias.clear();
-      medias.addAll(_oldPlaylistMedias);
+      medias
+        ..clear()
+        ..addAll(_oldPlaylistMedias);
     }
     setPlaylist(medias);
   }

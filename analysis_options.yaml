@@ -16,3 +16,5 @@ linter:
     unnecessary_await_in_return: true
     unnecessary_late: true
     unnecessary_breaks: true
+    unawaited_futures: true
+    cascade_invocations: true

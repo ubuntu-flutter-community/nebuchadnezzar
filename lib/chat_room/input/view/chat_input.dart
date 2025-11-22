@@ -213,17 +213,17 @@ class _ChatInputState extends State<ChatInput> {
                   controller: _sendController,
                   enabled: !archiveActive && !unAcceptedDirectChat,
                   autofocus: true,
-
                   onChanged: (v) {
-                    draftManager.setTextDraft(
-                      roomId: widget.room.id,
-                      draft: v,
-                      notify: false,
-                    );
-                    draftManager.setCursorPosition(
-                      roomId: widget.room.id,
-                      position: _sendController.selection.baseOffset,
-                    );
+                    draftManager
+                      ..setTextDraft(
+                        roomId: widget.room.id,
+                        draft: v,
+                        notify: false,
+                      )
+                      ..setCursorPosition(
+                        roomId: widget.room.id,
+                        position: _sendController.selection.baseOffset,
+                      );
                     unawaited(
                       di<EditRoomService>().setTyping(
                         widget.room,
@@ -268,16 +268,18 @@ class _ChatInputState extends State<ChatInput> {
                                 : (cat, emo) {
                                     _sendController.text =
                                         _sendController.text + emo.emoji;
-                                    draftManager.setTextDraft(
-                                      roomId: widget.room.id,
-                                      draft: _sendController.text,
-                                      notify: true,
-                                    );
-                                    draftManager.setCursorPosition(
-                                      roomId: widget.room.id,
-                                      position:
-                                          _sendController.selection.baseOffset,
-                                    );
+                                    draftManager
+                                      ..setTextDraft(
+                                        roomId: widget.room.id,
+                                        draft: _sendController.text,
+                                        notify: true,
+                                      )
+                                      ..setCursorPosition(
+                                        roomId: widget.room.id,
+                                        position: _sendController
+                                            .selection
+                                            .baseOffset,
+                                      );
                                     _sendNode.requestFocus();
                                   },
                           ),

@@ -115,9 +115,9 @@ class _CustomClipPathDark extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0, width);
-    path.lineTo(width, height);
+    Path path = Path()
+      ..lineTo(0, width)
+      ..lineTo(width, height);
     return path;
   }
 
@@ -133,9 +133,9 @@ class _CustomClipPathLight extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(width, 0);
-    path.lineTo(width, height);
+    Path path = Path()
+      ..lineTo(width, 0)
+      ..lineTo(width, height);
     return path;
   }
 

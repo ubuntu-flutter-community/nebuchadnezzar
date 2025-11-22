@@ -114,10 +114,9 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                               _recoveryKeyTextEditingController.text.isEmpty
                           ? null
                           : () async {
-                              encryptionManager.setRecoveryKeyInputError(null);
-                              encryptionManager.setRecoveryKeyInputLoading(
-                                true,
-                              );
+                              encryptionManager
+                                ..setRecoveryKeyInputError(null)
+                                ..setRecoveryKeyInputLoading(true);
                               try {
                                 final newKey = _recoveryKeyTextEditingController
                                     .text
@@ -219,7 +218,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                   onPressed: recoveryKeyInputLoading
                       ? null
                       : () async {
-                          showDialog(
+                          await showDialog(
                             context: context,
                             builder: (context) => ConfirmationDialog(
                               title: Text(l10n.recoveryKeyLost),

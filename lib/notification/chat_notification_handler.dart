@@ -17,22 +17,23 @@ Future<void> chatNotificationHandler(
   if (newValue.hasData && !focused && selectedRoom == null ||
       selectedRoom?.id != newValue.data?.room.id) {
     final event = newValue.data!;
-    final notification = LocalNotification(
-      title: event.room.getLocalizedDisplayname(),
-      body: event.body,
-      actions: [
-        LocalNotificationAction(
-          text: context.mounted ? context.l10n.openChat : 'Open Chat',
-        ),
-      ],
-    );
-    notification.onClick = () {
-      di<ChatManager>().setSelectedRoom(event.room);
-    };
-    notification.onClickAction = (i) {
-      di<ChatManager>().setSelectedRoom(event.room);
-      di<WindowManager>().focus();
-    };
-    notification.show();
+    final notification =
+        LocalNotification(
+            title: event.room.getLocalizedDisplayname(),
+            body: event.body,
+            actions: [
+              LocalNotificationAction(
+                text: context.mounted ? context.l10n.openChat : 'Open Chat',
+              ),
+            ],
+          )
+          ..onClick = () {
+            di<ChatManager>().setSelectedRoom(event.room);
+          }
+          ..onClickAction = (i) {
+            di<ChatManager>().setSelectedRoom(event.room);
+            di<WindowManager>().focus();
+          };
+    await notification.show();
   }
 }

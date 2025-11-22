@@ -257,7 +257,10 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     }
     await _maybeScrollTo(index);
     if (!widget.timeline.room.isArchived) {
-      widget.timeline.setReadMarker(eventId: event.eventId);
+      await di<TimelineManager>().trySetReadMarker(
+        widget.timeline,
+        eventId: event.eventId,
+      );
     }
   }
 
