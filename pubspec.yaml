@@ -102,17 +102,17 @@ dependency_overrides:
     git:
       url: https://github.com/media-kit/media-kit
       path: media_kit
-      ref: c1ef5b7aebba776298670b68806c651fc5237756
+      ref: 5a50cb2fc92d8d53cbfb78f46d705c92fccce5c9
   media_kit_libs_video:
     git:
       url: https://github.com/media-kit/media-kit
       path: libs/universal/media_kit_libs_video
-      ref: c1ef5b7aebba776298670b68806c651fc5237756
+      ref: 5a50cb2fc92d8d53cbfb78f46d705c92fccce5c9
   media_kit_video:
     git:
       url: https://github.com/media-kit/media-kit
       path: media_kit_video
-      ref: c1ef5b7aebba776298670b68806c651fc5237756
+      ref: 5a50cb2fc92d8d53cbfb78f46d705c92fccce5c9
 
 flutter:
   generate: true

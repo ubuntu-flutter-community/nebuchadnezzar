@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 
 import '../../common/view/confirm.dart';
 import '../../common/view/ui_constants.dart';
@@ -14,17 +14,14 @@ class ChatSettingsPusherList extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    callOnce((context) => di<AccountManager>().getPushers());
-
     final pushersFromStream = watchStream(
       (AccountManager c) => c.pusherStream,
       preserveState: false,
     ).data;
 
     final pushersFromFuture = watchFuture(
-      (AccountManager c) => c.pushersFuture,
-      preserveState: false,
-      initialValue: [],
+      (AccountManager m) => m.getPushers(),
+      initialValue: <Pusher>[],
     ).data;
 
     final pushers = pushersFromStream ?? pushersFromFuture ?? [];

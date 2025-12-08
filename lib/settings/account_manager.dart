@@ -192,8 +192,7 @@ class AccountManager {
   Stream<List<Pusher>?> get pusherStream =>
       _client.onSync.stream.asyncMap((e) async => _client.getPushers());
 
-  late Future<List<Pusher>?> pushersFuture;
-  void getPushers() => pushersFuture = _client.getPushers();
+  Future<List<Pusher>?> getPushers() async => _client.getPushers();
 
   Future<SyncUpdate> get pushRuleUpdateFuture => _client.onSync.stream
       .where(
