@@ -18,7 +18,9 @@ class RadioFavoritesList extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    callOnce((_) => di<RadioManager>().favoriteStationsCommand.run());
+    callOnceAfterThisBuild(
+      (_) => di<RadioManager>().favoriteStationsCommand.run(),
+    );
     return watchValue(
       (RadioManager s) => s.favoriteStationsCommand.results,
     ).toWidget(

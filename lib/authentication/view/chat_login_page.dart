@@ -38,18 +38,6 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    final allowsPasswordLogin = watchValue(
-      (AuthenticationManager s) => s.supportedLoginTypeCommand,
-    );
-
-    final readOnly = watchValue(
-      (AuthenticationManager s) => s.loginCommand.isRunning,
-    );
-
-    final errors = watchValue(
-      (AuthenticationManager s) => s.loginCommand.errors,
-    );
-
     registerHandler(
       select: (AuthenticationManager m) => m.loginCommand,
       handler: (context, userId, cancel) {
@@ -62,13 +50,25 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
       },
     );
 
-    callOnce(
+    callOnceAfterThisBuild(
       (context) => di<AuthenticationManager>().supportedLoginTypeCommand.run(
         LoginTypeCheckCapsule(
           loginMethod: LoginType.mLoginPassword,
           homeServer: _homeServerController.text.trim(),
         ),
       ),
+    );
+
+    final allowsPasswordLogin = watchValue(
+      (AuthenticationManager s) => s.supportedLoginTypeCommand,
+    );
+
+    final readOnly = watchValue(
+      (AuthenticationManager s) => s.loginCommand.isRunning,
+    );
+
+    final errors = watchValue(
+      (AuthenticationManager s) => s.loginCommand.errors,
     );
 
     return ChatLoginPageScaffold(
