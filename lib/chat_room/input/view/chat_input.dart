@@ -12,6 +12,7 @@ import '../../../common/chat_manager.dart';
 import '../../../common/logging.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/ui_constants.dart';
+import '../../../extensions/room_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../common/view/chat_typing_indicator.dart';
 import '../../create_or_edit/edit_room_service.dart';
@@ -151,11 +152,15 @@ class _ChatInputState extends State<ChatInput> {
         child: Icon(YaruIcons.send_filled),
       ),
     );
+
     final unAcceptedDirectChat =
-        widget.room.isDirectChat &&
-        widget.room.getParticipants().any(
-          (e) => e.membership == Membership.invite,
-        );
+        watchStream(
+          (ChatManager m) => m.getPendingDirectChatStream(widget.room),
+          initialValue: widget.room.isUnacceptedDirectChat,
+          preserveState: false,
+          allowStreamChange: true,
+        ).data ??
+        false;
 
     return Stack(
       clipBehavior: Clip.none,

@@ -86,7 +86,8 @@
     "otherNotificationSettings",
     "deletePushRuleTitle",
     "deletePushRuleDescription",
-    "pusherDevices"
+    "pusherDevices",
+    "syncNow"
   ],
 
   "sv": [
@@ -181,6 +182,7 @@
     "otherNotificationSettings",
     "deletePushRuleTitle",
     "deletePushRuleDescription",
-    "pusherDevices"
+    "pusherDevices",
+    "syncNow"
   ]
 }

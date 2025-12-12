@@ -92,30 +92,6 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             itemBuilder: (context, i, animation) {
               final event = widget.timeline.events[i];
 
-              if (event.hideInTimeline(
-                    showAvatarChanges: showAvatarChanges,
-                    showDisplayNameChanges: showDisplayNameChanges,
-                  ) ||
-                  event
-                      .getDisplayEvent(widget.timeline)
-                      .hideInTimeline(
-                        showAvatarChanges: showAvatarChanges,
-                        showDisplayNameChanges: showDisplayNameChanges,
-                      )) {
-                return Column(
-                  children: [
-                    const SizedBox.shrink(),
-                    if (i == 0 && !widget.timeline.room.isSpace)
-                      ChatEventSeenByIndicator(
-                        key: ValueKey(
-                          '${event.eventId}${widget.timeline.events.length}',
-                        ),
-                        event: event,
-                      ),
-                  ],
-                );
-              }
-
               final previous = widget.timeline.events.elementAtOrNull(i + 1);
               final next = i == 0
                   ? null
@@ -134,30 +110,42 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (previous != null &&
-                          event.originServerTs.toLocal().day !=
-                              previous.originServerTs.toLocal().day)
-                        Text(
-                          previous.originServerTs
-                              .toLocal()
-                              .formatAndLocalizeDay(context),
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.labelSmall,
-                        ),
-                      RepaintBoundary(
-                        child: ChatEventTile(
-                          key: ValueKey('${event.eventId}column'),
-                          event: event,
-                          eventPosition: event.getEventPosition(
-                            prev: previous,
-                            next: next,
+                      if (!event.hideInTimeline(
                             showAvatarChanges: showAvatarChanges,
                             showDisplayNameChanges: showDisplayNameChanges,
+                          ) &&
+                          !event
+                              .getDisplayEvent(widget.timeline)
+                              .hideInTimeline(
+                                showAvatarChanges: showAvatarChanges,
+                                showDisplayNameChanges: showDisplayNameChanges,
+                              )) ...[
+                        if (previous != null &&
+                            event.originServerTs.toLocal().day !=
+                                previous.originServerTs.toLocal().day)
+                          Text(
+                            previous.originServerTs
+                                .toLocal()
+                                .formatAndLocalizeDay(context),
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.labelSmall,
                           ),
-                          onReplyOriginClick: (event) => _jump(event),
-                          timeline: widget.timeline,
+                        RepaintBoundary(
+                          child: ChatEventTile(
+                            key: ValueKey('${event.eventId}column'),
+                            event: event,
+                            eventPosition: event.getEventPosition(
+                              prev: previous,
+                              next: next,
+                              showAvatarChanges: showAvatarChanges,
+                              showDisplayNameChanges: showDisplayNameChanges,
+                            ),
+                            onReplyOriginClick: (event) => _jump(event),
+                            timeline: widget.timeline,
+                          ),
                         ),
-                      ),
+                      ],
+
                       if (i == 0 && !widget.timeline.room.isSpace)
                         ChatEventSeenByIndicator(
                           key: ValueKey(

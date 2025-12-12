@@ -33,6 +33,8 @@ class _ChatMasterSettingsTileAvatarState
     final syncStatus = watchStream(
       (ChatManager m) => m.syncStatusUpdateStream,
       initialValue: di<ChatManager>().syncStatusUpdate,
+      preserveState: false,
+      allowStreamChange: true,
     ).data;
 
     final widget = switch (syncStatus?.status) {
@@ -41,14 +43,22 @@ class _ChatMasterSettingsTileAvatarState
         message: syncStatus?.error?.exception?.toString() ?? '',
         child: Icon(YaruIcons.error, color: context.theme.colorScheme.error),
       ),
+      SyncStatus.processing => const Center(
+        key: ValueKey('1'),
+        child: Padding(
+          padding: EdgeInsets.all(4.0),
+          child: Progress(strokeWidth: 2),
+        ),
+      ),
       SyncStatus.cleaningUp => const Center(
+        key: ValueKey('2'),
         child: Padding(
           padding: EdgeInsets.all(4.0),
           child: Progress(strokeWidth: 2),
         ),
       ),
       _ => FutureBuilder(
-        key: const ValueKey('2'),
+        key: const ValueKey('3'),
         future: _profileFuture,
         builder: (context, asyncSnapshot) {
           return ChatSettingsAvatar(
@@ -61,7 +71,7 @@ class _ChatMasterSettingsTileAvatarState
       ),
     };
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 400),
       child: SizedBox.square(dimension: 25, child: widget),
     );
   }

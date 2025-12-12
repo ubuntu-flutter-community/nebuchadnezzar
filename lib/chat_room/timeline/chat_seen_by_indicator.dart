@@ -1,37 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 
-import '../../authentication/authentication_service.dart';
 import '../../common/chat_manager.dart';
 import '../../common/search_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/user_x.dart';
+
+const maxAvatars = 7;
 
 class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
   const ChatEventSeenByIndicator({super.key, required this.event});
 
   final Event event;
 
-  static const maxAvatars = 7;
-
   @override
   Widget build(BuildContext context) {
     final seenByUsers =
         watchStream(
-              (ChatManager m) => m.getRoomsReceiptsStream(event),
-              initialValue: event.receipts,
-            ).data
-            ?.map((e) => e.user)
-            .where((e) => e.id != di<AuthenticationService>().loggedInUserId)
-            .toList() ??
+          (ChatManager m) => m.getRoomsReceiptsStream(event),
+          initialValue: event.receipts,
+        ).data?.map((e) => e.user).where((e) => !e.isLoggedInUser).toList() ??
         [];
 
+    return SimpleChatSeenByIndicator(seenByUsers: seenByUsers);
+  }
+}
+
+class SimpleChatSeenByIndicator extends StatelessWidget {
+  const SimpleChatSeenByIndicator({
+    super.key,
+    required this.seenByUsers,
+    this.alignment,
+  });
+
+  final List<User> seenByUsers;
+  final AlignmentGeometry? alignment;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      alignment: Alignment.center,
+      alignment: alignment ?? Alignment.center,
       child: AnimatedContainer(
         padding: const EdgeInsets.symmetric(
           vertical: kSmallPadding,

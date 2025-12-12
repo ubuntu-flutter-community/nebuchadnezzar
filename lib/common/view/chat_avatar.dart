@@ -16,6 +16,7 @@ class ChatAvatar extends StatefulWidget with WatchItStatefulWidgetMixin {
     this.avatarUri,
     this.fallBackColor,
     this.onTap,
+    this.onLongPress,
     this.borderRadius,
     this.fit = BoxFit.cover,
   });
@@ -26,6 +27,7 @@ class ChatAvatar extends StatefulWidget with WatchItStatefulWidgetMixin {
   final double? fallBackIconSize;
   final Color? fallBackColor;
   final void Function()? onTap;
+  final void Function()? onLongPress;
   final BorderRadius? borderRadius;
   final BoxFit fit;
 
@@ -92,6 +94,7 @@ class _ChatAvatarState extends State<ChatAvatar> {
     return InkWell(
       borderRadius: borderRadius,
       onTap: widget.onTap,
+      onLongPress: widget.onLongPress,
       child: sizedBox,
     );
   }
