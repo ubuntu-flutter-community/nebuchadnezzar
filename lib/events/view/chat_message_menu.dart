@@ -1,14 +1,15 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../chat_room/input/draft_manager.dart';
+import '../../chat_room/timeline/chat_seen_by_indicator.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../extensions/event_x.dart';
+import '../../extensions/user_x.dart';
 import '../../l10n/l10n.dart';
 import 'chat_event_inspect_dialog.dart';
 import 'chat_message_menu_reaction_picker.dart';
@@ -114,17 +115,27 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
                     onPressed: () => widget.event.sendAgain(),
                     child: Text(context.l10n.send, style: style),
                   ),
-                if (kDebugMode)
-                  MenuItemButton(
-                    trailingIcon: const Icon(YaruIcons.code),
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (context) => ChatEventInspectDialog(
-                        event: widget.event,
-                        child: widget.child,
-                      ),
+
+                MenuItemButton(
+                  trailingIcon: const Icon(YaruIcons.code),
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => ChatEventInspectDialog(
+                      event: widget.event,
+                      child: widget.child,
                     ),
-                    child: Text('Inspect', style: style),
+                  ),
+                  child: Text('Inspect', style: style),
+                ),
+                if (widget.event.receipts.isNotEmpty)
+                  MenuItemButton(
+                    child: SimpleChatSeenByIndicator(
+                      alignment: Alignment.centerLeft,
+                      seenByUsers: widget.event.receipts
+                          .map((e) => e.user)
+                          .where((e) => !e.isLoggedInUser)
+                          .toList(),
+                    ),
                   ),
               ],
         child: widget.child,

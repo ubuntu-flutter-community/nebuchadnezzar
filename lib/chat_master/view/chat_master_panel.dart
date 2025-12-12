@@ -18,6 +18,7 @@ import 'chat_master_title_bar.dart';
 import 'chat_rooms_list.dart';
 import 'chat_rooms_search_field.dart';
 import 'chat_space_filter.dart';
+import 'start_sync_button.dart';
 
 class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
   const ChatMasterSidePanel({super.key});
@@ -60,7 +61,10 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
                     context: context,
                     builder: (context) => const ChatSettingsDialog(),
                   ),
-                  trailing: const _OpenEmptyPlayerButton(),
+                  trailing: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [StartSyncButton(), _OpenEmptyPlayerButton()],
+                  ),
                 ),
               ],
             ),

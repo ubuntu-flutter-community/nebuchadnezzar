@@ -2664,4 +2664,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pusherDevices => 'Pusher Devices';
+
+  @override
+  String get syncNow => 'Sync now';
 }

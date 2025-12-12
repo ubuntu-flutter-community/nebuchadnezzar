@@ -1,14 +1,18 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
+import '../extensions/room_x.dart';
 import 'logging.dart';
 import 'rooms_filter.dart';
 
 class ChatManager extends SafeChangeNotifier {
-  ChatManager({required Client client}) : _client = client;
+  ChatManager({required Client client}) : _client = client {
+    startSyncingCommand = Command.createAsyncNoParamNoResult(startSyncing);
+  }
 
   // The matrix dart SDK client
   final Client _client;
@@ -16,6 +20,9 @@ class ChatManager extends SafeChangeNotifier {
   SyncStatusUpdate? get syncStatusUpdate => _client.onSyncStatus.value;
   Stream<SyncStatusUpdate> get syncStatusUpdateStream =>
       _client.onSyncStatus.stream;
+
+  Future<void> startSyncing() async => _client.oneShotSync();
+  late Command<void, void> startSyncingCommand;
 
   // Room management
   /// The list of all rooms the user is participating or invited.
@@ -170,5 +177,32 @@ class ChatManager extends SafeChangeNotifier {
       await Future.value();
     }
     setSelectedRoom(null);
+  }
+
+  Stream<bool> getPendingDirectChatStream(Room room) => _client
+      .onRoomState
+      .stream
+      .where(
+        (e) => e.roomId == room.id && e.state.type == EventTypes.RoomMember,
+      )
+      .map((e) => room.isUnacceptedDirectChat);
+
+  Future<void> awaitEncryptionEvent(Room room) async {
+    if (room.encrypted) return;
+    try {
+      await room.client.oneShotSync();
+      await room.postLoad();
+      if (!room.encrypted) {
+        await room.client.onRoomState.stream
+            .where(
+              (e) =>
+                  e.roomId == room.id && e.state.type == EventTypes.Encryption,
+            )
+            .first
+            .timeout(const Duration(seconds: 20));
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 }

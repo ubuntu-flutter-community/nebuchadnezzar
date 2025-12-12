@@ -3254,5 +3254,6 @@
       "ruleName": {}
     }
   },
-  "pusherDevices": "Pusher Devices"
+  "pusherDevices": "Pusher Devices",
+  "syncNow": "Sync now"
 }

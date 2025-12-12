@@ -4683,6 +4683,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pusher Devices'**
   String get pusherDevices;
+
+  /// No description provided for @syncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNow;
 }
 
 class _AppLocalizationsDelegate
