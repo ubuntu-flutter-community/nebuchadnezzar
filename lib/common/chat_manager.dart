@@ -5,6 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
+import '../extensions/event_x.dart';
 import '../extensions/room_x.dart';
 import 'logging.dart';
 import 'rooms_filter.dart';
@@ -86,7 +87,7 @@ class ChatManager extends SafeChangeNotifier {
   /// The unfiltered onSync stream of the [Client]
   Stream<SyncUpdate> get syncStream => _client.onSync.stream;
 
-  Stream<List<Receipt>> getRoomsReceiptsStream(Event event) =>
+  Stream<List<User>> getRoomsReceiptsStream(Event event) =>
       getJoinedRoomUpdate(event.room.id).asyncMap((_) async {
         try {
           await Future.wait(
@@ -95,7 +96,7 @@ class ChatManager extends SafeChangeNotifier {
         } on Exception catch (_) {
           printMessageInDebugMode('Failed to fetch all receipt profiles :(');
         }
-        return event.receipts;
+        return event.seenByUsers;
       });
 
   /// A stream of [LeftRoomUpdate]s for a specific `roomId`
@@ -186,6 +187,16 @@ class ChatManager extends SafeChangeNotifier {
         (e) => e.roomId == room.id && e.state.type == EventTypes.RoomMember,
       )
       .map((e) => room.isUnacceptedDirectChat);
+
+  Stream<bool> otherUserHasLeftRoom(Room room) => _client.onRoomState.stream
+      .where(
+        (e) =>
+            e.roomId == room.id &&
+            e.state.type == EventTypes.RoomMember &&
+            e.state.content['membership'] == 'leave' &&
+            e.state.senderId != _client.userID,
+      )
+      .map((_) => true);
 
   Future<void> awaitEncryptionEvent(Room room) async {
     if (room.encrypted) return;

@@ -6,6 +6,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../../app/view/error_page.dart';
 import '../../../app/view/mouse_and_keyboard_command_wrapper.dart';
@@ -16,6 +17,7 @@ import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
+import '../../../extensions/room_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../info_drawer/chat_room_info_drawer.dart';
 import '../../input/draft_manager.dart';
@@ -89,6 +91,40 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         }
       },
     );
+
+    final isUnacceptedDirectChat = widget.room.isDirectChat
+        ? false
+        : watchStream(
+                (ChatManager m) => m.getPendingDirectChatStream(widget.room),
+                initialValue: widget.room.isUnacceptedDirectChat,
+              ).data ??
+              false;
+
+    if (isUnacceptedDirectChat) {
+      return Scaffold(
+        appBar: ChatRoomTitleBar(room: widget.room),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(kBigPadding),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  YaruIcons.send,
+                  size: 64,
+                  color: context.colorScheme.onSurfaceVariant,
+                ),
+                Text(
+                  l10n.waitingPartnerAcceptRequest,
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.bodyLarge,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return MouseAndKeyboardCommandWrapper(
       child: DropRegion(

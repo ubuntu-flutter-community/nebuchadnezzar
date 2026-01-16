@@ -18,6 +18,8 @@ class AccountManager {
 
   final Client _client;
 
+  String get dehydratedDeviceDisplayName => _client.dehydratedDeviceDisplayName;
+
   Stream<CachedPresence?> get presenceStream => _client.onPresenceChanged.stream
       .where((cachedPresence) => cachedPresence.userid == _client.userID);
 

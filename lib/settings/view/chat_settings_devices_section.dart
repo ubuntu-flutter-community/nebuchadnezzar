@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -51,6 +52,8 @@ class _ChatSettingsDevicesSectionState
               ? const Center(child: Progress())
               : Column(
                   children: (devices ?? snapshot.data ?? [])
+                      .sortedBy((d) => d.lastSeenTs ?? 0)
+                      .reversed
                       .map(
                         (d) => _DeviceTile(
                           key: ValueKey(d.deviceId),
@@ -74,10 +77,10 @@ class _DeviceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = context.theme;
-    final colorScheme = theme.colorScheme;
     final keys = di<AccountManager>().getDeviceKeys(device);
     final isOwnDevice = device.deviceId == di<AccountManager>().myDeviceId;
+    final isDehydratedDevice =
+        device.displayname == di<AccountManager>().dehydratedDeviceDisplayName;
 
     return YaruTile(
       leading: IconButton.outlined(
@@ -88,16 +91,10 @@ class _DeviceTile extends StatelessWidget {
         ),
         icon: Icon(
           device.icon,
-          color: keys == null
-              ? theme.disabledColor
-              : keys.blocked
-              ? colorScheme.error
-              : keys.verified
-              ? colorScheme.success
-              : colorScheme.warning,
+          color: device.getColor(theme: context.theme, keys: keys),
         ),
       ),
-      trailing: !isOwnDevice
+      trailing: !isOwnDevice && !isDehydratedDevice
           ? IconButton(
               onPressed: () => ConfirmationDialog.show(
                 context: context,
@@ -115,7 +112,13 @@ class _DeviceTile extends StatelessWidget {
           device.lastSeenTs ?? 0,
         ).formatAndLocalize(context, simple: true),
       ),
-      title: SelectableText(device.displayName ?? device.deviceId),
+      title: SelectableText(
+        '${device.displayName ?? device.deviceId} ${device.getLabel(keys: keys)}${isOwnDevice
+            ? ' (this device)'
+            : isDehydratedDevice
+            ? ' (dehydrated device)'
+            : ''}',
+      ),
     );
   }
 }

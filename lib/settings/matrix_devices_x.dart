@@ -4,8 +4,8 @@ import 'package:yaru/yaru.dart';
 
 IconData _getIconFromName(String displayname) {
   final name = displayname.toLowerCase();
-  if ({'android'}.any((s) => name.contains(s))) {
-    return YaruIcons.smartphone;
+  if ({'android', 'pixel', 'samsung', 'redmi', 'xiaomi'}.any(name.contains)) {
+    return Icons.android;
   }
   if ({'ios', 'ipad', 'iphone', 'ipod'}.any((s) => name.contains(s))) {
     return YaruIcons.apple;
@@ -39,6 +39,23 @@ extension DeviceExtension on Device {
       (displayName?.isNotEmpty ?? false) ? displayName! : 'Unknown device';
 
   IconData get icon => _getIconFromName(displayname);
+
+  Color getColor({required ThemeData theme, required DeviceKeys? keys}) =>
+      keys == null
+      ? theme.disabledColor
+      : keys.blocked
+      ? theme.colorScheme.error
+      : keys.verified
+      ? theme.colorScheme.success
+      : theme.colorScheme.warning;
+
+  String getLabel({required DeviceKeys? keys}) => keys == null
+      ? '(no keys)'
+      : keys.blocked
+      ? '(blocked)'
+      : keys.verified
+      ? '(verified)'
+      : '(unverified)';
 }
 
 extension DeviceKeysExtension on DeviceKeys {

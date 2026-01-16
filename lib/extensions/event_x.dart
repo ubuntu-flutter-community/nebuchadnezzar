@@ -226,6 +226,11 @@ extension EventX on Event {
   bool get isEncryptedAndCouldDecrypt =>
       (type == EventTypes.Encrypted && type != MessageTypes.BadEncrypted) &&
       content['can_request_session'] == true;
+
+  List<User> get seenByUsers => receipts
+      .map((e) => e.user)
+      .where((e) => e.id != room.client.userID)
+      .toList();
 }
 
 enum EventPosition { top, bottom, middle, semanticSingle }
