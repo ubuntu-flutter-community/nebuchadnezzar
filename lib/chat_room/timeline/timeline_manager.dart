@@ -83,11 +83,18 @@ class TimelineManager extends SafeChangeNotifier {
 
   Future<void> trySetReadMarker(Timeline timeline, {String? eventId}) async {
     try {
-      if (!timeline.room.isArchived && timeline.room.isUnread) {
-        final eventExists = eventId == null
-            ? false
-            : (await timeline.room.getEventById(eventId)) != null;
-        await timeline.setReadMarker(eventId: eventExists ? eventId : null);
+      if (!timeline.room.isArchived) {
+        String? maybeEventId;
+
+        if (eventId != null) {
+          final event = await timeline.room.getEventById(eventId);
+
+          if (event?.status == EventStatus.synced) {
+            maybeEventId = event?.eventId;
+          }
+        }
+
+        await timeline.setReadMarker(eventId: maybeEventId);
       } else {
         printMessageInDebugMode(
           'Skipping setReadMarker() for "${timeline.room.getLocalizedDisplayname()}" as it is ${timeline.room.isArchived ? 'archived' : 'not unread'}.',

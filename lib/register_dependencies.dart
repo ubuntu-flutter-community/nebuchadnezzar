@@ -4,13 +4,13 @@ import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Colors;
+import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'app/app_config.dart';
@@ -68,9 +68,7 @@ void registerDependencies() {
       () async => SharedPreferences.getInstance(),
     )
     ..registerLazySingleton<FlutterSecureStorage>(
-      () => const FlutterSecureStorage(
-        aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      ),
+      () => const FlutterSecureStorage(aOptions: AndroidOptions()),
     )
     ..registerSingletonWithDependencies<SettingsService>(
       () => SettingsService(

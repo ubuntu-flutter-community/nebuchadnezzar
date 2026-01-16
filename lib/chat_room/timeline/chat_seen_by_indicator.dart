@@ -8,7 +8,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
 import '../../common/view/ui_constants.dart';
-import '../../extensions/user_x.dart';
+import '../../extensions/event_x.dart';
 
 const maxAvatars = 7;
 
@@ -22,9 +22,9 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
     final seenByUsers =
         watchStream(
           (ChatManager m) => m.getRoomsReceiptsStream(event),
-          initialValue: event.receipts,
-        ).data?.map((e) => e.user).where((e) => !e.isLoggedInUser).toList() ??
-        [];
+          initialValue: event.seenByUsers,
+        ).data ??
+        <User>[];
 
     return SimpleChatSeenByIndicator(seenByUsers: seenByUsers);
   }
@@ -44,7 +44,7 @@ class SimpleChatSeenByIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      alignment: alignment ?? Alignment.center,
+      alignment: alignment ?? Alignment.centerRight,
       child: AnimatedContainer(
         padding: const EdgeInsets.symmetric(
           vertical: kSmallPadding,
@@ -107,8 +107,8 @@ class ChatEventSeenByAvatar extends StatelessWidget {
       },
       child: ChatAvatar(
         avatarUri: user.avatarUrl,
-        fallBackIconSize: 10,
-        dimension: 15,
+        fallBackIconSize: 15,
+        dimension: 20,
       ),
     ),
   );

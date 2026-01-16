@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
@@ -146,13 +146,18 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         ),
                       ],
 
-                      if (i == 0 && !widget.timeline.room.isSpace)
-                        ChatEventSeenByIndicator(
-                          key: ValueKey(
-                            '${event.eventId}${widget.timeline.events.length}',
+                      if (!widget.timeline.room.isSpace)
+                        if (i == 0)
+                          ChatEventSeenByIndicator(
+                            key: ValueKey(
+                              '${event.eventId}${widget.timeline.events.length}',
+                            ),
+                            event: event,
+                          )
+                        else if (event.type == EventTypes.Message)
+                          SimpleChatSeenByIndicator(
+                            seenByUsers: event.seenByUsers,
                           ),
-                          event: event,
-                        ),
                     ],
                   ),
                 ),
@@ -234,7 +239,14 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   }
 
   Future<void> _jump(Event event) async {
-    int index = widget.timeline.events.indexOf(event);
+    final eventInTimeline = widget.timeline.events.firstWhereOrNull(
+      (timelineEvent) => timelineEvent.eventId == event.eventId,
+    );
+
+    var index = eventInTimeline == null
+        ? -1
+        : widget.timeline.events.indexOf(eventInTimeline);
+
     while (index == -1 && retryCount >= 0) {
       await di<TimelineManager>().requestHistory(
         widget.timeline,
