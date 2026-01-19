@@ -325,7 +325,8 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                   ),
                   if ((event.isUserEvent ||
                           event.status == EventStatus.error) &&
-                      eventPosition == EventPosition.bottom)
+                      (eventPosition == EventPosition.bottom ||
+                          eventPosition == EventPosition.semanticSingle))
                     ChatEventStatusIcon(event: event, timeline: timeline),
                 ],
               ),

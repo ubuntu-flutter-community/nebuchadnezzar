@@ -92,27 +92,9 @@ extension EventX on Event {
     EventTypes.RoomPinnedEvents,
   }.contains(type);
 
-  bool get showAsBadge =>
-      type.contains('m.call.') ||
-      messageType == MessageTypes.Emote ||
-      {
-        'm.space.parent',
-        'm.space.child',
-        EventTypes.RoomAvatar,
-        EventTypes.RoomAliases,
-        EventTypes.RoomTopic,
-        EventTypes.RoomCreate,
-        EventTypes.RoomPowerLevels,
-        EventTypes.RoomJoinRules,
-        EventTypes.HistoryVisibility,
-        EventTypes.RoomName,
-        EventTypes.RoomMember,
-        EventTypes.Unknown,
-        EventTypes.GuestAccess,
-        EventTypes.Encryption,
-        EventTypes.RoomPinnedEvents,
-        EventTypes.RoomCanonicalAlias,
-      }.contains(type);
+  bool get showAsBubble => type == EventTypes.Message;
+
+  bool get showAsBadge => !showAsBubble;
 
   bool get isCallEvent => type.contains('m.call.');
 

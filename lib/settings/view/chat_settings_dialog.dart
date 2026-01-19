@@ -38,8 +38,8 @@ class _ChatSettingsDialogState extends State<ChatSettingsDialog>
   Widget build(BuildContext context) => AlertDialog(
     titlePadding: EdgeInsets.zero,
     title: YaruDialogTitleBar(
-      title: YaruTabBar(
-        tabController: tabController,
+      title: TabBar(
+        controller: tabController,
         tabs: [
           Tab(
             child: Row(

@@ -87,11 +87,6 @@ Color getEventBadgeColor(ThemeData theme, bool showAsSpecialBadge) =>
     ? theme.colorScheme.primary
     : theme.colorScheme.onSurface.withValues(alpha: 0.2);
 
-Color getEventBadgeTextColor(ThemeData theme, String type) =>
-    type == 'm.space.parent' || type == 'm.space.child'
-    ? theme.colorScheme.onPrimary
-    : theme.colorScheme.onSurface;
-
 ButtonStyle get textFieldSuffixStyle => IconButton.styleFrom(
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.only(
