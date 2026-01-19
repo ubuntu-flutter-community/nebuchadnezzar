@@ -146,18 +146,15 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         ),
                       ],
 
-                      if (!widget.timeline.room.isSpace)
-                        if (i == 0)
-                          ChatEventSeenByIndicator(
-                            key: ValueKey(
-                              '${event.eventId}${widget.timeline.events.length}',
-                            ),
-                            event: event,
-                          )
-                        else if (event.type == EventTypes.Message)
-                          SimpleChatSeenByIndicator(
-                            seenByUsers: event.seenByUsers,
+                      if (i == 0 &&
+                          event.showAsBubble &&
+                          !widget.timeline.room.isSpace)
+                        ChatEventSeenByIndicator(
+                          key: ValueKey(
+                            '${event.eventId}${widget.timeline.events.length}',
                           ),
+                          event: event,
+                        ),
                     ],
                   ),
                 ),

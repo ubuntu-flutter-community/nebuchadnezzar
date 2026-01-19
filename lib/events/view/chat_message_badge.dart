@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
@@ -33,7 +34,9 @@ class ChatMessageBadge extends StatelessWidget {
             if (leading != null) leading!,
             Flexible(
               child: Badge(
-                textColor: getEventBadgeTextColor(theme, displayEvent.type),
+                textColor: contrastColor(
+                  getEventBadgeColor(theme, displayEvent.showAsSpecialBadge),
+                ),
                 backgroundColor: getEventBadgeColor(
                   theme,
                   displayEvent.showAsSpecialBadge,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yaru/yaru.dart';
 
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -31,8 +30,8 @@ class _PlayerExplorerState extends State<PlayerExplorer>
       padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
       child: Column(
         children: [
-          YaruTabBar(
-            tabController: _tabController,
+          TabBar(
+            controller: _tabController,
             tabs: [
               Tab(text: l10n.queue),
               Tab(text: l10n.radioBrowser),
