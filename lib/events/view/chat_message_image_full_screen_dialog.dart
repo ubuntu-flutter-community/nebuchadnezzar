@@ -174,7 +174,7 @@ class _ChatMessageImageFullScreenDialogState
                               minScale: PhotoViewComputedScale.contained * 0.8,
                               maxScale: PhotoViewComputedScale.covered * 10,
                               initialScale:
-                                  PhotoViewComputedScale.contained * 0.5,
+                                  PhotoViewComputedScale.contained * 1,
                               controller: _controller,
                             ),
                           );

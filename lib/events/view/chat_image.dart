@@ -10,6 +10,7 @@ import '../../common/local_image_manager.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/event_x.dart';
+import 'chat_message_reactions.dart';
 
 class ChatImage extends StatelessWidget with WatchItMixin {
   const ChatImage({
@@ -17,31 +18,37 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     required this.event,
     this.dimension,
     this.height,
-    this.fit,
+    this.fit = BoxFit.cover,
     this.width = imageWidth,
     this.onTap,
     this.showDescription = true,
     this.onlyImage = false,
+    this.showLabel = false,
+    this.borderRadius,
+    this.timeline,
   });
 
   final Event event;
   final double? dimension;
   final double? height;
   final double width;
-  final BoxFit? fit;
+  final BoxFit fit;
   final VoidCallback? onTap;
   final bool showDescription;
   final bool onlyImage;
+  final bool showLabel;
+  final BorderRadius? borderRadius;
+  final Timeline? timeline;
 
   static const double imageWidth = 370.0;
   static const double imageHeight = 270.0;
-  static const borderRadius = BorderRadius.all(kBubbleRadius);
 
   @override
   Widget build(BuildContext context) {
+    final bRadius = borderRadius ?? const BorderRadius.all(kBigBubbleRadius);
+
     final theHeight = dimension ?? height ?? imageHeight;
     final theWidth = dimension ?? width;
-    final theFit = fit ?? BoxFit.cover;
     final maybeImage = watchPropertyValue(
       (LocalImageManager m) => m.get(event.eventId),
     );
@@ -57,13 +64,13 @@ class ChatImage extends StatelessWidget with WatchItMixin {
           ? event.isSvgImage
                 ? SvgPicture.memory(
                     maybeImage,
-                    fit: theFit,
+                    fit: fit,
                     height: theHeight,
                     width: theWidth,
                   )
                 : Image.memory(
                     maybeImage,
-                    fit: theFit,
+                    fit: fit,
                     height: theHeight,
                     width: theWidth,
                   )
@@ -71,7 +78,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
               event: event,
               width: theWidth,
               height: theHeight,
-              fit: theFit,
+              fit: fit,
               getThumbnail: event.hasThumbnail,
             ),
     );
@@ -80,35 +87,63 @@ class ChatImage extends StatelessWidget with WatchItMixin {
       return image;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
-      child: ClipRRect(
-        borderRadius: borderRadius,
-        child: InkWell(
-          borderRadius: borderRadius,
-          onTap: onTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  image,
-                  if (event.isVideo)
-                    const Icon(
-                      YaruIcons.video,
-                      size: 55,
-                      color: Colors.white70,
+    return ClipRRect(
+      borderRadius: bRadius,
+      child: InkWell(
+        borderRadius: bRadius,
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                image,
+                if (event.isVideo)
+                  const Icon(YaruIcons.video, size: 55, color: Colors.white70),
+                if (showLabel && !event.isUserEvent)
+                  Positioned(
+                    top: kSmallPadding,
+                    left: event.isUserEvent ? null : kSmallPadding,
+                    right: event.isUserEvent ? kSmallPadding : null,
+                    child: Badge(
+                      backgroundColor: Colors.black87,
+                      textColor: Colors.white,
+                      label: Padding(
+                        padding: const EdgeInsets.all(kTinyPadding),
+                        child: Text(
+                          event.senderFromMemoryOrFallback.calcDisplayname(),
+                        ),
+                      ),
                     ),
-                ],
+                  ),
+                if (timeline != null)
+                  Positioned(
+                    bottom: kSmallPadding,
+                    right: event.isUserEvent ? null : kSmallPadding,
+                    left: event.isUserEvent ? kSmallPadding : null,
+                    child: ChatMessageReactions(
+                      event: event,
+                      timeline: timeline!,
+                    ),
+                  ),
+              ],
+            ),
+            if (showDescription &&
+                event.fileDescription != null &&
+                event.fileDescription!.isNotEmpty)
+              SizedBox(
+                width: theWidth,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kMediumPadding,
+                    vertical: kSmallPadding,
+                  ),
+                  child: Text(event.fileDescription!),
+                ),
               ),
-              if (showDescription &&
-                  event.fileDescription != null &&
-                  event.fileDescription!.isNotEmpty)
-                Text(event.fileDescription!),
-            ],
-          ),
+          ],
         ),
       ),
     );

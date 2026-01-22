@@ -32,6 +32,10 @@ class ChatMessageReactions extends StatelessWidget {
     );
     final reactionMap = <String, ReactionEntry>{};
 
+    if (allReactionEvents.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     for (final e in allReactionEvents) {
       final key = e.content
           .tryGetMap<String, dynamic>('m.relates_to')
@@ -54,40 +58,43 @@ class ChatMessageReactions extends StatelessWidget {
     final reactionList = reactionMap.values.toList()
       ..sort((a, b) => b.count - a.count > 0 ? 1 : -1);
 
-    return Wrap(
-      spacing: kSmallPadding,
-      runSpacing: kSmallPadding,
-      alignment: event.isUserEvent ? WrapAlignment.end : WrapAlignment.start,
-      children: [
-        ...reactionList.map(
-          (r) => _Reaction(
-            reactionKey: r.key,
-            count: r.count,
-            reacted: r.reacted,
-            onTap: () {
-              if (r.reacted) {
-                final evt = allReactionEvents.firstWhereOrNull(
-                  (e) =>
-                      e.senderId == e.room.client.userID &&
-                      e.content.tryGetMap('m.relates_to')?['key'] == r.key,
-                );
-                if (evt != null) {
-                  showFutureLoadingDialog(
-                    context: context,
-                    future: () => evt.redactEvent(),
+    return Padding(
+      padding: const EdgeInsets.all(kSmallPadding),
+      child: Wrap(
+        spacing: kSmallPadding,
+        runSpacing: kSmallPadding,
+        alignment: event.isUserEvent ? WrapAlignment.end : WrapAlignment.start,
+        children: [
+          ...reactionList.map(
+            (r) => _Reaction(
+              reactionKey: r.key,
+              count: r.count,
+              reacted: r.reacted,
+              onTap: () {
+                if (r.reacted) {
+                  final evt = allReactionEvents.firstWhereOrNull(
+                    (e) =>
+                        e.senderId == e.room.client.userID &&
+                        e.content.tryGetMap('m.relates_to')?['key'] == r.key,
                   );
+                  if (evt != null) {
+                    showFutureLoadingDialog(
+                      context: context,
+                      future: () => evt.redactEvent(),
+                    );
+                  }
+                } else {
+                  event.room.sendReaction(event.eventId, r.key);
                 }
-              } else {
-                event.room.sendReaction(event.eventId, r.key);
-              }
-            },
-            onLongPress: () => showDialog(
-              context: context,
-              builder: (context) => ReactionsModal(reactionEntry: r),
+              },
+              onLongPress: () => showDialog(
+                context: context,
+                builder: (context) => ReactionsModal(reactionEntry: r),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

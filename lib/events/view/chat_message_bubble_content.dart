@@ -50,6 +50,24 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
     final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
 
+    var borderRadius = switch (eventPosition) {
+      EventPosition.middle => BorderRadius.circular(kBubbleRadiusValue),
+      EventPosition.top => const BorderRadius.only(
+        topLeft: kBubbleRadius,
+        topRight: kBigBubbleRadius,
+        bottomLeft: kBubbleRadius,
+        bottomRight: kBubbleRadius,
+      ),
+      EventPosition.bottom => const BorderRadius.only(
+        topLeft: kBubbleRadius,
+        topRight: kBubbleRadius,
+        bottomLeft: kBigBubbleRadius,
+        bottomRight: kBigBubbleRadius,
+      ),
+      EventPosition.semanticSingle => const BorderRadius.all(
+        kBigBubbleRadius,
+      ).copyWith(topLeft: kBubbleRadius),
+    };
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: event.isUserEvent
@@ -92,9 +110,11 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                       child: Stack(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: kMediumPadding,
-                            ),
+                            padding: event.isImage
+                                ? null
+                                : const EdgeInsets.symmetric(
+                                    horizontal: kMediumPadding,
+                                  ),
                             decoration: BoxDecoration(
                               color:
                                   color ??
@@ -102,38 +122,26 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                     event.isUserEvent,
                                     context.theme,
                                   ),
-                              borderRadius: switch (eventPosition) {
-                                EventPosition.middle => BorderRadius.circular(
-                                  kBubbleRadiusValue,
-                                ),
-                                EventPosition.top => const BorderRadius.only(
-                                  topLeft: kBubbleRadius,
-                                  topRight: kBigBubbleRadius,
-                                  bottomLeft: kBubbleRadius,
-                                  bottomRight: kBubbleRadius,
-                                ),
-                                EventPosition.bottom => const BorderRadius.only(
-                                  topLeft: kBubbleRadius,
-                                  topRight: kBubbleRadius,
-                                  bottomLeft: kBigBubbleRadius,
-                                  bottomRight: kBigBubbleRadius,
-                                ),
-                                EventPosition.semanticSingle =>
-                                  const BorderRadius.all(
-                                    kBigBubbleRadius,
-                                  ).copyWith(topLeft: kBubbleRadius),
-                              },
+                              borderRadius: borderRadius,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const SizedBox(height: kSmallPadding),
-                                Text(
-                                  event.senderFromMemoryOrFallback
-                                      .calcDisplayname(),
-                                  style: textTheme.labelSmall,
-                                ),
+                                if (!(event.isImage ||
+                                    (event.isVideo && event.hasThumbnail)))
+                                  event.isUserEvent
+                                      ? const SizedBox(height: kSmallPadding)
+                                      : Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: kSmallPadding,
+                                          ),
+                                          child: Text(
+                                            event.senderFromMemoryOrFallback
+                                                .calcDisplayname(),
+                                            style: textTheme.labelSmall,
+                                          ),
+                                        ),
 
                                 if (event.inReplyToEventId(
                                       includingFallback: false,
@@ -165,7 +173,9 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                         event.hasThumbnail,
                                       )) {
                                         (MessageTypes.Image, _) => ChatImage(
-                                          fit: BoxFit.contain,
+                                          borderRadius: borderRadius,
+                                          timeline: timeline,
+                                          showLabel: true,
                                           event: event,
                                           onTap: event.isSvgImage
                                               ? null
@@ -178,7 +188,8 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                 ),
                                         ),
                                         (MessageTypes.Video, true) => ChatImage(
-                                          fit: BoxFit.contain,
+                                          showLabel: true,
+                                          timeline: timeline,
                                           event: event,
                                           onTap: () {
                                             showDialog(
@@ -278,9 +289,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                     )
                                     .isNotEmpty)
                                   Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: kTinyPadding,
-                                    ),
+                                    padding: const EdgeInsets.all(kTinyPadding),
                                     child: InkWell(
                                       onTap: () => showDialog(
                                         context: context,
@@ -296,17 +305,14 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                       ),
                                     ),
                                   ),
-                                if (!event.redacted)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      top: kSmallPadding,
-                                    ),
-                                    child: ChatMessageReactions(
-                                      event: event,
-                                      timeline: timeline,
-                                    ),
+                                if (!event.redacted && !event.hasThumbnail)
+                                  ChatMessageReactions(
+                                    event: event,
+                                    timeline: timeline,
                                   ),
-                                const SizedBox(height: kSmallPadding),
+                                if (!(event.isImage ||
+                                    event.isVideo && event.hasThumbnail))
+                                  const SizedBox(height: kSmallPadding),
                               ],
                             ),
                           ),
