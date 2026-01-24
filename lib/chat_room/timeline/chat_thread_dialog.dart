@@ -31,13 +31,23 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
   @override
   void initState() {
     super.initState();
-    di<DraftManager>().setThreadRootEventId(widget.event.eventId);
-    di<DraftManager>().setThreadLastEventId(
-      widget.event
-          .aggregatedEvents(widget.timeline, RelationshipTypes.thread)
-          .last
-          .eventId,
-    );
+    di<DraftManager>()
+      ..setReplyEvent(null, notify: false)
+      ..setEditEvent(roomId: widget.event.room.id, event: null, notify: false)
+      ..setThreadRootEventId(widget.event.eventId, notify: false)
+      ..setThreadLastEventId(
+        widget.event
+            .aggregatedEvents(widget.timeline, RelationshipTypes.thread)
+            .last
+            .eventId,
+        notify: false,
+      );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    di<DraftManager>().resetThreadIds();
   }
 
   @override
@@ -71,17 +81,23 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
           itemBuilder: (context, index) {
             final threadChild = widget.event
                 .aggregatedEvents(widget.timeline, RelationshipTypes.thread)
-                .elementAt(index);
+                .elementAtOrNull(index);
+
+            if (threadChild == null) return const SizedBox.shrink();
+
             return ChatMessageBubble(
               event: threadChild,
               timeline: widget.timeline,
               onReplyOriginClick: widget.onReplyOriginClick,
-              eventPosition: EventPosition.middle,
+              eventPosition: EventPosition.semanticSingle,
+              allowNormalReply: false,
             );
           },
         ),
       ),
-      actions: [ChatInput(room: widget.timeline.room)],
+      actions: [
+        ChatInput(key: const ValueKey('THREAD'), room: widget.timeline.room),
+      ],
     );
   }
 }

@@ -34,11 +34,13 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
     required this.timeline,
     required this.onReplyOriginClick,
     required this.eventPosition,
+    this.allowNormalReply = true,
     this.color,
   });
 
   final Event event;
   final Timeline timeline;
+  final bool allowNormalReply;
   final Future<void> Function(Event event) onReplyOriginClick;
   final EventPosition eventPosition;
   final Color? color;
@@ -107,6 +109,8 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                   Flexible(
                     child: ChatMessageMenu(
                       event: event,
+                      timeline: timeline,
+                      allowNormalReply: allowNormalReply,
                       child: Stack(
                         children: [
                           Container(
@@ -128,20 +132,17 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (!(event.isImage ||
-                                    (event.isVideo && event.hasThumbnail)))
-                                  event.isUserEvent
-                                      ? const SizedBox(height: kSmallPadding)
-                                      : Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: kSmallPadding,
-                                          ),
-                                          child: Text(
-                                            event.senderFromMemoryOrFallback
-                                                .calcDisplayname(),
-                                            style: textTheme.labelSmall,
-                                          ),
-                                        ),
+                                if (!event.hasThumbnail)
+                                  const SizedBox(height: kSmallPadding),
+
+                                if (!event.isUserEvent &&
+                                    eventPosition != EventPosition.bottom &&
+                                    eventPosition != EventPosition.middle)
+                                  Text(
+                                    event.senderFromMemoryOrFallback
+                                        .calcDisplayname(),
+                                    style: textTheme.labelSmall,
+                                  ),
 
                                 if (event.inReplyToEventId(
                                       includingFallback: false,

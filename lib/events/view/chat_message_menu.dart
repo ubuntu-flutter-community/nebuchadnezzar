@@ -5,6 +5,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../chat_room/input/draft_manager.dart';
 import '../../chat_room/timeline/chat_seen_by_indicator.dart';
+import '../../chat_room/timeline/chat_thread_dialog.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
@@ -16,9 +17,17 @@ import 'chat_message_menu_reaction_picker.dart';
 import 'chat_text_message.dart';
 
 class ChatMessageMenu extends StatefulWidget {
-  const ChatMessageMenu({super.key, required this.event, required this.child});
+  const ChatMessageMenu({
+    super.key,
+    required this.event,
+    required this.child,
+    required this.timeline,
+    this.allowNormalReply = true,
+  });
 
   final Event event;
+  final Timeline timeline;
+  final bool allowNormalReply;
   final Widget child;
 
   @override
@@ -44,12 +53,30 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
             : [
                 ChatMessageMenuReactionPicker(event: widget.event),
                 const Divider(),
-                MenuItemButton(
-                  trailingIcon: const Icon(YaruIcons.reply),
-                  onPressed: () =>
-                      di<DraftManager>().setReplyEvent(widget.event),
-                  child: Text(context.l10n.reply, style: style),
-                ),
+                if (widget.allowNormalReply)
+                  MenuItemButton(
+                    trailingIcon: const Icon(YaruIcons.reply),
+                    onPressed: () {
+                      if (widget.event
+                          .aggregatedEvents(
+                            widget.timeline,
+                            RelationshipTypes.thread,
+                          )
+                          .isNotEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => ChatThreadDialog(
+                            event: widget.event,
+                            timeline: widget.timeline,
+                            onReplyOriginClick: (e) async {},
+                          ),
+                        );
+                      } else {
+                        di<DraftManager>().setReplyEvent(widget.event);
+                      }
+                    },
+                    child: Text(context.l10n.reply, style: style),
+                  ),
                 if (widget.event.room.canSendDefaultMessages &&
                     widget.event.isUserEvent)
                   MenuItemButton(

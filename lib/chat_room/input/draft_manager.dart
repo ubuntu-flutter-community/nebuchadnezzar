@@ -28,16 +28,24 @@ class DraftManager extends SafeChangeNotifier {
 
   Event? _replyEvent;
   Event? get replyEvent => _replyEvent;
-  void setReplyEvent(Event? event) {
+  void setReplyEvent(Event? event, {bool notify = true}) {
     _replyEvent = event;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   final Map<String, Event?> _editEvents = {};
   Event? getEditEvent(String roomId) => _editEvents[roomId];
-  void setEditEvent({required String roomId, Event? event}) {
+  void setEditEvent({
+    required String roomId,
+    Event? event,
+    bool notify = true,
+  }) {
     _editEvents[roomId] = event;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   int get maxUploadSize => _mediaConfig?.mUploadSize ?? 100 * 1000 * 1000;
@@ -45,14 +53,25 @@ class DraftManager extends SafeChangeNotifier {
 
   String? _threadRootEventId;
   String? get threadRootEventId => _threadRootEventId;
-  void setThreadRootEventId(String? eventId) {
+  void setThreadRootEventId(String? eventId, {bool notify = true}) {
     _threadRootEventId = eventId;
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   String? _threadLastEventId;
   String? get threadLastEventId => _threadLastEventId;
-  void setThreadLastEventId(String? eventId) {
+  void setThreadLastEventId(String? eventId, {bool notify = true}) {
     _threadLastEventId = eventId;
+    if (notify) {
+      notifyListeners();
+    }
+  }
+
+  void resetThreadIds() {
+    _threadLastEventId = null;
+    _threadRootEventId = null;
   }
 
   Future<void> send({required Room room, String? text}) async {

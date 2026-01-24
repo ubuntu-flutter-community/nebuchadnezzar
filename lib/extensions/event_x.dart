@@ -114,6 +114,8 @@ extension EventX on Event {
     _ => YaruIcons.error,
   };
 
+  bool get isPartOfThread => relationshipType == RelationshipTypes.thread;
+
   bool hideInTimeline({
     required bool showAvatarChanges,
     required bool showDisplayNameChanges,
@@ -132,6 +134,7 @@ extension EventX on Event {
     if ({
       RelationshipTypes.edit,
       RelationshipTypes.reaction,
+      RelationshipTypes.thread,
     }.contains(relationshipType)) {
       return true;
     }

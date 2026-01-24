@@ -43,6 +43,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   void initState() {
     super.initState();
+    di<DraftManager>().resetThreadIds();
     _timelineFuture = di<TimelineManager>()
         .loadTimeline(
           widget.room,
