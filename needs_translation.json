@@ -87,7 +87,11 @@
     "deletePushRuleTitle",
     "deletePushRuleDescription",
     "pusherDevices",
-    "syncNow"
+    "syncNow",
+    "startAppUpPleaseWait",
+    "retry",
+    "reportIssue",
+    "closeApp"
   ],
 
   "sv": [
@@ -183,6 +187,10 @@
     "deletePushRuleTitle",
     "deletePushRuleDescription",
     "pusherDevices",
-    "syncNow"
+    "syncNow",
+    "startAppUpPleaseWait",
+    "retry",
+    "reportIssue",
+    "closeApp"
   ]
 }

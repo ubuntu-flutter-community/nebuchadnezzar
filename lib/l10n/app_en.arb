@@ -3255,5 +3255,9 @@
     }
   },
   "pusherDevices": "Pusher Devices",
-  "syncNow": "Sync now"
+  "syncNow": "Sync now",
+  "startAppUpPleaseWait": "Starting, please wait...",
+  "retry": "Retry",
+  "reportIssue": "Report issue",
+  "closeApp": "Close app"
 }

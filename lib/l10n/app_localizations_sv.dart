@@ -2681,4 +2681,16 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get syncNow => 'Sync now';
+
+  @override
+  String get startAppUpPleaseWait => 'Starting, please wait...';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get reportIssue => 'Report issue';
+
+  @override
+  String get closeApp => 'Close app';
 }

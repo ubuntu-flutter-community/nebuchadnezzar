@@ -346,7 +346,7 @@ class _NewWidgetState extends State<NewWidget> {
                   },
             value: threadRootEventId != null,
           ),
-          Text('Create Thread'),
+          const Text('Create Thread'),
         ],
       ),
       yaruInfoType: editEvent != null

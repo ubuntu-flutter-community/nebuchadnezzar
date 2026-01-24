@@ -43,7 +43,7 @@ extension ClientX on Client {
     );
     // This reads potential credentials that might exist from previous sessions
     // to determine whether the user is logged in or not.
-    await client.init().timeout(const Duration(seconds: 55));
+    await client.init();
 
     return client;
   }

@@ -4689,6 +4689,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync now'**
   String get syncNow;
+
+  /// No description provided for @startAppUpPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting, please wait...'**
+  String get startAppUpPleaseWait;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @reportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report issue'**
+  String get reportIssue;
+
+  /// No description provided for @closeApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Close app'**
+  String get closeApp;
 }
 
 class _AppLocalizationsDelegate
