@@ -139,7 +139,12 @@ class CreateRoomManager {
     }
 
     final maybeRoom = _client.getRoomById(roomId);
+
     if (maybeRoom != null) {
+      if (draft.value.enableEncryption) {
+        await _waitForEncryptionEvent(maybeRoom);
+      }
+
       if (maybeRoom.canChangeStateEvent(EventTypes.RoomAvatar) &&
           draft.value.avatar?.bytes != null) {
         try {
@@ -149,25 +154,16 @@ class CreateRoomManager {
           printMessageInDebugMode(e, s);
         }
       }
-      if (maybeRoom.isDirectChat && !maybeRoom.encrypted) {
-        try {
-          await maybeRoom.enableEncryption();
-          printMessageInDebugMode('Room encrypted: ${maybeRoom.encrypted}');
-        } on Exception catch (e, s) {
-          printMessageInDebugMode(e, s);
-          rethrow;
-        }
-      }
     }
 
     return maybeRoom;
   }
 
   Future<Room?> createOrGetDirectChat(String userId) async {
-    final maybeDirectChatId = _client.getDirectChatFromUserId(userId);
+    final alreadyExistedId = _client.getDirectChatFromUserId(userId);
     Room? maybeRoom;
-    if (maybeDirectChatId != null) {
-      maybeRoom = _client.getRoomById(maybeDirectChatId);
+    if (alreadyExistedId != null) {
+      maybeRoom = _client.getRoomById(alreadyExistedId);
     }
 
     if (maybeRoom == null) {
@@ -176,6 +172,7 @@ class CreateRoomManager {
         maybeId = await _client.startDirectChat(
           userId,
           preset: CreateRoomPreset.privateChat,
+          enableEncryption: true,
         );
       } on Exception catch (e) {
         printMessageInDebugMode(e);
@@ -183,8 +180,25 @@ class CreateRoomManager {
       }
 
       maybeRoom = _client.getRoomById(maybeId);
+
+      if (alreadyExistedId == null && maybeRoom != null) {
+        await _waitForEncryptionEvent(maybeRoom);
+      }
     }
 
     return maybeRoom;
+  }
+
+  Future<void> _waitForEncryptionEvent(Room newRoom) async {
+    await newRoom.client.oneShotSync();
+    await newRoom.postLoad();
+    if (!newRoom.encrypted) {
+      await newRoom.client.onRoomState.stream
+          .where(
+            (e) =>
+                e.roomId == newRoom.id && e.state.type == EventTypes.Encryption,
+          )
+          .first;
+    }
   }
 }

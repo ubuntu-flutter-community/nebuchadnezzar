@@ -207,6 +207,10 @@ class _ConfirmationDialogState<T> extends State<ConfirmationDialog<T>> {
                                 } else {
                                   widget.onConfirm!();
                                   setState(() => _loading = false);
+                                  if (context.mounted &&
+                                      Navigator.of(context).canPop()) {
+                                    Navigator.of(context).pop();
+                                  }
                                 }
                               } else if (context.mounted &&
                                   Navigator.of(context).canPop()) {

@@ -58,7 +58,8 @@ class AccountManager {
 
   Future<void> deleteDevice(String id) async {
     try {
-      final accountManageUrl = _client.wellKnown?.additionalProperties
+      final accountManageUrl = (await _client.getWellknown())
+          .additionalProperties
           .tryGetMap<String, Object?>('org.matrix.msc2965.authentication')
           ?.tryGet<String>('account');
       final uri = accountManageUrl == null

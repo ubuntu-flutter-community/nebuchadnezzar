@@ -283,6 +283,8 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                           messageStyle: messageStyle,
                                         ),
                                       },
+                                if (!event.hasThumbnail)
+                                  const SizedBox(height: kSmallPadding),
                                 if (event
                                     .aggregatedEvents(
                                       timeline,

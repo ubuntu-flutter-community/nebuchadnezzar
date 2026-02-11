@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
@@ -10,7 +9,7 @@ import '../../common/view/confirm.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../create_or_edit/edit_room_service.dart';
+import '../create_or_edit/edit_room_manager.dart';
 
 class ChatRoomInfoDrawerLeaveButton extends StatelessWidget {
   const ChatRoomInfoDrawerLeaveButton({super.key, required this.room});
@@ -29,16 +28,10 @@ class ChatRoomInfoDrawerLeaveButton extends StatelessWidget {
         onPressed: () => ConfirmationDialog.show(
           context: context,
           title: Text('${l10n.leave} ${room.getLocalizedDisplayname()}'),
-          onConfirm: () =>
-              showFutureLoadingDialog(
-                context: context,
-                future: () => di<EditRoomService>().leaveRoom(room),
-              ).then((_) {
-                di<ChatManager>().setSelectedRoom(null);
-                if (context.mounted && Navigator.of(context).canPop()) {
-                  Navigator.of(context).pop();
-                }
-              }),
+          onConfirm: () {
+            di<ChatManager>().setSelectedRoom(null);
+            di<EditRoomManager>().getLeaveRoomCommand(room).run();
+          },
         ),
         icon: room.isArchived
             ? const Icon(YaruIcons.log_in)
