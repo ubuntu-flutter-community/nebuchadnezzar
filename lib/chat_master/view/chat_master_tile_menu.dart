@@ -1,10 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../chat_room/create_or_edit/edit_room_service.dart';
 import '../../chat_room/titlebar/chat_room_notification_button.dart';
 import '../../common/chat_manager.dart';
@@ -76,16 +77,12 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                     title: Text(
                       '${context.l10n.leave} ${widget.room.getLocalizedDisplayname()}',
                     ),
-                    onConfirm: () =>
-                        showFutureLoadingDialog(
-                          context: context,
-                          future: () =>
-                              di<EditRoomService>().leaveRoom(widget.room),
-                        ).then((_) {
-                          if (mounted) {
-                            di<ChatManager>().setSelectedRoom(null);
-                          }
-                        }),
+                    onConfirm: () {
+                      di<ChatManager>().setSelectedRoom(null);
+                      di<EditRoomManager>()
+                          .getLeaveRoomCommand(widget.room)
+                          .run();
+                    },
                   ),
                   leadingIcon: const Icon(YaruIcons.log_out),
                   child: Text(

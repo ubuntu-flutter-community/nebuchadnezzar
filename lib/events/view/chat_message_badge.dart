@@ -31,7 +31,7 @@ class ChatMessageBadge extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (leading != null) leading!,
+            ?leading,
             Flexible(
               child: Badge(
                 textColor: contrastColor(

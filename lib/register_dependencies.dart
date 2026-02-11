@@ -17,6 +17,7 @@ import 'app/app_config.dart';
 import 'authentication/authentication_manager.dart';
 import 'authentication/authentication_service.dart';
 import 'chat_room/create_or_edit/create_room_manager.dart';
+import 'chat_room/create_or_edit/edit_room_manager.dart';
 import 'chat_room/create_or_edit/edit_room_service.dart';
 import 'chat_room/input/draft_manager.dart';
 import 'chat_room/timeline/timeline_manager.dart';
@@ -176,6 +177,9 @@ void registerDependencies() {
     })
     ..registerLazySingleton<EditRoomService>(
       () => EditRoomService(client: di<Client>()),
+    )
+    ..registerLazySingleton<EditRoomManager>(
+      () => EditRoomManager(editRoomService: di<EditRoomService>()),
     )
     ..registerLazySingleton<CreateRoomManager>(
       () => CreateRoomManager(client: di<Client>()),

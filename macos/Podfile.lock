@@ -23,7 +23,7 @@ PODS:
     - FlutterMacOS
   - flutter_vodozemac (0.0.1):
     - FlutterMacOS
-  - flutter_web_auth_2 (3.0.0):
+  - flutter_web_auth_2 (5.0.0):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - irondash_engine_context (0.0.1):
@@ -184,7 +184,7 @@ SPEC CHECKSUMS:
   file_selector_macos: 9e9e068e90ebee155097d00e89ae91edb2374db7
   flutter_secure_storage_darwin: acdb3f316ed05a3e68f856e0353b133eec373a23
   flutter_vodozemac: fd2ea9cb3e2a37beaac883a369811fbfe042fc53
-  flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65
+  flutter_web_auth_2: 7fe624ff12ddcb4c19e5dbcd56c9e9ea4899d967
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   irondash_engine_context: 893c7d96d20ce361d7e996f39d360c4c2f9869ba
   local_notifier: ebf072651e35ae5e47280ad52e2707375cb2ae4e
