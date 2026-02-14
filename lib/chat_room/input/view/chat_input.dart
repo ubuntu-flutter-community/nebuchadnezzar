@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
@@ -48,8 +47,6 @@ class _ChatInputState extends State<ChatInput> {
         // Check if the "@"-Key has been pressed
         if (_sendController.text.contains('@')) {
           printMessageInDebugMode('@ key pressed');
-
-          return KeyEventResult.handled;
         }
 
         final enterPressedWithoutShift =
@@ -63,7 +60,7 @@ class _ChatInputState extends State<ChatInput> {
             );
 
         if (enterPressedWithoutShift) {
-          send(context);
+          send();
           return KeyEventResult.handled;
         } else if (event is KeyRepeatEvent) {
           // Disable holding enter
@@ -82,33 +79,14 @@ class _ChatInputState extends State<ChatInput> {
     super.dispose();
   }
 
-  Future<void> send(BuildContext context) async =>
-      di<DraftManager>().filesDrafts.containsKey(widget.room.id) &&
-          di<DraftManager>().filesDrafts[widget.room.id]!.isNotEmpty
-      ? showFutureLoadingDialog(
-          context: context,
-          title: context.l10n.sendingAttachment,
-          future: () => di<DraftManager>()
-              .send(room: widget.room)
-              .timeout(const Duration(seconds: 30)),
-          barrierDismissible: true,
-          backLabel: context.l10n.close,
-          onError: (error) {
-            if (error is TimeoutException) {
-              return context.l10n.oopsSomethingWentWrong;
-            }
-            return error.toString();
-          },
-        ).then((res) {
-          if (res.isValue) {
-            _sendController.clear();
-            _sendNode.requestFocus();
-          }
-        })
-      : di<DraftManager>().send(room: widget.room).then((_) {
-          _sendController.clear();
-          _sendNode.requestFocus();
-        });
+  void send() {
+    final isRunning = di<DraftManager>().sendCommand.isRunning;
+    if (isRunning.value) return;
+    di<DraftManager>().sendCommand.runAsync(widget.room).then((_) {
+      _sendController.clear();
+      _sendNode.requestFocus();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +99,8 @@ class _ChatInputState extends State<ChatInput> {
     final archiveActive = watchPropertyValue(
       (ChatManager m) => m.archiveActive,
     );
+
+    final sending = watchValue((DraftManager m) => m.sendCommand.isRunning);
 
     final replyEvent = watchPropertyValue((DraftManager m) => m.replyEvent);
 
@@ -274,9 +254,12 @@ class _ChatInputState extends State<ChatInput> {
                           padding: EdgeInsets.zero,
                           icon: transform,
                           onPressed:
-                              attaching || archiveActive || unAcceptedDirectChat
+                              sending ||
+                                  attaching ||
+                                  archiveActive ||
+                                  unAcceptedDirectChat
                               ? null
-                              : () async => send(context),
+                              : () => send(),
                         ),
                       ],
                     ),

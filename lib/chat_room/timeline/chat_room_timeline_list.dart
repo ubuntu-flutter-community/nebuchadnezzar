@@ -111,24 +111,27 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (!event.hideInTimeline(
-                            showAvatarChanges: showAvatarChanges,
-                            showDisplayNameChanges: showDisplayNameChanges,
-                          ) &&
-                          !event
-                              .getDisplayEvent(widget.timeline)
-                              .hideInTimeline(
-                                showAvatarChanges: showAvatarChanges,
-                                showDisplayNameChanges: showDisplayNameChanges,
-                              )) ...[
+                        showAvatarChanges: showAvatarChanges,
+                        showDisplayNameChanges: showDisplayNameChanges,
+                      )) ...[
                         if (previous != null &&
+                            !previous.hideInTimeline(
+                              showAvatarChanges: showAvatarChanges,
+                              showDisplayNameChanges: showDisplayNameChanges,
+                            ) &&
                             event.originServerTs.toLocal().day !=
                                 previous.originServerTs.toLocal().day)
-                          Text(
-                            previous.originServerTs
-                                .toLocal()
-                                .formatAndLocalizeDay(context),
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.labelSmall,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              previous.originServerTs
+                                  .toLocal()
+                                  .formatAndLocalizeDay(context),
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           ),
                         RepaintBoundary(
                           child: ChatEventTile(

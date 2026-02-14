@@ -36,21 +36,23 @@ class ChatMessageBubble extends StatelessWidget {
         minWidth: ChatMessageBubble.minWidth,
       ),
       child: Container(
-        margin:
-            const EdgeInsets.symmetric(
-              horizontal: kSmallPadding,
-              vertical: kTinyPadding,
-            ).copyWith(
-              top: event.isImage
-                  ? null
-                  : eventPosition == EventPosition.top
-                  ? kMediumPadding
-                  : null,
-            ),
-        padding: const EdgeInsets.only(
-          top: kSmallPadding,
-          bottom: kSmallPadding,
+        margin: const EdgeInsets.symmetric(vertical: kTinyPadding).copyWith(
+          top: event.isImage
+              ? null
+              : eventPosition == EventPosition.top
+              ? kMediumPadding
+              : null,
         ),
+        padding: switch (eventPosition) {
+          EventPosition.single => const EdgeInsets.symmetric(
+            vertical: kSmallPadding,
+          ),
+          EventPosition.top => const EdgeInsets.only(top: kMediumPadding),
+          EventPosition.middle => const EdgeInsets.symmetric(
+            vertical: kTinyPadding,
+          ),
+          EventPosition.bottom => const EdgeInsets.only(bottom: kMediumPadding),
+        },
         child: ChatMessageBubbleContent(
           color: color,
           eventPosition: eventPosition,

@@ -72,6 +72,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       (TimelineManager m) => m.getUpdatingTimeline(widget.room.id),
     );
 
+    final threadeMode = watchPropertyValue((DraftManager m) => m.threadMode);
+
     registerStreamHandler(
       select: (ChatManager m) => m.getLeftRoomStream(widget.room.id),
       handler: (context, leftRoomUpdate, cancel) {
@@ -133,12 +135,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               key: chatRoomScaffoldKey,
               endDrawer: ChatRoomInfoDrawer(room: widget.room),
               appBar: ChatRoomTitleBar(room: widget.room),
-              bottomNavigationBar: widget.room.isArchived || widget.room.isSpace
-                  ? null
-                  : ChatInput(
-                      key: ValueKey('${widget.room.id}input'),
-                      room: widget.room,
-                    ),
+              bottomNavigationBar: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                child:
+                    widget.room.isArchived || widget.room.isSpace || threadeMode
+                    ? const SizedBox.shrink()
+                    : ChatInput(room: widget.room),
+              ),
               body: FutureBuilder<Timeline>(
                 key: ValueKey(widget.room.id),
                 future: _timelineFuture,

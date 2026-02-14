@@ -47,7 +47,7 @@ Color getTileColor(bool isUserEvent, ThemeData theme) {
 
   return isUserEvent
       ? userColor
-      : getMonochromeBg(theme: theme, factor: 6, darkFactor: 15);
+      : getMonochromeBg(theme: theme, factor: 6, darkFactor: 18);
 }
 
 Color getTileIconColor(ThemeData theme) {

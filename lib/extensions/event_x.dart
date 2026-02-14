@@ -5,7 +5,7 @@ import 'package:yaru/yaru.dart';
 import '../l10n/app_localizations.dart';
 
 extension EventX on Event {
-  bool get isImage => messageType == MessageTypes.Image;
+  bool get isImage => messageType == MessageTypes.Image && !isSvgImage;
   bool get isFile => messageType == MessageTypes.File;
   bool get isVideo => messageType == MessageTypes.Video;
   bool get isAudio => messageType == MessageTypes.Audio;
@@ -30,6 +30,18 @@ extension EventX on Event {
     final body = content.tryGet<String>('body');
     if (filename != body && body != null && filename != null) return body;
     return null;
+  }
+
+  int? get fileSize {
+    if (!{
+      MessageTypes.File,
+      MessageTypes.Image,
+      MessageTypes.Video,
+      MessageTypes.Audio,
+    }.contains(messageType)) {
+      return null;
+    }
+    return content.tryGet<Map<String, dynamic>>('info')?.tryGet<int>('size');
   }
 
   String? get fileName {
@@ -165,28 +177,33 @@ extension EventX on Event {
         ) ??
         true;
 
-    final prevVisible = !prevHidden && !(prev?.showAsBadge ?? true);
-    final nextVisible = !nextHidden && !(next?.showAsBadge ?? true);
+    final prevFromOtherDay =
+        !prevHidden &&
+        prev != null &&
+        prev.originServerTs.toLocal().day != originServerTs.toLocal().day;
 
-    // Single event
-    if ((!prevVisible && !nextVisible) ||
-        (next?.senderId != senderId && prev?.senderId != senderId)) {
-      return EventPosition.semanticSingle;
-    }
+    final nextFromOtherDay =
+        !nextHidden &&
+        next != null &&
+        next.originServerTs.toLocal().day != originServerTs.toLocal().day;
 
-    // Top of group
-    if (!prevVisible ||
-        prev!.senderId != senderId ||
-        prev.originServerTs.toLocal().day != originServerTs.toLocal().day) {
+    final prevBadge = !prevHidden && (prev?.showAsBadge ?? false);
+    final nextBadge = !nextHidden && (next?.showAsBadge ?? false);
+
+    final prevSameSender = !prevHidden && (prev?.senderId == senderId);
+    final nextSameSender = !nextHidden && (next?.senderId == senderId);
+
+    if (prevHidden || prevFromOtherDay || prevBadge || !prevSameSender) {
+      if (nextFromOtherDay || nextHidden || nextBadge || !nextSameSender) {
+        return EventPosition.single;
+      }
       return EventPosition.top;
+    } else {
+      if (nextFromOtherDay || nextHidden || nextBadge || !nextSameSender) {
+        return EventPosition.bottom;
+      }
+      return EventPosition.middle;
     }
-
-    // Bottom of group
-    if (!nextVisible || next!.senderId != senderId) {
-      return EventPosition.bottom;
-    }
-
-    return EventPosition.middle;
   }
 
   Uri? get geoUri {
@@ -218,4 +235,4 @@ extension EventX on Event {
       .toList();
 }
 
-enum EventPosition { top, bottom, middle, semanticSingle }
+enum EventPosition { top, bottom, middle, single }
