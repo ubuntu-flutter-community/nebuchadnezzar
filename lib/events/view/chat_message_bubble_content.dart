@@ -52,24 +52,45 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
     final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
 
-    var borderRadius = switch (eventPosition) {
-      EventPosition.middle => BorderRadius.circular(kBubbleRadiusValue),
-      EventPosition.top => const BorderRadius.only(
-        topLeft: kBubbleRadius,
-        topRight: kBigBubbleRadius,
-        bottomLeft: kBubbleRadius,
-        bottomRight: kBubbleRadius,
+    final borderRadius = switch ((eventPosition, event.isUserEvent)) {
+      (EventPosition.single, true) => BorderRadius.circular(12),
+      (EventPosition.single, false) => BorderRadius.circular(12),
+      (EventPosition.top, true) => const BorderRadius.only(
+        topLeft: Radius.circular(kBigBubbleRadiusValue),
+        topRight: Radius.circular(kBigBubbleRadiusValue),
+        bottomLeft: Radius.circular(kBigBubbleRadiusValue),
       ),
-      EventPosition.bottom => const BorderRadius.only(
-        topLeft: kBubbleRadius,
-        topRight: kBubbleRadius,
-        bottomLeft: kBigBubbleRadius,
-        bottomRight: kBigBubbleRadius,
+      (EventPosition.top, false) => const BorderRadius.only(
+        topLeft: Radius.circular(kBigBubbleRadiusValue),
+        topRight: Radius.circular(kBigBubbleRadiusValue),
+        bottomRight: Radius.circular(kBigBubbleRadiusValue),
       ),
-      EventPosition.semanticSingle => const BorderRadius.all(
-        kBigBubbleRadius,
-      ).copyWith(topLeft: kBubbleRadius),
+      (EventPosition.middle, true) => const BorderRadius.only(
+        topLeft: Radius.circular(kBigBubbleRadiusValue),
+        bottomLeft: Radius.circular(kBigBubbleRadiusValue),
+        bottomRight: Radius.circular(kTinyPadding),
+        topRight: Radius.circular(kTinyPadding),
+      ),
+      (EventPosition.middle, false) => const BorderRadius.only(
+        topRight: Radius.circular(kBigBubbleRadiusValue),
+        bottomRight: Radius.circular(kBigBubbleRadiusValue),
+        topLeft: Radius.circular(kTinyPadding),
+        bottomLeft: Radius.circular(kTinyPadding),
+      ),
+      (EventPosition.bottom, true) => const BorderRadius.only(
+        topLeft: Radius.circular(kBigBubbleRadiusValue),
+        bottomLeft: Radius.circular(kBigBubbleRadiusValue),
+        bottomRight: Radius.circular(kBigBubbleRadiusValue),
+        topRight: Radius.circular(kTinyPadding),
+      ),
+      (EventPosition.bottom, false) => const BorderRadius.only(
+        topRight: Radius.circular(kBigBubbleRadiusValue),
+        bottomLeft: Radius.circular(kBigBubbleRadiusValue),
+        bottomRight: Radius.circular(kBigBubbleRadiusValue),
+        topLeft: Radius.circular(kTinyPadding),
+      ),
     };
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: event.isUserEvent
@@ -81,8 +102,9 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
           child:
-              eventPosition == EventPosition.top ||
-                  eventPosition == EventPosition.semanticSingle
+              !event.isUserEvent &&
+                  (eventPosition == EventPosition.top ||
+                      eventPosition == EventPosition.single)
               ? ChatAvatar(
                   avatarUri: event.senderFromMemoryOrFallback.avatarUrl,
                   onTap: () => showDialog(
@@ -132,7 +154,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (!event.hasThumbnail)
+                                if (!event.hasThumbnail || !event.isImage)
                                   const SizedBox(height: kSmallPadding),
 
                                 if (!event.isUserEvent &&
@@ -263,17 +285,8 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                         MessageTypes.Audio ||
                                                     event.messageType ==
                                                         MessageTypes.Video)
-                                                  IconButton(
-                                                    tooltip: l10n.appendToQueue,
-                                                    onPressed: () =>
-                                                        playMatrixMedia(
-                                                          context,
-                                                          event: event,
-                                                          newPlaylist: false,
-                                                        ),
-                                                    icon: const Icon(
-                                                      YaruIcons.music_queue,
-                                                    ),
+                                                  AppendToQueueButton(
+                                                    event: event,
                                                   ),
                                               ],
                                             ),
@@ -308,13 +321,14 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                       ),
                                     ),
                                   ),
-                                if (!event.redacted && !event.hasThumbnail)
+                                if (event.status == EventStatus.synced &&
+                                    !event.redacted &&
+                                    !(event.hasThumbnail || event.isImage))
                                   ChatMessageReactions(
                                     event: event,
                                     timeline: timeline,
                                   ),
-                                if (!(event.isImage ||
-                                    event.isVideo && event.hasThumbnail))
+                                if (!event.hasThumbnail && !event.isImage)
                                   const SizedBox(height: kSmallPadding),
                               ],
                             ),
@@ -335,7 +349,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                   if ((event.isUserEvent ||
                           event.status == EventStatus.error) &&
                       (eventPosition == EventPosition.bottom ||
-                          eventPosition == EventPosition.semanticSingle))
+                          eventPosition == EventPosition.single))
                     ChatEventStatusIcon(event: event, timeline: timeline),
                 ],
               ),
@@ -343,6 +357,28 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
           ),
         ),
       ],
+    );
+  }
+}
+
+class AppendToQueueButton extends StatelessWidget
+    with WatchItMixin, PlayerControlMixin {
+  const AppendToQueueButton({super.key, required this.event});
+
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDownloading = watchValue(
+      (ChatDownloadManager m) => m.getDownloadCommand(event).isRunning,
+    );
+
+    return IconButton(
+      tooltip: context.l10n.appendToQueue,
+      onPressed: isDownloading
+          ? null
+          : () => playMatrixMedia(context, event: event, newPlaylist: false),
+      icon: const Icon(YaruIcons.music_queue),
     );
   }
 }

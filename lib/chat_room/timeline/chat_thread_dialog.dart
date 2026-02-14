@@ -42,12 +42,19 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
             .eventId,
         notify: false,
       );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      di<DraftManager>().setThreadMode(true);
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     di<DraftManager>().resetThreadIds();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      di<DraftManager>().setThreadMode(false);
+    });
   }
 
   @override
@@ -89,7 +96,7 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
               event: threadChild,
               timeline: widget.timeline,
               onReplyOriginClick: widget.onReplyOriginClick,
-              eventPosition: EventPosition.semanticSingle,
+              eventPosition: EventPosition.single,
               allowNormalReply: false,
             );
           },

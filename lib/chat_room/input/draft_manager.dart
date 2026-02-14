@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
@@ -21,10 +22,23 @@ class DraftManager extends SafeChangeNotifier {
     required Client client,
     required LocalImageService localImageService,
   }) : _client = client,
-       _localImageService = localImageService;
+       _localImageService = localImageService {
+    sendCommand = Command.createAsync(
+      (room) => send(room: room),
+      initialValue: null,
+    );
+  }
 
   final Client _client;
   final LocalImageService _localImageService;
+
+  bool _threadMode = false;
+  bool get threadMode => _threadMode;
+  void setThreadMode(bool value) {
+    if (value == _threadMode) return;
+    _threadMode = value;
+    notifyListeners();
+  }
 
   Event? _replyEvent;
   Event? get replyEvent => _replyEvent;
@@ -74,7 +88,9 @@ class DraftManager extends SafeChangeNotifier {
     _threadRootEventId = null;
   }
 
-  Future<void> send({required Room room, String? text}) async {
+  late final Command<Room, void> sendCommand;
+
+  Future<void> send({required Room room}) async {
     try {
       await room.setTyping(false);
     } on Exception catch (e, s) {

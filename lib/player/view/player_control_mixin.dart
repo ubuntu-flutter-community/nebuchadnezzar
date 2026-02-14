@@ -1,14 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 import '../../common/platforms.dart';
 import '../../common/view/confirm.dart';
+import '../../events/chat_download_manager.dart';
 import '../../l10n/l10n.dart';
 import '../data/local_media.dart';
 import '../player_manager.dart';
@@ -37,15 +37,9 @@ mixin PlayerControlMixin {
     MatrixFile? matrixFile;
 
     try {
-      final result = await showFutureLoadingDialog(
-        context: context,
-        future: () => event.downloadAndDecryptAttachment(),
-        title: context.l10n.loadingPleaseWait,
-        backLabel: context.l10n.cancel,
-        barrierDismissible: true,
-      );
-
-      matrixFile = result.asValue?.value;
+      matrixFile = await di<ChatDownloadManager>()
+          .getDownloadCommand(event)
+          .runAsync();
 
       if (matrixFile != null) {
         if (!Platforms.isWeb) {
