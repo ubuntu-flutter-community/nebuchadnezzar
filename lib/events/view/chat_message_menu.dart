@@ -51,7 +51,10 @@ class _ChatMessageMenuState extends State<ChatMessageMenu> {
         menuChildren: widget.event.redacted
             ? []
             : [
-                ChatMessageMenuReactionPicker(event: widget.event),
+                ChatMessageMenuReactionPicker(
+                  event: widget.event,
+                  timeline: widget.timeline,
+                ),
                 const Divider(),
                 if (widget.allowNormalReply)
                   MenuItemButton(

@@ -6,6 +6,7 @@ import 'package:matrix/matrix.dart';
 import '../../common/constants.dart';
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
+import '../../events/chat_message_reaction_capsule.dart';
 import '../../extensions/room_x.dart';
 import '../../extensions/xtypegroup_x.dart';
 
@@ -463,6 +464,28 @@ class EditRoomService {
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
+    }
+  }
+
+  Future<String?> sendReaction(ChatMessageReactionCapsule capsule) async {
+    final entry = capsule.entry;
+    final event = capsule.event;
+    final allReactionEvents = capsule.allReactionEvents;
+
+    if (allReactionEvents == null) {
+      return null;
+    }
+
+    final reactedOnEvent = allReactionEvents.firstWhereOrNull(
+      (e) =>
+          e.senderId == e.room.client.userID &&
+          e.content.tryGetMap('m.relates_to')?['key'] == entry.key,
+    );
+
+    if (reactedOnEvent != null) {
+      return reactedOnEvent.redactEvent();
+    } else {
+      return event.room.sendReaction(event.eventId, entry.key);
     }
   }
 }

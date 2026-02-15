@@ -102,11 +102,11 @@ class _ChatMessageImageFullScreenDialogState
         actions: [
           IconButton(
             tooltip: l10n.downloadFile,
-            onPressed: () => di<ChatDownloadManager>().safeFile(
-              event: widget.event,
-              dialogTitle: l10n.saveFile,
-              confirmButtonText: l10n.saveFile,
-            ),
+            onPressed: () =>
+                di<ChatDownloadManager>().getSaveFileCommand(widget.event).run((
+                  confirmButtonText: l10n.saveFile,
+                  dialogTitle: l10n.saveFile,
+                )),
             icon: ChatMessageAttachmentIndicator(event: widget.event),
           ),
         ],

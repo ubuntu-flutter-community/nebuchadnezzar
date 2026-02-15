@@ -9,11 +9,7 @@ import 'chat_download_service.dart';
 
 class ChatDownloadManager extends SafeChangeNotifier {
   ChatDownloadManager({required ChatDownloadService service})
-    : _service = service {
-    _propertiesChangedSub = _service.propertiesChanged.listen(
-      (_) => notifyListeners(),
-    );
-  }
+    : _service = service;
 
   final ChatDownloadService _service;
   StreamSubscription<bool>? _propertiesChangedSub;
@@ -37,15 +33,22 @@ class ChatDownloadManager extends SafeChangeNotifier {
         ),
       );
 
-  String? isEventDownloaded(Event event) => _service.isEventDownloaded(event);
-  Future<void> safeFile({
-    required Event event,
-    required String confirmButtonText,
-    required String dialogTitle,
-  }) async => _service.safeFile(
-    event: event,
-    confirmButtonText: confirmButtonText,
-    dialogTitle: dialogTitle,
+  final _saveFileCommands =
+      <
+        Event,
+        Command<({String confirmButtonText, String dialogTitle}), String?>
+      >{};
+  Command<({String confirmButtonText, String dialogTitle}), String?>
+  getSaveFileCommand(Event event) => _saveFileCommands.putIfAbsent(
+    event,
+    () => Command.createAsync(
+      (param) => _service.safeFile(
+        event: event,
+        confirmButtonText: param.confirmButtonText,
+        dialogTitle: param.dialogTitle,
+      ),
+      initialValue: null,
+    ),
   );
 
   @override

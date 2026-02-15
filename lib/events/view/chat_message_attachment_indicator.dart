@@ -18,14 +18,15 @@ class ChatMessageAttachmentIndicator extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final isEventDownload = watchPropertyValue(
-      (ChatDownloadManager m) => m.isEventDownloaded(event),
+    final path = watchValue(
+      (ChatDownloadManager m) =>
+          m.getSaveFileCommand(event).results.select((data) => data.data),
     );
 
     // TODO: open with native file manager
-    return isEventDownload != null
+    return path != null
         ? Tooltip(
-            message: isEventDownload,
+            message: path,
             child: Icon(
               YaruIcons.download_filled,
               color: context.colorScheme.primary,

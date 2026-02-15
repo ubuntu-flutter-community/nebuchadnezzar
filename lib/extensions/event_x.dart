@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
+import '../events/chat_message_reaction_entry.dart';
 import '../l10n/app_localizations.dart';
 
 extension EventX on Event {
@@ -18,17 +20,20 @@ extension EventX on Event {
     if (!{
       MessageTypes.File,
       MessageTypes.Image,
+      MessageTypes.Sticker,
       MessageTypes.Video,
       MessageTypes.Audio,
     }.contains(messageType)) {
       return null;
     }
-    final formattedBody = content.tryGet<String>('formatted_body');
-    if (formattedBody != null) return formattedBody;
-
     final filename = content.tryGet<String>('filename');
-    final body = content.tryGet<String>('body');
-    if (filename != body && body != null && filename != null) return body;
+    final body = calcUnlocalizedBody(hideReply: true, plaintextBody: true);
+
+    if (filename != body &&
+        filename != null &&
+        content.tryGet<String>('body')?.isNotEmpty == true) {
+      return body;
+    }
     return null;
   }
 
@@ -57,7 +62,7 @@ extension EventX on Event {
     if (filename != null) return filename;
 
     final body = content.tryGet<String>('body');
-    if (body != null) return body;
+    if (body != null && body.isNotEmpty) return body;
 
     final url = content.tryGet<String>('url');
     if (url != null) {
@@ -233,6 +238,42 @@ extension EventX on Event {
       .map((e) => e.user)
       .where((e) => e.id != room.client.userID)
       .toList();
+
+  Set<Event> getAllReactionEvents(Timeline timeline) =>
+      aggregatedEvents(timeline, RelationshipTypes.reaction);
+
+  Map<String, ChatMessageReactionEntry> getReactionMap(
+    Set<Event> allReactionEvents,
+  ) {
+    final reactionMap = <String, ChatMessageReactionEntry>{};
+
+    for (final e in allReactionEvents) {
+      final key = e.content
+          .tryGetMap<String, dynamic>('m.relates_to')
+          ?.tryGet<String>('key');
+      if (key != null) {
+        if (!reactionMap.containsKey(key)) {
+          reactionMap[key] = ChatMessageReactionEntry(
+            key: key,
+            count: 0,
+            reacted: false,
+            reactors: [],
+          );
+        }
+        reactionMap[key]!.count++;
+        reactionMap[key]!.reactors!.add(e.senderFromMemoryOrFallback);
+        reactionMap[key]!.reacted |= e.senderId == e.room.client.userID;
+      }
+    }
+
+    return reactionMap;
+  }
+
+  List<ChatMessageReactionEntry> getReactionList(
+    Set<Event> allReactionEvents,
+  ) => getReactionMap(
+    allReactionEvents,
+  ).values.toList().sorted((a, b) => b.count - a.count > 0 ? 1 : -1);
 }
 
 enum EventPosition { top, bottom, middle, single }
