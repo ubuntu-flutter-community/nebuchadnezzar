@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_room/common/view/chat_invitation_dialog.dart';
+import '../../chat_room/common/view/chat_join_room_dialog.dart';
 import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../chat_room/input/draft_manager.dart';
 import '../../chat_room/titlebar/chat_room_pin_button.dart';
@@ -76,7 +76,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                           Membership.invite => showDialog(
                             context: context,
                             builder: (context) =>
-                                ChatInvitationDialog(room: room),
+                                ChatJoinRoomDialog(room: room),
                           ),
                           _ => Future.value(),
                         };

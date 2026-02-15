@@ -17,6 +17,7 @@ import '../../../common/view/snackbars.dart';
 import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../create_or_edit/edit_room_manager.dart';
 import '../../info_drawer/chat_room_info_drawer.dart';
 import '../../input/draft_manager.dart';
 import '../../input/view/chat_input.dart';
@@ -65,6 +66,53 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
+    registerHandler(
+      select: (EditRoomManager m) => m.knockOrJoinCommand,
+      handler: (context, room, cancel) {
+        if (room != null) {
+          di<ChatManager>().setSelectedRoom(room);
+          if (room.isSpace) {
+            di<ChatManager>().setActiveSpace(room);
+          }
+        }
+      },
+    );
+
+    registerHandler(
+      select: (EditRoomManager m) => m.joinRoomCommand,
+      handler: (context, room, cancel) {
+        if (room != null) {
+          di<ChatManager>().setSelectedRoom(room);
+          if (room.isSpace) {
+            di<ChatManager>().setActiveSpace(room);
+          }
+        }
+      },
+    );
+
+    final knockIngOrJoining = watchValue(
+      (EditRoomManager m) => m.knockOrJoinCommand.isRunning,
+    );
+
+    final joining = watchValue(
+      (EditRoomManager m) => m.joinRoomCommand.isRunning,
+    );
+
+    if (knockIngOrJoining || joining) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Progress(),
+              const SizedBox(height: kMediumPadding),
+              Text(context.l10n.loadingPleaseWait),
+            ],
+          ),
+        ),
+      );
+    }
+
     final l10n = context.l10n;
     final colorScheme = context.colorScheme;
 
