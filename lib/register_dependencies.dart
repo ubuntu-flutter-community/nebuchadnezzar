@@ -136,7 +136,6 @@ void registerDependencies() {
         client: di<Client>(),
         preferences: di<SharedPreferences>(),
       ),
-      dispose: (s) => s.dispose(),
       dependsOn: [Client, SharedPreferences],
     )
     ..registerSingletonWithDependencies<ChatDownloadManager>(

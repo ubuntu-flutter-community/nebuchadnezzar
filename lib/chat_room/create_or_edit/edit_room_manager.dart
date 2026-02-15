@@ -1,6 +1,7 @@
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 
+import '../../events/chat_message_reaction_capsule.dart';
 import 'edit_room_service.dart';
 
 class EditRoomManager {
@@ -21,13 +22,23 @@ class EditRoomManager {
   late final Command<Room, Room?> joinRoomCommand;
   late final Command<PublishedRoomsChunk, Room?> knockOrJoinCommand;
 
-  final Map<String, Command<void, void>> _leaveRoomCommands = {};
-  Command<void, void> getLeaveRoomCommand(Room room) =>
+  final Map<String, Command<Set<Event>, void>> _leaveRoomCommands = {};
+  Command<Set<Event>, void> getLeaveRoomCommand(Room room) =>
       _leaveRoomCommands.putIfAbsent(
         room.id,
-        () => Command.createAsync(
-          (_) => _editRoomService.leaveRoom(room),
-          initialValue: null,
-        ),
+        () => Command.createAsync((_) async {
+          await _editRoomService.leaveRoom(room);
+          _leaveRoomCommands.remove(room.id);
+        }, initialValue: null),
       );
+
+  final Map<String, Command<ChatMessageReactionCapsule, String?>>
+  sendReactionsCommands = {};
+  Command<ChatMessageReactionCapsule, String?> getSendReactionCommand(
+    String charKeyAndEventId,
+  ) => sendReactionsCommands.putIfAbsent(
+    charKeyAndEventId,
+    () =>
+        Command.createAsync(_editRoomService.sendReaction, initialValue: null),
+  );
 }

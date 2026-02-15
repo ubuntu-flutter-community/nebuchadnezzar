@@ -66,11 +66,12 @@ class ChatMessageMediaAvatar extends StatelessWidget
                             MessageTypes.File ||
                             MessageTypes.Audio ||
                             MessageTypes.Video =>
-                              () => di<ChatDownloadManager>().safeFile(
-                                event: event,
-                                dialogTitle: l10n.saveFile,
-                                confirmButtonText: l10n.saveFile,
-                              ),
+                              () => di<ChatDownloadManager>()
+                                  .getSaveFileCommand(event)
+                                  .run((
+                                    confirmButtonText: l10n.saveFile,
+                                    dialogTitle: l10n.saveFile,
+                                  )),
                             _ => () async {},
                           },
                         ),

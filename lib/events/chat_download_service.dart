@@ -18,21 +18,19 @@ class ChatDownloadService {
   // ignore: unused_field
   final Client _client;
   final SharedPreferences _preferences;
-  final _propertiesChangedController = StreamController<bool>.broadcast();
-  Stream<bool> get propertiesChanged => _propertiesChangedController.stream;
 
   String? isEventDownloaded(Event event) {
     var path = _preferences.getString(event.eventId);
     return path != null && File(path).existsSync() ? path : null;
   }
 
-  Future<void> safeFile({
+  Future<String?> safeFile({
     required Event event,
     required String confirmButtonText,
     required String dialogTitle,
   }) async {
     if (event.attachmentMxcUrl == null) {
-      return;
+      return null;
     }
     MatrixFile? file;
     String? path;
@@ -63,10 +61,9 @@ class ChatDownloadService {
 
     if (file != null && path != null) {
       if (await _preferences.setString(event.eventId, path)) {
-        _propertiesChangedController.add(true);
+        return path;
       }
     }
+    return null;
   }
-
-  Future<void> dispose() async => _propertiesChangedController.close();
 }

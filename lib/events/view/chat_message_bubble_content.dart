@@ -275,13 +275,15 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                   tooltip: l10n.downloadFile,
                                                   onPressed: () =>
                                                       di<ChatDownloadManager>()
-                                                          .safeFile(
-                                                            event: event,
-                                                            dialogTitle:
-                                                                l10n.saveFile,
+                                                          .getSaveFileCommand(
+                                                            event,
+                                                          )
+                                                          .run((
                                                             confirmButtonText:
                                                                 l10n.saveFile,
-                                                          ),
+                                                            dialogTitle:
+                                                                l10n.saveFile,
+                                                          )),
                                                   icon:
                                                       ChatMessageAttachmentIndicator(
                                                         event: event,
