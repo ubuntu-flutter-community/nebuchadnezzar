@@ -10,6 +10,7 @@ import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
+import '../../extensions/event_x.dart';
 import 'chat_html_message_link_handler.dart';
 import 'chat_image.dart';
 
@@ -29,7 +30,8 @@ class HtmlMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final fontSize = style?.fontSize ?? 12;
-    final defaultTextColor = context.colorScheme.onSurface;
+    final colorScheme = context.colorScheme;
+    final defaultTextColor = colorScheme.onSurface;
     final element = _linkifyHtml(
       HtmlParser.parseHTML(displayEvent.formattedText),
     );
@@ -44,7 +46,14 @@ class HtmlMessage extends StatelessWidget {
               '*': theStyle,
               'code': theStyle,
               'pre': theStyle,
-              'a': theStyle.copyWith(color: context.colorScheme.link),
+              'a': theStyle.copyWith(
+                color: displayEvent.isUserEvent
+                    ? colorScheme.primary.scale(
+                        lightness: theme.colorScheme.isLight ? -0.5 : 0.4,
+                        saturation: 1,
+                      )
+                    : colorScheme.link,
+              ),
             },
       extensions: [
         CodeExtension(fontSize: fontSize, isLight: theme.colorScheme.isLight),

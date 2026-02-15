@@ -4,6 +4,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/event_x.dart';
 
 class ChatMessageReplyHeader extends StatefulWidget {
   const ChatMessageReplyHeader({
@@ -40,6 +41,7 @@ class _ChatMessageReplyHeaderState extends State<ChatMessageReplyHeader> {
       return fromCache.redacted
           ? Container()
           : _Message(
+              orginalEvent: widget.event,
               replyEvent: fromCache,
               onReplyOriginClick: widget.onReplyOriginClick,
               timeline: widget.timeline,
@@ -66,6 +68,7 @@ class _ChatMessageReplyHeaderState extends State<ChatMessageReplyHeader> {
           }
 
           return _Message(
+            orginalEvent: widget.event,
             replyEvent: replyEvent,
             onReplyOriginClick: widget.onReplyOriginClick,
             timeline: widget.timeline,
@@ -82,20 +85,24 @@ class _Message extends StatelessWidget {
   const _Message({
     required this.onReplyOriginClick,
     required this.replyEvent,
+    required this.orginalEvent,
     required this.timeline,
   });
 
   final Future<void> Function(Event) onReplyOriginClick;
   final Event? replyEvent;
+  final Event orginalEvent;
   final Timeline timeline;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = context.colorScheme;
+    final color = orginalEvent.isUserEvent
+        ? colorScheme.primary.scale(lightness: colorScheme.isDark ? 0.5 : -0.5)
+        : colorScheme.link;
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          left: BorderSide(color: context.colorScheme.link, width: 2),
-        ),
+        border: Border(left: BorderSide(color: color, width: 2)),
       ),
       padding: const EdgeInsets.only(left: kSmallPadding),
       margin: const EdgeInsets.only(top: kSmallPadding, bottom: kSmallPadding),
@@ -108,7 +115,7 @@ class _Message extends StatelessWidget {
           style: context.textTheme.labelSmall?.copyWith(
             fontStyle: FontStyle.italic,
             overflow: TextOverflow.ellipsis,
-            color: context.colorScheme.link,
+            color: color,
           ),
         ),
       ),

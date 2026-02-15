@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 
-import '../../chat_room/create_or_edit/edit_room_service.dart';
+import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../l10n/l10n.dart';
-import '../chat_manager.dart';
 import '../search_manager.dart';
 import 'build_context_x.dart';
 import 'chat_avatar.dart';
@@ -40,18 +38,10 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
                 focusNode: focusNode,
                 autofocus: true,
               ),
-      onSelected: (option) =>
-          showFutureLoadingDialog(
-            context: context,
-            future: () => di<EditRoomService>().knockOrJoinRoomChunk(option),
-          ).then((result) {
-            if (result.asValue?.value != null) {
-              if (context.mounted) {
-                Navigator.of(context).pop();
-              }
-              di<ChatManager>().setSelectedRoom(result.asValue!.value!);
-            }
-          }),
+      onSelected: (option) {
+        Navigator.of(context).pop();
+        di<EditRoomManager>().knockOrJoinCommand.run(option);
+      },
       displayStringForOption: (chunk) => chunk.name ?? chunk.roomId,
 
       optionsBuilder: (textEditingValue) =>
@@ -98,18 +88,10 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
                             chunk.canonicalAlias ?? chunk.roomId,
                             maxLines: 1,
                           ),
-                          onTap: () =>
-                              showFutureLoadingDialog(
-                                context: context,
-                                future: () => di<EditRoomService>()
-                                    .knockOrJoinRoomChunk(chunk),
-                              ).then((result) {
-                                if (result.asValue?.value != null) {
-                                  di<ChatManager>().setSelectedRoom(
-                                    result.asValue!.value!,
-                                  );
-                                }
-                              }),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            di<EditRoomManager>().knockOrJoinCommand.run(chunk);
+                          },
                         ),
                       );
                     },

@@ -91,6 +91,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
       ),
     };
 
+    final baseColor = color ?? getTileColor(event.isUserEvent, context.theme);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: event.isUserEvent
@@ -142,12 +143,17 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                     horizontal: kMediumPadding,
                                   ),
                             decoration: BoxDecoration(
-                              color:
-                                  color ??
-                                  getTileColor(
-                                    event.isUserEvent,
-                                    context.theme,
-                                  ),
+                              gradient: event.isImage
+                                  ? null
+                                  : LinearGradient(
+                                      colors: [
+                                        baseColor,
+                                        baseColor.scale(lightness: 0.05),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+
                               borderRadius: borderRadius,
                             ),
                             child: Column(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_room/create_or_edit/edit_room_service.dart';
+import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../common/chat_manager.dart';
 import '../../common/rooms_filter.dart';
 import '../../common/search_manager.dart';
@@ -77,18 +77,8 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
               ),
               context: context,
               onConfirm: () async {
-                final maybe = await di<EditRoomService>().knockOrJoinRoomChunk(
-                  chunk,
-                );
-                if (maybe != null) {
-                  di<ChatManager>().setSelectedRoom(maybe);
-                  if (maybe.isSpace) {
-                    di<ChatManager>().setActiveSpace(maybe);
-                  }
-                }
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
+                Navigator.of(context).pop();
+                di<EditRoomManager>().knockOrJoinCommand.run(chunk);
               },
             ),
           ),

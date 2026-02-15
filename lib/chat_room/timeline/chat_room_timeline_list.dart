@@ -115,14 +115,12 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         showDisplayNameChanges: showDisplayNameChanges,
                       )) ...[
                         if (previous != null &&
-                            !previous.hideInTimeline(
-                              showAvatarChanges: showAvatarChanges,
-                              showDisplayNameChanges: showDisplayNameChanges,
-                            ) &&
                             event.originServerTs.toLocal().day !=
                                 previous.originServerTs.toLocal().day)
                           Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: kSmallPadding,
+                            ),
                             child: Text(
                               previous.originServerTs
                                   .toLocal()
