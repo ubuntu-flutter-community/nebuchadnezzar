@@ -80,12 +80,16 @@ class _ChatInputState extends State<ChatInput> {
   }
 
   void send() {
-    final isRunning = di<DraftManager>().sendCommand.isRunning;
-    if (isRunning.value) return;
-    di<DraftManager>().sendCommand.runAsync(widget.room).then((_) {
+    if (di<DraftManager>().getFilesDraft(widget.room.id).isNotEmpty) {
+      di<DraftManager>().sendCommand.runAsync(widget.room).then((_) {
+        _sendController.clear();
+        _sendNode.requestFocus();
+      });
+    } else {
+      di<DraftManager>().sendCommand.run(widget.room);
       _sendController.clear();
       _sendNode.requestFocus();
-    });
+    }
   }
 
   @override
@@ -100,7 +104,9 @@ class _ChatInputState extends State<ChatInput> {
       (ChatManager m) => m.archiveActive,
     );
 
-    final sending = watchValue((DraftManager m) => m.sendCommand.isRunning);
+    final isSending = watchValue((DraftManager m) => m.sendCommand.isRunning);
+
+    final sendingFile = draftFiles.isNotEmpty && isSending;
 
     final replyEvent = watchPropertyValue((DraftManager m) => m.replyEvent);
 
@@ -171,7 +177,9 @@ class _ChatInputState extends State<ChatInput> {
                   maxLines: 10,
                   focusNode: _sendNode,
                   controller: _sendController,
-                  enabled: !archiveActive && !unAcceptedDirectChat,
+                  enabled: sendingFile
+                      ? false
+                      : !archiveActive && !unAcceptedDirectChat,
                   autofocus: true,
                   onChanged: (v) {
                     draftManager
@@ -203,7 +211,8 @@ class _ChatInputState extends State<ChatInput> {
                           IconButton(
                             padding: EdgeInsets.zero,
                             onPressed:
-                                attaching ||
+                                sendingFile ||
+                                    attaching ||
                                     archiveActive ||
                                     unAcceptedDirectChat
                                 ? null
@@ -254,10 +263,7 @@ class _ChatInputState extends State<ChatInput> {
                           padding: EdgeInsets.zero,
                           icon: transform,
                           onPressed:
-                              sending ||
-                                  attaching ||
-                                  archiveActive ||
-                                  unAcceptedDirectChat
+                              attaching || archiveActive || unAcceptedDirectChat
                               ? null
                               : () => send(),
                         ),

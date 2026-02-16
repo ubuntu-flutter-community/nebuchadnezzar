@@ -28,8 +28,6 @@ class AuthenticationService {
   Stream<UiaRequest<dynamic>> get onUiaRequestStream =>
       _client.onUiaRequest.stream;
 
-  final int _timeoutSeconds = 65;
-
   Future<bool> checkIfLoginTypeIsSupported(
     String loginType,
     String homeServer,
@@ -136,15 +134,13 @@ class AuthenticationService {
         throw Exception('Login token not received from SSO.');
       }
 
-      final response = await _client
-          .login(
-            LoginType.mLoginToken,
-            token: token,
-            initialDeviceDisplayName: Platforms.isWeb
-                ? '${AppConfig.kAppTitle} Web Browser'
-                : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
-          )
-          .timeout(Duration(seconds: _timeoutSeconds));
+      final response = await _client.login(
+        LoginType.mLoginToken,
+        token: token,
+        initialDeviceDisplayName: Platforms.isWeb
+            ? '${AppConfig.kAppTitle} Web Browser'
+            : '${AppConfig.kAppTitle} ${Platform.operatingSystem}',
+      );
 
       return response.userId;
     } on Exception {

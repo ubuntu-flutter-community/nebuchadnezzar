@@ -13,6 +13,7 @@ class ChatMessageBubble extends StatelessWidget {
     required this.onReplyOriginClick,
     required this.eventPosition,
     this.allowNormalReply = true,
+    this.showThreadButton = true,
     this.color,
   });
 
@@ -26,6 +27,7 @@ class ChatMessageBubble extends StatelessWidget {
 
   final Color? color;
   final bool allowNormalReply;
+  final bool showThreadButton;
 
   @override
   Widget build(BuildContext context) => Align(
@@ -60,6 +62,7 @@ class ChatMessageBubble extends StatelessWidget {
           timeline: timeline,
           onReplyOriginClick: onReplyOriginClick,
           allowNormalReply: allowNormalReply,
+          showThreadButton: showThreadButton,
         ),
       ),
     ),

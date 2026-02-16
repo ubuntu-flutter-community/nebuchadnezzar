@@ -4,7 +4,6 @@ import 'package:flutter_it/flutter_it.dart';
 import '../../authentication/authentication_service.dart';
 import '../../authentication/view/chat_login_page.dart';
 import '../../encryption/view/check_encryption_setup_page.dart';
-import '../../register_dependencies.dart';
 import '../app_config.dart';
 import 'app.dart';
 import 'error_page.dart';
@@ -54,13 +53,10 @@ class _WaitForRegistrationPageState extends State<WaitForRegistrationPage> {
                 highContrastDarkTheme: widget.highContrastDarkTheme,
                 highContrastTheme: widget.highContrastTheme,
                 child: ErrorPage(
-                  error: snapshot.error.toString(),
+                  error: snapshot.error,
                   addQuitButton: true,
-                  onRetry: () {
-                    di.reset(dispose: false);
-                    registerDependencies();
-                    _registrationRestartNotifier.value = UniqueKey();
-                  },
+                  onRetry: () =>
+                      _registrationRestartNotifier.value = UniqueKey(),
                 ),
               )
             : snapshot.hasData

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
@@ -9,6 +9,7 @@ import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../events/chat_download_manager.dart';
 import '../../events/view/chat_image.dart';
+import '../../events/view/chat_message_bubble_content.dart';
 import '../../events/view/chat_message_image_full_screen_dialog.dart';
 import '../../events/view/chat_message_media_avatar.dart';
 import '../../extensions/event_x.dart';
@@ -177,6 +178,11 @@ class ChatRoomInfoMediaGrid extends StatelessWidget
                         confirmButtonText: l10n.saveFile,
                         dialogTitle: l10n.saveFile,
                       )),
+              },
+              trailing: switch (messageType) {
+                MessageTypes.Audio ||
+                MessageTypes.Video => AppendToQueueButton(event: event),
+                _ => null,
               },
               minLeadingWidth: 50,
               leading: event.isImage

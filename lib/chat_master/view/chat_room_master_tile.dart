@@ -32,10 +32,16 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
       (EditRoomManager m) => m.getLeaveRoomCommand(room).isRunning,
     );
 
+    final isForgetting = watchValue(
+      (EditRoomManager m) => m.getForgetRoomCommand(room).isRunning,
+    );
+
+    final isProcessing = isLeaving || isForgetting;
+
     return ChatMasterTileMenu(
       room: room,
       child: Opacity(
-        opacity: isLeaving ? 0.5 : 1.0,
+        opacity: isProcessing ? 0.5 : 1.0,
         child: Padding(
           padding: const EdgeInsets.only(bottom: kSmallPadding),
           child: Stack(
@@ -45,7 +51,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                 key: ValueKey('${room.id}_master_tile'),
                 selected:
                     selectedRoom?.id != null && selectedRoom?.id == room.id,
-                leading: isLeaving
+                leading: isProcessing
                     ? const SizedBox.square(
                         dimension: kAvatarDefaultSize,
                         child: Center(
@@ -65,7 +71,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                 subtitle: room.membership == Membership.invite
                     ? Text(room.getLocalizedDisplayname())
                     : ChatRoomMasterTileSubTitle(room: room),
-                onTap: isLeaving
+                onTap: isProcessing
                     ? null
                     : () async {
                         di<DraftManager>().setAttaching(false);

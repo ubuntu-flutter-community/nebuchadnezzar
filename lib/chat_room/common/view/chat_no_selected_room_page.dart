@@ -61,7 +61,7 @@ class ChatNoSelectedRoomPage extends StatelessWidget with WatchItMixin {
             mainAxisSize: MainAxisSize.min,
             spacing: kBigPadding,
             children: [
-              Image.asset('assets/nebuchadnezzar.png', width: 100, height: 100),
+              Image.asset('assets/nebuchadnezzar.png', width: 100),
               const Text('Please select a chatroom from the side panel.'),
             ],
           ),

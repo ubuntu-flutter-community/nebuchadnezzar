@@ -14,6 +14,8 @@ class EditRoomService {
   EditRoomService({required Client client}) : _client = client;
 
   final Client _client;
+  List<ArchivedRoom> get archivedRooms => _client.archivedRooms;
+  List<Room> get rooms => _client.rooms;
 
   Stream<SyncUpdate> get _joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
