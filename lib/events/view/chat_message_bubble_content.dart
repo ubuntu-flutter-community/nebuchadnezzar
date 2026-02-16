@@ -35,12 +35,14 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
     required this.onReplyOriginClick,
     required this.eventPosition,
     this.allowNormalReply = true,
+    this.showThreadButton = true,
     this.color,
   });
 
   final Event event;
   final Timeline timeline;
   final bool allowNormalReply;
+  final bool showThreadButton;
   final Future<void> Function(Event event) onReplyOriginClick;
   final EventPosition eventPosition;
   final Color? color;
@@ -143,16 +145,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                     horizontal: kMediumPadding,
                                   ),
                             decoration: BoxDecoration(
-                              gradient: event.isImage
-                                  ? null
-                                  : LinearGradient(
-                                      colors: [
-                                        baseColor,
-                                        baseColor.scale(lightness: 0.05),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
+                              color: baseColor,
 
                               borderRadius: borderRadius,
                             ),
@@ -306,12 +299,13 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                       },
                                 if (!event.hasThumbnail)
                                   const SizedBox(height: kSmallPadding),
-                                if (event
-                                    .aggregatedEvents(
-                                      timeline,
-                                      RelationshipTypes.thread,
-                                    )
-                                    .isNotEmpty)
+                                if (showThreadButton &&
+                                    event
+                                        .aggregatedEvents(
+                                          timeline,
+                                          RelationshipTypes.thread,
+                                        )
+                                        .isNotEmpty)
                                   Padding(
                                     padding: const EdgeInsets.all(kTinyPadding),
                                     child: InkWell(

@@ -17,7 +17,7 @@ class ErrorPage extends StatelessWidget {
     this.addQuitButton = false,
   });
 
-  final String error;
+  final Object? error;
   final void Function()? onRetry;
   final String? onRetryLabel;
   final bool addQuitButton;
@@ -49,7 +49,7 @@ class ErrorBody extends StatelessWidget {
     this.addQuitButton = false,
   });
 
-  final String error;
+  final Object? error;
   final void Function()? onRetry;
   final String? onRetryLabel;
   final bool addQuitButton;
@@ -60,31 +60,36 @@ class ErrorBody extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(kBigPadding),
         child: SizedBox(
-          width: 250,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          width: 350,
+          child: ListView(
+            shrinkWrap: true,
             children: [
-              const Icon(Icons.bug_report, size: 30),
+              const Icon(Icons.bug_report_outlined, size: 100),
               const SizedBox(height: kMediumPadding),
-              Text('An error occurred: $error'),
+              YaruExpandable(
+                header: Text(
+                  error.toString().split(': ').firstOrNull ?? error.toString(),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                child: SelectableText(error.toString()),
+              ),
               const SizedBox(height: 2 * kBigPadding),
-              SizedBox(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: kMediumPadding,
-                  children: [
-                    if (onRetry != null)
-                      ...[
-                        ElevatedButton.icon(
-                          icon: const Icon(YaruIcons.refresh),
-                          onPressed: onRetry,
-                          label: Text(onRetryLabel ?? context.l10n.retry),
-                        ),
-                        OutlinedButton.icon(
-                          icon: const Icon(YaruIcons.send),
-                          onPressed: () {
-                            final String body =
-                                '''
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: kMediumPadding,
+                children: [
+                  if (onRetry != null)
+                    ...[
+                      ElevatedButton.icon(
+                        icon: const Icon(YaruIcons.refresh),
+                        onPressed: onRetry,
+                        label: Text(onRetryLabel ?? context.l10n.retry),
+                      ),
+                      OutlinedButton.icon(
+                        icon: const Icon(YaruIcons.send),
+                        onPressed: () {
+                          final String body =
+                              '''
 **Describe the bug**
 
 A clear and concise description of what the bug is.
@@ -104,36 +109,37 @@ Add any other context about the problem here.
 
 **Error Log**
 ```
+------------ Platform: ------------
 Platform: ${kIsWeb ? 'Web' : Platform.operatingSystem} ${kIsWeb ? '' : Platform.operatingSystemVersion}
-
------------- Stack Trace ------------
-${StackTrace.current}
-                                ''';
-                            launchUrl(
-                              Uri(
-                                scheme: AppConfig.scheme,
-                                host: AppConfig.host,
-                                path:
-                                    '/${AppConfig.owner}/${AppConfig.repo}/issues/new',
-                                queryParameters: {
-                                  'title':
-                                      'fix: ${error.toString().split('\n').first}',
-                                  'body': body,
-                                },
-                              ),
-                            );
-                          },
-                          label: Text(context.l10n.reportIssue),
+           
+------------ Error: ------------
+${error.toString().splitMapJoin(RegExp('.{1,100}'), onMatch: (m) => '${m.group(0)}\n', onNonMatch: (n) => n)}
+```
+''';
+                          launchUrl(
+                            Uri(
+                              scheme: AppConfig.scheme,
+                              host: AppConfig.host,
+                              path:
+                                  '/${AppConfig.owner}/${AppConfig.repo}/issues/new',
+                              queryParameters: {
+                                'title':
+                                    'fix: ${error.toString().split(':').firstOrNull ?? 'error'}',
+                                'body': body,
+                              },
+                            ),
+                          );
+                        },
+                        label: Text(context.l10n.reportIssue),
+                      ),
+                      if (addQuitButton)
+                        OutlinedButton.icon(
+                          icon: const Icon(YaruIcons.window_close),
+                          onPressed: () => exit(0),
+                          label: Text(context.l10n.closeApp),
                         ),
-                        if (addQuitButton)
-                          OutlinedButton.icon(
-                            icon: const Icon(YaruIcons.window_close),
-                            onPressed: () => exit(0),
-                            label: Text(context.l10n.closeApp),
-                          ),
-                      ].map((e) => SizedBox(width: double.infinity, child: e)),
-                  ],
-                ),
+                    ].map((e) => SizedBox(width: 250.0, child: e)),
+                ],
               ),
             ],
           ),

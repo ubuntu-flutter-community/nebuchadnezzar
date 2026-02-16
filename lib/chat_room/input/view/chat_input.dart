@@ -80,12 +80,9 @@ class _ChatInputState extends State<ChatInput> {
   }
 
   void send() {
-    final isRunning = di<DraftManager>().sendCommand.isRunning;
-    if (isRunning.value) return;
-    di<DraftManager>().sendCommand.runAsync(widget.room).then((_) {
-      _sendController.clear();
-      _sendNode.requestFocus();
-    });
+    di<DraftManager>().sendCommand.run(widget.room);
+    _sendController.clear();
+    _sendNode.requestFocus();
   }
 
   @override
@@ -99,8 +96,6 @@ class _ChatInputState extends State<ChatInput> {
     final archiveActive = watchPropertyValue(
       (ChatManager m) => m.archiveActive,
     );
-
-    final sending = watchValue((DraftManager m) => m.sendCommand.isRunning);
 
     final replyEvent = watchPropertyValue((DraftManager m) => m.replyEvent);
 
@@ -254,10 +249,7 @@ class _ChatInputState extends State<ChatInput> {
                           padding: EdgeInsets.zero,
                           icon: transform,
                           onPressed:
-                              sending ||
-                                  attaching ||
-                                  archiveActive ||
-                                  unAcceptedDirectChat
+                              attaching || archiveActive || unAcceptedDirectChat
                               ? null
                               : () => send(),
                         ),

@@ -79,9 +79,9 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                     ),
                     onConfirm: () {
                       di<ChatManager>().setSelectedRoom(null);
-                      di<EditRoomManager>()
-                          .getLeaveRoomCommand(widget.room)
-                          .run();
+                      di<EditRoomManager>().globalLeaveRoomCommand.run(
+                        widget.room,
+                      );
                     },
                   ),
                   leadingIcon: const Icon(YaruIcons.log_out),

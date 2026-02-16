@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
+import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
-import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../events/view/chat_message_bubble.dart';
 import '../../extensions/event_x.dart';
@@ -68,31 +68,33 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
 
     watchPropertyValue((TimelineManager m) => m.getTimeline(room.id));
 
-    final textTheme = context.textTheme;
-    return AlertDialog(
-      title: Text(
-        'Thread(${widget.event.senderFromMemoryOrFallback.calcDisplayname()}): ${widget.event.getDisplayEvent(widget.timeline).plaintextBody}',
-        maxLines: 3,
-        style: textTheme.titleMedium,
+    var events = {
+      ...widget.event.aggregatedEvents(
+        widget.timeline,
+        RelationshipTypes.thread,
       ),
+      widget.event,
+    };
+    return AlertDialog(
+      constraints: const BoxConstraints(maxWidth: 500, maxHeight: 800),
+      titlePadding: EdgeInsets.zero,
+      title: const YaruDialogTitleBar(title: Text('Thread')),
       contentPadding: EdgeInsets.zero,
       actionsPadding: const EdgeInsets.all(kSmallPadding),
       content: SizedBox(
         width: 500,
         height: 600,
         child: ListView.builder(
+          reverse: true,
           padding: const EdgeInsets.all(kMediumPadding),
-          itemCount: widget.event
-              .aggregatedEvents(widget.timeline, RelationshipTypes.thread)
-              .length,
+          itemCount: events.length,
           itemBuilder: (context, index) {
-            final threadChild = widget.event
-                .aggregatedEvents(widget.timeline, RelationshipTypes.thread)
-                .elementAtOrNull(index);
+            final threadChild = events.elementAtOrNull(index);
 
             if (threadChild == null) return const SizedBox.shrink();
 
             return ChatMessageBubble(
+              showThreadButton: false,
               event: threadChild,
               timeline: widget.timeline,
               onReplyOriginClick: widget.onReplyOriginClick,

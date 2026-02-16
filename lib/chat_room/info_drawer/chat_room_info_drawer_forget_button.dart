@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import '../create_or_edit/edit_room_service.dart';
+import '../create_or_edit/edit_room_manager.dart';
 
 class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
   const ChatRoomInfoDrawerForgetButton({super.key, required this.room});
@@ -38,12 +37,7 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
             : null,
         onPressed: () {
           di<ChatManager>().setSelectedRoom(null);
-          showFutureLoadingDialog(
-            barrierDismissible: true,
-            title: context.l10n.delete,
-            context: context,
-            future: () => di<EditRoomService>().forgetRoom(room),
-          );
+          di<EditRoomManager>().globalForgetRoomCommand.run(room);
         },
         icon: Icon(
           YaruIcons.trash,
