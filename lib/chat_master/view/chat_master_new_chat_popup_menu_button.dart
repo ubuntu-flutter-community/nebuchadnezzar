@@ -32,6 +32,7 @@ class ChatMasterNewChatPopupMenuButton extends StatelessWidget {
           PopupMenuItem(
             onTap: () => showDialog(
               context: context,
+              barrierDismissible: false,
               builder: (context) => const CreateOrEditRoomDialog(),
             ),
             child: Row(
@@ -42,6 +43,7 @@ class ChatMasterNewChatPopupMenuButton extends StatelessWidget {
           PopupMenuItem(
             onTap: () => showDialog(
               context: context,
+              barrierDismissible: false,
               builder: (context) => const CreateOrEditRoomDialog(space: true),
             ),
             child: Row(

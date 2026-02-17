@@ -91,7 +91,12 @@
     "startAppUpPleaseWait",
     "retry",
     "reportIssue",
-    "closeApp"
+    "closeApp",
+    "creatingRoomPleaseWait",
+    "creatingSpacePleaseWait",
+    "joiningRoomPleaseWait",
+    "leavingRoomPleaseWait",
+    "deletingRoomPleaseWait"
   ],
 
   "sv": [
@@ -191,6 +196,11 @@
     "startAppUpPleaseWait",
     "retry",
     "reportIssue",
-    "closeApp"
+    "closeApp",
+    "creatingRoomPleaseWait",
+    "creatingSpacePleaseWait",
+    "joiningRoomPleaseWait",
+    "leavingRoomPleaseWait",
+    "deletingRoomPleaseWait"
   ]
 }

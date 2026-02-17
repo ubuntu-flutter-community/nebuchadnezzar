@@ -7,134 +7,30 @@ import '../../authentication/view/chat_login_page.dart';
 import '../../authentication/view/uia_request_handler.dart';
 import '../../chat_room/common/view/chat_no_selected_room_page.dart';
 import '../../chat_room/common/view/chat_room_page.dart';
-import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../common/chat_manager.dart';
 import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../encryption/encryption_manager.dart';
 import '../../encryption/view/key_verification_dialog.dart';
-import '../../l10n/l10n.dart';
 import '../../notification/chat_notification_handler.dart';
 import '../../player/view/player_view.dart';
-import 'chat_clear_archive_progress_bar.dart';
+import 'chat_edit_room_mixin.dart';
 import 'chat_master_panel.dart';
 
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
-class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
+class ChatMasterDetailPage extends StatelessWidget
+    with WatchItMixin, ChatEditRoomMixin {
   const ChatMasterDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    registerHandler(
-      select: (EditRoomManager m) => m.forgetAllRoomsCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.isRunning) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              const SnackBar(
-                duration: Duration(seconds: 3000),
-                content: ChatClearArchiveProgressBar(),
-              ),
-            );
-        } else if (newValue.hasData) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(const SnackBar(content: Text('Deleted all rooms')));
-        } else if (newValue.hasError) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(
-                  '${context.l10n.oopsSomethingWentWrong}: ${newValue.error}',
-                ),
-              ),
-            );
-        } else {
-          _commandDoneCleanupSnackbars(context);
-        }
-      },
-    );
+    registerGlobalLeaveCommand();
 
-    registerHandler(
-      select: (EditRoomManager m) => m.globalLeaveRoomCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.isRunning) {
-          _showInifniteSpinnerSnackbar(
-            context,
-            '${context.l10n.leave} ${newValue.data?.getLocalizedDisplayname() ?? ''}',
-          );
-        } else if (newValue.hasData && newValue.data != null) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 5),
-                content: Text(
-                  'Left: ${newValue.data?.getLocalizedDisplayname() ?? ''}',
-                ),
-                action: SnackBarAction(
-                  label: context.l10n.delete,
-                  onPressed: () {
-                    di<EditRoomManager>().globalForgetRoomCommand.run(
-                      newValue.data!,
-                    );
-                  },
-                ),
-              ),
-            );
-        } else if (newValue.hasError) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(
-                  '${context.l10n.oopsSomethingWentWrong} ${newValue.data?.getLocalizedDisplayname() ?? ''}: ${newValue.error}',
-                ),
-              ),
-            );
-        } else {
-          _commandDoneCleanupSnackbars(context);
-        }
-      },
-    );
+    registerGlobalForgetRoomCommand();
 
-    registerHandler(
-      select: (EditRoomManager m) => m.globalForgetRoomCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.isRunning) {
-          _showInifniteSpinnerSnackbar(
-            context,
-            '${context.l10n.delete} ${newValue.data?.getLocalizedDisplayname() ?? ''}',
-          );
-        } else if (newValue.hasData && newValue.data != null) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Deleted: ${newValue.data?.getLocalizedDisplayname() ?? ''}',
-                ),
-              ),
-            );
-        } else if (newValue.hasError) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(
-                  '${context.l10n.oopsSomethingWentWrong} ${newValue.data?.getLocalizedDisplayname() ?? ''}: ${newValue.error}',
-                ),
-              ),
-            );
-        } else {
-          _commandDoneCleanupSnackbars(context);
-        }
-      },
-    );
+    registerForgetAllRoomsCommand();
 
     registerStreamHandler(
       select: (EncryptionManager m) => m.onKeyVerificationRequest,
@@ -178,12 +74,6 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
       handler: chatNotificationHandler,
     );
 
-    // TODO: #6
-    // registerStreamHandler(
-    //   select: (Client m) => m.onCallEvents.stream,
-    //   handler: callHandler,
-    // );
-
     final selectedRoom = watchPropertyValue((ChatManager m) => m.selectedRoom);
     final isArchivedRoom = watchPropertyValue(
       (ChatManager m) => m.selectedRoom?.isArchived == true,
@@ -217,32 +107,5 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
       ),
       bottomNavigationBar: const PlayerView(),
     );
-  }
-
-  void _showInifniteSpinnerSnackbar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 5),
-        content: Row(
-          children: [
-            const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-            const SizedBox(width: 16),
-            Text(text),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _commandDoneCleanupSnackbars(BuildContext context) {
-    Future.delayed(const Duration(seconds: 2), () {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-      }
-    });
   }
 }

@@ -6,39 +6,36 @@ import 'edit_room_service.dart';
 
 class EditRoomManager {
   EditRoomManager({required EditRoomService editRoomService})
-    : _editRoomService = editRoomService {
-    joinRoomCommand = Command.createAsync(
-      editRoomService.joinRoom,
-      initialValue: null,
-    );
-    knockOrJoinCommand = Command.createAsync(
-      editRoomService.knockOrJoinRoomChunk,
-      initialValue: null,
-    );
-    globalLeaveRoomCommand = Command.createAsync((room) async {
-      await getLeaveRoomCommand(room).runAsync();
-      return room;
-    }, initialValue: null);
-
-    globalForgetRoomCommand = Command.createAsync((room) async {
-      await getForgetRoomCommand(room).runAsync();
-      return room;
-    }, initialValue: null);
-  }
+    : _editRoomService = editRoomService;
 
   final EditRoomService _editRoomService;
 
-  late final Command<Room, Room?> joinRoomCommand;
-  late final Command<PublishedRoomsChunk, Room?> knockOrJoinCommand;
-  late final Command<Room, Room?> globalLeaveRoomCommand;
-  late final Command<Room, Room?> globalForgetRoomCommand;
-  late final Command<void, void> leaveAllRoomsCommand =
-      Command.createAsyncNoParamNoResultWithProgress((handle) async {
-        final rooms = _editRoomService.rooms;
-        for (final room in rooms) {
-          await getLeaveRoomCommand(room).runAsync();
-        }
-      });
+  late final Command<Room, Room?> joinRoomCommand = Command.createAsync(
+    _editRoomService.joinRoom,
+    initialValue: null,
+  );
+
+  late final Command<PublishedRoomsChunk, Room?> knockOrJoinCommand =
+      Command.createAsync(
+        _editRoomService.knockOrJoinRoomChunk,
+        initialValue: null,
+      );
+
+  late final Command<Room, Room?> globalLeaveRoomCommand = Command.createAsync((
+    room,
+  ) async {
+    await getLeaveRoomCommand(room).runAsync();
+    return room;
+  }, initialValue: null);
+
+  late final Command<Room, Room?> globalForgetRoomCommand = Command.createAsync(
+    (room) async {
+      await getForgetRoomCommand(room).runAsync();
+      return room;
+    },
+    initialValue: null,
+  );
+
   late final Command<void, void> forgetAllRoomsCommand =
       Command.createAsyncNoParamNoResultWithProgress((handle) async {
         handle.updateProgress(0);
@@ -56,12 +53,14 @@ class EditRoomManager {
         final total = list.length;
 
         for (final entry in list) {
-          await getForgetRoomCommand(entry.room).runAsync();
+          await getForgetRoomCommand(entry.room, sync: false).runAsync();
 
           handle.updateProgress(
             ((list.indexOf(entry) + 1) / total).clamp(0, 1),
           );
         }
+
+        await _editRoomService.getOneShotSync();
       });
 
   final Map<String, Command<void, Room?>> _leaveRoomCommands = {};
@@ -76,11 +75,11 @@ class EditRoomManager {
       );
 
   final Map<String, Command<void, void>> _forgetRoomCommands = {};
-  Command<void, void> getForgetRoomCommand(Room room) =>
+  Command<void, void> getForgetRoomCommand(Room room, {bool sync = true}) =>
       _forgetRoomCommands.putIfAbsent(
         room.id,
         () => Command.createAsync((_) async {
-          await _editRoomService.forgetRoom(room);
+          await _editRoomService.forgetRoom(room, sync: sync);
           _forgetRoomCommands.remove(room.id);
         }, initialValue: null),
       );

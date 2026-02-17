@@ -3,7 +3,9 @@ import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../../common/chat_manager.dart';
 import '../../../common/view/build_context_x.dart';
+import '../../../common/view/common_widgets.dart';
 import '../../../common/view/sliver_sticky_panel.dart';
 import '../../../common/view/space.dart';
 import '../../../common/view/ui_constants.dart';
@@ -19,7 +21,8 @@ import 'create_room_profiles_list_view.dart';
 
 const _maxWidth = 500.0;
 
-class CreateOrEditRoomDialog extends StatefulWidget {
+class CreateOrEditRoomDialog extends StatefulWidget
+    with WatchItStatefulWidgetMixin {
   const CreateOrEditRoomDialog({super.key, this.room, this.space = false});
 
   final Room? room;
@@ -38,6 +41,32 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
 
   @override
   Widget build(BuildContext context) {
+    registerHandler(
+      select: (CreateRoomManager m) => m.createRoomOrSpaceCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasError) {
+        } else if (newValue.hasData && newValue.data != null) {
+          final room = newValue.data;
+          if (room?.isSpace ?? false) {
+            di<ChatManager>().setActiveSpace(room);
+          } else {
+            di<ChatManager>().setSelectedRoom(room);
+          }
+          if (context.mounted && Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+          }
+        }
+      },
+    );
+
+    final isCreating = watchValue(
+      (CreateRoomManager m) => m.createRoomOrSpaceCommand.isRunning,
+    );
+
+    final roomCreationErrors = watchValue(
+      (CreateRoomManager m) => m.createRoomOrSpaceCommand.errors,
+    );
+
     final l10n = context.l10n;
     final mediaQueryWidth = context.mediaQuerySize.width;
 
@@ -52,93 +81,125 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
       actionsPadding: const EdgeInsets.all(kMediumPadding),
       contentPadding: const EdgeInsets.only(bottom: kBigPadding),
       content: SizedBox(
-        height: isSpace ? _maxWidth : 2 * _maxWidth,
+        height: isCreating || roomCreationErrors != null
+            ? null
+            : isSpace
+            ? _maxWidth
+            : 2 * _maxWidth,
         width: _maxWidth,
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(kYaruContainerRadius),
             topRight: Radius.circular(kYaruContainerRadius),
           ),
-          child: CustomScrollView(
-            slivers: space(
-              sliver: true,
-              heightGap: kBigPadding,
-              children: [
-                SliverStickyPanel(
-                  backgroundColor: context.theme.dialogTheme.backgroundColor,
-                  padding: EdgeInsets.zero,
-                  child: YaruDialogTitleBar(
-                    backgroundColor: Colors.transparent,
-                    border: BorderSide.none,
-                    title: Text(
-                      widget.room != null
-                          ? '${l10n.edit} ${isSpace ? l10n.space : l10n.group}'
-                          : isSpace
-                          ? l10n.createNewSpace
-                          : l10n.createGroup,
-                    ),
-                  ),
-                ),
-                if (!isSpace)
-                  SliverPadding(
-                    padding: const EdgeInsets.only(bottom: kBigPadding),
-                    sliver: SliverToBoxAdapter(
-                      child: Center(
-                        child: CreateOrEditRoomAvatar(room: widget.room),
+          child: isCreating
+              ? Center(
+                  child: Column(
+                    spacing: kBigPadding,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        isSpace
+                            ? l10n.creatingSpacePleaseWait
+                            : l10n.creatingRoomPleaseWait,
                       ),
-                    ),
+                      const Progress(),
+                    ],
                   ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
-                  sliver: SliverToBoxAdapter(
-                    child: CreateOrEditRoomHeader(
-                      room: widget.room,
-                      isSpace: isSpace,
-                    ),
+                )
+              : roomCreationErrors?.error != null
+              ? Center(
+                  child: Text(
+                    roomCreationErrors!.error.toString(),
+                    style: TextStyle(color: context.colorScheme.error),
                   ),
-                ),
-                if (widget.room != null && !isSpace)
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: kBigPadding,
-                    ),
-                    sliver: SliverToBoxAdapter(
-                      child: ChatRoomPermissions(room: widget.room!),
-                    ),
-                  ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: kBigPadding),
-                  sliver: SliverToBoxAdapter(
-                    child: YaruSection(
-                      headline: Text(l10n.users),
-                      child: Column(
-                        children: [
-                          if (widget.room == null ||
-                              widget.room?.canInvite == true)
-                            CreateOrEditRoomUserSearchAutoComplete(
-                              room: widget.room,
-                              useWidth: usedWidth,
-                            ),
-                          SizedBox(
-                            height: 200,
-                            width: _maxWidth,
-                            child: widget.room != null
-                                ? widget.room?.canInvite == true
-                                      ? ChatRoomUsersList(
-                                          room: widget.room!,
-                                          sliver: false,
-                                        )
-                                      : const SizedBox.shrink()
-                                : const CreateRoomProfilesListView(),
+                )
+              : CustomScrollView(
+                  slivers: space(
+                    sliver: true,
+                    heightGap: kBigPadding,
+                    children: [
+                      SliverStickyPanel(
+                        backgroundColor:
+                            context.theme.dialogTheme.backgroundColor,
+                        padding: EdgeInsets.zero,
+                        child: YaruDialogTitleBar(
+                          isClosable: widget.room != null,
+                          backgroundColor: Colors.transparent,
+                          border: BorderSide.none,
+                          title: Text(
+                            widget.room != null
+                                ? '${l10n.edit} ${isSpace ? l10n.space : l10n.group}'
+                                : isSpace
+                                ? l10n.createNewSpace
+                                : l10n.createGroup,
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                      if (!isSpace)
+                        SliverPadding(
+                          padding: const EdgeInsets.only(bottom: kBigPadding),
+                          sliver: SliverToBoxAdapter(
+                            child: Center(
+                              child: CreateOrEditRoomAvatar(room: widget.room),
+                            ),
+                          ),
+                        ),
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kBigPadding,
+                        ),
+                        sliver: SliverToBoxAdapter(
+                          child: CreateOrEditRoomHeader(
+                            room: widget.room,
+                            isSpace: isSpace,
+                          ),
+                        ),
+                      ),
+                      if (widget.room != null && !isSpace)
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: kBigPadding,
+                          ),
+                          sliver: SliverToBoxAdapter(
+                            child: ChatRoomPermissions(room: widget.room!),
+                          ),
+                        ),
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kBigPadding,
+                        ),
+                        sliver: SliverToBoxAdapter(
+                          child: YaruSection(
+                            headline: Text(l10n.users),
+                            child: Column(
+                              children: [
+                                if (widget.room == null ||
+                                    widget.room?.canInvite == true)
+                                  CreateOrEditRoomUserSearchAutoComplete(
+                                    room: widget.room,
+                                    useWidth: usedWidth,
+                                  ),
+                                SizedBox(
+                                  height: 200,
+                                  width: _maxWidth,
+                                  child: widget.room != null
+                                      ? widget.room?.canInvite == true
+                                            ? ChatRoomUsersList(
+                                                room: widget.room!,
+                                                sliver: false,
+                                              )
+                                            : const SizedBox.shrink()
+                                      : const CreateRoomProfilesListView(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
         ),
       ),
       actions: widget.room != null
@@ -154,7 +215,7 @@ class _CreateOrEditRoomDialogState extends State<CreateOrEditRoomDialog> {
                       onPressed: Navigator.of(context).pop,
                       child: Text(l10n.cancel),
                     ),
-                    CreateRoomButton(isSpace: isSpace),
+                    CreateRoomButton(shallBeSpace: isSpace),
                   ],
                 ),
               ),

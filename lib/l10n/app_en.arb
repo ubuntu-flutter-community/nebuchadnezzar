@@ -3259,5 +3259,10 @@
   "startAppUpPleaseWait": "Starting, please wait...",
   "retry": "Retry",
   "reportIssue": "Report issue",
-  "closeApp": "Close app"
+  "closeApp": "Close app",
+  "creatingRoomPleaseWait": "Creating room, please wait...",
+  "creatingSpacePleaseWait": "Creating space, please wait...",
+  "joiningRoomPleaseWait": "Joining room, please wait...",
+  "leavingRoomPleaseWait": "Leaving room, please wait...",
+  "deletingRoomPleaseWait": "Deleting room, please wait..."
 }

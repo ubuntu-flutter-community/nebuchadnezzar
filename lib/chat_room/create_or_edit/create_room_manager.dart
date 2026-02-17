@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 // import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
@@ -19,7 +20,10 @@ class CreateRoomManager {
     CreateRoomDraft.empty(),
   );
 
-  void init({required Room? room}) => draft.value = CreateRoomDraft.empty();
+  void init({required Room? room}) {
+    draft.value = CreateRoomDraft.empty();
+    createRoomOrSpaceCommand.clearErrors();
+  }
 
   void updateDraft({
     String? name,
@@ -55,10 +59,11 @@ class CreateRoomManager {
     updateDraft(profiles: {...draft.value.profiles..remove(profile)});
   }
 
-  Future<void> setRoomAvatar({
-    required Room? room,
-    required String wrongFormatString,
-  }) async {
+  late final Command<Room?, void> setRoomAvatarCommand = Command.createAsync(
+    setRoomAvatar,
+    initialValue: null,
+  );
+  Future<void> setRoomAvatar(Room? room) async {
     try {
       XFile? xFile;
       if (Platforms.isLinux) {
@@ -96,16 +101,13 @@ class CreateRoomManager {
     }
   }
 
-  Future<Room?> createRoomOrSpace({
-    required bool space,
-    bool waitForSync = true,
-    List<StateEvent>? initialState,
-    bool federated = true,
-    Map<String, dynamic>? powerLevelContentOverride,
-  }) async {
+  late final Command<bool, Room?> createRoomOrSpaceCommand =
+      Command.createAsync(createRoomOrSpace, initialValue: null);
+
+  Future<Room?> createRoomOrSpace(bool shallBeSpace) async {
     String? roomId;
     try {
-      roomId = space
+      roomId = shallBeSpace
           ? await _client.createSpace(
               name: draft.value.name,
               visibility: draft.value.visibility,
@@ -115,7 +117,6 @@ class CreateRoomManager {
               invite3pid: null,
               roomVersion: null,
               topic: draft.value.topic,
-              waitForSync: waitForSync,
               spaceAliasName: draft.value.name,
             )
           : await _client.createGroupChat(
@@ -124,14 +125,10 @@ class CreateRoomManager {
               invite: draft.value.profiles
                   .map((p) => p.userId)
                   .toList(growable: false),
-              initialState: initialState,
               visibility: draft.value.visibility,
               preset: draft.value.createRoomPreset,
               historyVisibility: draft.value.historyVisibility,
-              waitForSync: waitForSync,
               groupCall: draft.value.groupCall,
-              federated: federated,
-              powerLevelContentOverride: powerLevelContentOverride,
             );
     } catch (e, s) {
       printMessageInDebugMode(e, s);
