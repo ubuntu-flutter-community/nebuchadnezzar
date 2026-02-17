@@ -37,15 +37,25 @@ class ImportantButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.child,
+    this.icon,
   });
 
   final void Function()? onPressed;
   final Widget child;
+  final Widget? icon;
 
   @override
   Widget build(BuildContext context) {
     return yaru
-        ? ElevatedButton(onPressed: onPressed, child: child)
+        ? icon != null
+              ? ElevatedButton.icon(
+                  onPressed: onPressed,
+                  icon: icon!,
+                  label: child,
+                )
+              : ElevatedButton(onPressed: onPressed, child: child)
+        : icon != null
+        ? FilledButton.icon(onPressed: onPressed, icon: icon!, label: child)
         : FilledButton(onPressed: onPressed, child: child);
   }
 }

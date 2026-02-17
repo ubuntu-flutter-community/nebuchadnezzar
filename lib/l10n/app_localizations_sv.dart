@@ -2693,4 +2693,19 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get closeApp => 'Close app';
+
+  @override
+  String get creatingRoomPleaseWait => 'Creating room, please wait...';
+
+  @override
+  String get creatingSpacePleaseWait => 'Creating space, please wait...';
+
+  @override
+  String get joiningRoomPleaseWait => 'Joining room, please wait...';
+
+  @override
+  String get leavingRoomPleaseWait => 'Leaving room, please wait...';
+
+  @override
+  String get deletingRoomPleaseWait => 'Deleting room, please wait...';
 }

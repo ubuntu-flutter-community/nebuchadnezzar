@@ -32,13 +32,7 @@ class EditRoomManager {
   late final Command<PublishedRoomsChunk, Room?> knockOrJoinCommand;
   late final Command<Room, Room?> globalLeaveRoomCommand;
   late final Command<Room, Room?> globalForgetRoomCommand;
-  late final Command<void, void> leaveAllRoomsCommand =
-      Command.createAsyncNoParamNoResultWithProgress((handle) async {
-        final rooms = _editRoomService.rooms;
-        for (final room in rooms) {
-          await getLeaveRoomCommand(room).runAsync();
-        }
-      });
+
   late final Command<void, void> forgetAllRoomsCommand =
       Command.createAsyncNoParamNoResultWithProgress((handle) async {
         handle.updateProgress(0);
@@ -56,12 +50,14 @@ class EditRoomManager {
         final total = list.length;
 
         for (final entry in list) {
-          await getForgetRoomCommand(entry.room).runAsync();
+          await getForgetRoomCommand(entry.room, sync: false).runAsync();
 
           handle.updateProgress(
             ((list.indexOf(entry) + 1) / total).clamp(0, 1),
           );
         }
+
+        await _editRoomService.getOneShotSync();
       });
 
   final Map<String, Command<void, Room?>> _leaveRoomCommands = {};
@@ -76,11 +72,11 @@ class EditRoomManager {
       );
 
   final Map<String, Command<void, void>> _forgetRoomCommands = {};
-  Command<void, void> getForgetRoomCommand(Room room) =>
+  Command<void, void> getForgetRoomCommand(Room room, {bool sync = true}) =>
       _forgetRoomCommands.putIfAbsent(
         room.id,
         () => Command.createAsync((_) async {
-          await _editRoomService.forgetRoom(room);
+          await _editRoomService.forgetRoom(room, sync: sync);
           _forgetRoomCommands.remove(room.id);
         }, initialValue: null),
       );

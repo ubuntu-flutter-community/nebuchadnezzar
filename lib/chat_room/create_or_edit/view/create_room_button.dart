@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-import '../../../common/chat_manager.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../l10n/l10n.dart';
 import '../create_room_manager.dart';
 
 class CreateRoomButton extends StatelessWidget with WatchItMixin {
-  const CreateRoomButton({super.key, required this.isSpace});
+  const CreateRoomButton({super.key, required this.shallBeSpace});
 
-  final bool isSpace;
+  final bool shallBeSpace;
 
   @override
   Widget build(BuildContext context) {
@@ -19,30 +17,24 @@ class CreateRoomButton extends StatelessWidget with WatchItMixin {
       (CreateRoomManager m) => m.draft.select((e) => e.name),
     );
 
+    final isCreating = watchValue(
+      (CreateRoomManager m) => m.createRoomOrSpaceCommand.isRunning,
+    );
+
     return ImportantButton(
-      onPressed: name.trim().isEmpty
+      icon: isCreating
+          ? const SizedBox(
+              width: 16,
+              height: 16,
+              child: Progress(strokeWidth: 2),
+            )
+          : null,
+      onPressed: name.trim().isEmpty || isCreating
           ? null
-          : () =>
-                showFutureLoadingDialog(
-                  context: context,
-                  future: () =>
-                      di<CreateRoomManager>().createRoomOrSpace(space: isSpace),
-                ).then((result) {
-                  if (result.asValue?.value != null) {
-                    final room = result.asValue!.value!;
-
-                    if (room.isSpace) {
-                      di<ChatManager>().setActiveSpace(room);
-                    } else {
-                      di<ChatManager>().setSelectedRoom(room);
-                    }
-
-                    if (context.mounted && Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
-                    }
-                  }
-                }),
-      child: Text(isSpace ? l10n.createNewSpace : l10n.createGroup),
+          : () => di<CreateRoomManager>().createRoomOrSpaceCommand.run(
+              shallBeSpace,
+            ),
+      child: Text(shallBeSpace ? l10n.createNewSpace : l10n.createGroup),
     );
   }
 }

@@ -4713,6 +4713,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close app'**
   String get closeApp;
+
+  /// No description provided for @creatingRoomPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating room, please wait...'**
+  String get creatingRoomPleaseWait;
+
+  /// No description provided for @creatingSpacePleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating space, please wait...'**
+  String get creatingSpacePleaseWait;
+
+  /// No description provided for @joiningRoomPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Joining room, please wait...'**
+  String get joiningRoomPleaseWait;
+
+  /// No description provided for @leavingRoomPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaving room, please wait...'**
+  String get leavingRoomPleaseWait;
+
+  /// No description provided for @deletingRoomPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting room, please wait...'**
+  String get deletingRoomPleaseWait;
 }
 
 class _AppLocalizationsDelegate

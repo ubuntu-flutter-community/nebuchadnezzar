@@ -54,7 +54,11 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
               ),
             );
         } else {
-          _commandDoneCleanupSnackbars(context);
+          Future.delayed(const Duration(seconds: 1), () {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).clearSnackBars();
+            }
+          });
         }
       },
     );
@@ -63,29 +67,10 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
       select: (EditRoomManager m) => m.globalLeaveRoomCommand.results,
       handler: (context, newValue, cancel) {
         if (newValue.isRunning) {
-          _showInifniteSpinnerSnackbar(
+          _showIndeterminateSpinnerSnackbar(
             context,
             '${context.l10n.leave} ${newValue.data?.getLocalizedDisplayname() ?? ''}',
           );
-        } else if (newValue.hasData && newValue.data != null) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 5),
-                content: Text(
-                  'Left: ${newValue.data?.getLocalizedDisplayname() ?? ''}',
-                ),
-                action: SnackBarAction(
-                  label: context.l10n.delete,
-                  onPressed: () {
-                    di<EditRoomManager>().globalForgetRoomCommand.run(
-                      newValue.data!,
-                    );
-                  },
-                ),
-              ),
-            );
         } else if (newValue.hasError) {
           ScaffoldMessenger.of(context)
             ..clearSnackBars()
@@ -96,17 +81,42 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
                 ),
               ),
             );
+        } else if (newValue.hasData) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          if (newValue.data != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Left: ${newValue.data?.getLocalizedDisplayname() ?? ''}',
+                ),
+                action: SnackBarAction(
+                  label: context.l10n.delete,
+                  onPressed: () => di<EditRoomManager>().globalForgetRoomCommand
+                      .run(newValue.data!),
+                ),
+              ),
+            );
+          }
         } else {
-          _commandDoneCleanupSnackbars(context);
+          Future.delayed(const Duration(seconds: 4), () {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).clearSnackBars();
+            }
+          });
         }
       },
+    );
+
+    registerHandler(
+      select: (EditRoomManager m) => m.globalLeaveRoomCommand,
+      handler: (context, newValue, cancel) {},
     );
 
     registerHandler(
       select: (EditRoomManager m) => m.globalForgetRoomCommand.results,
       handler: (context, newValue, cancel) {
         if (newValue.isRunning) {
-          _showInifniteSpinnerSnackbar(
+          _showIndeterminateSpinnerSnackbar(
             context,
             '${context.l10n.delete} ${newValue.data?.getLocalizedDisplayname() ?? ''}',
           );
@@ -130,8 +140,6 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
                 ),
               ),
             );
-        } else {
-          _commandDoneCleanupSnackbars(context);
         }
       },
     );
@@ -219,30 +227,24 @@ class ChatMasterDetailPage extends StatelessWidget with WatchItMixin {
     );
   }
 
-  void _showInifniteSpinnerSnackbar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 5),
-        content: Row(
-          children: [
-            const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-            const SizedBox(width: 16),
-            Text(text),
-          ],
+  void _showIndeterminateSpinnerSnackbar(BuildContext context, String text) {
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 100),
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              const SizedBox(width: 16),
+              Text(text),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  void _commandDoneCleanupSnackbars(BuildContext context) {
-    Future.delayed(const Duration(seconds: 2), () {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-      }
-    });
+      );
   }
 }

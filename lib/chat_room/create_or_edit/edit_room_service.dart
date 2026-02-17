@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../common/constants.dart';
@@ -15,7 +16,7 @@ class EditRoomService {
 
   final Client _client;
   List<ArchivedRoom> get archivedRooms => _client.archivedRooms;
-  List<Room> get rooms => _client.rooms;
+  Future<void> getOneShotSync() => _client.oneShotSync();
 
   Stream<SyncUpdate> get _joinedUpdateStream =>
       _client.onSync.stream.where((e) => e.rooms?.join?.isNotEmpty ?? false);
@@ -312,10 +313,11 @@ class EditRoomService {
           )
           .map((e) => room?.avatar);
 
-  Future<void> setRoomAvatar({
-    required Room? room,
-    required String wrongFormatString,
-  }) async {
+  late final Command<Room, void> setRoomAvatarCommand = Command.createAsync(
+    setRoomAvatar,
+    initialValue: null,
+  );
+  Future<void> setRoomAvatar(Room room) async {
     try {
       MatrixImageFile? avatarDraft;
       XFile? xFile;
@@ -347,9 +349,7 @@ class EditRoomService {
         nativeImplementations: _client.nativeImplementations,
       );
 
-      if (room != null) {
-        await room.setAvatar(avatarDraft);
-      }
+      await room.setAvatar(avatarDraft);
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
@@ -395,10 +395,12 @@ class EditRoomService {
     }
   }
 
-  Future<void> forgetRoom(Room room) async {
+  Future<void> forgetRoom(Room room, {bool sync = true}) async {
     try {
       await room.forget();
-      await _client.oneShotSync();
+      if (sync) {
+        await _client.oneShotSync();
+      }
     } on Exception catch (e, s) {
       printMessageInDebugMode(e, s);
       rethrow;
