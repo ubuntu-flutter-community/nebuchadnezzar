@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -26,6 +25,11 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
     final archiveActive = watchPropertyValue(
       (ChatManager m) => m.archiveActive,
     );
+
+    final loadingArchive = watchValue(
+      (ChatManager m) => m.toggleArchiveCommand.isRunning,
+    );
+
     return YaruWindowTitleBar(
       heroTag: '<Left hero tag>',
       title: Text(archiveActive ? l10n.archive : l10n.chats),
@@ -52,10 +56,9 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
             tooltip: context.l10n.archive,
             selectedIcon: const Icon(YaruIcons.trash_filled),
             isSelected: watchPropertyValue((ChatManager m) => m.archiveActive),
-            onPressed: () => showFutureLoadingDialog(
-              context: context,
-              future: di<ChatManager>().toggleArchive,
-            ),
+            onPressed: loadingArchive
+                ? null
+                : () => di<ChatManager>().toggleArchiveCommand.run(),
             icon: const Icon(YaruIcons.trash),
           ),
         ],

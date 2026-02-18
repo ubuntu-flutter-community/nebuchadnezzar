@@ -9,6 +9,14 @@ class ChatRoomsList extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
+    final loadingArchive = watchValue(
+      (ChatManager m) => m.toggleArchiveCommand.isRunning,
+    );
+
+    if (loadingArchive) {
+      return const SizedBox.shrink();
+    }
+
     final filteredRooms =
         watchStream(
           (ChatManager m) => m.filteredRoomsStream,

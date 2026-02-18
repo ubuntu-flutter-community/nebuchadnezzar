@@ -395,6 +395,25 @@ class DraftManager extends SafeChangeNotifier {
   bool isMessageSelected({required String eventId}) =>
       _selectedMessages[eventId] ?? false;
 
+  late final Command<
+    ({
+      String roomId,
+      String clipboardNotAvailable,
+      String noSupportedFormatFoundInClipboard,
+      String fileIsTooLarge,
+    }),
+    List<void>
+  >
+  addAttachmentFromClipboardCommand = Command.createAsync(
+    (param) => addAttachMentFromClipboard(
+      param.roomId,
+      clipboardNotAvailable: param.clipboardNotAvailable,
+      noSupportedFormatFoundInClipboard:
+          param.noSupportedFormatFoundInClipboard,
+      fileIsTooLarge: param.fileIsTooLarge,
+    ),
+    initialValue: [],
+  );
   Future<List<void>> addAttachMentFromClipboard(
     String roomId, {
     required String clipboardNotAvailable,

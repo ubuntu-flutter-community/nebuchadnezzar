@@ -170,14 +170,27 @@ class ChatManager extends SafeChangeNotifier {
 
   bool _archiveActive = false;
   bool get archiveActive => _archiveActive;
-  Future<void> toggleArchive() async {
+
+  late final Command<
+    void,
+    ({bool archiveActive, List<ArchivedRoom> archivedRooms})
+  >
+  toggleArchiveCommand = Command.createAsyncNoParam(
+    _toggleArchive,
+    initialValue: (archiveActive: false, archivedRooms: _client.archivedRooms),
+  );
+
+  Future<({bool archiveActive, List<ArchivedRoom> archivedRooms})>
+  _toggleArchive() async {
     _archiveActive = !_archiveActive;
     if (_archiveActive) {
+      setSelectedRoom(null);
       await _client.loadArchive();
-    } else {
-      await Future.value();
     }
-    setSelectedRoom(null);
+    return (
+      archiveActive: _archiveActive,
+      archivedRooms: _client.archivedRooms,
+    );
   }
 
   Stream<bool> getPendingDirectChatStream(Room room) => _client

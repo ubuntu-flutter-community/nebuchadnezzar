@@ -86,9 +86,9 @@ class _ChatInputState extends State<ChatInput> {
         _sendNode.requestFocus();
       });
     } else {
-      di<DraftManager>().sendCommand.run(widget.room);
       _sendController.clear();
       _sendNode.requestFocus();
+      di<DraftManager>().sendCommand.run(widget.room);
     }
   }
 
@@ -102,6 +102,10 @@ class _ChatInputState extends State<ChatInput> {
     final attaching = watchPropertyValue((DraftManager m) => m.attaching);
     final archiveActive = watchPropertyValue(
       (ChatManager m) => m.archiveActive,
+    );
+
+    final isPastingFromClipboard = watchValue(
+      (DraftManager m) => m.addAttachmentFromClipboardCommand.isRunning,
     );
 
     final isSending = watchValue((DraftManager m) => m.sendCommand.isRunning);
@@ -177,7 +181,7 @@ class _ChatInputState extends State<ChatInput> {
                   maxLines: 10,
                   focusNode: _sendNode,
                   controller: _sendController,
-                  enabled: sendingFile
+                  enabled: sendingFile || isPastingFromClipboard
                       ? false
                       : !archiveActive && !unAcceptedDirectChat,
                   autofocus: true,
@@ -258,15 +262,21 @@ class _ChatInputState extends State<ChatInput> {
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          tooltip: l10n.send,
-                          padding: EdgeInsets.zero,
-                          icon: transform,
-                          onPressed:
-                              attaching || archiveActive || unAcceptedDirectChat
-                              ? null
-                              : () => send(),
-                        ),
+                        if (isPastingFromClipboard ||
+                            attaching ||
+                            unAcceptedDirectChat)
+                          const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        else
+                          IconButton(
+                            tooltip: l10n.send,
+                            padding: EdgeInsets.zero,
+                            icon: transform,
+                            onPressed: () => send(),
+                          ),
                       ],
                     ),
                   ),

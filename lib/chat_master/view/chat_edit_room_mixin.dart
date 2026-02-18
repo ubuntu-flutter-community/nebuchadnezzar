@@ -25,6 +25,7 @@ mixin ChatEditRoomMixin {
             ..clearSnackBars()
             ..showSnackBar(
               SnackBar(
+                showCloseIcon: true,
                 duration: const Duration(seconds: 3),
                 content: Text(
                   'Left: ${newValue.data?.getLocalizedDisplayname() ?? ''}',
@@ -89,13 +90,20 @@ mixin ChatEditRoomMixin {
             context,
             '${context.l10n.oopsSomethingWentWrong}: ${newValue.error}',
           );
-        } else if (newValue.hasData) {
+        }
+      },
+    );
+
+    registerHandler(
+      select: (EditRoomManager m) => m.forgetAllRoomsCommand.progress,
+      handler: (context, newValue, cancel) {
+        if (newValue == 1) {
           ScaffoldMessenger.of(context)
             ..clearSnackBars()
             ..showSnackBar(
               const SnackBar(
                 duration: Duration(seconds: 3),
-                content: Text('Deleted all archived rooms'),
+                content: Text('Clearing archive is complete'),
               ),
             );
         }
