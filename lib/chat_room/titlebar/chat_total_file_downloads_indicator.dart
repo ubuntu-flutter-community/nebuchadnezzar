@@ -97,7 +97,10 @@ class ChatDownloadsDialog extends StatelessWidget with WatchItMixin {
 
     return SimpleDialog(
       titlePadding: EdgeInsets.zero,
+      constraints: const BoxConstraints(maxWidth: 500),
       title: YaruDialogTitleBar(
+        border: BorderSide.none,
+        backgroundColor: Colors.transparent,
         title: const Text('Downloads'),
         leading: (downloads.isNotEmpty)
             ? Center(

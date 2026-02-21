@@ -18,9 +18,6 @@ class ChatManager extends SafeChangeNotifier {
   // The matrix dart SDK client
   final Client _client;
 
-  static Function(CommandError<dynamic> error, StackTrace stackTrace)?
-  get globalExceptionHandler => Command.globalExceptionHandler;
-
   SyncStatusUpdate? get syncStatusUpdate => _client.onSyncStatus.value;
   Stream<SyncStatusUpdate> get syncStatusUpdateStream =>
       _client.onSyncStatus.stream;
