@@ -70,6 +70,7 @@ class ErrorBody extends StatelessWidget {
                 header: Text(
                   error.toString().split(': ').firstOrNull ?? error.toString(),
                   style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
                 ),
                 child: SelectableText(error.toString()),
               ),
@@ -111,7 +112,7 @@ Add any other context about the problem here.
 ```
 ------------ Platform: ------------
 Platform: ${kIsWeb ? 'Web' : Platform.operatingSystem} ${kIsWeb ? '' : Platform.operatingSystemVersion}
-           
+
 ------------ Error: ------------
 ${error.toString().splitMapJoin(RegExp('.{1,100}'), onMatch: (m) => '${m.group(0)}\n', onNonMatch: (n) => n)}
 ```

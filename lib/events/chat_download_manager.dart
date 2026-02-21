@@ -4,11 +4,14 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
+import 'package:mime/mime.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:xdg_directories/xdg_directories.dart';
+import 'package:path/path.dart' as p;
 
+import '../app/app_config.dart';
 import '../common/platforms.dart';
 import '../extensions/event_x.dart';
 import 'chat_download_service.dart';
@@ -30,17 +33,25 @@ class ChatDownloadManager extends SafeChangeNotifier {
         _tempDirectory ??= (Platforms.isLinux
             ? configHome
             : await getTemporaryDirectory());
+
+        if (_tempDirectory == null) throw Exception('No temp dir!');
+        final baseDirPath = p.join(_tempDirectory!.path, AppConfig.appName);
         for (final event in events) {
-          final filePath = '${_tempDirectory?.path}/${event.fileName}';
+          final filePath = p.join(baseDirPath, event.fileName);
           if (File(filePath).existsSync() &&
               downloadedEventsInTemp.none(
                 (c) => c.event.fileName == event.fileName,
               )) {
+            final file = File(filePath);
             downloadedEventsInTemp.add(
               DownloadCapsule(
                 event: event,
-                file: File(filePath),
-                matrixFile: null,
+                file: file,
+                matrixFile: MatrixFile.fromMimeType(
+                  name: p.basename(file.path),
+                  bytes: file.readAsBytesSync(),
+                  mimeType: lookupMimeType(file.path),
+                ),
               ),
             );
           }
@@ -64,51 +75,58 @@ class ChatDownloadManager extends SafeChangeNotifier {
       }, initialValue: null);
 
   final _downloadCommands = <Event, Command<void, DownloadCapsule?>>{};
-  Command<void, DownloadCapsule?> getDownloadCommand(Event event) =>
-      _downloadCommands.putIfAbsent(
-        event,
-        () => Command.createAsyncWithProgress((_, handle) async {
-          Directory? tempDir;
+  Command<void, DownloadCapsule?> getDownloadCommand(
+    Event event,
+  ) => _downloadCommands.putIfAbsent(
+    event,
+    () => Command.createAsyncWithProgress((_, handle) async {
+      _tempDirectory ??= (Platforms.isLinux
+          ? configHome
+          : await getTemporaryDirectory());
 
-          tempDir = await getTemporaryDirectory();
+      if (_tempDirectory == null) throw Exception('No temp dir!');
+      final baseDirPath = p.join(_tempDirectory!.path, AppConfig.appName);
 
-          File? file;
-          MatrixFile? matrixFile;
+      File? file;
+      MatrixFile? matrixFile;
 
-          final path = '${tempDir.path}/${event.fileName}';
-          if (File(path).existsSync()) {
-            file = File(path);
-          } else {
-            matrixFile = await event.downloadAndDecryptAttachment(
-              onDownloadProgress: (v) {
-                // the amount of downloaded bytes is v
-                // the total size of the file is event.fileSize
-                final progress = event.fileSize != null && event.fileSize! > 0
-                    ? v / event.fileSize!
-                    : null;
-                handle.updateProgress(progress ?? 0);
-              },
-            );
-          }
+      if (!Directory(baseDirPath).existsSync()) {
+        Directory(baseDirPath).createSync();
+      }
 
-          if (file != null &&
-              Platform.isIOS &&
-              matrixFile?.mimeType.toLowerCase() == 'audio/ogg') {
-            Logs().v('Convert ogg audio file for iOS...');
-            final convertedFile = File('${file.path}.caf');
-            if (await convertedFile.exists() == false) {
-              OpusCaf().convertOpusToCaf(file.path, convertedFile.path);
-            }
-            file = convertedFile;
-          }
+      final path = p.join(baseDirPath, event.fileName);
+      if (File(path).existsSync()) {
+        file = File(path);
+        matrixFile = MatrixFile.fromMimeType(
+          name: p.basename(file.path),
+          bytes: file.readAsBytesSync(),
+          mimeType: lookupMimeType(file.path),
+        );
+      } else {
+        matrixFile = await event.downloadAndDecryptAttachment(
+          onDownloadProgress: (v) {
+            final progress = event.fileSize != null && event.fileSize! > 0
+                ? v / event.fileSize!
+                : null;
+            handle.updateProgress(progress ?? 0);
+          },
+        );
 
-          return DownloadCapsule(
-            event: event,
-            file: file,
-            matrixFile: matrixFile,
-          );
-        }, initialValue: null),
-      );
+        file = File(path)..writeAsBytesSync(matrixFile.bytes);
+      }
+
+      if (Platform.isIOS && matrixFile.mimeType.toLowerCase() == 'audio/ogg') {
+        Logs().v('Convert ogg audio file for iOS...');
+        final convertedFile = File('${file.path}.caf');
+        if (await convertedFile.exists() == false) {
+          OpusCaf().convertOpusToCaf(file.path, convertedFile.path);
+        }
+        file = convertedFile;
+      }
+
+      return DownloadCapsule(event: event, file: file, matrixFile: matrixFile);
+    }, initialValue: null),
+  );
 
   final _saveFileCommands =
       <
