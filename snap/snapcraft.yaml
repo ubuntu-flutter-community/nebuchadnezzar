@@ -62,6 +62,7 @@ parts:
       - libjpeg-turbo8-dev
       - libasound2-dev
       - libplacebo-dev
+      - libxv-dev
     prime:
       - usr/lib/*/libmpv*
 
@@ -83,6 +84,7 @@ parts:
       - xz-utils
       - zip
       - lld
+      - llvm
     override-prime: ""
 
   nebuchadnezzar:
@@ -156,6 +158,7 @@ parts:
       - libsrt1.5-gnutls
       - ocl-icd-libopencl1
       - libplacebo338
+      - libxv1
       - on amd64:
           - libmfx1
     prime:

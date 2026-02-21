@@ -3264,5 +3264,9 @@
   "creatingSpacePleaseWait": "Creating space, please wait...",
   "joiningRoomPleaseWait": "Joining room, please wait...",
   "leavingRoomPleaseWait": "Leaving room, please wait...",
-  "deletingRoomPleaseWait": "Deleting room, please wait..."
+  "deletingRoomPleaseWait": "Deleting room, please wait...",
+  "loadingArchivePleaseWait": "Loading archive, please wait...",
+  "clearingArchivePleaseWait": "Clearing archive, please wait...",
+  "pleaseSelectAChatRoom": "Please select a chat room",
+  "archiveIsEmpty": "There are no archived chats yet. When you leave a chat, you can find it here."
 }

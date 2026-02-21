@@ -6,9 +6,12 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
+import 'package:yaru/widgets.dart';
 
 import '../../../app/view/error_page.dart';
 import '../../../app/view/mouse_and_keyboard_command_wrapper.dart';
+import '../../../chat_master/view/chat_space_discover_button.dart';
+import '../../../chat_master/view/chat_spaces_search_list.dart';
 import '../../../common/chat_manager.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
@@ -112,6 +115,32 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         ),
       );
     }
+    if (widget.room.isSpace) {
+      return Scaffold(
+        key: chatRoomScaffoldKey,
+        endDrawer: const ChatRoomInfoDrawer(),
+        appBar: ChatRoomTitleBar(room: widget.room),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(kBigPadding),
+            child: SizedBox(
+              width: 500,
+              height: 1000,
+              child: YaruBorderContainer(
+                child: Column(
+                  spacing: kMediumPadding,
+                  children: [
+                    SizedBox(height: kBigPadding),
+                    ChatSpaceDiscoverButton(),
+                    Flexible(child: ChatSpacesSearchList()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     final l10n = context.l10n;
     final colorScheme = context.colorScheme;
@@ -181,14 +210,17 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           children: [
             Scaffold(
               key: chatRoomScaffoldKey,
-              endDrawer: ChatRoomInfoDrawer(room: widget.room),
+              endDrawer: const ChatRoomInfoDrawer(),
               appBar: ChatRoomTitleBar(room: widget.room),
               bottomNavigationBar: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 400),
                 child:
                     widget.room.isArchived || widget.room.isSpace || threadeMode
                     ? const SizedBox.shrink()
-                    : ChatInput(room: widget.room),
+                    : ChatInput(
+                        key: ValueKey('${widget.room.id}_input'),
+                        room: widget.room,
+                      ),
               ),
               body: FutureBuilder<Timeline>(
                 key: ValueKey(widget.room.id),

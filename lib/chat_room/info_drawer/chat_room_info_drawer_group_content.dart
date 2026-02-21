@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../chat_master/view/chat_space_discover_button.dart';
-import '../../chat_master/view/chat_spaces_search_list.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -21,16 +19,6 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final theme = context.theme;
-
-    if (room.isSpace) {
-      return const Column(
-        spacing: kMediumPadding,
-        children: [
-          ChatSpaceDiscoverButton(),
-          Expanded(child: ChatSpacesSearchList()),
-        ],
-      );
-    }
 
     return YaruExpansionPanel(
       border: Border.all(color: Colors.transparent),
@@ -54,7 +42,8 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
                     Text(l10n.users, style: theme.textTheme.titleSmall),
                   ],
                 ),
-                ChatRoomInfoDrawerMediaGridHeadline(room: room),
+                if (!room.isSpace)
+                  ChatRoomInfoDrawerMediaGridHeadline(room: room),
               ]
               .map(
                 (e) => MouseRegion(cursor: SystemMouseCursors.click, child: e),
@@ -66,13 +55,14 @@ class ChatRoomInfoDrawerGroupContent extends StatelessWidget {
           height: context.mediaQuerySize.height - 340,
           child: ChatRoomUsersList(room: room, sliver: false),
         ),
-        SizedBox(
-          height: context.mediaQuerySize.height - 340,
-          child: ChatRoomInfoDrawerMediaGridTabs(
-            key: ValueKey('${room.id}_media_'),
-            room: room,
+        if (!room.isSpace)
+          SizedBox(
+            height: context.mediaQuerySize.height - 340,
+            child: ChatRoomInfoDrawerMediaGridTabs(
+              key: ValueKey('${room.id}_media_'),
+              room: room,
+            ),
           ),
-        ),
       ],
     );
   }

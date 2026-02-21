@@ -42,6 +42,7 @@ class _ChatMessageImageFullScreenDialogState
     _future = di<LocalImageManager>().downloadImage(
       event: widget.event,
       cache: false,
+      shallBeThumbnail: false,
     );
   }
 

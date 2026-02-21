@@ -55,6 +55,12 @@ class ChatImage extends StatelessWidget with WatchItMixin {
 
     if (event.status == EventStatus.error) {
       return const Center(child: Icon(YaruIcons.image_missing, size: 45));
+    } else if (event.status != EventStatus.synced) {
+      return SizedBox(
+        height: theHeight,
+        width: theWidth,
+        child: const Center(child: Progress()),
+      );
     }
 
     final image = SizedBox(

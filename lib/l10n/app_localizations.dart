@@ -4743,6 +4743,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Deleting room, please wait...'**
   String get deletingRoomPleaseWait;
+
+  /// No description provided for @loadingArchivePleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading archive, please wait...'**
+  String get loadingArchivePleaseWait;
+
+  /// No description provided for @clearingArchivePleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Clearing archive, please wait...'**
+  String get clearingArchivePleaseWait;
+
+  /// No description provided for @pleaseSelectAChatRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a chat room'**
+  String get pleaseSelectAChatRoom;
+
+  /// No description provided for @archiveIsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no archived chats yet. When you leave a chat, you can find it here.'**
+  String get archiveIsEmpty;
 }
 
 class _AppLocalizationsDelegate

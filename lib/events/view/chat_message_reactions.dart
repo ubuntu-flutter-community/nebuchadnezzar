@@ -23,42 +23,43 @@ class ChatMessageReactions extends StatelessWidget {
   Widget build(BuildContext context) {
     final allReactionEvents = event.getAllReactionEvents(timeline);
 
-    if (allReactionEvents.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(kSmallPadding),
-      child: Wrap(
-        spacing: kSmallPadding,
-        runSpacing: kSmallPadding,
-        alignment: event.isUserEvent ? WrapAlignment.end : WrapAlignment.start,
-        children: event
-            .getReactionList(allReactionEvents)
-            .map(
-              (entry) => ChatMessageReaction(
-                event: event,
-                reactionKey: entry.key,
-                count: entry.count,
-                reacted: entry.reacted,
-                onTap: () => di<EditRoomManager>()
-                    .getSendReactionCommand(entry.key + event.eventId)
-                    .run(
-                      ChatMessageReactionCapsule(
-                        allReactionEvents: allReactionEvents,
-                        entry: entry,
-                        event: event,
-                      ),
+    final reactions = Wrap(
+      key: ValueKey('${event.eventId}reactions'),
+      spacing: kSmallPadding,
+      runSpacing: kSmallPadding,
+      alignment: event.isUserEvent ? WrapAlignment.end : WrapAlignment.start,
+      children: event
+          .getReactionList(allReactionEvents)
+          .map(
+            (entry) => ChatMessageReaction(
+              event: event,
+              reactionKey: entry.key,
+              count: entry.count,
+              reacted: entry.reacted,
+              onTap: () => di<EditRoomManager>()
+                  .getSendReactionCommand(entry.key + event.eventId)
+                  .run(
+                    ChatMessageReactionCapsule(
+                      allReactionEvents: allReactionEvents,
+                      entry: entry,
+                      event: event,
                     ),
-                onLongPress: () => showDialog(
-                  context: context,
-                  builder: (context) =>
-                      ChatMessageReactionsDialog(reactionEntry: entry),
-                ),
+                  ),
+              onLongPress: () => showDialog(
+                context: context,
+                builder: (context) =>
+                    ChatMessageReactionsDialog(reactionEntry: entry),
               ),
-            )
-            .toList(),
-      ),
+            ),
+          )
+          .toList(),
+    );
+
+    const nothing = SizedBox.shrink();
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      child: reactions.children.isEmpty ? nothing : reactions,
     );
   }
 }

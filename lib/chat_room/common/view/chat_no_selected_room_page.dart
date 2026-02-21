@@ -54,6 +54,18 @@ class ChatNoSelectedRoomPage extends StatelessWidget with WatchItMixin {
       (EditRoomManager m) => m.forgetAllRoomsCommand.progress,
     );
 
+    final isArchiveActive = watchPropertyValue(
+      (ChatManager m) => m.archiveActive,
+    );
+
+    final isArchiveEmpty =
+        watchStream(
+          (ChatManager m) => m.filteredRoomsStream,
+          initialValue: di<ChatManager>().filteredRooms,
+          preserveState: false,
+        ).data?.isEmpty ??
+        true;
+
     return Scaffold(
       appBar: YaruWindowTitleBar(
         heroTag: '<Right hero tag>',
@@ -91,11 +103,38 @@ class ChatNoSelectedRoomPage extends StatelessWidget with WatchItMixin {
                       value: progress,
                       shapePath: _buildBoatPath(),
                     )
-                  : Image.asset('assets/nebuchadnezzar.png', width: 100),
-              Text(
-                loadingArchive || clearingArchive
-                    ? context.l10n.loadingPleaseWait
-                    : 'Please select a chatroom from the side panel.',
+                  : isArchiveActive
+                  ? CustomPaint(
+                      size: const Size(90, 90),
+                      painter: _PathPainter(
+                        path: _buildArchiveIconPath(),
+                        color: context.theme.colorScheme.primary,
+                      ),
+                    )
+                  : Image.asset(
+                      'assets/nebuchadnezzar.png',
+                      width: 90,
+                      height: 90,
+                    ),
+              SizedBox(
+                width: 300,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kMediumPadding,
+                  ),
+                  child: Text(
+                    loadingArchive
+                        ? context.l10n.loadingArchivePleaseWait
+                        : clearingArchive
+                        ? context.l10n.clearingArchivePleaseWait
+                        : isArchiveActive
+                        ? isArchiveEmpty
+                              ? context.l10n.archiveIsEmpty
+                              : context.l10n.pleaseSelectAChatRoom
+                        : context.l10n.pleaseSelectAChatRoom,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
             ],
           ),
@@ -120,34 +159,61 @@ class ChatNoSelectedRoomPage extends StatelessWidget with WatchItMixin {
 
   Path _buildArchiveIconPath() {
     final path = Path()
-      // 1. THE LID (Top Part)
-      // Starting at the bottom-left of the lid
       ..moveTo(10, 35)
-      ..lineTo(90, 35) // Bottom edge of lid
-      ..lineTo(90, 20) // Right side
-      ..quadraticBezierTo(90, 10, 80, 10) // Top-right corner
-      ..lineTo(20, 10) // Top edge
-      ..quadraticBezierTo(10, 10, 10, 20) // Top-left corner
-      ..close()
-      // 2. THE BODY (Bottom Part)
+      ..lineTo(90, 35)
+      ..lineTo(90, 20)
+      ..quadraticBezierTo(90, 10, 80, 10)
+      ..lineTo(20, 10)
+      ..quadraticBezierTo(10, 10, 10, 20)
       ..moveTo(15, 40)
-      ..lineTo(85, 40) // Top edge of body
-      ..lineTo(85, 80) // Right side
-      ..quadraticBezierTo(85, 90, 75, 90) // Bottom-right corner
-      ..lineTo(25, 90) // Bottom edge
-      ..quadraticBezierTo(15, 90, 15, 80) // Bottom-left corner
+      ..lineTo(85, 40)
+      ..lineTo(85, 80)
+      ..quadraticBezierTo(85, 90, 75, 90)
+      ..lineTo(25, 90)
+      ..quadraticBezierTo(15, 90, 15, 80)
       ..close()
-      // 3. THE HANDLE (Slot)
-      // Adding a rounded rectangle cutout in the center
       ..addRRect(
         RRect.fromRectAndRadius(
           const Rect.fromLTWH(35, 50, 30, 10),
           const Radius.circular(5),
         ),
       )
-      // Set the fill type to evenOdd so the handle appears as a "hole"
       ..fillType = PathFillType.evenOdd;
 
     return path;
+  }
+}
+
+class _PathPainter extends CustomPainter {
+  final Path path;
+  final Color color;
+
+  _PathPainter({required this.path, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final pathBounds = path.getBounds();
+    final double scaleX = size.width / pathBounds.width;
+    final double scaleY = size.height / pathBounds.height;
+    final double scale = scaleX < scaleY ? scaleX : scaleY;
+
+    canvas
+      ..save()
+      ..translate(size.width / 2, size.height / 2)
+      ..scale(scale)
+      ..translate(-pathBounds.center.dx, -pathBounds.center.dy);
+
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    canvas
+      ..drawPath(path, paint)
+      ..restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _PathPainter oldDelegate) {
+    return oldDelegate.path != path || oldDelegate.color != color;
   }
 }
