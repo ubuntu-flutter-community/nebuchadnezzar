@@ -73,12 +73,12 @@ class TimelineManager extends SafeChangeNotifier {
             await timeline.room.client.onHistoryEvent.stream
                 .where((e) => e.roomId == timeline.room.id)
                 .last;
-          } else {
-            await timeline.requestHistory(
-              filter: param.filter,
-              historyCount: param.historyCount,
-            );
           }
+
+          await timeline.requestHistory(
+            filter: param.filter,
+            historyCount: param.historyCount,
+          );
 
           _setTimeline(timeline: timeline);
         }, initialValue: null),
