@@ -15,9 +15,12 @@ class EditRoomManager {
     initialValue: null,
   );
 
-  late final Command<PublishedRoomsChunk, Room?> knockOrJoinCommand =
+  late final Command<({String roomId, bool knock}), Room?> knockOrJoinCommand =
       Command.createAsync(
-        _editRoomService.knockOrJoinRoomChunk,
+        (param) => _editRoomService.knockOrJoinRoomById(
+          roomId: param.roomId,
+          knock: param.knock,
+        ),
         initialValue: null,
       );
 

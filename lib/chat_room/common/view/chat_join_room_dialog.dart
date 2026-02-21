@@ -21,6 +21,9 @@ class ChatJoinRoomDialog extends StatelessWidget with WatchItMixin {
       di<EditRoomManager>().getLeaveRoomCommand(room).run();
     },
     confirmLabel: context.l10n.accept,
-    onConfirm: () => di<EditRoomManager>().joinRoomCommand.run(room),
+    onConfirm: () => di<EditRoomManager>().knockOrJoinCommand.run((
+      roomId: room.id,
+      knock: false,
+    )),
   );
 }

@@ -1,12 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
-import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../../common/platforms.dart';
 import '../../common/view/confirm.dart';
 import '../../events/chat_download_manager.dart';
 import '../../l10n/l10n.dart';
@@ -33,40 +28,10 @@ mixin PlayerControlMixin {
     required Event event,
     bool newPlaylist = true,
   }) async {
-    File? file;
-    MatrixFile? matrixFile;
+    final result = await di<ChatDownloadManager>().globalDownloadCommand
+        .runAsync(event);
 
-    try {
-      matrixFile = await di<ChatDownloadManager>()
-          .getDownloadCommand(event)
-          .runAsync();
-
-      if (matrixFile != null) {
-        if (!Platforms.isWeb) {
-          final tempDir = await getTemporaryDirectory();
-
-          file = File('${tempDir.path}/${matrixFile.name}');
-
-          if (!file.existsSync()) {
-            await file.writeAsBytes(matrixFile.bytes);
-          }
-
-          if (Platform.isIOS &&
-              matrixFile.mimeType.toLowerCase() == 'audio/ogg') {
-            Logs().v('Convert ogg audio file for iOS...');
-            final convertedFile = File('${file.path}.caf');
-            if (await convertedFile.exists() == false) {
-              OpusCaf().convertOpusToCaf(file.path, convertedFile.path);
-            }
-            file = convertedFile;
-          }
-        }
-      }
-    } catch (e, s) {
-      Logs().v('Could not download audio file', e, s);
-
-      rethrow;
-    }
+    final file = result?.file;
 
     if (file != null) {
       final media = LocalMedia(file.path);

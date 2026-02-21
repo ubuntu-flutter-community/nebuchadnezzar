@@ -30,6 +30,19 @@ class ChatNoSelectedRoomPage extends StatelessWidget with WatchItMixin {
       },
     );
 
+    // register handler for knockOrJoinCommand to set the selected room when a room is joined or knocked
+    registerHandler(
+      select: (EditRoomManager m) => m.knockOrJoinCommand,
+      handler: (context, room, cancel) {
+        if (room != null) {
+          di<ChatManager>().setSelectedRoom(room);
+          if (room.isSpace) {
+            di<ChatManager>().setActiveSpace(room);
+          }
+        }
+      },
+    );
+
     registerHandler(
       select: (EditRoomManager m) => m.joinRoomCommand,
       handler: (context, room, cancel) {

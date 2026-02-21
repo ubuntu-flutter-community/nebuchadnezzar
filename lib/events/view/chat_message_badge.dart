@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_room/common/view/chat_room_upgrade_dialog.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
@@ -20,19 +21,27 @@ class ChatMessageBadge extends StatelessWidget {
     final theme = context.theme;
     return Padding(
       padding: const EdgeInsets.all(kSmallPadding),
-      child: GestureDetector(
-        onSecondaryTap: () => showDialog(
-          context: context,
-          builder: (context) => ChatEventInspectDialog(
-            event: displayEvent,
-            child: const SizedBox.shrink(),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ?leading,
-            Flexible(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ?leading,
+          Flexible(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(5),
+              onSecondaryTap: () => showDialog(
+                context: context,
+                builder: (context) => ChatEventInspectDialog(
+                  event: displayEvent,
+                  child: const SizedBox.shrink(),
+                ),
+              ),
+              onTap: displayEvent.type == EventTypes.RoomTombstone
+                  ? () => showDialog(
+                      context: context,
+                      builder: (context) =>
+                          ChatRoomUpgradeDialog(room: displayEvent.room),
+                    )
+                  : null,
               child: Badge(
                 textColor: contrastColor(
                   getEventBadgeColor(theme, displayEvent.showAsSpecialBadge),
@@ -55,8 +64,8 @@ class ChatMessageBadge extends StatelessWidget {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

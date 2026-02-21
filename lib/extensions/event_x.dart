@@ -106,6 +106,7 @@ extension EventX on Event {
   bool get showAsSpecialBadge => {
     'm.space.parent',
     'm.space.child',
+    EventTypes.RoomTombstone,
     EventTypes.RoomPinnedEvents,
   }.contains(type);
 
