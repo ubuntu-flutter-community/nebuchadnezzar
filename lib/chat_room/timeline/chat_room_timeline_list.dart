@@ -7,6 +7,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/common_widgets.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../events/chat_download_manager.dart';
@@ -79,9 +80,12 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
         ).data ??
         [];
 
-    watchPropertyValue(
-      (TimelineManager m) => m.getUpdatingTimeline(widget.timeline.room.id),
+    final isRequestingHistory = watchValue(
+      (TimelineManager m) =>
+          m.getRequestHistoryCommand(widget.timeline.room.id).isRunning,
     );
+
+    final canRequestHistory = widget.timeline.canRequestHistory;
 
     return Stack(
       children: [
@@ -108,6 +112,11 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                 di<TimelineManager>().trySetReadMarker(widget.timeline);
               }
 
+              final hideInTimeline = event.hideInTimeline(
+                showAvatarChanges: showAvatarChanges,
+                showDisplayNameChanges: showDisplayNameChanges,
+              );
+
               return AutoScrollTag(
                 index: i,
                 controller: _controller,
@@ -117,10 +126,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (!event.hideInTimeline(
-                        showAvatarChanges: showAvatarChanges,
-                        showDisplayNameChanges: showDisplayNameChanges,
-                      )) ...[
+                      if (!hideInTimeline) ...[
                         if (previous != null &&
                             event.originServerTs.toLocal().day !=
                                 previous.originServerTs.toLocal().day)
@@ -154,7 +160,9 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         ),
                       ],
 
-                      if (event.showAsBubble && !widget.timeline.room.isSpace)
+                      if (!hideInTimeline &&
+                          !event.showAsBadge &&
+                          !widget.timeline.room.isSpace)
                         i == 0
                             ? ChatEventSeenByIndicator(
                                 key: ValueKey(
@@ -189,7 +197,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
               ),
             ),
           ),
-        if (widget.timeline.canRequestHistory)
+        if (canRequestHistory)
           Positioned(
             right: kBigPadding,
             top: pinnedEvents.isNotEmpty ? 4 * kBigPadding : kBigPadding,
@@ -197,14 +205,21 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
               heroTag: 'historyRequestButtonTag',
               tooltip: context.l10n.loadMore,
               backgroundColor: theme.colorScheme.surface,
-              child: Icon(
-                YaruIcons.history,
-                color: theme.colorScheme.onSurface,
-              ),
-              onPressed: () => di<TimelineManager>().requestHistory(
-                widget.timeline,
-                historyCount: 50,
-              ),
+              onPressed: isRequestingHistory
+                  ? null
+                  : () => di<TimelineManager>()
+                        .getRequestHistoryCommand(widget.timeline.room.id)
+                        .run((
+                          timeline: widget.timeline,
+                          historyCount: 50,
+                          filter: null,
+                        )),
+              child: isRequestingHistory
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: Progress(strokeWidth: 2),
+                    )
+                  : Icon(YaruIcons.history, color: theme.colorScheme.onSurface),
             ),
           ),
         if (_showScrollButton)
@@ -232,10 +247,9 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     if (metrics.atEdge) {
       final isAtBottom = metrics.pixels != 0;
       if (isAtBottom) {
-        di<TimelineManager>().requestHistory(
-          widget.timeline,
-          historyCount: 150,
-        );
+        di<TimelineManager>()
+            .getRequestHistoryCommand(widget.timeline.room.id)
+            .run((timeline: widget.timeline, historyCount: 150, filter: null));
       } else {
         setState(() => _showScrollButton = false);
       }
@@ -255,10 +269,9 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
         : widget.timeline.events.indexOf(eventInTimeline);
 
     while (index == -1 && retryCount >= 0) {
-      await di<TimelineManager>().requestHistory(
-        widget.timeline,
-        historyCount: 5,
-      );
+      await di<TimelineManager>()
+          .getRequestHistoryCommand(widget.timeline.room.id)
+          .runAsync((timeline: widget.timeline, historyCount: 5, filter: null));
       index = widget.timeline.events.indexOf(event);
       retryCount--;
     }

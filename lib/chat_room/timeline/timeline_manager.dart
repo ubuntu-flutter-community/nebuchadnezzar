@@ -1,3 +1,4 @@
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
@@ -32,7 +33,9 @@ class TimelineManager extends SafeChangeNotifier {
 
   Future<void> postTimelineLoad(Timeline timeline) async {
     _requestKeysForUndecryptableEvents(timeline);
-    await requestHistory(timeline, historyCount: 500);
+    await getRequestHistoryCommand(
+      timeline.room.id,
+    ).runAsync((timeline: timeline, historyCount: 500, filter: null));
     await trySetReadMarker(timeline);
   }
 
@@ -43,35 +46,43 @@ class TimelineManager extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  final Map<String, bool> _updatingTimeline = {};
-  bool getUpdatingTimeline(String? roomId) => _updatingTimeline[roomId] == true;
-  void _setUpdatingTimeline({required String roomId, required bool value}) {
-    if (_updatingTimeline[roomId] == value) return;
-    _updatingTimeline[roomId] = value;
-    notifyListeners();
+  void removeTimeline(String roomId) {
+    _timelines.remove(roomId);
+    _requestHistoryCommands.remove(roomId);
   }
 
-  Future<void> requestHistory(
-    Timeline timeline, {
-    int historyCount = 50,
-    StateFilter? filter,
-  }) async {
-    _setUpdatingTimeline(roomId: timeline.room.id, value: true);
-    _setTimeline(timeline: timeline);
+  final _requestHistoryCommands =
+      <
+        String,
+        Command<
+          ({Timeline timeline, int historyCount, StateFilter? filter}),
+          void
+        >
+      >{};
+  Command<({Timeline timeline, int historyCount, StateFilter? filter}), void>
+  getRequestHistoryCommand(String roomId) =>
+      _requestHistoryCommands.putIfAbsent(
+        roomId,
+        () => Command.createAsync((param) async {
+          final timeline = param.timeline;
+          if (!timeline.canRequestHistory) {
+            return;
+          }
 
-    if (timeline.canRequestHistory) {
-      try {
-        await timeline.requestHistory(
-          filter: filter,
-          historyCount: historyCount,
-        );
-      } on Exception catch (e, s) {
-        printMessageInDebugMode(e, s);
-      }
-    }
+          if (timeline.isRequestingHistory) {
+            await timeline.room.client.onHistoryEvent.stream
+                .where((e) => e.roomId == timeline.room.id)
+                .last;
+          } else {
+            await timeline.requestHistory(
+              filter: param.filter,
+              historyCount: param.historyCount,
+            );
+          }
 
-    _setUpdatingTimeline(roomId: timeline.room.id, value: false);
-  }
+          _setTimeline(timeline: timeline);
+        }, initialValue: null),
+      );
 
   Future<void> loadRoomStates(Room room) async {
     try {

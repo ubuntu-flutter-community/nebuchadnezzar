@@ -8,6 +8,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../create_or_edit/edit_room_manager.dart';
+import '../timeline/timeline_manager.dart';
 
 class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
   const ChatRoomInfoDrawerForgetButton({super.key, required this.room});
@@ -38,6 +39,7 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
         onPressed: () {
           di<ChatManager>().setSelectedRoom(null);
           di<EditRoomManager>().globalForgetRoomCommand.run(room);
+          di<TimelineManager>().removeTimeline(room.id);
         },
         icon: Icon(
           YaruIcons.trash,
