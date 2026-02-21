@@ -7,7 +7,9 @@ import 'package:matrix/matrix.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
+import 'package:xdg_directories/xdg_directories.dart';
 
+import '../common/platforms.dart';
 import '../extensions/event_x.dart';
 import 'chat_download_service.dart';
 
@@ -25,7 +27,9 @@ class ChatDownloadManager extends SafeChangeNotifier {
   late final Command<Timeline, void> fillRecentDownloadsCommand =
       Command.createAsync((timeline) async {
         final events = timeline.events.where((e) => e.hasAttachment).toList();
-        _tempDirectory ??= await getTemporaryDirectory();
+        _tempDirectory ??= (Platforms.isLinux
+            ? configHome
+            : await getTemporaryDirectory());
         for (final event in events) {
           final filePath = '${_tempDirectory?.path}/${event.fileName}';
           if (File(filePath).existsSync() &&

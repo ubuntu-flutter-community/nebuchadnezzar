@@ -12,6 +12,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:xdg_directories/xdg_directories.dart';
 
 import '../app/app_config.dart';
 import '../common/logging.dart';
@@ -131,7 +132,9 @@ extension ClientX on Client {
 
     Directory? fileStorageLocation;
     try {
-      fileStorageLocation = await getTemporaryDirectory();
+      fileStorageLocation = (Platforms.isLinux
+          ? configHome
+          : await getTemporaryDirectory());
     } on MissingPlatformDirectoryException catch (_) {
       Logs().w(
         'No temporary directory for file cache available on this platform.',
