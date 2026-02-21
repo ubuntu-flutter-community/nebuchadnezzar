@@ -17,9 +17,10 @@ class LocalImageService {
   Future<Uint8List?> downloadImage({
     required Event event,
     required bool cache,
+    required bool shallBeThumbnail,
   }) async {
     final bytes = (await event.downloadAndDecryptAttachment(
-      getThumbnail: event.hasThumbnail,
+      getThumbnail: shallBeThumbnail && event.hasThumbnail,
     )).bytes;
 
     final cover = (event.hasThumbnail && cache)

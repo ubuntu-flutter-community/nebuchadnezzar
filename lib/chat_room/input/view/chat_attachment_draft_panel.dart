@@ -16,6 +16,8 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
       (DraftManager m) => m.getFilesDraft(roomId),
     );
 
+    if (draftFiles.isEmpty) return const SizedBox.shrink();
+
     final attaching = watchPropertyValue((DraftManager m) => m.attaching);
 
     final draftFilesL = watchPropertyValue(
@@ -24,43 +26,48 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
 
     if (!attaching && draftFilesL == 0) return const SizedBox.shrink();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
-      child: SizedBox(
-        height: ChatPendingAttachment.dimension,
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: ChatPendingAttachment.dimension,
-              mainAxisExtent: ChatPendingAttachment.dimension,
-            ),
-            reverse: true,
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
-            scrollDirection: Axis.horizontal,
-            itemCount: draftFilesL,
-            itemBuilder: (context, index) {
-              final file = draftFiles.elementAt(index);
-              return AnimatedContainer(
-                duration: const Duration(seconds: 1),
-                child: ChatPendingAttachment(
-                  roomId: roomId,
-                  onToggleCompress: () => di<DraftManager>().toggleCompress(
-                    roomId: roomId,
-                    file: file,
-                  ),
-                  onTap: () => di<DraftManager>().removeFileFromDraft(
-                    roomId: roomId,
-                    file: file,
-                  ),
-                  file: file,
+    return Column(
+      children: [
+        const Divider(height: 1),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
+          child: SizedBox(
+            height: ChatPendingAttachment.dimension,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: ChatPendingAttachment.dimension,
+                  mainAxisExtent: ChatPendingAttachment.dimension,
                 ),
-              );
-            },
+                reverse: true,
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
+                scrollDirection: Axis.horizontal,
+                itemCount: draftFilesL,
+                itemBuilder: (context, index) {
+                  final file = draftFiles.elementAt(index);
+                  return AnimatedContainer(
+                    duration: const Duration(seconds: 1),
+                    child: ChatPendingAttachment(
+                      roomId: roomId,
+                      onToggleCompress: () => di<DraftManager>().toggleCompress(
+                        roomId: roomId,
+                        file: file,
+                      ),
+                      onTap: () => di<DraftManager>().removeFileFromDraft(
+                        roomId: roomId,
+                        file: file,
+                      ),
+                      file: file,
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }

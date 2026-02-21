@@ -17,7 +17,8 @@ class ChatMasterClearArchiveButton extends StatelessWidget with WatchItMixin {
 
     return IconButton(
       tooltip: context.l10n.clearArchive,
-      onPressed: result.isRunning || result.data!.archivedRooms.isEmpty
+      onPressed:
+          result.isRunning || (result.data?.archivedRooms.isEmpty ?? true)
           ? null
           : () {
               di<ChatManager>().setSelectedRoom(null);

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 
+import '../../common/chat_manager.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/room_x.dart';
 import '../create_or_edit/edit_room_service.dart';
@@ -13,12 +14,16 @@ import 'chat_room_info_drawer_group_header.dart';
 import 'chat_room_info_drawer_leave_button.dart';
 
 class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
-  const ChatRoomInfoDrawer({super.key, required this.room});
-
-  final Room room;
+  const ChatRoomInfoDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final room = watchPropertyValue((ChatManager m) => m.selectedRoom);
+
+    if (room == null) {
+      return const SizedBox.shrink();
+    }
+
     final unAcceptedDirectChat = watchStream(
       (EditRoomService m) => m
           .getUsersStreamOfJoinedRoom(
@@ -31,6 +36,7 @@ class ChatRoomInfoDrawer extends StatelessWidget with WatchItMixin {
     ).data;
 
     return Drawer(
+      key: ValueKey('drawer_${room.id}'),
       child: SizedBox(
         width: kSideBarWith,
         child: Column(

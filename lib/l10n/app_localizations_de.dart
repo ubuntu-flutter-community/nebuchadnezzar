@@ -12,184 +12,186 @@ class AppLocalizationsDe extends AppLocalizations {
   String get alwaysUse24HourFormat => 'false';
 
   @override
-  String get repeatPassword => 'Repeat password';
+  String get repeatPassword => 'Passwort wiederholen';
 
   @override
-  String get notAnImage => 'Not an image file.';
+  String get notAnImage => 'Keine Bilddatei.';
 
   @override
-  String get remove => 'Remove';
+  String get remove => 'Entfernen';
 
   @override
-  String get importNow => 'Import now';
+  String get importNow => 'Jetzt importieren';
 
   @override
-  String get importEmojis => 'Import Emojis';
+  String get importEmojis => 'Emojis importieren';
 
   @override
-  String get importFromZipFile => 'Import from .zip file';
+  String get importFromZipFile => 'Aus .zip Datei importieren';
 
   @override
-  String get exportEmotePack => 'Export Emote pack as .zip';
+  String get exportEmotePack => 'Emote-Paket als .zip exportieren';
 
   @override
-  String get replace => 'Replace';
+  String get replace => 'Ersetzen';
 
   @override
-  String get about => 'About';
+  String get about => 'Über';
 
   @override
-  String get accept => 'Accept';
+  String get accept => 'Akzeptieren';
 
   @override
   String acceptedTheInvitation(String username) {
-    return '👍 $username accepted the invitation';
+    return '👍 $username hat die Einladung angenommen';
   }
 
   @override
-  String get account => 'Account';
+  String get account => 'Konto';
 
   @override
   String activatedEndToEndEncryption(String username) {
-    return '🔐 $username activated end to end encryption';
+    return '🔐 $username hat die Ende-zu-Ende-Verschlüsselung aktiviert';
   }
 
   @override
-  String get addEmail => 'Add email';
+  String get addEmail => 'E-Mail hinzufügen';
 
   @override
   String get confirmMatrixId =>
-      'Please confirm your Matrix ID in order to delete your account.';
+      'Bitte bestätigen Sie Ihre Matrix-ID, um Ihr Konto zu löschen.';
 
   @override
   String supposedMxid(String mxid) {
-    return 'This should be $mxid';
+    return 'Dies sollte $mxid sein';
   }
 
   @override
-  String get addChatDescription => 'Add a chat description...';
+  String get addChatDescription => 'Chat-Beschreibung hinzufügen...';
 
   @override
-  String get addToSpace => 'Add to space';
+  String get addToSpace => 'Zum Space hinzufügen';
 
   @override
   String get admin => 'Admin';
 
   @override
-  String get alias => 'alias';
+  String get alias => 'Alias';
 
   @override
-  String get all => 'All';
+  String get all => 'Alle';
 
   @override
-  String get allChats => 'All chats';
+  String get allChats => 'Alle Chats';
 
   @override
-  String get commandHint_googly => 'Send some googly eyes';
+  String get commandHint_googly => 'Sende Kulleraugen';
 
   @override
-  String get commandHint_cuddle => 'Send a cuddle';
+  String get commandHint_cuddle => 'Sende Kuscheln';
 
   @override
-  String get commandHint_hug => 'Send a hug';
+  String get commandHint_hug => 'Sende eine Umarmung';
 
   @override
   String googlyEyesContent(String senderName) {
-    return '$senderName sends you googly eyes';
+    return '$senderName sendet Kulleraugen';
   }
 
   @override
   String cuddleContent(String senderName) {
-    return '$senderName cuddles you';
+    return '$senderName knuddelt dich';
   }
 
   @override
   String hugContent(String senderName) {
-    return '$senderName hugs you';
+    return '$senderName umarmt dich';
   }
 
   @override
   String answeredTheCall(String senderName) {
-    return '$senderName answered the call';
+    return '$senderName hat den Anruf angenommen';
   }
 
   @override
-  String get anyoneCanJoin => 'Anyone can join';
+  String get anyoneCanJoin => 'Jeder kann beitreten';
 
   @override
-  String get appLock => 'App lock';
+  String get appLock => 'App-Sperre';
 
   @override
   String get appLockDescription =>
-      'Lock the app when not using with a pin code';
+      'Sperre die App mit einem PIN-Code, wenn sie nicht verwendet wird';
 
   @override
-  String get archive => 'Archive';
+  String get archive => 'Archiv';
 
   @override
-  String get areGuestsAllowedToJoin => 'Are guest users allowed to join';
+  String get areGuestsAllowedToJoin => 'Dürfen Gäste beitreten';
 
   @override
-  String get areYouSure => 'Are you sure?';
+  String get areYouSure => 'Sind Sie sicher?';
 
   @override
-  String get areYouSureYouWantToLogout => 'Are you sure you want to log out?';
+  String get areYouSureYouWantToLogout =>
+      'Sind Sie sicher, dass Sie sich abmelden möchten?';
 
   @override
   String get askSSSSSign =>
-      'To be able to sign the other person, please enter your secure store passphrase or recovery key.';
+      'Um die andere Person signieren zu können, geben Sie bitte Ihre Passphrase oder Ihren Wiederherstellungsschlüssel für den sicheren Speicher ein.';
 
   @override
   String askVerificationRequest(String username) {
-    return 'Accept this verification request from $username?';
+    return 'Diese Verifizierungsanfrage von $username annehmen?';
   }
 
   @override
   String get autoplayImages =>
-      'Automatically play animated stickers and emotes';
+      'Automatische Wiedergabe von animierten Stickern und Emotes';
 
   @override
   String badServerLoginTypesException(
     String serverVersions,
     String supportedVersions,
   ) {
-    return 'The homeserver supports the login types:\n$serverVersions\nBut this app supports only:\n$supportedVersions';
+    return 'Der Homeserver unterstützt die Anmeldetypen:\n$serverVersions\nAber diese App unterstützt nur:\n$supportedVersions';
   }
 
   @override
-  String get sendTypingNotifications => 'Send typing notifications';
+  String get sendTypingNotifications => 'Sende Schreibbenachrichtigungen';
 
   @override
-  String get swipeRightToLeftToReply => 'Swipe right to left to reply';
+  String get swipeRightToLeftToReply =>
+      'Wische von rechts nach links zum Antworten';
 
   @override
-  String get sendOnEnter => 'Send on enter';
+  String get sendOnEnter => 'Senden mit Eingabetaste';
 
   @override
   String badServerVersionsException(
     String serverVersions,
     String supportedVersions,
   ) {
-    return 'The homeserver supports the Spec versions:\n$serverVersions\nBut this app supports only $supportedVersions';
+    return 'Der Homeserver unterstützt die Spec-Versionen:\n$serverVersions\nAber diese App unterstützt nur $supportedVersions';
   }
 
   @override
   String countChatsAndCountParticipants(String chats, Object participants) {
-    return '$chats chats and $participants participants';
+    return '$chats Chats und $participants Teilnehmer';
   }
 
   @override
-  String get noMoreChatsFound => 'No more chats found...';
+  String get noMoreChatsFound => 'Keine weiteren Chats gefunden...';
 
   @override
   String get noChatsFoundHere =>
-      'No chats found here yet. Start a new chat with someone by using the button below. ⤵️';
+      'Hier wurden noch keine Chats gefunden. Starte einen neuen Chat mit jemandem, indem du den Button unten benutzt. ⤵️';
 
   @override
-  String get joinedChats => 'Joined chats';
+  String get joinedChats => 'Beigetretene Chats';
 
   @override
-  String get unread => 'Unread';
+  String get unread => 'Ungelesen';
 
   @override
   String get space => 'Space';
@@ -198,296 +200,303 @@ class AppLocalizationsDe extends AppLocalizations {
   String get spaces => 'Spaces';
 
   @override
-  String get banFromChat => 'Ban from chat';
+  String get banFromChat => 'Aus dem Chat verbannen';
 
   @override
-  String get banned => 'Banned';
+  String get banned => 'Verbannt';
 
   @override
   String bannedUser(String username, String targetName) {
-    return '$username banned $targetName';
+    return '$username hat $targetName verbannt';
   }
 
   @override
-  String get blockDevice => 'Block Device';
+  String get blockDevice => 'Gerät blockieren';
 
   @override
-  String get blocked => 'Blocked';
+  String get blocked => 'Blockiert';
 
   @override
-  String get botMessages => 'Bot messages';
+  String get botMessages => 'Bot-Nachrichten';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Abbrechen';
 
   @override
   String cantOpenUri(String uri) {
-    return 'Can\'t open the URI $uri';
+    return 'Kann die URI $uri nicht öffnen';
   }
 
   @override
-  String get changeDeviceName => 'Change device name';
+  String get changeDeviceName => 'Gerätename ändern';
 
   @override
   String changedTheChatAvatar(String username) {
-    return '$username changed the chat avatar';
+    return '$username hat den Chat-Avatar geändert';
   }
 
   @override
   String changedTheChatDescriptionTo(String username, String description) {
-    return '$username changed the chat description to: \'$description\'';
+    return '$username hat die Chat-Beschreibung geändert zu: \'$description\'';
   }
 
   @override
   String changedTheChatNameTo(String username, String chatname) {
-    return '$username changed the chat name to: \'$chatname\'';
+    return '$username hat den Chat-Namen geändert zu: \'$chatname\'';
   }
 
   @override
   String changedTheChatPermissions(String username) {
-    return '$username changed the chat permissions';
+    return '$username hat die Chat-Berechtigungen geändert';
   }
 
   @override
   String changedTheDisplaynameTo(String username, String displayname) {
-    return '$username changed their displayname to: \'$displayname\'';
+    return '$username hat den Anzeigenamen geändert zu: \'$displayname\'';
   }
 
   @override
   String changedTheGuestAccessRules(String username) {
-    return '$username changed the guest access rules';
+    return '$username hat die Gästezugriffsregeln geändert';
   }
 
   @override
   String changedTheGuestAccessRulesTo(String username, String rules) {
-    return '$username changed the guest access rules to: $rules';
+    return '$username hat die Gästezugriffsregeln geändert zu: $rules';
   }
 
   @override
   String changedTheHistoryVisibility(String username) {
-    return '$username changed the history visibility';
+    return '$username hat die Sichtbarkeit des Verlaufs geändert';
   }
 
   @override
   String changedTheHistoryVisibilityTo(String username, String rules) {
-    return '$username changed the history visibility to: $rules';
+    return '$username hat die Sichtbarkeit des Verlaufs geändert zu: $rules';
   }
 
   @override
   String changedTheJoinRules(String username) {
-    return '$username changed the join rules';
+    return '$username hat die Beitrittsregeln geändert';
   }
 
   @override
   String changedTheJoinRulesTo(String username, String joinRules) {
-    return '$username changed the join rules to: $joinRules';
+    return '$username hat die Beitrittsregeln geändert zu: $joinRules';
   }
 
   @override
   String changedTheProfileAvatar(String username) {
-    return '$username changed their avatar';
+    return '$username hat den Avatar geändert';
   }
 
   @override
   String changedTheRoomAliases(String username) {
-    return '$username changed the room aliases';
+    return '$username hat die Raum-Aliase geändert';
   }
 
   @override
   String changedTheRoomInvitationLink(String username) {
-    return '$username changed the invitation link';
+    return '$username hat den Einladungslink geändert';
   }
 
   @override
-  String get changePassword => 'Change password';
+  String get changePassword => 'Passwort ändern';
 
   @override
-  String get changeTheHomeserver => 'Change the homeserver';
+  String get changeTheHomeserver => 'Homeserver ändern';
 
   @override
-  String get changeTheme => 'Change your style';
+  String get changeTheme => 'Design ändern';
 
   @override
-  String get changeTheNameOfTheGroup => 'Change the name of the group';
+  String get changeTheNameOfTheGroup => 'Gruppennamen ändern';
 
   @override
-  String get changeYourAvatar => 'Change your avatar';
+  String get changeYourAvatar => 'Avatar ändern';
 
   @override
   String get channelCorruptedDecryptError =>
-      'The encryption has been corrupted';
+      'Die Verschlüsselung wurde beschädigt';
 
   @override
   String get chat => 'Chat';
 
   @override
-  String get yourChatBackupHasBeenSetUp => 'Your chat backup has been set up.';
+  String get yourChatBackupHasBeenSetUp =>
+      'Dein Chat-Backup wurde eingerichtet.';
 
   @override
-  String get chatBackup => 'Chat backup';
+  String get chatBackup => 'Chat-Backup';
 
   @override
   String get chatBackupDescription =>
-      'Your old messages are secured with a recovery key. Please make sure you don\'t lose it.';
+      'Deine alten Nachrichten sind mit einem Wiederherstellungsschlüssel gesichert. Bitte stelle sicher, dass du ihn nicht verlierst.';
 
   @override
-  String get chatDetails => 'Chat details';
+  String get chatDetails => 'Chat-Details';
 
   @override
-  String get chatHasBeenAddedToThisSpace => 'Chat has been added to this space';
+  String get chatHasBeenAddedToThisSpace =>
+      'Chat wurde zu diesem Space hinzugefügt';
 
   @override
   String get chats => 'Chats';
 
   @override
-  String get chooseAStrongPassword => 'Choose a strong password';
+  String get chooseAStrongPassword => 'Wähle ein sicheres Passwort';
 
   @override
-  String get clearArchive => 'Clear archive';
+  String get clearArchive => 'Archiv leeren';
 
   @override
-  String get close => 'Close';
+  String get close => 'Schließen';
 
   @override
   String get commandHint_markasdm =>
-      'Mark as direct message room for the giving Matrix ID';
+      'Als Direktnachrichtenraum für die angegebene Matrix-ID markieren';
 
   @override
-  String get commandHint_markasgroup => 'Mark as group';
+  String get commandHint_markasgroup => 'Als Gruppe markieren';
 
   @override
-  String get commandHint_ban => 'Ban the given user from this room';
+  String get commandHint_ban =>
+      'Den angegebenen Benutzer aus diesem Raum verbannen';
 
   @override
-  String get commandHint_clearcache => 'Clear cache';
+  String get commandHint_clearcache => 'Cache leeren';
 
   @override
   String get commandHint_create =>
-      'Create an empty group chat\nUse --no-encryption to disable encryption';
+      'Erstelle einen leeren Gruppenchat\nVerwende --no-encryption, um die Verschlüsselung zu deaktivieren';
 
   @override
-  String get commandHint_discardsession => 'Discard session';
+  String get commandHint_discardsession => 'Sitzung verwerfen';
 
   @override
   String get commandHint_dm =>
-      'Start a direct chat\nUse --no-encryption to disable encryption';
+      'Starte einen Direktchat\nVerwende --no-encryption, um die Verschlüsselung zu deaktivieren';
 
   @override
-  String get commandHint_html => 'Send HTML-formatted text';
+  String get commandHint_html => 'HTML-formatierten Text senden';
 
   @override
-  String get commandHint_invite => 'Invite the given user to this room';
+  String get commandHint_invite =>
+      'Lade den angegebenen Benutzer in diesen Raum ein';
 
   @override
-  String get commandHint_join => 'Join the given room';
+  String get commandHint_join => 'Dem angegebenen Raum beitreten';
 
   @override
-  String get commandHint_kick => 'Remove the given user from this room';
+  String get commandHint_kick =>
+      'Entferne den angegebenen Benutzer aus diesem Raum';
 
   @override
-  String get commandHint_leave => 'Leave this room';
+  String get commandHint_leave => 'Verlasse diesen Raum';
 
   @override
-  String get commandHint_me => 'Describe yourself';
+  String get commandHint_me => 'Beschreibe dich selbst';
 
   @override
   String get commandHint_myroomavatar =>
-      'Set your picture for this room (by mxc-uri)';
+      'Setze dein Bild für diesen Raum (per mxc-uri)';
 
   @override
-  String get commandHint_myroomnick => 'Set your display name for this room';
+  String get commandHint_myroomnick =>
+      'Setze deinen Anzeigenamen für diesen Raum';
 
   @override
   String get commandHint_op =>
-      'Set the given user\'s power level (default: 50)';
+      'Setze das Power-Level des angegebenen Benutzers (Standard: 50)';
 
   @override
-  String get commandHint_plain => 'Send unformatted text';
+  String get commandHint_plain => 'Unformatierten Text senden';
 
   @override
-  String get commandHint_react => 'Send reply as a reaction';
+  String get commandHint_react => 'Antwort als Reaktion senden';
 
   @override
-  String get commandHint_send => 'Send text';
+  String get commandHint_send => 'Text senden';
 
   @override
-  String get commandHint_unban => 'Unban the given user from this room';
+  String get commandHint_unban =>
+      'Entbanne den angegebenen Benutzer aus diesem Raum';
 
   @override
-  String get commandInvalid => 'Command invalid';
+  String get commandInvalid => 'Ungültiger Befehl';
 
   @override
   String commandMissing(String command) {
-    return '$command is not a command.';
+    return '$command ist kein Befehl.';
   }
 
   @override
-  String get compareEmojiMatch => 'Please compare the emojis';
+  String get compareEmojiMatch => 'Bitte vergleichen Sie die Emojis';
 
   @override
-  String get compareNumbersMatch => 'Please compare the numbers';
+  String get compareNumbersMatch => 'Bitte vergleichen Sie die Zahlen';
 
   @override
-  String get configureChat => 'Configure chat';
+  String get configureChat => 'Chat konfigurieren';
 
   @override
-  String get confirm => 'Confirm';
+  String get confirm => 'Bestätigen';
 
   @override
-  String get connect => 'Connect';
+  String get connect => 'Verbinden';
 
   @override
   String get contactHasBeenInvitedToTheGroup =>
-      'Contact has been invited to the group';
+      'Kontakt wurde in die Gruppe eingeladen';
 
   @override
-  String get containsDisplayName => 'Contains display name';
+  String get containsDisplayName => 'Enthält Anzeigename';
 
   @override
-  String get containsUserName => 'Contains username';
+  String get containsUserName => 'Enthält Benutzername';
 
   @override
   String get contentHasBeenReported =>
-      'The content has been reported to the server admins';
+      'Der Inhalt wurde den Server-Admins gemeldet';
 
   @override
-  String get copiedToClipboard => 'Copied to clipboard';
+  String get copiedToClipboard => 'In die Zwischenablage kopiert';
 
   @override
-  String get copy => 'Copy';
+  String get copy => 'Kopieren';
 
   @override
-  String get copyToClipboard => 'Copy to clipboard';
+  String get copyToClipboard => 'In die Zwischenablage kopieren';
 
   @override
   String couldNotDecryptMessage(String error) {
-    return 'Could not decrypt message: $error';
+    return 'Nachricht konnte nicht entschlüsselt werden: $error';
   }
 
   @override
   String countParticipants(int count) {
-    return '$count participants';
+    return '$count Teilnehmer';
   }
 
   @override
-  String get create => 'Create';
+  String get create => 'Erstellen';
 
   @override
   String createdTheChat(String username) {
-    return '💬 $username created the chat';
+    return '💬 $username hat den Chat erstellt';
   }
 
   @override
-  String get createGroup => 'Create group';
+  String get createGroup => 'Gruppe erstellen';
 
   @override
-  String get createNewSpace => 'New space';
+  String get createNewSpace => 'Neuer Space';
 
   @override
-  String get currentlyActive => 'Currently active';
+  String get currentlyActive => 'Gerade aktiv';
 
   @override
-  String get darkTheme => 'Dark';
+  String get darkTheme => 'Dunkel';
 
   @override
   String dateAndTimeOfDay(String date, String timeOfDay) {
@@ -506,485 +515,488 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get deactivateAccountWarning =>
-      'This will deactivate your user account. This can not be undone! Are you sure?';
+      'Dies wird dein Benutzerkonto deaktivieren. Das kann nicht rückgängig gemacht werden! Bist du sicher?';
 
   @override
-  String get defaultPermissionLevel => 'Default permission level for new users';
+  String get defaultPermissionLevel =>
+      'Standardberechtigungsstufe für neue Benutzer';
 
   @override
-  String get delete => 'Delete';
+  String get delete => 'Löschen';
 
   @override
-  String get deleteAccount => 'Delete account';
+  String get deleteAccount => 'Konto löschen';
 
   @override
-  String get deleteMessage => 'Delete message';
+  String get deleteMessage => 'Nachricht löschen';
 
   @override
-  String get device => 'Device';
+  String get device => 'Gerät';
 
   @override
-  String get deviceId => 'Device ID';
+  String get deviceId => 'Geräte-ID';
 
   @override
-  String get devices => 'Devices';
+  String get devices => 'Geräte';
 
   @override
-  String get directChats => 'Direct Chats';
+  String get directChats => 'Direktnachrichten';
 
   @override
-  String get allRooms => 'All Group Chats';
+  String get allRooms => 'Alle Gruppenchats';
 
   @override
-  String get displaynameHasBeenChanged => 'Displayname has been changed';
+  String get displaynameHasBeenChanged => 'Anzeigename wurde geändert';
 
   @override
-  String get downloadFile => 'Download file';
+  String get downloadFile => 'Datei herunterladen';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'Bearbeiten';
 
   @override
-  String get editBlockedServers => 'Edit blocked servers';
+  String get editBlockedServers => 'Blockierte Server bearbeiten';
 
   @override
-  String get chatPermissions => 'Chat permissions';
+  String get chatPermissions => 'Chat-Berechtigungen';
 
   @override
-  String get editDisplayname => 'Edit displayname';
+  String get editDisplayname => 'Anzeigenamen bearbeiten';
 
   @override
-  String get editRoomAliases => 'Edit room aliases';
+  String get editRoomAliases => 'Raum-Aliase bearbeiten';
 
   @override
-  String get editRoomAvatar => 'Edit room avatar';
+  String get editRoomAvatar => 'Raum-Avatar bearbeiten';
 
   @override
-  String get emoteExists => 'Emote already exists!';
+  String get emoteExists => 'Emote existiert bereits!';
 
   @override
-  String get emoteInvalid => 'Invalid emote shortcode!';
+  String get emoteInvalid => 'Ungültiges Emote-Kürzel!';
 
   @override
   String get emoteKeyboardNoRecents =>
-      'Recently-used emotes will appear here...';
+      'Kürzlich verwendete Emotes erscheinen hier...';
 
   @override
-  String get emotePacks => 'Emote packs for room';
+  String get emotePacks => 'Emote-Pakete für Raum';
 
   @override
-  String get emoteSettings => 'Emote Settings';
+  String get emoteSettings => 'Emote-Einstellungen';
 
   @override
-  String get globalChatId => 'Global chat ID';
+  String get globalChatId => 'Globale Chat-ID';
 
   @override
-  String get accessAndVisibility => 'Access and visibility';
+  String get accessAndVisibility => 'Zugriff und Sichtbarkeit';
 
   @override
   String get accessAndVisibilityDescription =>
-      'Who is allowed to join this chat and how the chat can be discovered.';
+      'Wer darf diesem Chat beitreten und wie kann der Chat gefunden werden.';
 
   @override
-  String get calls => 'Calls';
+  String get calls => 'Anrufe';
 
   @override
-  String get customEmojisAndStickers => 'Custom emojis and stickers';
+  String get customEmojisAndStickers => 'Benutzerdefinierte Emojis und Sticker';
 
   @override
   String get customEmojisAndStickersBody =>
-      'Add or share custom emojis or stickers which can be used in any chat.';
+      'Füge benutzerdefinierte Emojis oder Sticker hinzu, die in jedem Chat verwendet werden können.';
 
   @override
-  String get emoteShortcode => 'Emote shortcode';
+  String get emoteShortcode => 'Emote-Kürzel';
 
   @override
   String get emoteWarnNeedToPick =>
-      'You need to pick an emote shortcode and an image!';
+      'Du musst ein Emote-Kürzel und ein Bild auswählen!';
 
   @override
-  String get emptyChat => 'Empty chat';
+  String get emptyChat => 'Leerer Chat';
 
   @override
-  String get enableEmotesGlobally => 'Enable emote pack globally';
+  String get enableEmotesGlobally => 'Emote-Paket global aktivieren';
 
   @override
-  String get enableEncryption => 'Enable encryption';
+  String get enableEncryption => 'Verschlüsselung aktivieren';
 
   @override
   String get enableEncryptionWarning =>
-      'You won\'t be able to disable the encryption anymore. Are you sure?';
+      'Du wirst die Verschlüsselung nicht mehr deaktivieren können. Bist du sicher?';
 
   @override
-  String get encrypted => 'Encrypted';
+  String get encrypted => 'Verschlüsselt';
 
   @override
-  String get encryption => 'Encryption';
+  String get encryption => 'Verschlüsselung';
 
   @override
-  String get encryptionNotEnabled => 'Encryption is not enabled';
+  String get encryptionNotEnabled => 'Verschlüsselung ist nicht aktiviert';
 
   @override
   String endedTheCall(String senderName) {
-    return '$senderName ended the call';
+    return '$senderName hat den Anruf beendet';
   }
 
   @override
-  String get enterAnEmailAddress => 'Enter an email address';
+  String get enterAnEmailAddress => 'Gib eine E-Mail-Adresse ein';
 
   @override
   String get homeserver => 'Homeserver';
 
   @override
-  String get enterYourHomeserver => 'Enter your homeserver';
+  String get enterYourHomeserver => 'Gib deinen Homeserver ein';
 
   @override
   String errorObtainingLocation(String error) {
-    return 'Error obtaining location: $error';
+    return 'Fehler beim Abrufen des Standorts: $error';
   }
 
   @override
-  String get everythingReady => 'Everything ready!';
+  String get everythingReady => 'Alles bereit!';
 
   @override
-  String get extremeOffensive => 'Extremely offensive';
+  String get extremeOffensive => 'Extrem anstößig';
 
   @override
-  String get fileName => 'File name';
+  String get fileName => 'Dateiname';
 
   @override
   String get nebuchadnezzar => 'Nebuchadnezzar';
 
   @override
-  String get fontSize => 'Font size';
+  String get fontSize => 'Schriftgröße';
 
   @override
-  String get forward => 'Forward';
+  String get forward => 'Weiterleiten';
 
   @override
-  String get fromJoining => 'From joining';
+  String get fromJoining => 'Vom Beitreten';
 
   @override
-  String get fromTheInvitation => 'From the invitation';
+  String get fromTheInvitation => 'Von der Einladung';
 
   @override
-  String get goToTheNewRoom => 'Go to the new room';
+  String get goToTheNewRoom => 'Gehe zum neuen Raum';
 
   @override
-  String get group => 'Group';
+  String get group => 'Gruppe';
 
   @override
-  String get chatDescription => 'Chat description';
+  String get chatDescription => 'Chat-Beschreibung';
 
   @override
-  String get chatDescriptionHasBeenChanged => 'Chat description changed';
+  String get chatDescriptionHasBeenChanged => 'Chat-Beschreibung geändert';
 
   @override
-  String get groupIsPublic => 'Group is public';
+  String get groupIsPublic => 'Gruppe ist öffentlich';
 
   @override
-  String get groups => 'Groups';
+  String get groups => 'Gruppen';
 
   @override
   String groupWith(String displayname) {
-    return 'Group with $displayname';
+    return 'Gruppe mit $displayname';
   }
 
   @override
-  String get guestsAreForbidden => 'Guests are forbidden';
+  String get guestsAreForbidden => 'Gäste sind verboten';
 
   @override
-  String get guestsCanJoin => 'Guests can join';
+  String get guestsCanJoin => 'Gäste können beitreten';
 
   @override
   String hasWithdrawnTheInvitationFor(String username, String targetName) {
-    return '$username has withdrawn the invitation for $targetName';
+    return '$username hat die Einladung für $targetName zurückgezogen';
   }
 
   @override
-  String get help => 'Help';
+  String get help => 'Hilfe';
 
   @override
-  String get hideRedactedEvents => 'Hide redacted events';
+  String get hideRedactedEvents => 'Redigierte Ereignisse verbergen';
 
   @override
-  String get hideRedactedMessages => 'Hide redacted messages';
+  String get hideRedactedMessages => 'Redigierte Nachrichten verbergen';
 
   @override
   String get hideRedactedMessagesBody =>
-      'If someone redacts a message, this message won\'t be visible in the chat anymore.';
+      'Wenn jemand eine Nachricht redigiert, wird diese Nachricht im Chat nicht mehr sichtbar sein.';
 
   @override
   String get hideInvalidOrUnknownMessageFormats =>
-      'Hide invalid or unknown message formats';
+      'Ungültige oder unbekannte Nachrichtenformate verbergen';
 
   @override
-  String get howOffensiveIsThisContent => 'How offensive is this content?';
+  String get howOffensiveIsThisContent => 'Wie anstößig ist dieser Inhalt?';
 
   @override
   String get id => 'ID';
 
   @override
-  String get identity => 'Identity';
+  String get identity => 'Identität';
 
   @override
-  String get block => 'Block';
+  String get block => 'Blockieren';
 
   @override
-  String get blockedUsers => 'Blocked users';
+  String get blockedUsers => 'Blockierte Benutzer';
 
   @override
   String get blockListDescription =>
-      'You can block users who are disturbing you. You won\'t be able to receive any messages or room invites from the users on your personal block list.';
+      'Du kannst Benutzer blockieren, die dich stören. Du wirst keine Nachrichten oder Raumeinladungen von den Benutzern auf deiner persönlichen Blockierliste erhalten.';
 
   @override
-  String get blockUsername => 'Ignore username';
+  String get blockUsername => 'Benutzername ignorieren';
 
   @override
-  String get iHaveClickedOnLink => 'I have clicked on the link';
+  String get iHaveClickedOnLink => 'Ich habe auf den Link geklickt';
 
   @override
-  String get incorrectPassphraseOrKey => 'Incorrect passphrase or recovery key';
+  String get incorrectPassphraseOrKey =>
+      'Falsche Passphrase oder Wiederherstellungsschlüssel';
 
   @override
-  String get inoffensive => 'Inoffensive';
+  String get inoffensive => 'Harmlos';
 
   @override
-  String get inviteContact => 'Invite contact';
+  String get inviteContact => 'Kontakt einladen';
 
   @override
   String inviteContactToGroupQuestion(Object contact, Object groupName) {
-    return 'Do you want to invite $contact to the chat \"$groupName\"?';
+    return 'Möchtest du $contact in den Chat \"$groupName\" einladen?';
   }
 
   @override
   String inviteContactToGroup(String groupName) {
-    return 'Invite contact to $groupName';
+    return 'Kontakt zu $groupName einladen';
   }
 
   @override
-  String get noChatDescriptionYet => 'No chat description created yet.';
+  String get noChatDescriptionYet => 'Noch keine Chat-Beschreibung erstellt.';
 
   @override
-  String get tryAgain => 'Try again';
+  String get tryAgain => 'Erneut versuchen';
 
   @override
-  String get invalidServerName => 'Invalid server name';
+  String get invalidServerName => 'Ungültiger Servername';
 
   @override
-  String get invited => 'Invited';
+  String get invited => 'Eingeladen';
 
   @override
   String get redactMessageDescription =>
-      'The message will be redacted for all participants in this conversation. This cannot be undone.';
+      'Die Nachricht wird für alle Teilnehmer in dieser Konversation redigiert. Dies kann nicht rückgängig gemacht werden.';
 
   @override
   String get optionalRedactReason =>
-      '(Optional) Reason for redacting this message...';
+      '(Optional) Grund für das Redigieren dieser Nachricht...';
 
   @override
   String invitedUser(String username, String targetName) {
-    return '📩 $username invited $targetName';
+    return '📩 $username hat $targetName eingeladen';
   }
 
   @override
-  String get invitedUsersOnly => 'Invited users only';
+  String get invitedUsersOnly => 'Nur eingeladene Benutzer';
 
   @override
   String get inviteForMe => 'Invite for me';
 
   @override
   String inviteText(String username, String link) {
-    return '$username invited you to Nebuchadnezzar.\n1. Visit https://snapcraft.io/nebuchadnezzar and install the app \n2. Sign up or sign in \n3. Open the invite link: \n $link';
+    return '$username hat dich zu Nebuchadnezzar eingeladen.\n1. Gehe zu https://snapcraft.io/nebuchadnezzar und installiere die App\n2. Melde dich an oder registriere dich\n3. Öffne den Einladungslink:\n $link';
   }
 
   @override
-  String get isTyping => 'is typing…';
+  String get isTyping => 'schreibt...';
 
   @override
   String joinedTheChat(String username) {
-    return '👋 $username joined the chat';
+    return '👋 $username ist dem Chat beigetreten';
   }
 
   @override
-  String get joinRoom => 'Join room';
+  String get joinRoom => 'Raum beitreten';
 
   @override
   String kicked(String username, String targetName) {
-    return '👞 $username kicked $targetName';
+    return '👞 $username hat $targetName rausgeworfen';
   }
 
   @override
   String kickedAndBanned(String username, String targetName) {
-    return '🙅 $username kicked and banned $targetName';
+    return '🙅 $username hat $targetName rausgeworfen und verbannt';
   }
 
   @override
-  String get kickFromChat => 'Kick from chat';
+  String get kickFromChat => 'Aus dem Chat werfen';
 
   @override
   String lastActiveAgo(String localizedTimeShort) {
-    return 'Last active: $localizedTimeShort';
+    return 'Zuletzt aktiv: $localizedTimeShort';
   }
 
   @override
-  String get leave => 'Leave';
+  String get leave => 'Verlassen';
 
   @override
-  String get leftTheChat => 'Left the chat';
+  String get leftTheChat => 'Hat den Chat verlassen';
 
   @override
-  String get license => 'License';
+  String get license => 'Lizenz';
 
   @override
-  String get lightTheme => 'Light';
+  String get lightTheme => 'Hell';
 
   @override
   String loadCountMoreParticipants(int count) {
-    return 'Load $count more participants';
+    return 'Lade $count weitere Teilnehmer';
   }
 
   @override
-  String get dehydrate => 'Export session and wipe device';
+  String get dehydrate => 'Sitzung exportieren und Gerät löschen';
 
   @override
   String get dehydrateWarning =>
-      'This action cannot be undone. Ensure you safely store the backup file.';
+      'Diese Aktion kann nicht rückgängig gemacht werden. Stelle sicher, dass du die Sicherungsdatei sicher aufbewahrst.';
 
   @override
-  String get dehydrateTor => 'TOR Users: Export session';
+  String get dehydrateTor => 'TOR-Benutzer: Sitzung exportieren';
 
   @override
   String get dehydrateTorLong =>
-      'For TOR users, it is recommended to export the session before closing the window.';
+      'Für TOR-Benutzer wird empfohlen, die Sitzung vor dem Schließen des Fensters zu exportieren.';
 
   @override
-  String get hydrateTor => 'TOR Users: Import session export';
+  String get hydrateTor => 'TOR-Benutzer: Sitzungsexport importieren';
 
   @override
   String get hydrateTorLong =>
-      'Did you export your session last time on TOR? Quickly import it and continue chatting.';
+      'Hast du deine Sitzung beim letzten Mal über TOR exportiert? Importiere sie schnell und chatte weiter.';
 
   @override
-  String get hydrate => 'Restore from backup file';
+  String get hydrate => 'Aus Sicherungsdatei wiederherstellen';
 
   @override
-  String get loadingPleaseWait => 'Loading… Please wait.';
+  String get loadingPleaseWait => 'Laden... Bitte warten.';
 
   @override
-  String get loadMore => 'Load more…';
+  String get loadMore => 'Mehr laden...';
 
   @override
   String get locationDisabledNotice =>
-      'Location services are disabled. Please enable them to be able to share your location.';
+      'Standortdienste sind deaktiviert. Bitte aktiviere sie, um deinen Standort teilen zu können.';
 
   @override
   String get locationPermissionDeniedNotice =>
-      'Location permission denied. Please grant them to be able to share your location.';
+      'Standortberechtigung verweigert. Bitte gewähre sie, um deinen Standort teilen zu können.';
 
   @override
-  String get login => 'Login';
+  String get login => 'Anmelden';
 
   @override
   String logInTo(String homeserver) {
-    return 'Log in to $homeserver';
+    return 'Bei $homeserver anmelden';
   }
 
   @override
-  String get logout => 'Logout';
+  String get logout => 'Abmelden';
 
   @override
-  String get memberChanges => 'Member changes';
+  String get memberChanges => 'Mitgliederänderungen';
 
   @override
-  String get mention => 'Mention';
+  String get mention => 'Erwähnung';
 
   @override
-  String get messages => 'Messages';
+  String get messages => 'Nachrichten';
 
   @override
-  String get messagesStyle => 'Messages:';
+  String get messagesStyle => 'Nachrichten:';
 
   @override
   String get moderator => 'Moderator';
 
   @override
-  String get muteChat => 'Mute chat';
+  String get muteChat => 'Chat stummschalten';
 
   @override
   String get needPantalaimonWarning =>
-      'Please be aware that you need Pantalaimon to use end-to-end encryption for now.';
+      'Bitte beachte, dass du Pantalaimon benötigst, um die Ende-zu-Ende-Verschlüsselung vorerst nutzen zu können.';
 
   @override
-  String get newChat => 'New chat';
+  String get newChat => 'Neuer Chat';
 
   @override
-  String get newMessageInNebuchadnezzar => '💬 New message in Nebuchadnezzar';
+  String get newMessageInNebuchadnezzar =>
+      '💬 Neue Nachricht in Nebuchadnezzar';
 
   @override
-  String get newVerificationRequest => 'New verification request!';
+  String get newVerificationRequest => 'Neue Verifizierungsanfrage!';
 
   @override
-  String get next => 'Next';
+  String get next => 'Weiter';
 
   @override
-  String get no => 'No';
+  String get no => 'Nein';
 
   @override
-  String get noConnectionToTheServer => 'No connection to the server';
+  String get noConnectionToTheServer => 'Keine Verbindung zum Server';
 
   @override
-  String get noEmotesFound => 'No emotes found. 😕';
+  String get noEmotesFound => 'Keine Emotes gefunden. 😕';
 
   @override
   String get noEncryptionForPublicRooms =>
-      'You can only activate encryption as soon as the room is no longer publicly accessible.';
+      'Du kannst die Verschlüsselung erst aktivieren, wenn der Raum nicht mehr öffentlich zugänglich ist.';
 
   @override
   String get noGoogleServicesWarning =>
-      'Firebase Cloud Messaging doesn\'t appear to be available on your device. To still receive push notifications, we recommend installing ntfy. With ntfy or another Unified Push provider you can receive push notifications in a data secure way. You can download ntfy from the PlayStore or from F-Droid.';
+      'Firebase Cloud Messaging scheint auf deinem Gerät nicht verfügbar zu sein. Um trotzdem Push-Benachrichtigungen zu erhalten, empfehlen wir die Installation von ntfy. Mit ntfy oder einem anderen Unified Push-Anbieter kannst du Push-Benachrichtigungen datenschutzkonform empfangen. Du kannst ntfy aus dem PlayStore oder von F-Droid herunterladen.';
 
   @override
   String noMatrixServer(String server1, String server2) {
-    return '$server1 is no matrix server, use $server2 instead?';
+    return '$server1 ist kein Matrix-Server, $server2 stattdessen verwenden?';
   }
 
   @override
-  String get shareInviteLink => 'Share invite link';
+  String get shareInviteLink => 'Einladungslink teilen';
 
   @override
-  String get scanQrCode => 'Scan QR code';
+  String get scanQrCode => 'QR-Code scannen';
 
   @override
-  String get none => 'None';
+  String get none => 'Keine';
 
   @override
   String get noPasswordRecoveryDescription =>
-      'You have not added a way to recover your password yet.';
+      'Du hast noch keine Methode zur Wiederherstellung deines Passworts hinzugefügt.';
 
   @override
-  String get noPermission => 'No permission';
+  String get noPermission => 'Keine Berechtigung';
 
   @override
-  String get noRoomsFound => 'No rooms found…';
+  String get noRoomsFound => 'Keine Räume gefunden...';
 
   @override
-  String get notifications => 'Notifications';
+  String get notifications => 'Benachrichtigungen';
 
   @override
   String get notificationsEnabledForThisAccount =>
-      'Notifications enabled for this account';
+      'Benachrichtigungen für dieses Konto aktiviert';
 
   @override
   String numUsersTyping(int count) {
-    return '$count users are typing…';
+    return '$count Nutzer schreiben gerade...';
   }
 
   @override
-  String get obtainingLocation => 'Obtaining location…';
+  String get obtainingLocation => 'Standort wird abgerufen...';
 
   @override
-  String get offensive => 'Offensive';
+  String get offensive => 'Anstößig';
 
   @override
   String get offline => 'Offline';
@@ -996,600 +1008,607 @@ class AppLocalizationsDe extends AppLocalizations {
   String get online => 'Online';
 
   @override
-  String get onlineKeyBackupEnabled => 'Online Key Backup is enabled';
+  String get onlineKeyBackupEnabled => 'Online-Schlüssel-Backup ist aktiviert';
 
   @override
   String get oopsPushError =>
-      'Oops! Unfortunately, an error occurred when setting up the push notifications.';
+      'Hoppla! Leider ist beim Einrichten der Push-Benachrichtigungen ein Fehler aufgetreten.';
 
   @override
-  String get oopsSomethingWentWrong => 'Oops, something went wrong…';
+  String get oopsSomethingWentWrong => 'Hoppla, etwas ist schief gelaufen...';
 
   @override
-  String get openAppToReadMessages => 'Open app to read messages';
+  String get openAppToReadMessages => 'App öffnen, um Nachrichten zu lesen';
 
   @override
-  String get openCamera => 'Open camera';
+  String get openCamera => 'Kamera öffnen';
 
   @override
-  String get openVideoCamera => 'Open camera for a video';
+  String get openVideoCamera => 'Kamera für ein Video öffnen';
 
   @override
-  String get oneClientLoggedOut => 'One of your clients has been logged out';
+  String get oneClientLoggedOut => 'Einer deiner Clients wurde abgemeldet';
 
   @override
-  String get addAccount => 'Add account';
+  String get addAccount => 'Konto hinzufügen';
 
   @override
-  String get editBundlesForAccount => 'Edit bundles for this account';
+  String get editBundlesForAccount => 'Bundles für dieses Konto bearbeiten';
 
   @override
-  String get addToBundle => 'Add to bundle';
+  String get addToBundle => 'Zu Bundle hinzufügen';
 
   @override
-  String get removeFromBundle => 'Remove from this bundle';
+  String get removeFromBundle => 'Aus diesem Bundle entfernen';
 
   @override
-  String get bundleName => 'Bundle name';
+  String get bundleName => 'Bundle-Name';
 
   @override
   String get enableMultiAccounts =>
-      '(BETA) Enable multi accounts on this device';
+      '(BETA) Multi-Accounts auf diesem Gerät aktivieren';
 
   @override
-  String get openInMaps => 'Open in maps';
+  String get openInMaps => 'In Karten öffnen';
 
   @override
   String get link => 'Link';
 
   @override
   String get serverRequiresEmail =>
-      'This server needs to validate your email address for registration.';
+      'Dieser Server benötigt eine Bestätigung deiner E-Mail-Adresse für die Registrierung.';
 
   @override
-  String get or => 'Or';
+  String get or => 'Oder';
 
   @override
-  String get participant => 'Participant';
+  String get participant => 'Teilnehmer';
 
   @override
-  String get passphraseOrKey => 'passphrase or recovery key';
+  String get passphraseOrKey => 'Passphrase oder Wiederherstellungsschlüssel';
 
   @override
-  String get password => 'Password';
+  String get password => 'Passwort';
 
   @override
-  String get passwordForgotten => 'Password forgotten';
+  String get passwordForgotten => 'Passwort vergessen';
 
   @override
-  String get passwordHasBeenChanged => 'Password has been changed';
+  String get passwordHasBeenChanged => 'Passwort wurde geändert';
 
   @override
   String get hideMemberChangesInPublicChats =>
-      'Hide member changes in public chats';
+      'Mitgliederänderungen in öffentlichen Chats verbergen';
 
   @override
   String get hideMemberChangesInPublicChatsBody =>
-      'Do not show in the chat timeline if someone joins or leaves a public chat to improve readability.';
+      'Zeige nicht im Chat-Verlauf an, wenn jemand einem öffentlichen Chat beitritt oder ihn verlässt, um die Lesbarkeit zu verbessern.';
 
   @override
-  String get overview => 'Overview';
+  String get overview => 'Übersicht';
 
   @override
-  String get notifyMeFor => 'Notify me for';
+  String get notifyMeFor => 'Benachrichtige mich für';
 
   @override
-  String get passwordRecoverySettings => 'Password recovery settings';
+  String get passwordRecoverySettings =>
+      'Einstellungen zur Passwortwiederherstellung';
 
   @override
-  String get passwordRecovery => 'Password recovery';
+  String get passwordRecovery => 'Passwortwiederherstellung';
 
   @override
-  String get people => 'People';
+  String get people => 'Personen';
 
   @override
-  String get pickImage => 'Pick an image';
+  String get pickImage => 'Bild auswählen';
 
   @override
-  String get pin => 'Pin';
+  String get pin => 'Anpinnen';
 
   @override
   String play(String fileName) {
-    return 'Play $fileName';
+    return '$fileName abspielen';
   }
 
   @override
-  String get pleaseChoose => 'Please choose';
+  String get pleaseChoose => 'Bitte wählen';
 
   @override
-  String get pleaseChooseAPasscode => 'Please choose a pass code';
+  String get pleaseChooseAPasscode => 'Bitte wähle einen Passcode';
 
   @override
   String get pleaseClickOnLink =>
-      'Please click on the link in the email and then proceed.';
+      'Bitte klicke auf den Link in der E-Mail und fahre dann fort.';
 
   @override
   String get pleaseEnter4Digits =>
-      'Please enter 4 digits or leave empty to disable app lock.';
+      'Bitte gib 4 Ziffern ein oder lasse das Feld leer, um die App-Sperre zu deaktivieren.';
 
   @override
-  String get pleaseEnterRecoveryKey => 'Please enter your recovery key:';
+  String get pleaseEnterRecoveryKey =>
+      'Bitte gib deinen Wiederherstellungsschlüssel ein:';
 
   @override
-  String get pleaseEnterYourPassword => 'Please enter your password';
+  String get pleaseEnterYourPassword => 'Bitte gib dein Passwort ein';
 
   @override
-  String get pleaseEnterYourPin => 'Please enter your pin';
+  String get pleaseEnterYourPin => 'Bitte gib deine PIN ein';
 
   @override
-  String get pleaseEnterYourUsername => 'Please enter your username';
+  String get pleaseEnterYourUsername => 'Bitte gib deinen Benutzernamen ein';
 
   @override
   String get pleaseFollowInstructionsOnWeb =>
-      'Please follow the instructions on the website and tap on next.';
+      'Bitte folge den Anweisungen auf der Webseite und tippe auf Weiter.';
 
   @override
-  String get privacy => 'Privacy';
+  String get privacy => 'Privatsphäre';
 
   @override
-  String get publicRooms => 'Public Rooms';
+  String get publicRooms => 'Öffentliche Räume';
 
   @override
-  String get pushRules => 'Push rules';
+  String get pushRules => 'Push-Regeln';
 
   @override
-  String get reason => 'Reason';
+  String get reason => 'Grund';
 
   @override
-  String get recording => 'Recording';
+  String get recording => 'Aufnahme';
 
   @override
   String redactedBy(String username) {
-    return 'Redacted by $username';
+    return 'Zensiert von $username';
   }
 
   @override
-  String get directChat => 'Direct chat';
+  String get directChat => 'Direktchat';
 
   @override
   String redactedByBecause(String username, String reason) {
-    return 'Redacted by $username because: \"$reason\"';
+    return 'Zensiert von $username wegen: \"$reason\"';
   }
 
   @override
   String redactedAnEvent(String username) {
-    return '$username redacted an event';
+    return '$username hat ein Ereignis zensiert';
   }
 
   @override
-  String get redactMessage => 'Redact message';
+  String get redactMessage => 'Nachricht zensieren';
 
   @override
-  String get register => 'Register';
+  String get register => 'Registrieren';
 
   @override
-  String get reject => 'Reject';
+  String get reject => 'Ablehnen';
 
   @override
   String rejectedTheInvitation(String username) {
-    return '$username rejected the invitation';
+    return '$username hat die Einladung abgelehnt';
   }
 
   @override
-  String get rejoin => 'Rejoin';
+  String get rejoin => 'Wieder beitreten';
 
   @override
-  String get removeAllOtherDevices => 'Remove all other devices';
+  String get removeAllOtherDevices => 'Alle anderen Geräte entfernen';
 
   @override
   String removedBy(String username) {
-    return 'Removed by $username';
+    return 'Entfernt von $username';
   }
 
   @override
-  String get removeDevice => 'Remove device';
+  String get removeDevice => 'Gerät entfernen';
 
   @override
-  String get unbanFromChat => 'Unban from chat';
+  String get unbanFromChat => 'Bann für Chat aufheben';
 
   @override
-  String get removeYourAvatar => 'Remove your avatar';
+  String get removeYourAvatar => 'Avatar entfernen';
 
   @override
-  String get replaceRoomWithNewerVersion => 'Replace room with newer version';
+  String get replaceRoomWithNewerVersion =>
+      'Raum durch neuere Version ersetzen';
 
   @override
-  String get reply => 'Reply';
+  String get reply => 'Antworten';
 
   @override
-  String get reportMessage => 'Report message';
+  String get reportMessage => 'Nachricht melden';
 
   @override
-  String get requestPermission => 'Request permission';
+  String get requestPermission => 'Berechtigung anfordern';
 
   @override
-  String get roomHasBeenUpgraded => 'Room has been upgraded';
+  String get roomHasBeenUpgraded => 'Raum wurde aktualisiert';
 
   @override
-  String get roomVersion => 'Room version';
+  String get roomVersion => 'Raumversion';
 
   @override
-  String get saveFile => 'Save file';
+  String get saveFile => 'Datei speichern';
 
   @override
-  String get search => 'Search';
+  String get search => 'Suchen';
 
   @override
-  String get security => 'Security';
+  String get security => 'Sicherheit';
 
   @override
-  String get recoveryKey => 'Recovery key';
+  String get recoveryKey => 'Wiederherstellungsschlüssel';
 
   @override
-  String get recoveryKeyLost => 'Recovery key lost?';
+  String get recoveryKeyLost => 'Wiederherstellungsschlüssel verloren?';
 
   @override
   String seenByUser(String username) {
-    return 'Seen by $username';
+    return 'Gesehen von $username';
   }
 
   @override
-  String get send => 'Send';
+  String get send => 'Senden';
 
   @override
-  String get sendAMessage => 'Send a message';
+  String get sendAMessage => 'Sende eine Nachricht';
 
   @override
-  String get sendAsText => 'Send as text';
+  String get sendAsText => 'Als Text senden';
 
   @override
-  String get sendAudio => 'Send audio';
+  String get sendAudio => 'Audio senden';
 
   @override
-  String get sendFile => 'Send file';
+  String get sendFile => 'Datei senden';
 
   @override
-  String get sendImage => 'Send image';
+  String get sendImage => 'Bild senden';
 
   @override
-  String get sendMessages => 'Send messages';
+  String get sendMessages => 'Nachrichten senden';
 
   @override
-  String get sendOriginal => 'Send original';
+  String get sendOriginal => 'Original senden';
 
   @override
-  String get sendSticker => 'Send sticker';
+  String get sendSticker => 'Sticker senden';
 
   @override
-  String get sendVideo => 'Send video';
+  String get sendVideo => 'Video senden';
 
   @override
   String sentAFile(String username) {
-    return '📁 $username sent a file';
+    return '📁 $username hat eine Datei gesendet';
   }
 
   @override
   String sentAnAudio(String username) {
-    return '🎤 $username sent an audio';
+    return '🎤 $username hat eine Audio-Nachricht gesendet';
   }
 
   @override
   String sentAPicture(String username) {
-    return '🖼️ $username sent a picture';
+    return '🖼️ $username hat ein Bild gesendet';
   }
 
   @override
   String sentASticker(String username) {
-    return '😊 $username sent a sticker';
+    return '😊 $username hat einen Sticker gesendet';
   }
 
   @override
   String sentAVideo(String username) {
-    return '🎥 $username sent a video';
+    return '🎥 $username hat ein Video gesendet';
   }
 
   @override
   String sentCallInformations(String senderName) {
-    return '$senderName sent call information';
+    return '$senderName hat Anrufinformationen gesendet';
   }
 
   @override
-  String get separateChatTypes => 'Separate Direct Chats and Groups';
+  String get separateChatTypes => 'Direktnachrichten und Gruppen trennen';
 
   @override
-  String get setAsCanonicalAlias => 'Set as main alias';
+  String get setAsCanonicalAlias => 'Als Hauptalias setzen';
 
   @override
-  String get setCustomEmotes => 'Set custom emotes';
+  String get setCustomEmotes => 'Benutzerdefinierte Emotes festlegen';
 
   @override
-  String get setChatDescription => 'Set chat description';
+  String get setChatDescription => 'Chatbeschreibung festlegen';
 
   @override
-  String get setInvitationLink => 'Set invitation link';
+  String get setInvitationLink => 'Einladungslink festlegen';
 
   @override
-  String get setPermissionsLevel => 'Set permissions level';
+  String get setPermissionsLevel => 'Berechtigungsstufe festlegen';
 
   @override
-  String get setStatus => 'Set status';
+  String get setStatus => 'Status festlegen';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Einstellungen';
 
   @override
-  String get share => 'Share';
+  String get share => 'Teilen';
 
   @override
   String sharedTheLocation(String username) {
-    return '$username shared their location';
+    return '$username hat seinen Standort geteilt';
   }
 
   @override
-  String get shareLocation => 'Share location';
+  String get shareLocation => 'Standort teilen';
 
   @override
-  String get showPassword => 'Show password';
+  String get showPassword => 'Passwort anzeigen';
 
   @override
-  String get presenceStyle => 'Presence:';
+  String get presenceStyle => 'Präsenz:';
 
   @override
-  String get presencesToggle => 'Show status messages from other users';
+  String get presencesToggle =>
+      'Statusnachrichten von anderen Benutzern anzeigen';
 
   @override
-  String get singlesignon => 'Single Sign on';
+  String get singlesignon => 'Single Sign-on';
 
   @override
-  String get skip => 'Skip';
+  String get skip => 'Überspringen';
 
   @override
-  String get sourceCode => 'Source code';
+  String get sourceCode => 'Quellcode';
 
   @override
-  String get spaceIsPublic => 'Space is public';
+  String get spaceIsPublic => 'Space ist öffentlich';
 
   @override
-  String get spaceName => 'Space name';
+  String get spaceName => 'Space-Name';
 
   @override
   String startedACall(String senderName) {
-    return '$senderName started a call';
+    return '$senderName hat einen Anruf gestartet';
   }
 
   @override
-  String get startFirstChat => 'Start your first chat';
+  String get startFirstChat => 'Starte deinen ersten Chat';
 
   @override
   String get status => 'Status';
 
   @override
-  String get statusExampleMessage => 'How are you today?';
+  String get statusExampleMessage => 'Wie geht es dir heute?';
 
   @override
-  String get submit => 'Submit';
+  String get submit => 'Absenden';
 
   @override
-  String get synchronizingPleaseWait => 'Synchronizing… Please wait.';
+  String get synchronizingPleaseWait => 'Synchronisiere... Bitte warten.';
 
   @override
   String get systemTheme => 'System';
 
   @override
-  String get theyDontMatch => 'They Don\'t Match';
+  String get theyDontMatch => 'Sie stimmen nicht überein';
 
   @override
-  String get theyMatch => 'They Match';
+  String get theyMatch => 'Sie stimmen überein';
 
   @override
   String get title => 'Nebuchadnezzar';
 
   @override
-  String get toggleFavorite => 'Toggle Favorite';
+  String get toggleFavorite => 'Favorit umschalten';
 
   @override
-  String get toggleMuted => 'Toggle Muted';
+  String get toggleMuted => 'Stummschaltung umschalten';
 
   @override
-  String get toggleUnread => 'Mark Read/Unread';
+  String get toggleUnread => 'Gelesen/Ungelesen markieren';
 
   @override
   String get tooManyRequestsWarning =>
-      'Too many requests. Please try again later!';
+      'Zu viele Anfragen. Bitte versuche es später noch einmal!';
 
   @override
-  String get transferFromAnotherDevice => 'Transfer from another device';
+  String get transferFromAnotherDevice => 'Von einem anderen Gerät übertragen';
 
   @override
-  String get tryToSendAgain => 'Try to send again';
+  String get tryToSendAgain => 'Erneut senden';
 
   @override
-  String get unavailable => 'Unavailable';
+  String get unavailable => 'Nicht verfügbar';
 
   @override
   String unbannedUser(String username, String targetName) {
-    return '$username unbanned $targetName';
+    return '$username hat $targetName entbannt';
   }
 
   @override
-  String get unblockDevice => 'Unblock Device';
+  String get unblockDevice => 'Gerät entsperren';
 
   @override
-  String get unknownDevice => 'Unknown device';
+  String get unknownDevice => 'Unbekanntes Gerät';
 
   @override
-  String get unknownEncryptionAlgorithm => 'Unknown encryption algorithm';
+  String get unknownEncryptionAlgorithm =>
+      'Unbekannter Verschlüsselungsalgorithmus';
 
   @override
   String unknownEvent(String type) {
-    return 'Unknown event \'$type\'';
+    return 'Unbekanntes Ereignis \'$type\'';
   }
 
   @override
-  String get unmuteChat => 'Unmute chat';
+  String get unmuteChat => 'Stummschaltung aufheben';
 
   @override
-  String get unpin => 'Unpin';
+  String get unpin => 'Loslösen';
 
   @override
   String unreadChats(int unreadCount) {
     String _temp0 = intl.Intl.pluralLogic(
       unreadCount,
       locale: localeName,
-      other: '$unreadCount unread chats',
-      one: '1 unread chat',
+      other: '$unreadCount ungelesene Chats',
+      one: '1 ungelesener Chat',
     );
     return '$_temp0';
   }
 
   @override
   String userAndOthersAreTyping(String username, int count) {
-    return '$username and $count others are typing…';
+    return '$username und $count andere schreiben...';
   }
 
   @override
   String userAndUserAreTyping(String username, String username2) {
-    return '$username and $username2 are typing…';
+    return '$username und $username2 schreiben...';
   }
 
   @override
   String userIsTyping(String username) {
-    return '$username is typing…';
+    return '$username schreibt...';
   }
 
   @override
   String userLeftTheChat(String username) {
-    return '🚪 $username left the chat';
+    return '🚪 $username hat den Chat verlassen';
   }
 
   @override
-  String get username => 'Username';
+  String get username => 'Benutzername';
 
   @override
   String userSentUnknownEvent(String username, String type) {
-    return '$username sent a $type event';
+    return '$username hat ein $type Ereignis gesendet';
   }
 
   @override
-  String get unverified => 'Unverified';
+  String get unverified => 'Unverifiziert';
 
   @override
-  String get verified => 'Verified';
+  String get verified => 'Verifiziert';
 
   @override
-  String get verify => 'Verify';
+  String get verify => 'Verifizieren';
 
   @override
-  String get verifyStart => 'Start Verification';
+  String get verifyStart => 'Verifizierung starten';
 
   @override
-  String get verifySuccess => 'You successfully verified!';
+  String get verifySuccess => 'Du hast erfolgreich verifiziert!';
 
   @override
-  String get verifyTitle => 'Verifying other account';
+  String get verifyTitle => 'Anderes Konto verifizieren';
 
   @override
-  String get videoCall => 'Video call';
+  String get videoCall => 'Videoanruf';
 
   @override
-  String get visibilityOfTheChatHistory => 'Visibility of the chat history';
+  String get visibilityOfTheChatHistory => 'Sichtbarkeit des Chatverlaufs';
 
   @override
-  String get visibleForAllParticipants => 'Visible for all participants';
+  String get visibleForAllParticipants => 'Sichtbar für alle Teilnehmer';
 
   @override
-  String get visibleForEveryone => 'Visible for everyone';
+  String get visibleForEveryone => 'Sichtbar für jeden';
 
   @override
-  String get voiceMessage => 'Voice message';
+  String get voiceMessage => 'Sprachnachricht';
 
   @override
   String get waitingPartnerAcceptRequest =>
-      'Waiting for partner to accept the request…';
+      'Warten auf Annahme der Anfrage durch Partner...';
 
   @override
-  String get waitingPartnerEmoji => 'Waiting for partner to accept the emoji…';
+  String get waitingPartnerEmoji =>
+      'Warten auf Annahme des Emojis durch Partner...';
 
   @override
   String get waitingPartnerNumbers =>
-      'Waiting for partner to accept the numbers…';
+      'Warten auf Annahme der Zahlen durch Partner...';
 
   @override
-  String get wallpaper => 'Wallpaper:';
+  String get wallpaper => 'Hintergrundbild:';
 
   @override
-  String get warning => 'Warning!';
+  String get warning => 'Warnung!';
 
   @override
-  String get weSentYouAnEmail => 'We sent you an email';
+  String get weSentYouAnEmail => 'Wir haben dir eine E-Mail gesendet';
 
   @override
-  String get whoCanPerformWhichAction => 'Who can perform which action';
+  String get whoCanPerformWhichAction => 'Wer darf welche Aktion ausführen';
 
   @override
-  String get whoIsAllowedToJoinThisGroup => 'Who is allowed to join this group';
+  String get whoIsAllowedToJoinThisGroup => 'Wer darf dieser Gruppe beitreten';
 
   @override
-  String get whyDoYouWantToReportThis => 'Why do you want to report this?';
+  String get whyDoYouWantToReportThis => 'Warum möchtest du dies melden?';
 
   @override
   String get wipeChatBackup =>
-      'Wipe your chat backup to create a new recovery key?';
+      'Chat-Backup löschen, um einen neuen Wiederherstellungsschlüssel zu erstellen?';
 
   @override
   String get withTheseAddressesRecoveryDescription =>
-      'With these addresses you can recover your password.';
+      'Mit diesen Adressen kannst du dein Passwort wiederherstellen.';
 
   @override
-  String get writeAMessage => 'Write a message…';
+  String get writeAMessage => 'Schreibe eine Nachricht...';
 
   @override
-  String get yes => 'Yes';
+  String get yes => 'Ja';
 
   @override
-  String get you => 'You';
+  String get you => 'Du';
 
   @override
   String get youAreNoLongerParticipatingInThisChat =>
-      'You are no longer participating in this chat';
+      'Du nimmst nicht mehr an diesem Chat teil';
 
   @override
   String get youHaveBeenBannedFromThisChat =>
-      'You have been banned from this chat';
+      'Du wurdest aus diesem Chat verbannt';
 
   @override
-  String get yourPublicKey => 'Your public key';
+  String get yourPublicKey => 'Dein öffentlicher Schlüssel';
 
   @override
-  String get messageInfo => 'Message info';
+  String get messageInfo => 'Nachricht-Info';
 
   @override
-  String get time => 'Time';
+  String get time => 'Zeit';
 
   @override
-  String get messageType => 'Message Type';
+  String get messageType => 'Nachrichtentyp';
 
   @override
-  String get sender => 'Sender';
+  String get sender => 'Absender';
 
   @override
-  String get openGallery => 'Open gallery';
+  String get openGallery => 'Galerie öffnen';
 
   @override
-  String get removeFromSpace => 'Remove from space';
+  String get removeFromSpace => 'Aus Space entfernen';
 
   @override
-  String get addToSpaceDescription => 'Select a space to add this chat to it.';
+  String get addToSpaceDescription =>
+      'Wähle einen Space, um diesen Chat hinzuzufügen.';
 
   @override
   String get start => 'Start';
 
   @override
   String get pleaseEnterRecoveryKeyDescription =>
-      'To unlock your old messages, please enter your recovery key that has been generated in a previous session. Your recovery key is NOT your password.';
+      'Um deine alten Nachrichten freizuschalten, gib bitte deinen Wiederherstellungsschlüssel ein, der in einer früheren Sitzung generiert wurde. Dein Wiederherstellungsschlüssel ist NICHT dein Passwort.';
 
   @override
-  String get publish => 'Publish';
+  String get publish => 'Veröffentlichen';
 
   @override
   String videoWithSize(String size) {
@@ -1597,671 +1616,680 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get openChat => 'Open Chat';
+  String get openChat => 'Chat öffnen';
 
   @override
-  String get markAsRead => 'Mark as read';
+  String get markAsRead => 'Als gelesen markieren';
 
   @override
-  String get reportUser => 'Report user';
+  String get reportUser => 'Benutzer melden';
 
   @override
-  String get dismiss => 'Dismiss';
+  String get dismiss => 'Verwerfen';
 
   @override
   String reactedWith(String sender, String reaction) {
-    return '$sender reacted with $reaction';
+    return '$sender hat mit $reaction reagiert';
   }
 
   @override
-  String get pinMessage => 'Pin to room';
+  String get pinMessage => 'Im Raum anpinnen';
 
   @override
   String get confirmEventUnpin =>
-      'Are you sure to permanently unpin the event?';
+      'Bist du sicher, dass du das Ereignis dauerhaft loslösen möchtest?';
 
   @override
   String get emojis => 'Emojis';
 
   @override
-  String get placeCall => 'Place call';
+  String get placeCall => 'Anrufen';
 
   @override
-  String get voiceCall => 'Voice call';
+  String get voiceCall => 'Sprachanruf';
 
   @override
-  String get unsupportedAndroidVersion => 'Unsupported Android version';
+  String get unsupportedAndroidVersion => 'Nicht unterstützte Android-Version';
 
   @override
   String get unsupportedAndroidVersionLong =>
-      'This feature requires a newer Android version. Please check for updates or Lineage OS support.';
+      'Diese Funktion erfordert eine neuere Android-Version. Bitte prüfe auf Updates oder Lineage OS-Unterstützung.';
 
   @override
   String get videoCallsBetaWarning =>
-      'Please note that video calls are currently in beta. They might not work as expected or work at all on all platforms.';
+      'Bitte beachte, dass sich Videoanrufe derzeit in der Beta-Phase befinden. Sie funktionieren möglicherweise nicht wie erwartet oder auf allen Plattformen überhaupt nicht.';
 
   @override
-  String get experimentalVideoCalls => 'Experimental video calls';
+  String get experimentalVideoCalls => 'Experimentelle Videoanrufe';
 
   @override
-  String get emailOrUsername => 'Email or username';
+  String get emailOrUsername => 'E-Mail oder Benutzername';
 
   @override
-  String get indexedDbErrorTitle => 'Private mode issues';
+  String get indexedDbErrorTitle => 'Probleme im privaten Modus';
 
   @override
   String get indexedDbErrorLong =>
-      'The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run Nebuchadnezzar.';
+      'Der Nachrichtenspeicher ist im privaten Modus leider standardmäßig nicht aktiviert.\nBitte besuche\n - about:config\n - setze dom.indexedDB.privateBrowsing.enabled auf true\nAndernfalls ist es nicht möglich, Nebuchadnezzar auszuführen.';
 
   @override
   String switchToAccount(int number) {
-    return 'Switch to account $number';
+    return 'Zu Konto $number wechseln';
   }
 
   @override
-  String get nextAccount => 'Next account';
+  String get nextAccount => 'Nächstes Konto';
 
   @override
-  String get previousAccount => 'Previous account';
+  String get previousAccount => 'Vorheriges Konto';
 
   @override
-  String get addWidget => 'Add widget';
+  String get addWidget => 'Widget hinzufügen';
 
   @override
   String get widgetVideo => 'Video';
 
   @override
-  String get widgetEtherpad => 'Text note';
+  String get widgetEtherpad => 'Textnotiz';
 
   @override
   String get widgetJitsi => 'Jitsi Meet';
 
   @override
-  String get widgetCustom => 'Custom';
+  String get widgetCustom => 'Benutzerdefiniert';
 
   @override
   String get widgetName => 'Name';
 
   @override
-  String get widgetUrlError => 'This is not a valid URL.';
+  String get widgetUrlError => 'Dies ist keine gültige URL.';
 
   @override
-  String get widgetNameError => 'Please provide a display name.';
+  String get widgetNameError => 'Bitte gib einen Anzeigenamen an.';
 
   @override
-  String get errorAddingWidget => 'Error adding the widget.';
+  String get errorAddingWidget => 'Fehler beim Hinzufügen des Widgets.';
 
   @override
-  String get youRejectedTheInvitation => 'You rejected the invitation';
+  String get youRejectedTheInvitation => 'Du hast die Einladung abgelehnt';
 
   @override
-  String get youJoinedTheChat => 'You joined the chat';
+  String get youJoinedTheChat => 'Du bist dem Chat beigetreten';
 
   @override
-  String get youAcceptedTheInvitation => '👍 You accepted the invitation';
+  String get youAcceptedTheInvitation => '👍 Du hast die Einladung angenommen';
 
   @override
   String youBannedUser(String user) {
-    return 'You banned $user';
+    return 'Du hast $user gebannt';
   }
 
   @override
   String youHaveWithdrawnTheInvitationFor(String user) {
-    return 'You have withdrawn the invitation for $user';
+    return 'Du hast die Einladung für $user zurückgezogen';
   }
 
   @override
   String youInvitedToBy(String alias) {
-    return '📩 You have been invited via link to:\n$alias';
+    return '📩 Du wurdest über einen Link eingeladen zu:\n$alias';
   }
 
   @override
   String youInvitedBy(String user) {
-    return '📩 You have been invited by $user';
+    return '📩 Du wurdest eingeladen von $user';
   }
 
   @override
   String invitedBy(String user) {
-    return '📩 Invited by $user';
+    return '📩 Eingeladen von $user';
   }
 
   @override
   String youInvitedUser(String user) {
-    return '📩 You invited $user';
+    return '📩 Du hast $user eingeladen';
   }
 
   @override
   String youKicked(String user) {
-    return '👞 You kicked $user';
+    return '👞 Du hast $user gekickt';
   }
 
   @override
   String youKickedAndBanned(String user) {
-    return '🙅 You kicked and banned $user';
+    return '🙅 Du hast $user gekickt und gebannt';
   }
 
   @override
   String youUnbannedUser(String user) {
-    return 'You unbanned $user';
+    return 'Du hast $user entbannt';
   }
 
   @override
   String hasKnocked(String user) {
-    return '🚪 $user has knocked';
+    return '🚪 $user hat angeklopft';
   }
 
   @override
-  String get usersMustKnock => 'Users must knock';
+  String get usersMustKnock => 'Benutzer müssen anklopfen';
 
   @override
-  String get noOneCanJoin => 'No one can join';
+  String get noOneCanJoin => 'Niemand kann beitreten';
 
   @override
   String userWouldLikeToChangeTheChat(String user) {
-    return '$user would like to join the chat.';
+    return '$user möchte dem Chat beitreten.';
   }
 
   @override
   String get noPublicLinkHasBeenCreatedYet =>
-      'No public link has been created yet';
+      'Es wurde noch kein öffentlicher Link erstellt';
 
   @override
-  String get knock => 'Knock';
+  String get knock => 'Anklopfen';
 
   @override
-  String get users => 'Users';
+  String get users => 'Benutzer';
 
   @override
-  String get unlockOldMessages => 'Unlock old messages';
+  String get unlockOldMessages => 'Alte Nachrichten freischalten';
 
   @override
   String get storeInSecureStorageDescription =>
-      'Store the recovery key in the secure storage of this device.';
+      'Speichere den Wiederherstellungsschlüssel im sicheren Speicher dieses Geräts.';
 
   @override
   String get saveKeyManuallyDescription =>
-      'Save this key manually by triggering the system share dialog or clipboard.';
+      'Speichere diesen Schlüssel manuell über den Teilen-Dialog oder die Zwischenablage.';
 
   @override
-  String get storeInAndroidKeystore => 'Store in Android KeyStore';
+  String get storeInAndroidKeystore => 'Im Android KeyStore speichern';
 
   @override
-  String get storeInAppleKeyChain => 'Store in Apple KeyChain';
+  String get storeInAppleKeyChain => 'Im Apple KeyChain speichern';
 
   @override
-  String get storeSecurlyOnThisDevice => 'Store securely on this device';
+  String get storeSecurlyOnThisDevice => 'Sicher auf diesem Gerät speichern';
 
   @override
   String countFiles(int count) {
-    return '$count files';
+    return '$count Dateien';
   }
 
   @override
-  String get user => 'User';
+  String get user => 'Benutzer';
 
   @override
-  String get custom => 'Custom';
+  String get custom => 'Benutzerdefiniert';
 
   @override
   String get foregroundServiceRunning =>
-      'This notification appears when the foreground service is running.';
+      'Diese Benachrichtigung erscheint, wenn der Vordergrunddienst läuft.';
 
   @override
-  String get screenSharingTitle => 'screen sharing';
+  String get screenSharingTitle => 'Bildschirmfreigabe';
 
   @override
-  String get screenSharingDetail => 'You are sharing your screen in FuffyChat';
+  String get screenSharingDetail =>
+      'Du teilst deinen Bildschirm in Nebuchadnezzar';
 
   @override
-  String get callingPermissions => 'Calling permissions';
+  String get callingPermissions => 'Anrufberechtigungen';
 
   @override
-  String get callingAccount => 'Calling account';
+  String get callingAccount => 'Anrufkonto';
 
   @override
   String get callingAccountDetails =>
-      'Allows Nebuchadnezzar to use the native android dialer app.';
+      'Erlaubt Nebuchadnezzar, die native Android-Telefon-App zu verwenden.';
 
   @override
-  String get appearOnTop => 'Appear on top';
+  String get appearOnTop => 'Im Vordergrund anzeigen';
 
   @override
   String get appearOnTopDetails =>
-      'Allows the app to appear on top (not needed if you already have Fluffychat setup as a calling account)';
+      'Erlaubt der App, im Vordergrund zu erscheinen (nicht notwendig, wenn du Nebuchadnezzar bereits als Anrufkonto eingerichtet hast)';
 
   @override
   String get otherCallingPermissions =>
-      'Microphone, camera and other Nebuchadnezzar permissions';
+      'Mikrofon, Kamera und andere Nebuchadnezzar-Berechtigungen';
 
   @override
-  String get whyIsThisMessageEncrypted => 'Why is this message unreadable?';
+  String get whyIsThisMessageEncrypted => 'Warum ist diese Nachricht unlesbar?';
 
   @override
   String get noKeyForThisMessage =>
-      'This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings.';
+      'Dies kann passieren, wenn die Nachricht gesendet wurde, bevor du dich auf diesem Gerät angemeldet hast.\n\nEs ist auch möglich, dass der Absender dein Gerät blockiert hat oder etwas mit der Internetverbindung schief gelaufen ist.\n\nKannst du die Nachricht in einer anderen Sitzung lesen? Dann kannst du die Nachricht von dort übertragen! Gehe zu Einstellungen > Geräte und stelle sicher, dass deine Geräte sich gegenseitig verifiziert haben. Wenn du den Raum das nächste Mal öffnest und beide Sitzungen im Vordergrund sind, werden die Schlüssel automatisch übertragen.\n\nMöchtest du die Schlüssel beim Abmelden oder Gerätewechsel nicht verlieren? Stelle sicher, dass du das Chat-Backup in den Einstellungen aktiviert hast.';
 
   @override
-  String get newGroup => 'New group';
+  String get newGroup => 'Neue Gruppe';
 
   @override
-  String get newSpace => 'New space';
+  String get newSpace => 'Neuer Space';
 
   @override
-  String get enterSpace => 'Enter space';
+  String get enterSpace => 'Space betreten';
 
   @override
-  String get enterRoom => 'Enter room';
+  String get enterRoom => 'Raum betreten';
 
   @override
-  String get allSpaces => 'All spaces';
+  String get allSpaces => 'Alle Spaces';
 
   @override
   String numChats(int number) {
-    return '$number chats';
+    return '$number Chats';
   }
 
   @override
-  String get hideUnimportantStateEvents => 'Hide unimportant state events';
+  String get hideUnimportantStateEvents =>
+      'Unwichtige Status-Ereignisse ausblenden';
 
   @override
-  String get hidePresences => 'Hide Status List?';
+  String get hidePresences => 'Statusliste ausblenden?';
 
   @override
-  String get doNotShowAgain => 'Do not show again';
+  String get doNotShowAgain => 'Nicht erneut anzeigen';
 
   @override
   String wasDirectChatDisplayName(String oldDisplayName) {
-    return 'Empty chat (was $oldDisplayName)';
+    return 'Leerer Chat (war $oldDisplayName)';
   }
 
   @override
   String get newSpaceDescription =>
-      'Spaces allows you to consolidate your chats and build private or public communities.';
+      'Spaces ermöglichen es dir, deine Chats zu konsolidieren und private oder öffentliche Communities aufzubauen.';
 
   @override
-  String get encryptThisChat => 'Encrypt this chat';
+  String get encryptThisChat => 'Diesen Chat verschlüsseln';
 
   @override
   String get disableEncryptionWarning =>
-      'For security reasons you can not disable encryption in a chat, where it has been enabled before.';
+      'Aus Sicherheitsgründen kannst du die Verschlüsselung in einem Chat nicht deaktivieren, wenn sie zuvor aktiviert wurde.';
 
   @override
-  String get sorryThatsNotPossible => 'Sorry... that is not possible';
+  String get sorryThatsNotPossible => 'Entschuldigung... das ist nicht möglich';
 
   @override
-  String get deviceKeys => 'Device keys:';
+  String get deviceKeys => 'Geräteschlüssel:';
 
   @override
-  String get reopenChat => 'Reopen chat';
+  String get reopenChat => 'Chat wieder öffnen';
 
   @override
   String get noBackupWarning =>
-      'Warning! Without enabling chat backup, you will lose access to your encrypted messages. It is highly recommended to enable the chat backup first before logging out.';
+      'Warnung! Ohne aktiviertes Chat-Backup verlierst du den Zugriff auf deine verschlüsselten Nachrichten. Es wird dringend empfohlen, das Chat-Backup zu aktivieren, bevor du dich abmeldest.';
 
   @override
-  String get noOtherDevicesFound => 'No other devices found';
+  String get noOtherDevicesFound => 'Keine anderen Geräte gefunden';
 
   @override
   String fileIsTooBigForServer(int max) {
-    return 'Unable to send! The server only supports attachments up to $max.';
+    return 'Konnte nicht gesendet werden! Der Server unterstützt nur Anhänge bis zu $max.';
   }
 
   @override
   String fileHasBeenSavedAt(String path) {
-    return 'File has been saved at $path';
+    return 'Datei wurde unter $path gespeichert';
   }
 
   @override
-  String get jumpToLastReadMessage => 'Jump to last read message';
+  String get jumpToLastReadMessage =>
+      'Zur letzten gelesenen Nachricht springen';
 
   @override
-  String get readUpToHere => 'Read up to here';
+  String get readUpToHere => 'Bis hierher gelesen';
 
   @override
-  String get jump => 'Jump';
+  String get jump => 'Springen';
 
   @override
-  String get openLinkInBrowser => 'Open link in browser';
+  String get openLinkInBrowser => 'Link im Browser öffnen';
 
   @override
   String get reportErrorDescription =>
-      '😭 Oh no. Something went wrong. If you want, you can report this bug to the developers.';
+      '😭 Oh nein. Etwas ist schief gelaufen. Wenn du möchtest, kannst du diesen Fehler den Entwicklern melden.';
 
   @override
-  String get report => 'report';
+  String get report => 'Melden';
 
   @override
-  String get signInWithPassword => 'Sign in with password';
+  String get signInWithPassword => 'Mit Passwort anmelden';
 
   @override
   String get pleaseTryAgainLaterOrChooseDifferentServer =>
-      'Please try again later or choose a different server.';
+      'Bitte versuche es später noch einmal oder wähle einen anderen Server.';
 
   @override
   String signInWith(String provider) {
-    return 'Sign in with $provider';
+    return 'Anmelden mit $provider';
   }
 
   @override
   String get profileNotFound =>
-      'The user could not be found on the server. Maybe there is a connection problem or the user doesn\'t exist.';
+      'Der Benutzer konnte auf dem Server nicht gefunden werden. Vielleicht gibt es ein Verbindungsproblem oder der Benutzer existiert nicht.';
 
   @override
-  String get setTheme => 'Set theme:';
+  String get setTheme => 'Thema festlegen:';
 
   @override
-  String get setColorTheme => 'Set color theme:';
+  String get setColorTheme => 'Farbthema festlegen:';
 
   @override
-  String get invite => 'Invite';
+  String get invite => 'Einladen';
 
   @override
-  String get inviteGroupChat => '📨 Invite group chat';
+  String get inviteGroupChat => '📨 Gruppenchat einladen';
 
   @override
-  String get invitePrivateChat => '📨 Invite private chat';
+  String get invitePrivateChat => '📨 Privatchat einladen';
 
   @override
-  String get invalidInput => 'Invalid input!';
+  String get invalidInput => 'Ungültige Eingabe!';
 
   @override
   String wrongPinEntered(int seconds) {
-    return 'Wrong pin entered! Try again in $seconds seconds...';
+    return 'Falsche PIN eingegeben! Versuche es in $seconds Sekunden erneut...';
   }
 
   @override
-  String get pleaseEnterANumber => 'Please enter a number greater than 0';
+  String get pleaseEnterANumber => 'Bitte gib eine Zahl größer als 0 ein';
 
   @override
   String get archiveRoomDescription =>
-      'The chat will be moved to the archive. Other users will be able to see that you have left the chat.';
+      'Der Chat wird ins Archiv verschoben. Andere Benutzer sehen, dass du den Chat verlassen hast.';
 
   @override
   String get roomUpgradeDescription =>
-      'The chat will then be recreated with the new room version. All participants will be notified that they need to switch to the new chat. You can find out more about room versions at https://spec.matrix.org/latest/rooms/';
+      'Der Chat wird mit der neuen Raumversion neu erstellt. Alle Teilnehmer werden benachrichtigt, dass sie zum neuen Chat wechseln müssen. Mehr über Raumversionen erfährst du unter https://spec.matrix.org/latest/rooms/';
 
   @override
   String get removeDevicesDescription =>
-      'You will be logged out of this device and will no longer be able to receive messages.';
+      'Du wirst von diesem Gerät abgemeldet und kannst keine Nachrichten mehr empfangen.';
 
   @override
   String get banUserDescription =>
-      'The user will be banned from the chat and will not be able to enter the chat again until they are unbanned.';
+      'Der Benutzer wird aus dem Chat verbannt und kann den Chat nicht wieder betreten, bis er entbannt wird.';
 
   @override
   String get unbanUserDescription =>
-      'The user will be able to enter the chat again if they try.';
+      'Der Benutzer kann den Chat wieder betreten, wenn er es versucht.';
 
   @override
   String get kickUserDescription =>
-      'The user is kicked out of the chat but not banned. In public chats, the user can rejoin at any time.';
+      'Der Benutzer wird aus dem Chat geworfen, aber nicht verbannt. In öffentlichen Chats kann der Benutzer jederzeit wieder beitreten.';
 
   @override
   String get makeAdminDescription =>
-      'Once you make this user admin, you may not be able to undo this as they will then have the same permissions as you.';
+      'Sobald du diesen Benutzer zum Admin machst, kannst du dies möglicherweise nicht mehr rückgängig machen, da er dann die gleichen Berechtigungen wie du hat.';
 
   @override
   String get pushNotificationsNotAvailable =>
-      'Push notifications not available';
+      'Push-Benachrichtigungen nicht verfügbar';
 
   @override
-  String get learnMore => 'Learn more';
+  String get learnMore => 'Mehr erfahren';
 
   @override
-  String get yourGlobalUserIdIs => 'Your global user-ID is: ';
+  String get yourGlobalUserIdIs => 'Deine globale Benutzer-ID ist: ';
 
   @override
   String noUsersFoundWithQuery(String query) {
-    return 'Unfortunately no user could be found with \"$query\". Please check whether you made a typo.';
+    return 'Leider konnte kein Benutzer mit \"$query\" gefunden werden. Bitte überprüfe, ob du dich vertippt hast.';
   }
 
   @override
-  String get knocking => 'Knocking';
+  String get knocking => 'Anklopfen';
 
   @override
   String chatCanBeDiscoveredViaSearchOnServer(String server) {
-    return 'Chat can be discovered via the search on $server';
+    return 'Chat kann über die Suche auf $server gefunden werden';
   }
 
   @override
-  String get searchChatsRooms => 'Search for #chats, @users...';
+  String get searchChatsRooms => 'Suche nach #chats, @benutzern...';
 
   @override
-  String get nothingFound => 'Nothing found...';
+  String get nothingFound => 'Nichts gefunden...';
 
   @override
-  String get groupName => 'Group name';
+  String get groupName => 'Gruppenname';
 
   @override
-  String get createGroupAndInviteUsers => 'Create a group and invite users';
+  String get createGroupAndInviteUsers =>
+      'Gruppe erstellen und Benutzer einladen';
 
   @override
-  String get groupCanBeFoundViaSearch => 'Group can be found via search';
+  String get groupCanBeFoundViaSearch =>
+      'Gruppe kann über die Suche gefunden werden';
 
   @override
   String get wrongRecoveryKey =>
-      'Sorry... this does not seem to be the correct recovery key.';
+      'Entschuldigung... das scheint nicht der richtige Wiederherstellungsschlüssel zu sein.';
 
   @override
-  String get startConversation => 'Start conversation';
+  String get startConversation => 'Unterhaltung starten';
 
   @override
-  String get commandHint_sendraw => 'Send raw json';
+  String get commandHint_sendraw => 'Sende rohes JSON';
 
   @override
-  String get databaseMigrationTitle => 'Database is optimized';
+  String get databaseMigrationTitle => 'Datenbank wird optimiert';
 
   @override
-  String get databaseMigrationBody => 'Please wait. This may take a moment.';
+  String get databaseMigrationBody =>
+      'Bitte warten. Dies kann einen Moment dauern.';
 
   @override
-  String get leaveEmptyToClearStatus => 'Leave empty to clear your status.';
+  String get leaveEmptyToClearStatus =>
+      'Lasse das Feld leer, um deinen Status zu löschen.';
 
   @override
-  String get select => 'Select';
+  String get select => 'Auswählen';
 
   @override
-  String get searchForUsers => 'Search for @users...';
+  String get searchForUsers => 'Suche nach @benutzern...';
 
   @override
   String get pleaseEnterYourCurrentPassword =>
-      'Please enter your current password';
+      'Bitte gib dein aktuelles Passwort ein';
 
   @override
-  String get newPassword => 'New password';
+  String get newPassword => 'Neues Passwort';
 
   @override
-  String get pleaseChooseAStrongPassword => 'Please choose a strong password';
+  String get pleaseChooseAStrongPassword => 'Bitte wähle ein starkes Passwort';
 
   @override
-  String get passwordsDoNotMatch => 'Passwords do not match';
+  String get passwordsDoNotMatch => 'Passwörter stimmen nicht überein';
 
   @override
-  String get passwordIsWrong => 'Your entered password is wrong';
+  String get passwordIsWrong => 'Dein eingegebenes Passwort ist falsch';
 
   @override
-  String get publicLink => 'Public link';
+  String get publicLink => 'Öffentlicher Link';
 
   @override
-  String get publicChatAddresses => 'Public chat addresses';
+  String get publicChatAddresses => 'Öffentliche Chat-Adressen';
 
   @override
-  String get createNewAddress => 'Create new address';
+  String get createNewAddress => 'Neue Adresse erstellen';
 
   @override
-  String get joinSpace => 'Join space';
+  String get joinSpace => 'Space beitreten';
 
   @override
-  String get publicSpaces => 'Public spaces';
+  String get publicSpaces => 'Öffentliche Spaces';
 
   @override
-  String get addChatOrSubSpace => 'Add chat or sub space';
+  String get addChatOrSubSpace => 'Chat oder Sub-Space hinzufügen';
 
   @override
-  String get subspace => 'Subspace';
+  String get subspace => 'Sub-Space';
 
   @override
-  String get decline => 'Decline';
+  String get decline => 'Ablehnen';
 
   @override
-  String get thisDevice => 'This device:';
+  String get thisDevice => 'Dieses Gerät:';
 
   @override
-  String get initAppError => 'An error occured while init the app';
+  String get initAppError =>
+      'Ein Fehler ist bei der Initialisierung der App aufgetreten';
 
   @override
-  String get userRole => 'User role';
+  String get userRole => 'Benutzerrolle';
 
   @override
   String minimumPowerLevel(int level) {
-    return '$level is the minimum power level.';
+    return '$level ist das minimale Berechtigungslevel.';
   }
 
   @override
   String searchIn(String chat) {
-    return 'Search in chat \"$chat\"...';
+    return 'Suche in Chat \"$chat\"...';
   }
 
   @override
-  String get searchMore => 'Search more...';
+  String get searchMore => 'Mehr suchen...';
 
   @override
-  String get gallery => 'Gallery';
+  String get gallery => 'Galerie';
 
   @override
-  String get files => 'Files';
+  String get files => 'Dateien';
 
   @override
   String databaseBuildErrorBody(String url, String error) {
-    return 'Unable to build the SQlite database. The app tries to use the legacy database for now. Please report this error to the developers at $url. The error message is: $error';
+    return 'Konnte die SQLite-Datenbank nicht erstellen. Die App versucht vorerst, die alte Datenbank zu verwenden. Bitte melde diesen Fehler an die Entwickler unter $url. Die Fehlermeldung ist: $error';
   }
 
   @override
   String sessionLostBody(String url, String error) {
-    return 'Your session is lost. Please report this error to the developers at $url. The error message is: $error';
+    return 'Deine Sitzung ist verloren gegangen. Bitte melde diesen Fehler an die Entwickler unter $url. Die Fehlermeldung ist: $error';
   }
 
   @override
   String restoreSessionBody(String url, String error) {
-    return 'The app now tries to restore your session from the backup. Please report this error to the developers at $url. The error message is: $error';
+    return 'Die App versucht nun, deine Sitzung aus dem Backup wiederherzustellen. Bitte melde diesen Fehler an die Entwickler unter $url. Die Fehlermeldung ist: $error';
   }
 
   @override
   String forwardMessageTo(String roomName) {
-    return 'Forward message to $roomName?';
+    return 'Nachricht an $roomName weiterleiten?';
   }
 
   @override
-  String get sendReadReceipts => 'Send read receipts';
+  String get sendReadReceipts => 'Lesebestätigungen senden';
 
   @override
   String get sendTypingNotificationsDescription =>
-      'Other participants in a chat can see when you are typing a new message.';
+      'Andere Teilnehmer in einem Chat können sehen, wenn du eine Nachricht schreibst.';
 
   @override
   String get sendReadReceiptsDescription =>
-      'Other participants in a chat can see when you have read a message.';
+      'Andere Teilnehmer in einem Chat können sehen, wenn du eine Nachricht gelesen hast.';
 
   @override
-  String get formattedMessages => 'Formatted messages';
+  String get formattedMessages => 'Formatierte Nachrichten';
 
   @override
   String get formattedMessagesDescription =>
-      'Display rich message content like bold text using markdown.';
+      'Zeige formatierte Nachrichteninhalte wie fetten Text mit Markdown an.';
 
   @override
-  String get verifyOtherUser => '🔐 Verify other user';
+  String get verifyOtherUser => '🔐 Anderen Benutzer verifizieren';
 
   @override
   String get verifyOtherUserDescription =>
-      'If you verify another user, you can be sure that you know who you are really writing to. 💪\n\nWhen you start a verification, you and the other user will see a popup in the app. There you will then see a series of emojis or numbers that you have to compare with each other.\n\nThe best way to do this is to meet up or start a video call. 👭';
+      'Wenn du einen anderen Benutzer verifizierst, kannst du sicher sein, dass du wirklich mit der Person schreibst, mit der du schreiben möchtest. 💪\n\nWenn du eine Verifizierung startest, sehen du und der andere Benutzer ein Popup in der App. Dort seht ihr dann eine Reihe von Emojis oder Zahlen, die ihr miteinander vergleichen müsst.\n\nAm besten trefft ihr euch persönlich oder startet einen Videoanruf. 👭';
 
   @override
-  String get verifyOtherDevice => '🔐 Verify other device';
+  String get verifyOtherDevice => '🔐 Anderes Gerät verifizieren';
 
   @override
   String get verifyOtherDeviceDescription =>
-      'When you verify another device, those devices can exchange keys, increasing your overall security. 💪 When you start a verification, a popup will appear in the app on both devices. There you will then see a series of emojis or numbers that you have to compare with each other. It\'s best to have both devices handy before you start the verification. 🤳';
+      'Wenn du ein anderes Gerät verifizierst, können diese Geräte Schlüssel austauschen, was deine allgemeine Sicherheit erhöht. 💪 Wenn du eine Verifizierung startest, erscheint auf beiden Geräten ein Popup in der App. Dort siehst du dann eine Reihe von Emojis oder Zahlen, die du miteinander vergleichen musst. Am besten hast du beide Geräte griffbereit, bevor du die Verifizierung startest. 🤳';
 
   @override
   String acceptedKeyVerification(String sender) {
-    return '$sender accepted key verification';
+    return '$sender hat die Schlüsselverifizierung akzeptiert';
   }
 
   @override
   String canceledKeyVerification(String sender) {
-    return '$sender canceled key verification';
+    return '$sender hat die Schlüsselverifizierung abgebrochen';
   }
 
   @override
   String completedKeyVerification(String sender) {
-    return '$sender completed key verification';
+    return '$sender hat die Schlüsselverifizierung abgeschlossen';
   }
 
   @override
   String isReadyForKeyVerification(String sender) {
-    return '$sender is ready for key verification';
+    return '$sender ist bereit für die Schlüsselverifizierung';
   }
 
   @override
   String requestedKeyVerification(String sender) {
-    return '$sender requested key verification';
+    return '$sender hat die Schlüsselverifizierung angefordert';
   }
 
   @override
   String startedKeyVerification(String sender) {
-    return '$sender started key verification';
+    return '$sender hat die Schlüsselverifizierung gestartet';
   }
 
   @override
   String get transparent => 'Transparent';
 
   @override
-  String get incomingMessages => 'Incoming messages';
+  String get incomingMessages => 'Eingehende Nachrichten';
 
   @override
-  String get stickers => 'Stickers';
+  String get stickers => 'Sticker';
 
   @override
-  String get discover => 'Discover';
+  String get discover => 'Entdecken';
 
   @override
-  String get commandHint_ignore => 'Ignore the given matrix ID';
+  String get commandHint_ignore => 'Ignoriere die angegebene Matrix-ID';
 
   @override
-  String get commandHint_unignore => 'Unignore the given matrix ID';
+  String get commandHint_unignore =>
+      'Mache das Ignorieren der angegebenen Matrix-ID rückgängig';
 
   @override
   String unreadChatsInApp(String appname, String unread) {
-    return '$appname: $unread unread chats';
+    return '$appname: $unread ungelesene Chats';
   }
 
   @override
   String get noDatabaseEncryption =>
-      'Database encryption is not supported on this platform';
+      'Datenbankverschlüsselung wird auf dieser Plattform nicht unterstützt';
 
   @override
   String thereAreCountUsersBlocked(Object count) {
-    return 'Right now there are $count users blocked.';
+    return 'Derzeit sind $count Benutzer blockiert.';
   }
 
   @override
-  String get restricted => 'Restricted';
+  String get restricted => 'Eingeschränkt';
 
   @override
-  String get knockRestricted => 'Knock restricted';
+  String get knockRestricted => 'Anklopfen eingeschränkt';
 
   @override
   String goToSpace(Object space) {
-    return 'Go to space: $space';
+    return 'Gehe zu Space: $space';
   }
 
   @override
-  String get markAsUnread => 'Mark as unread';
+  String get markAsUnread => 'Als ungelesen markieren';
 
   @override
   String userLevel(int level) {
-    return '$level - User';
+    return '$level - Benutzer';
   }
 
   @override
@@ -2275,84 +2303,84 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get changeGeneralChatSettings => 'Change general chat settings';
+  String get changeGeneralChatSettings => 'Allgemeine Chateinstellungen ändern';
 
   @override
-  String get inviteOtherUsers => 'Invite other users to this chat';
+  String get inviteOtherUsers => 'Andere Benutzer in diesen Chat einladen';
 
   @override
-  String get changeTheChatPermissions => 'Change the chat permissions';
+  String get changeTheChatPermissions => 'Chatberechtigungen ändern';
 
   @override
   String get changeTheVisibilityOfChatHistory =>
-      'Change the visibility of the chat history';
+      'Sichtbarkeit des Chatverlaufs ändern';
 
   @override
   String get changeTheCanonicalRoomAlias =>
-      'Change the main public chat address';
+      'Hauptalias des öffentlichen Chats ändern';
 
   @override
-  String get sendRoomNotifications => 'Send a @room notifications';
+  String get sendRoomNotifications => '@room Benachrichtigungen senden';
 
   @override
-  String get changeTheDescriptionOfTheGroup =>
-      'Change the description of the chat';
+  String get changeTheDescriptionOfTheGroup => 'Chatbeschreibung ändern';
 
   @override
   String get chatPermissionsDescription =>
-      'Define which power level is necessary for certain actions in this chat. The power levels 0, 50 and 100 are usually representing users, moderators and admins, but any gradation is possible.';
+      'Definiere, welches Berechtigungslevel für bestimmte Aktionen in diesem Chat notwendig ist. Die Berechtigungslevel 0, 50 und 100 repräsentieren normalerweise Benutzer, Moderatoren und Admins, aber jede Abstufung ist möglich.';
 
   @override
   String updateInstalled(String version) {
-    return '🎉 Update $version installed!';
+    return '🎉 Update $version installiert!';
   }
 
   @override
-  String get changelog => 'Changelog';
+  String get changelog => 'Änderungsprotokoll';
 
   @override
-  String get sendCanceled => 'Sending canceled';
+  String get sendCanceled => 'Senden abgebrochen';
 
   @override
-  String get loginWithMatrixId => 'Login with Matrix-ID';
+  String get loginWithMatrixId => 'Mit Matrix-ID anmelden';
 
   @override
-  String get discoverHomeservers => 'Discover homeservers';
+  String get discoverHomeservers => 'Homeserver entdecken';
 
   @override
-  String get whatIsAHomeserver => 'What is a homeserver?';
+  String get whatIsAHomeserver => 'Was ist ein Homeserver?';
 
   @override
   String get homeserverDescription =>
-      'All your data is stored on the homeserver, just like an email provider. You can choose which homeserver you want to use, while you can still communicate with everyone. Learn more at at https://matrix.org.';
+      'Alle deine Daten werden auf dem Homeserver gespeichert, genau wie bei einem E-Mail-Anbieter. Du kannst wählen, welchen Homeserver du verwenden möchtest, während du immer noch mit jedem kommunizieren kannst. Erfahre mehr unter https://matrix.org.';
 
   @override
   String get doesNotSeemToBeAValidHomeserver =>
-      'Doesn\'t seem to be a compatible homeserver. Wrong URL?';
+      'Scheint kein kompatibler Homeserver zu sein. Falsche URL?';
 
   @override
-  String get calculatingFileSize => 'Calculating file size...';
+  String get calculatingFileSize => 'Dateigröße wird berechnet...';
 
   @override
-  String get prepareSendingAttachment => 'Prepare sending attachment...';
+  String get prepareSendingAttachment =>
+      'Bereite das Senden des Anhangs vor...';
 
   @override
-  String get sendingAttachment => 'Sending attachment...';
+  String get sendingAttachment => 'Sende Anhang...';
 
   @override
-  String get generatingVideoThumbnail => 'Generating video thumbnail...';
+  String get generatingVideoThumbnail => 'Generiere Video-Vorschau...';
 
   @override
-  String get compressVideo => 'Compressing video...';
+  String get compressVideo => 'Komprimiere Video...';
 
   @override
   String sendingAttachmentCountOfCount(int index, int length) {
-    return 'Sending attachment $index of $length...';
+    return 'Sende Anhang $index von $length...';
   }
 
   @override
   String serverLimitReached(int seconds) {
-    return 'Server limit reached! Waiting $seconds seconds...';
+    return 'Serverlimit erreicht! Warte $seconds Sekunden...';
   }
 
   @override
@@ -2365,118 +2393,118 @@ class AppLocalizationsDe extends AppLocalizations {
   String get member => 'Mitglied';
 
   @override
-  String get changePowerLevel => 'Berechtigungsstufe ändern';
+  String get changePowerLevel => 'Berechtigungslevel ändern';
 
   @override
   String get canNotChangePowerLevel =>
-      'Berechtigungsstufe kann nicht geändert werden, da ihre Berechtigungsstufe nicht höher ist als die des Benutzers, dessen Berechtigungsstufe Sie ändern möchten.';
+      'Das Berechtigungslevel kann nicht geändert werden, da es nicht höher ist als das des Benutzers, dessen Level du ändern möchtest.';
 
   @override
   String changePowerLevelForUserToValue(Object user, Object value) {
-    return 'Berechtigungsstufe für $user auf $value ändern?';
+    return 'Berechtigungslevel für $user auf $value ändern?';
   }
 
   @override
-  String get loginInPleaseWait => 'Logging in, please wait...';
+  String get loginInPleaseWait => 'Anmelden, bitte warten...';
 
   @override
   String get settingUpApplicationPleaseWait =>
-      'Settings up application, please wait ...';
+      'App wird eingerichtet, bitte warten...';
 
   @override
   String get checkingEncryptionPleaseWait =>
-      'Checking encryption, please wait ...';
+      'Verschlüsselung wird geprüft, bitte warten...';
 
   @override
   String get settingUpEncryptionPleaseWait =>
-      'Setting up encryption, please wait ...';
+      'Verschlüsselung wird eingerichtet, bitte warten...';
 
   @override
   String canonicalAliasInvalidInput(String homeServer) {
-    return 'Invalid input, must match #SOMETHING:$homeServer';
+    return 'Ungültige Eingabe, muss #ETWAS:$homeServer entsprechen';
   }
 
   @override
   String canonicalAliasHelperText(String roomName, String homeServer) {
-    return 'Example: #\$$roomName:\$$homeServer';
+    return 'Beispiel: #\$$roomName:\$$homeServer';
   }
 
   @override
-  String get shareKeysWithAllDevices => 'Share keys with all devices';
+  String get shareKeysWithAllDevices => 'Schlüssel mit allen Geräten teilen';
 
   @override
   String get shareKeysWithCrossVerifiedDevices =>
-      'Share keys with cross-verified devices';
+      'Schlüssel mit querverifizierten Geräten teilen';
 
   @override
   String get shareKeysWithCrossVerifiedDevicesIfEnabled =>
-      'Share keys with cross-verified devices (if enabled)';
+      'Schlüssel mit querverifizierten Geräten teilen (falls aktiviert)';
 
   @override
   String get shareKeysWithDirectlyVerifiedDevicesOnly =>
-      'Share keys with directly verified devices only';
+      'Schlüssel nur mit direkt verifizierten Geräten teilen';
 
   @override
-  String get joinRules => 'Join rules';
+  String get joinRules => 'Beitrittsregeln';
 
   @override
-  String get showTheseEventsInTheChat => 'Show these events in the chat';
+  String get showTheseEventsInTheChat => 'Zeige diese Ereignisse im Chat';
 
   @override
-  String get playMedia => 'Play media';
+  String get playMedia => 'Medien abspielen';
 
   @override
-  String get appendToQueue => 'Append to queue';
+  String get appendToQueue => 'Zur Warteschlange hinzufügen';
 
   @override
   String appendedToQueue(String title) {
-    return 'Appended to queue: $title';
+    return 'Zur Warteschlange hinzugefügt: $title';
   }
 
   @override
-  String get queue => 'Queue';
+  String get queue => 'Warteschlange';
 
   @override
-  String get clearQueue => 'Clear queue';
+  String get clearQueue => 'Warteschlange leeren';
 
   @override
-  String get queueCleared => 'Queue cleared';
+  String get queueCleared => 'Warteschlange geleert';
 
   @override
-  String get radioBrowser => 'Radio browser';
+  String get radioBrowser => 'Radio-Browser';
 
   @override
-  String get selectStation => 'Select station';
+  String get selectStation => 'Sender auswählen';
 
   @override
-  String get noStationFound => 'No station found';
+  String get noStationFound => 'Kein Sender gefunden';
 
   @override
-  String get favorites => 'Favorites';
+  String get favorites => 'Favoriten';
 
   @override
-  String get addToFavorites => 'Add to favorites';
+  String get addToFavorites => 'Zu Favoriten hinzufügen';
 
   @override
-  String get removeFromFavorites => 'Remove from favorites';
+  String get removeFromFavorites => 'Aus Favoriten entfernen';
 
   @override
-  String get favoriteAdded => 'Favorite added';
+  String get favoriteAdded => 'Favorit hinzugefügt';
 
   @override
-  String get favoriteRemoved => 'Favorite removed';
+  String get favoriteRemoved => 'Favorit entfernt';
 
   @override
-  String get notSupportedByServer => 'Not supported by server';
+  String get notSupportedByServer => 'Nicht vom Server unterstützt';
 
   @override
-  String get radioStation => 'Radio station';
+  String get radioStation => 'Radiosender';
 
   @override
-  String get radioStations => 'Radio stations';
+  String get radioStations => 'Radiosender';
 
   @override
-  String get noRadioBrowserConnected => 'No Radio Browser connected';
+  String get noRadioBrowserConnected => 'Kein Radio-Browser verbunden';
 
   @override
   String appendMediaToQueueDescription(String title) {
@@ -2484,214 +2512,234 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get appendMediaToQueueTitle => 'Append media to queue';
+  String get appendMediaToQueueTitle => 'Medien zur Warteschlange hinzufügen';
 
   @override
   String appendMediaToQueue(String title) {
-    return 'Append media to queue: $title';
+    return 'Medien zur Warteschlange hinzufügen: $title';
   }
 
   @override
-  String get playNowButton => 'Play now';
+  String get playNowButton => 'Jetzt abspielen';
 
   @override
-  String get appendMediaToQueueButton => 'Append to queue';
+  String get appendMediaToQueueButton => 'Zur Warteschlange hinzufügen';
 
   @override
-  String get clipboardNotAvailable => 'Clipboard not available';
+  String get clipboardNotAvailable => 'Zwischenablage nicht verfügbar';
 
   @override
   String get noSupportedFormatFoundInClipboard =>
-      'No supported format found in clipboard';
+      'Kein unterstütztes Format in der Zwischenablage gefunden';
 
   @override
-  String get fileIsTooLarge => 'File is too large';
+  String get fileIsTooLarge => 'Datei ist zu groß';
 
   @override
-  String get notificationRuleContainsUserName => 'Contains User Name';
+  String get notificationRuleContainsUserName => 'Enthält Benutzernamen';
 
   @override
   String get notificationRuleMaster => 'Master';
 
   @override
-  String get notificationRuleSuppressNotices => 'Suppress Notices';
+  String get notificationRuleSuppressNotices => 'Hinweise unterdrücken';
 
   @override
-  String get notificationRuleInviteForMe => 'Invitation for me';
+  String get notificationRuleInviteForMe => 'Einladung für mich';
 
   @override
-  String get notificationRuleMemberEvent => 'Member Event';
+  String get notificationRuleMemberEvent => 'Mitgliedsereignis';
 
   @override
-  String get notificationRuleIsUserMention => 'User Mention';
+  String get notificationRuleIsUserMention => 'Benutzererwähnung';
 
   @override
-  String get notificationRuleContainsDisplayName => 'Contains Display Name';
+  String get notificationRuleContainsDisplayName => 'Enthält Anzeigenamen';
 
   @override
-  String get notificationRuleIsRoomMention => 'Room Mention';
+  String get notificationRuleIsRoomMention => 'Raumerwähnung';
 
   @override
-  String get notificationRuleRoomnotif => 'Room Notification';
+  String get notificationRuleRoomnotif => 'Raum-Benachrichtigung';
 
   @override
-  String get notificationRuleTombstone => 'Tombstone';
+  String get notificationRuleTombstone => 'Grabstein';
 
   @override
-  String get notificationRuleReaction => 'Reaction';
+  String get notificationRuleReaction => 'Reaktion';
 
   @override
-  String get notificationRuleRoomServerAcl => 'Room Server ACL';
+  String get notificationRuleRoomServerAcl => 'Raum-Server-ACL';
 
   @override
-  String get notificationRuleSuppressEdits => 'Suppress Edits';
+  String get notificationRuleSuppressEdits => 'Bearbeitungen unterdrücken';
 
   @override
-  String get notificationRuleCall => 'Call';
+  String get notificationRuleCall => 'Anruf';
 
   @override
   String get notificationRuleEncryptedRoomOneToOne =>
-      'Encrypted Room (One-to-One)';
+      'Verschlüsselter Raum (1:1)';
 
   @override
-  String get notificationRuleRoomOneToOne => 'Room (One-to-One)';
+  String get notificationRuleRoomOneToOne => 'Raum (1:1)';
 
   @override
-  String get notificationRuleMessage => 'Message';
+  String get notificationRuleMessage => 'Nachricht';
 
   @override
-  String get notificationRuleEncrypted => 'Encrypted';
+  String get notificationRuleEncrypted => 'Verschlüsselt';
 
   @override
-  String get notificationRuleServerAcl => 'Server ACL';
+  String get notificationRuleServerAcl => 'Server-ACL';
 
   @override
   String get notificationRuleJitsi => 'Jitsi';
 
   @override
   String get notificationRuleContainsUserNameDescription =>
-      'Username is contained in the content';
+      'Benutzername ist im Inhalt enthalten';
 
   @override
-  String get notificationRuleMasterDescription => 'Master notification';
+  String get notificationRuleMasterDescription => 'Master-Benachrichtigung';
 
   @override
-  String get notificationRuleSuppressNoticesDescription => 'Suppress notices';
+  String get notificationRuleSuppressNoticesDescription =>
+      'Hinweise unterdrücken';
 
   @override
-  String get notificationRuleInviteForMeDescription => 'Invitation for me';
+  String get notificationRuleInviteForMeDescription => 'Einladung für mich';
 
   @override
-  String get notificationRuleMemberEventDescription => 'Member event';
+  String get notificationRuleMemberEventDescription => 'Mitgliedsereignis';
 
   @override
-  String get notificationRuleIsUserMentionDescription => 'User mention';
+  String get notificationRuleIsUserMentionDescription => 'Benutzererwähnung';
 
   @override
   String get notificationRuleContainsDisplayNameDescription =>
-      'Contains display name';
+      'Enthält Anzeigenamen';
 
   @override
-  String get notificationRuleIsRoomMentionDescription => 'Room mention';
+  String get notificationRuleIsRoomMentionDescription => 'Raumerwähnung';
 
   @override
-  String get notificationRuleRoomnotifDescription => 'Room notification';
+  String get notificationRuleRoomnotifDescription => 'Raum-Benachrichtigung';
 
   @override
-  String get notificationRuleTombstoneDescription => 'Tombstone';
+  String get notificationRuleTombstoneDescription => 'Grabstein';
 
   @override
-  String get notificationRuleReactionDescription => 'Reaction';
+  String get notificationRuleReactionDescription => 'Reaktion';
 
   @override
-  String get notificationRuleRoomServerAclDescription => 'Room server ACL';
+  String get notificationRuleRoomServerAclDescription => 'Raum-Server-ACL';
 
   @override
-  String get notificationRuleSuppressEditsDescription => 'Suppress edits';
+  String get notificationRuleSuppressEditsDescription =>
+      'Bearbeitungen unterdrücken';
 
   @override
-  String get notificationRuleCallDescription => 'Call';
+  String get notificationRuleCallDescription => 'Anruf';
 
   @override
   String get notificationRuleEncryptedRoomOneToOneDescription =>
-      'Encrypted Room (One-to-One)';
+      'Verschlüsselter Raum (1:1)';
 
   @override
-  String get notificationRuleRoomOneToOneDescription => 'Room (One-to-One)';
+  String get notificationRuleRoomOneToOneDescription => 'Raum (1:1)';
 
   @override
-  String get notificationRuleMessageDescription => 'Message';
+  String get notificationRuleMessageDescription => 'Nachricht';
 
   @override
-  String get notificationRuleEncryptedDescription => 'Encrypted';
+  String get notificationRuleEncryptedDescription => 'Verschlüsselt';
 
   @override
-  String get notificationRuleServerAclDescription => 'Server ACL';
+  String get notificationRuleServerAclDescription => 'Server-ACL';
 
   @override
   String get notificationRuleJitsiDescription => 'Jitsi';
 
   @override
   String unknownPushRule(Object ruleId) {
-    return 'Custom push rule $ruleId';
+    return 'Benutzerdefinierte Push-Regel $ruleId';
   }
 
   @override
-  String get contentNotificationSettings => 'Content notification settings';
+  String get contentNotificationSettings =>
+      'Inhalt-Benachrichtigungseinstellungen';
 
   @override
-  String get generalNotificationSettings => 'General notification settings';
+  String get generalNotificationSettings =>
+      'Allgemeine Benachrichtigungseinstellungen';
 
   @override
-  String get roomNotificationSettings => 'Room notification settings';
+  String get roomNotificationSettings => 'Raum-Benachrichtigungseinstellungen';
 
   @override
   String get userSpecificNotificationSettings =>
-      'User-specific notification settings';
+      'Benutzerspezifische Benachrichtigungseinstellungen';
 
   @override
-  String get otherNotificationSettings => 'Other notification settings';
+  String get otherNotificationSettings =>
+      'Andere Benachrichtigungseinstellungen';
 
   @override
   String deletePushRuleTitle(Object ruleName) {
-    return 'Delete push rule $ruleName?';
+    return 'Push-Regel $ruleName löschen?';
   }
 
   @override
   String deletePushRuleDescription(Object ruleName) {
-    return 'Do you really want to delete the push rule $ruleName? This action cannot be undone.';
+    return 'Möchten Sie die Push-Regel $ruleName wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.';
   }
 
   @override
-  String get pusherDevices => 'Pusher Devices';
+  String get pusherDevices => 'Pusher-Geräte';
 
   @override
-  String get syncNow => 'Sync now';
+  String get syncNow => 'Jetzt synchronisieren';
 
   @override
-  String get startAppUpPleaseWait => 'Starting, please wait...';
+  String get startAppUpPleaseWait => 'Wird gestartet, bitte warten...';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Wiederholen';
 
   @override
-  String get reportIssue => 'Report issue';
+  String get reportIssue => 'Problem melden';
 
   @override
-  String get closeApp => 'Close app';
+  String get closeApp => 'App schließen';
 
   @override
-  String get creatingRoomPleaseWait => 'Creating room, please wait...';
+  String get creatingRoomPleaseWait => 'Raum wird erstellt, bitte warten...';
 
   @override
-  String get creatingSpacePleaseWait => 'Creating space, please wait...';
+  String get creatingSpacePleaseWait =>
+      'Bereich wird erstellt, bitte warten...';
 
   @override
-  String get joiningRoomPleaseWait => 'Joining room, please wait...';
+  String get joiningRoomPleaseWait => 'Raum wird betreten, bitte warten...';
 
   @override
-  String get leavingRoomPleaseWait => 'Leaving room, please wait...';
+  String get leavingRoomPleaseWait => 'Raum wird verlassen, bitte warten...';
 
   @override
-  String get deletingRoomPleaseWait => 'Deleting room, please wait...';
+  String get deletingRoomPleaseWait => 'Raum wird gelöscht, bitte warten...';
+
+  @override
+  String get loadingArchivePleaseWait => 'Archiv wird geladen, bitte warten...';
+
+  @override
+  String get clearingArchivePleaseWait =>
+      'Archiv wird geleert, bitte warten...';
+
+  @override
+  String get pleaseSelectAChatRoom => 'Bitte wählen Sie einen Chatraum aus';
+
+  @override
+  String get archiveIsEmpty =>
+      'Es gibt noch keine archivierten Chats. Wenn Sie einen Chat verlassen, finden Sie ihn hier.';
 }

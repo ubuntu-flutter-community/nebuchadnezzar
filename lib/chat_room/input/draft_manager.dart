@@ -22,13 +22,7 @@ class DraftManager extends SafeChangeNotifier {
     required Client client,
     required LocalImageService localImageService,
   }) : _client = client,
-       _localImageService = localImageService {
-    sendCommand = Command.createAsync(
-      (room) => send(room: room),
-      initialValue: null,
-    );
-  }
-
+       _localImageService = localImageService;
   final Client _client;
   final LocalImageService _localImageService;
 
@@ -88,7 +82,10 @@ class DraftManager extends SafeChangeNotifier {
     _threadRootEventId = null;
   }
 
-  late final Command<Room, void> sendCommand;
+  late final Command<Room, void> sendCommand = Command.createAsync(
+    (room) => send(room: room),
+    initialValue: null,
+  );
 
   Future<void> send({required Room room}) async {
     try {
@@ -114,7 +111,6 @@ class DraftManager extends SafeChangeNotifier {
               bytes: matrixFile.bytes,
               name: matrixFile.name,
               mimeType: matrixFile.mimeType,
-              maxDimension: maxUploadSize,
               nativeImplementations: _client.nativeImplementations,
             );
           }

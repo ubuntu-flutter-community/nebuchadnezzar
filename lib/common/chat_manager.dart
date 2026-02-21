@@ -18,6 +18,9 @@ class ChatManager extends SafeChangeNotifier {
   // The matrix dart SDK client
   final Client _client;
 
+  static Function(CommandError<dynamic> error, StackTrace stackTrace)?
+  get globalExceptionHandler => Command.globalExceptionHandler;
+
   SyncStatusUpdate? get syncStatusUpdate => _client.onSyncStatus.value;
   Stream<SyncStatusUpdate> get syncStatusUpdateStream =>
       _client.onSyncStatus.stream;
@@ -182,11 +185,12 @@ class ChatManager extends SafeChangeNotifier {
 
   Future<({bool archiveActive, List<ArchivedRoom> archivedRooms})>
   _toggleArchive() async {
+    setSelectedRoom(null);
     _archiveActive = !_archiveActive;
     if (_archiveActive) {
-      setSelectedRoom(null);
       await _client.loadArchive();
     }
+    setSelectedRoom(null);
     return (
       archiveActive: _archiveActive,
       archivedRooms: _client.archivedRooms,

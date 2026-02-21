@@ -137,6 +137,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                       timeline: timeline,
                       allowNormalReply: allowNormalReply,
                       child: Stack(
+                        clipBehavior: Clip.none,
                         children: [
                           Container(
                             padding: event.isImage
@@ -153,18 +154,21 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (!event.hasThumbnail || !event.isImage)
-                                  const SizedBox(height: kSmallPadding),
-
                                 if (!event.isUserEvent &&
                                     eventPosition != EventPosition.bottom &&
                                     eventPosition != EventPosition.middle)
-                                  Text(
-                                    event.senderFromMemoryOrFallback
-                                        .calcDisplayname(),
-                                    style: textTheme.labelSmall,
-                                  ),
-
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: kSmallPadding,
+                                    ),
+                                    child: Text(
+                                      event.senderFromMemoryOrFallback
+                                          .calcDisplayname(),
+                                      style: textTheme.labelSmall,
+                                    ),
+                                  )
+                                else if (!(event.hasThumbnail || event.isImage))
+                                  const SizedBox(height: kSmallPadding),
                                 if (event.inReplyToEventId(
                                       includingFallback: false,
                                     ) !=
@@ -194,39 +198,52 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                         event.messageType,
                                         event.hasThumbnail,
                                       )) {
-                                        (MessageTypes.Image, _) => ChatImage(
-                                          borderRadius: borderRadius,
-                                          timeline: timeline,
+                                        // (MessageTypes.Image, _) => ChatImage(
+                                        //   borderRadius: borderRadius,
+                                        //   timeline: timeline,
+                                        //   showLabel: true,
+                                        //   event: event,
+                                        //   onTap: event.isSvgImage
+                                        //       ? null
+                                        //       : () => showDialog(
+                                        //           context: context,
+                                        //           builder: (context) =>
+                                        //               ChatMessageImageFullScreenDialog(
+                                        //                 event: event,
+                                        //               ),
+                                        //         ),
+                                        // ),
+                                        (_, true) => ChatImage(
                                           showLabel: true,
+                                          timeline: timeline,
                                           event: event,
                                           onTap: event.isSvgImage
                                               ? null
-                                              : () => showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      ChatMessageImageFullScreenDialog(
-                                                        event: event,
-                                                      ),
-                                                ),
-                                        ),
-                                        (MessageTypes.Video, true) => ChatImage(
-                                          showLabel: true,
-                                          timeline: timeline,
-                                          event: event,
-                                          onTap: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) =>
-                                                  const PlayerFullView(),
-                                            );
-                                            di<PlayerManager>().updateState(
-                                              fullMode: true,
-                                            );
-                                            playMatrixMedia(
-                                              context,
-                                              event: event,
-                                            );
-                                          },
+                                              : () {
+                                                  if (event.isVideo) {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          const PlayerFullView(),
+                                                    );
+                                                    di<PlayerManager>()
+                                                        .updateState(
+                                                          fullMode: true,
+                                                        );
+                                                    playMatrixMedia(
+                                                      context,
+                                                      event: event,
+                                                    );
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          ChatMessageImageFullScreenDialog(
+                                                            event: event,
+                                                          ),
+                                                    );
+                                                  }
+                                                },
                                         ),
                                         (MessageTypes.Location, _) => ChatMap(
                                           event: event,
@@ -323,22 +340,23 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                       ),
                                     ),
                                   ),
-                                if (event.status == EventStatus.synced &&
-                                    !event.redacted &&
-                                    !(event.hasThumbnail || event.isImage))
-                                  ChatMessageReactions(
-                                    event: event,
-                                    timeline: timeline,
+                                if (!(event.isImage || event.hasThumbnail))
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: kSmallPadding,
+                                    ),
+                                    child: ChatMessageReactions(
+                                      event: event,
+                                      timeline: timeline,
+                                    ),
                                   ),
-                                if (!event.hasThumbnail && !event.isImage)
-                                  const SizedBox(height: kSmallPadding),
                               ],
                             ),
                           ),
                           if (event.pinned)
                             Positioned(
-                              top: kSmallPadding,
-                              right: kSmallPadding,
+                              top: -kTinyPadding,
+                              right: -kMediumPadding,
                               child: GestureDetector(
                                 onTap: () => event.togglePinned(),
                                 child: const Icon(YaruIcons.pin, size: 15),

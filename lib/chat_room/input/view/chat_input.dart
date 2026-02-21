@@ -1,23 +1,18 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
+import 'package:slugify/slugify.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../../common/chat_manager.dart';
-import '../../../common/logging.dart';
-import '../../../common/view/common_widgets.dart';
+import '../../../common/view/build_context_x.dart';
+import '../../../common/view/chat_avatar.dart';
 import '../../../common/view/ui_constants.dart';
-import '../../../extensions/room_x.dart';
-import '../../../l10n/l10n.dart';
 import '../../common/view/chat_typing_indicator.dart';
-import '../../create_or_edit/edit_room_service.dart';
 import '../draft_manager.dart';
 import 'chat_attachment_draft_panel.dart';
-import 'chat_input_emoji_picker.dart';
+import 'chat_input_reply_box.dart';
+import 'chat_input_text_field.dart';
 
 class ChatInput extends StatefulWidget with WatchItStatefulWidgetMixin {
   const ChatInput({super.key, required this.room});
@@ -29,53 +24,67 @@ class ChatInput extends StatefulWidget with WatchItStatefulWidgetMixin {
 }
 
 class _ChatInputState extends State<ChatInput> {
-  late final TextEditingController _sendController;
-  late final FocusNode _sendNode;
+  late final TextEditingController _sendController = TextEditingController(
+    text: di<DraftManager>().getTextDraft(widget.room.id),
+  );
+
+  late final focusNode = FocusNode(
+    onKeyEvent: (node, event) {
+      final enterPressedWithoutShift =
+          event is KeyDownEvent &&
+          event.physicalKey == PhysicalKeyboardKey.enter &&
+          !HardwareKeyboard.instance.physicalKeysPressed.any(
+            (key) => <PhysicalKeyboardKey>{
+              PhysicalKeyboardKey.shiftLeft,
+              PhysicalKeyboardKey.shiftRight,
+            }.contains(key),
+          );
+
+      var getSuggestions = _getSuggestions(_sendController.value);
+      final suggestionsAreNotEmpty = getSuggestions.isNotEmpty;
+
+      if (enterPressedWithoutShift && event is KeyRepeatEvent) {
+        // Disable holding enter
+        return KeyEventResult.handled;
+      } else if (enterPressedWithoutShift && suggestionsAreNotEmpty) {
+        final suggestion = getSuggestions.first;
+        _insertSuggestionIntoInput(suggestion);
+        return KeyEventResult.handled;
+      } else if (enterPressedWithoutShift) {
+        send();
+        return KeyEventResult.handled;
+      } else {
+        return KeyEventResult.ignored;
+      }
+    },
+  );
 
   @override
   void initState() {
     super.initState();
-    _sendController = TextEditingController(
-      text: di<DraftManager>().getTextDraft(widget.room.id),
-    );
-    _sendNode = FocusNode(
-      onKeyEvent: (node, event) {
-        di<DraftManager>().setCursorPosition(
-          roomId: widget.room.id,
-          position: _sendController.selection.baseOffset,
-        );
-        // Check if the "@"-Key has been pressed
-        if (_sendController.text.contains('@')) {
-          printMessageInDebugMode('@ key pressed');
-        }
-
-        final enterPressedWithoutShift =
-            event is KeyDownEvent &&
-            event.physicalKey == PhysicalKeyboardKey.enter &&
-            !HardwareKeyboard.instance.physicalKeysPressed.any(
-              (key) => <PhysicalKeyboardKey>{
-                PhysicalKeyboardKey.shiftLeft,
-                PhysicalKeyboardKey.shiftRight,
-              }.contains(key),
-            );
-
-        if (enterPressedWithoutShift) {
-          send();
-          return KeyEventResult.handled;
-        } else if (event is KeyRepeatEvent) {
-          // Disable holding enter
-          return KeyEventResult.handled;
-        } else {
-          return KeyEventResult.ignored;
-        }
-      },
-    );
+    final cursorPosition = di<DraftManager>().getCursorPosition(widget.room.id);
+    if (cursorPosition != null &&
+        cursorPosition <= _sendController.text.length) {
+      _sendController.selection = TextSelection.fromPosition(
+        TextPosition(offset: cursorPosition),
+      );
+    }
   }
 
   @override
   void dispose() {
+    di<DraftManager>()
+      ..setTextDraft(
+        roomId: widget.room.id,
+        draft: _sendController.text,
+        notify: false,
+      )
+      ..setCursorPosition(
+        roomId: widget.room.id,
+        position: _sendController.selection.baseOffset,
+      );
+
     _sendController.dispose();
-    _sendNode.dispose();
     super.dispose();
   }
 
@@ -83,76 +92,15 @@ class _ChatInputState extends State<ChatInput> {
     if (di<DraftManager>().getFilesDraft(widget.room.id).isNotEmpty) {
       di<DraftManager>().sendCommand.runAsync(widget.room).then((_) {
         _sendController.clear();
-        _sendNode.requestFocus();
       });
     } else {
       _sendController.clear();
-      _sendNode.requestFocus();
       di<DraftManager>().sendCommand.run(widget.room);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final draftManager = di<DraftManager>();
-    final draftFiles = watchPropertyValue(
-      (DraftManager m) => m.getFilesDraft(widget.room.id),
-    );
-    final attaching = watchPropertyValue((DraftManager m) => m.attaching);
-    final archiveActive = watchPropertyValue(
-      (ChatManager m) => m.archiveActive,
-    );
-
-    final isPastingFromClipboard = watchValue(
-      (DraftManager m) => m.addAttachmentFromClipboardCommand.isRunning,
-    );
-
-    final isSending = watchValue((DraftManager m) => m.sendCommand.isRunning);
-
-    final sendingFile = draftFiles.isNotEmpty && isSending;
-
-    final replyEvent = watchPropertyValue((DraftManager m) => m.replyEvent);
-
-    final editEvent = watchPropertyValue(
-      (DraftManager m) => m.getEditEvent(widget.room.id),
-    );
-
-    final draft = watchPropertyValue(
-      (DraftManager m) => m.getTextDraft(widget.room.id),
-    );
-
-    _sendController.text = draft ?? '';
-
-    final cursorPosition = watchPropertyValue(
-      (DraftManager m) => m.getCursorPosition(widget.room.id),
-    );
-    if (cursorPosition != null &&
-        cursorPosition <= _sendController.text.length) {
-      _sendController.selection = TextSelection.fromPosition(
-        TextPosition(offset: cursorPosition),
-      );
-    }
-
-    _sendNode.requestFocus();
-
-    var transform = Transform.rotate(
-      angle: pi / 4,
-      child: const Padding(
-        padding: EdgeInsets.only(right: 2, top: 2),
-        child: Icon(YaruIcons.send_filled),
-      ),
-    );
-
-    final unAcceptedDirectChat =
-        watchStream(
-          (ChatManager m) => m.getPendingDirectChatStream(widget.room),
-          initialValue: widget.room.isUnacceptedDirectChat,
-          preserveState: false,
-          allowStreamChange: true,
-        ).data ??
-        false;
-
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -161,126 +109,52 @@ class _ChatInputState extends State<ChatInput> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (draftFiles.isNotEmpty) const Divider(height: 1),
-              if (draftFiles.isNotEmpty)
-                ChatAttachmentDraftPanel(roomId: widget.room.id),
-              if (replyEvent != null || editEvent != null)
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: kMediumPadding,
-                    right: kMediumPadding,
-                    top: kMediumPadding,
-                  ),
-                  child: NewWidget(room: widget.room),
-                ),
+              ChatAttachmentDraftPanel(roomId: widget.room.id),
+              ChatInputReplyBox(room: widget.room),
               const Divider(height: 1),
-              Padding(
-                padding: const EdgeInsets.all(kMediumPadding),
-                child: TextField(
-                  minLines: 1,
-                  maxLines: 10,
-                  focusNode: _sendNode,
-                  controller: _sendController,
-                  enabled: sendingFile || isPastingFromClipboard
-                      ? false
-                      : !archiveActive && !unAcceptedDirectChat,
-                  autofocus: true,
-                  onChanged: (v) {
-                    draftManager
-                      ..setTextDraft(
-                        roomId: widget.room.id,
-                        draft: v,
-                        notify: false,
-                      )
-                      ..setCursorPosition(
-                        roomId: widget.room.id,
-                        position: _sendController.selection.baseOffset,
-                      );
-                    unawaited(
-                      di<EditRoomService>().setTyping(
-                        widget.room,
-                        v.isNotEmpty,
-                      ),
-                    );
-                  },
-                  decoration: InputDecoration(
-                    hintText: unAcceptedDirectChat
-                        ? l10n.waitingPartnerAcceptRequest
-                        : l10n.sendAMessage,
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(kSmallPadding),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            padding: EdgeInsets.zero,
-                            onPressed:
-                                sendingFile ||
-                                    attaching ||
-                                    archiveActive ||
-                                    unAcceptedDirectChat
-                                ? null
-                                : () => draftManager.addAttachment(
-                                    widget.room.id,
-                                  ),
-                            icon: attaching
-                                ? const Center(
-                                    child: SizedBox.square(
-                                      dimension: 15,
-                                      child: Progress(strokeWidth: 1),
-                                    ),
-                                  )
-                                : const Icon(YaruIcons.plus),
-                          ),
-                          ChatInputEmojiPicker(
-                            onEmojiSelected:
-                                attaching ||
-                                    archiveActive ||
-                                    unAcceptedDirectChat
-                                ? null
-                                : (cat, emo) {
-                                    _sendController.text =
-                                        _sendController.text + emo.emoji;
-                                    draftManager
-                                      ..setTextDraft(
-                                        roomId: widget.room.id,
-                                        draft: _sendController.text,
-                                        notify: true,
-                                      )
-                                      ..setCursorPosition(
-                                        roomId: widget.room.id,
-                                        position: _sendController
-                                            .selection
-                                            .baseOffset,
-                                      );
-                                    _sendNode.requestFocus();
-                                  },
-                          ),
-                        ],
+              Autocomplete<Map<String, String?>>(
+                optionsViewOpenDirection: OptionsViewOpenDirection.up,
+                optionsBuilder: _getSuggestions,
+                textEditingController: _sendController,
+                focusNode: focusNode,
+                displayStringForOption: _insertSuggestion,
+                optionsViewBuilder: (c, onSelected, s) {
+                  final suggestions = s.toList();
+
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: kMediumPadding,
+                      right: kMediumPadding,
+                    ),
+                    child: Material(
+                      elevation: 4,
+                      shadowColor: context.theme.appBarTheme.shadowColor,
+                      borderRadius: BorderRadius.circular(kYaruButtonRadius),
+                      clipBehavior: Clip.hardEdge,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: suggestions.length,
+                        itemBuilder: (context, i) => _suggestionTileBuilder(
+                          context: c,
+                          suggestion: suggestions[i],
+                          onSelected: onSelected,
+                          isHighlighted: i == suggestions.length - 1,
+                        ),
                       ),
                     ),
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (isPastingFromClipboard ||
-                            attaching ||
-                            unAcceptedDirectChat)
-                          const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        else
-                          IconButton(
-                            tooltip: l10n.send,
-                            padding: EdgeInsets.zero,
-                            icon: transform,
-                            onPressed: () => send(),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
+                  );
+                },
+                onSelected: (suggestion) {
+                  _insertSuggestionIntoInput(suggestion);
+                },
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) =>
+                        ChatInputTextField(
+                          room: widget.room,
+                          sendController: controller,
+                          sendNode: focusNode,
+                          send: send,
+                        ),
               ),
             ],
           ),
@@ -292,74 +166,142 @@ class _ChatInputState extends State<ChatInput> {
       ],
     );
   }
-}
 
-class NewWidget extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const NewWidget({super.key, required this.room});
-
-  final Room room;
-
-  @override
-  State<NewWidget> createState() => _NewWidgetState();
-}
-
-class _NewWidgetState extends State<NewWidget> {
-  @override
-  void initState() {
-    super.initState();
+  void _insertSuggestionIntoInput(Map<String, String?> suggestion) {
+    final newText = _insertSuggestion(suggestion);
+    _sendController.text = newText;
+    _sendController.selection = TextSelection.fromPosition(
+      TextPosition(offset: newText.length),
+    );
+    di<DraftManager>().setTextDraft(
+      roomId: widget.room.id,
+      draft: newText,
+      notify: true,
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final editEvent = watchPropertyValue(
-      (DraftManager m) => m.getEditEvent(widget.room.id),
-    );
+  List<Map<String, String?>> _getSuggestions(TextEditingValue text) {
+    if (text.selection.baseOffset != text.selection.extentOffset ||
+        text.selection.baseOffset < 0) {
+      return [];
+    }
+    final searchText = text.text.substring(0, text.selection.baseOffset);
+    final ret = <Map<String, String?>>[];
+    const maxResults = 30;
 
-    final replyEvent = watchPropertyValue((DraftManager m) => m.replyEvent);
-    final threadRootEventId = watchPropertyValue(
-      (DraftManager m) => m.threadRootEventId,
-    );
+    final userMatch = RegExp(r'(?:\s|^)@([-\w]+)$').firstMatch(searchText);
+    if (userMatch != null) {
+      final userSearch = userMatch[1]!.toLowerCase();
+      for (final user in widget.room.getParticipants()) {
+        if ((user.displayName != null &&
+                (user.displayName!.toLowerCase().contains(userSearch) ||
+                    slugify(
+                      user.displayName!.toLowerCase(),
+                    ).contains(userSearch))) ||
+            user.id.split(':')[0].toLowerCase().contains(userSearch)) {
+          ret.add({
+            'type': 'user',
+            'mxid': user.id,
+            'mention': user.mention,
+            'displayname': user.displayName,
+            'avatar_url': user.avatarUrl?.toString(),
+          });
+        }
+        if (ret.length > maxResults) {
+          break;
+        }
+      }
+    }
+    final roomMatch = RegExp(r'(?:\s|^)#([-\w]+)$').firstMatch(searchText);
+    if (roomMatch != null) {
+      final roomSearch = roomMatch[1]!.toLowerCase();
+      for (final r in widget.room.client.rooms) {
+        if (r.getState(EventTypes.RoomTombstone) != null) {
+          continue;
+        }
+        final state = r.getState(EventTypes.RoomCanonicalAlias);
+        if ((state != null &&
+                ((state.content['alias'] is String &&
+                        state.content
+                            .tryGet<String>('alias')!
+                            .split(':')[0]
+                            .toLowerCase()
+                            .contains(roomSearch)) ||
+                    (state.content['alt_aliases'] is List &&
+                        (state.content['alt_aliases'] as List).any(
+                          (l) =>
+                              l is String &&
+                              l
+                                  .split(':')[0]
+                                  .toLowerCase()
+                                  .contains(roomSearch),
+                        )))) ||
+            (r.name.toLowerCase().contains(roomSearch))) {
+          ret.add({
+            'type': 'room',
+            'mxid': (r.canonicalAlias.isNotEmpty) ? r.canonicalAlias : r.id,
+            'displayname': r.getLocalizedDisplayname(),
+            'avatar_url': r.avatar?.toString(),
+          });
+        }
+        if (ret.length > maxResults) {
+          break;
+        }
+      }
+    }
+    return ret;
+  }
 
-    return YaruInfoBox(
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        spacing: kMediumPadding,
-        children: [
-          IconButton(
-            onPressed: () => di<DraftManager>()
-              ..setReplyEvent(null)
-              ..resetThreadIds()
-              ..setEditEvent(roomId: widget.room.id, event: null)
-              ..setTextDraft(roomId: widget.room.id, draft: '', notify: true),
-            icon: const Icon(YaruIcons.trash),
-          ),
+  Widget _suggestionTileBuilder({
+    required BuildContext context,
+    required Map<String, String?> suggestion,
+    required void Function(Map<String, String?>) onSelected,
+    required bool isHighlighted,
+  }) {
+    const size = 30.0;
 
-          YaruCheckbox(
-            onChanged: replyEvent == null
-                ? null
-                : (v) {
-                    di<DraftManager>().setThreadRootEventId(
-                      v == false ? null : replyEvent.eventId,
-                    );
-                  },
-            value: threadRootEventId != null,
-          ),
-          const Text('Create Thread'),
-        ],
-      ),
-      yaruInfoType: editEvent != null
-          ? YaruInfoType.warning
-          : YaruInfoType.information,
-      icon: Icon(editEvent != null ? YaruIcons.pen : YaruIcons.reply),
-      subtitle: Text(
-        (editEvent ?? replyEvent)!.plaintextBody,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 3,
-      ),
-      title: Text(
-        '${l10n.reply} (${(editEvent ?? replyEvent)!.senderFromMemoryOrFallback.displayName}):',
-      ),
+    if (suggestion['type'] == 'user' || suggestion['type'] == 'room') {
+      final url = Uri.parse(suggestion['avatar_url'] ?? '');
+      return ListTile(
+        shape: const RoundedRectangleBorder(),
+        selected: isHighlighted,
+        selectedColor: context.theme.colorScheme.primary,
+        onTap: () => onSelected(suggestion),
+        leading: ChatAvatar(avatarUri: url, dimension: size),
+        title: Text(suggestion['displayname'] ?? suggestion['mxid']!),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  String _insertSuggestion(Map<String, String?> suggestion) {
+    final replaceText = _sendController.text.substring(
+      0,
+      _sendController.selection.baseOffset,
     );
+    var startText = '';
+    final afterText = replaceText == _sendController.text
+        ? ''
+        : _sendController.text.substring(
+            _sendController.selection.baseOffset + 1,
+          );
+    var insertText = '';
+
+    if (suggestion['type'] == 'user') {
+      insertText = '${suggestion['mention']!} ';
+      startText = replaceText.replaceAllMapped(
+        RegExp(r'(\s|^)(@[-\w]+)$'),
+        (Match m) => '${m[1]}$insertText',
+      );
+    }
+    if (suggestion['type'] == 'room') {
+      insertText = '${suggestion['mxid']!} ';
+      startText = replaceText.replaceAllMapped(
+        RegExp(r'(\s|^)(#[-\w]+)$'),
+        (Match m) => '${m[1]}$insertText',
+      );
+    }
+
+    return startText + afterText;
   }
 }

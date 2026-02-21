@@ -27,7 +27,7 @@ extension PushRuleExtension on PushRule {
     '.m.rule.encrypted' => l10n.notificationRuleEncrypted,
     '.m.rule.room.server_acl' => l10n.notificationRuleServerAcl,
     '.im.vector.jitsi' => l10n.notificationRuleJitsi,
-    _ => ruleId.split('.').last.replaceAll('_', ' ').capitalize(),
+    _ => ruleId,
   };
 
   String getPushRuleDescription(AppLocalizations l10n) => switch (ruleId) {
@@ -67,9 +67,4 @@ extension PushRuleKindLocal on PushRuleKind {
     PushRuleKind.sender => l10n.userSpecificNotificationSettings,
     PushRuleKind.underride => l10n.otherNotificationSettings,
   };
-}
-
-extension on String {
-  String capitalize() =>
-      '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
 }

@@ -2694,4 +2694,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deletingRoomPleaseWait => 'Deleting room, please wait...';
+
+  @override
+  String get loadingArchivePleaseWait => 'Loading archive, please wait...';
+
+  @override
+  String get clearingArchivePleaseWait => 'Clearing archive, please wait...';
+
+  @override
+  String get pleaseSelectAChatRoom => 'Please select a chat room';
+
+  @override
+  String get archiveIsEmpty =>
+      'There are no archived chats yet. When you leave a chat, you can find it here.';
 }
