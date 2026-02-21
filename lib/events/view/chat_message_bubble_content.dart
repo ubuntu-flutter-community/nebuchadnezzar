@@ -156,7 +156,8 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                               children: [
                                 if (!event.isUserEvent &&
                                     eventPosition != EventPosition.bottom &&
-                                    eventPosition != EventPosition.middle)
+                                    eventPosition != EventPosition.middle &&
+                                    !(event.hasThumbnail || event.isImage))
                                   Padding(
                                     padding: const EdgeInsets.only(
                                       top: kSmallPadding,

@@ -13,11 +13,9 @@ import '../../../app/view/mouse_and_keyboard_command_wrapper.dart';
 import '../../../chat_master/view/chat_space_discover_button.dart';
 import '../../../chat_master/view/chat_spaces_search_list.dart';
 import '../../../common/chat_manager.dart';
-import '../../../common/view/build_context_x.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
-import '../../../common/view/theme.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
 import '../../create_or_edit/edit_room_manager.dart';
@@ -143,11 +141,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
 
     final l10n = context.l10n;
-    final colorScheme = context.colorScheme;
-
-    final updating = watchPropertyValue(
-      (TimelineManager m) => m.getUpdatingTimeline(widget.room.id),
-    );
 
     final threadeMode = watchPropertyValue((DraftManager m) => m.threadMode);
 
@@ -243,28 +236,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 },
               ),
             ),
-            if (updating &&
-                chatRoomScaffoldKey.currentState?.isEndDrawerOpen != true)
-              Positioned(
-                top: 4 * kBigPadding,
-                child: RepaintBoundary(
-                  child: CircleAvatar(
-                    backgroundColor: getMonochromeBg(
-                      theme: context.theme,
-                      factor: 3,
-                      darkFactor: 4,
-                    ),
-                    maxRadius: 15,
-                    child: SizedBox.square(
-                      dimension: 18,
-                      child: Progress(
-                        strokeWidth: 2,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
           ],
         ),
       ),

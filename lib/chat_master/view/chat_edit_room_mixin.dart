@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 import '../../chat_room/create_or_edit/edit_room_manager.dart';
+import '../../chat_room/timeline/timeline_manager.dart';
 import '../../l10n/l10n.dart';
 import 'chat_clear_archive_progress_bar.dart';
 
@@ -32,8 +33,12 @@ mixin ChatEditRoomMixin {
                 ),
                 action: SnackBarAction(
                   label: context.l10n.delete,
-                  onPressed: () => di<EditRoomManager>().globalForgetRoomCommand
-                      .run(newValue.data),
+                  onPressed: () {
+                    di<EditRoomManager>().globalForgetRoomCommand.run(
+                      newValue.data,
+                    );
+                    di<TimelineManager>().removeTimeline(newValue.data!.id);
+                  },
                 ),
               ),
             );

@@ -15,8 +15,8 @@ class ChatRoomInfoDrawerMediaGridHeadline extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final updating = watchPropertyValue(
-      (TimelineManager m) => m.getUpdatingTimeline(room.id),
+    final updating = watchValue(
+      (TimelineManager m) => m.getRequestHistoryCommand(room.id).isRunning,
     );
     return Row(
       spacing: kSmallPadding,

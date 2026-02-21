@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
@@ -98,15 +97,12 @@ class ChatRoomInfoMediaGrid extends StatelessWidget
     final colorScheme = context.colorScheme;
     final l10n = context.l10n;
 
-    watchStream((ChatManager m) => m.getEventStream(room), initialValue: null);
-    watchStream(
-      (ChatManager m) => m.getHistoryStream(room),
-      initialValue: null,
+    final t = watchValue(
+      (TimelineManager m) => m.getRequestHistoryCommand(room.id).results,
     );
 
-    final timeline = watchPropertyValue(
-      (TimelineManager m) => m.getTimeline(room.id),
-    );
+    final timeline =
+        t.paramData?.timeline ?? di<TimelineManager>().getTimeline(room.id);
 
     if (timeline == null) {
       return Center(
@@ -132,11 +128,11 @@ class ChatRoomInfoMediaGrid extends StatelessWidget
     return Center(
       child: NotificationListener<ScrollEndNotification>(
         onNotification: (notification) {
-          di<TimelineManager>().requestHistory(
-            timeline,
+          di<TimelineManager>().getRequestHistoryCommand(timeline.room.id).run((
+            timeline: timeline,
+            historyCount: 100,
             filter: StateFilter(types: [EventTypes.Message]),
-            historyCount: 1000,
-          );
+          ));
 
           return true;
         },
@@ -208,8 +204,9 @@ class ChatLoadMoreHistoryButton extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
-    final updatingTimeline = watchPropertyValue(
-      (TimelineManager m) => m.getUpdatingTimeline(timeline.room.id),
+    final updatingTimeline = watchValue(
+      (TimelineManager m) =>
+          m.getRequestHistoryCommand(timeline.room.id).isRunning,
     );
 
     return OutlinedButton.icon(
@@ -219,11 +216,12 @@ class ChatLoadMoreHistoryButton extends StatelessWidget with WatchItMixin {
               child: Progress(strokeWidth: 2),
             )
           : const Icon(YaruIcons.refresh),
-      onPressed: () => di<TimelineManager>().requestHistory(
-        timeline,
-        filter: StateFilter(types: [EventTypes.Message]),
-        historyCount: 1000,
-      ),
+      onPressed: () =>
+          di<TimelineManager>().getRequestHistoryCommand(timeline.room.id).run((
+            timeline: timeline,
+            historyCount: 1000,
+            filter: StateFilter(types: [EventTypes.Message]),
+          )),
       label: Text(context.l10n.loadMore),
     );
   }

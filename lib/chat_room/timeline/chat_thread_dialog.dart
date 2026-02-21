@@ -60,19 +60,20 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
   @override
   Widget build(BuildContext context) {
     final room = widget.timeline.room;
-    watchStream((ChatManager m) => m.getEventStream(room), initialValue: null);
-    watchStream(
-      (ChatManager m) => m.getHistoryStream(room),
+    final fromStream = watchStream(
+      (ChatManager m) => m.getEventStream(room),
       initialValue: null,
+      preserveState: false,
+    ).data;
+    watchValue(
+      (TimelineManager m) => m.getRequestHistoryCommand(room.id).isRunning,
     );
 
-    watchPropertyValue((TimelineManager m) => m.getTimeline(room.id));
-
     var events = {
-      ...widget.event.aggregatedEvents(
-        widget.timeline,
-        RelationshipTypes.thread,
-      ),
+      ...widget.event
+          .aggregatedEvents(widget.timeline, RelationshipTypes.thread)
+          .toList()
+          .reversed,
       widget.event,
     };
     return AlertDialog(
@@ -85,6 +86,7 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
         width: 500,
         height: 600,
         child: ListView.builder(
+          key: ValueKey(fromStream),
           reverse: true,
           padding: const EdgeInsets.all(kMediumPadding),
           itemCount: events.length,

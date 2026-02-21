@@ -46,6 +46,7 @@ dependencies:
   future_loading_dialog: ^0.3.0
   handy_window: ^0.4.0
   html: ^0.15.6
+  http: ^1.6.0
   intl: ^0.20.2
   latlong2: ^0.9.1
   linkify: ^5.0.0

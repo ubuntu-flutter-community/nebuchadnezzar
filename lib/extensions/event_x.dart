@@ -110,7 +110,8 @@ extension EventX on Event {
     EventTypes.RoomPinnedEvents,
   }.contains(type);
 
-  bool get showAsBubble => type == EventTypes.Message;
+  bool get showAsBubble =>
+      type == EventTypes.Message || type == EventTypes.Encrypted;
 
   bool get showAsBadge => !showAsBubble;
 
