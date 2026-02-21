@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
+import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../extensions/event_x.dart';
@@ -14,23 +18,92 @@ class ChatDownloadManager extends SafeChangeNotifier {
   final ChatDownloadService _service;
   StreamSubscription<bool>? _propertiesChangedSub;
 
-  final _downloadCommands = <Event, Command<void, MatrixFile?>>{};
-  Command<void, MatrixFile?> getDownloadCommand(Event event) =>
+  SetNotifier<Event> activeDownloads = SetNotifier();
+  SetNotifier<DownloadCapsule> downloadedEventsInTemp = SetNotifier();
+  Directory? _tempDirectory;
+
+  late final Command<Timeline, void> fillRecentDownloadsCommand =
+      Command.createAsync((timeline) async {
+        final events = timeline.events.where((e) => e.hasAttachment).toList();
+        _tempDirectory ??= await getTemporaryDirectory();
+        for (final event in events) {
+          final filePath = '${_tempDirectory?.path}/${event.fileName}';
+          if (File(filePath).existsSync() &&
+              downloadedEventsInTemp.none(
+                (c) => c.event.fileName == event.fileName,
+              )) {
+            downloadedEventsInTemp.add(
+              DownloadCapsule(
+                event: event,
+                file: File(filePath),
+                matrixFile: null,
+              ),
+            );
+          }
+        }
+      }, initialValue: null);
+
+  late final Command<Event, DownloadCapsule?> globalDownloadCommand =
+      Command.createAsync((event) async {
+        activeDownloads.add(event);
+        final result = await getDownloadCommand(event).runAsync();
+        activeDownloads.remove(event);
+        if (result != null &&
+            downloadedEventsInTemp.none(
+              (c) => c.event.fileName == result.event.fileName,
+            )) {
+          downloadedEventsInTemp.add(result);
+        }
+        _downloadCommands.remove(event);
+
+        return result;
+      }, initialValue: null);
+
+  final _downloadCommands = <Event, Command<void, DownloadCapsule?>>{};
+  Command<void, DownloadCapsule?> getDownloadCommand(Event event) =>
       _downloadCommands.putIfAbsent(
         event,
-        () => Command.createAsyncWithProgress(
-          (_, handle) => event.downloadAndDecryptAttachment(
-            onDownloadProgress: (v) {
-              // the amount of downloaded bytes is v
-              // the total size of the file is event.fileSize
-              final progress = event.fileSize != null && event.fileSize! > 0
-                  ? v / event.fileSize!
-                  : null;
-              handle.updateProgress(progress ?? 0);
-            },
-          ),
-          initialValue: null,
-        ),
+        () => Command.createAsyncWithProgress((_, handle) async {
+          Directory? tempDir;
+
+          tempDir = await getTemporaryDirectory();
+
+          File? file;
+          MatrixFile? matrixFile;
+
+          final path = '${tempDir.path}/${event.fileName}';
+          if (File(path).existsSync()) {
+            file = File(path);
+          } else {
+            matrixFile = await event.downloadAndDecryptAttachment(
+              onDownloadProgress: (v) {
+                // the amount of downloaded bytes is v
+                // the total size of the file is event.fileSize
+                final progress = event.fileSize != null && event.fileSize! > 0
+                    ? v / event.fileSize!
+                    : null;
+                handle.updateProgress(progress ?? 0);
+              },
+            );
+          }
+
+          if (file != null &&
+              Platform.isIOS &&
+              matrixFile?.mimeType.toLowerCase() == 'audio/ogg') {
+            Logs().v('Convert ogg audio file for iOS...');
+            final convertedFile = File('${file.path}.caf');
+            if (await convertedFile.exists() == false) {
+              OpusCaf().convertOpusToCaf(file.path, convertedFile.path);
+            }
+            file = convertedFile;
+          }
+
+          return DownloadCapsule(
+            event: event,
+            file: file,
+            matrixFile: matrixFile,
+          );
+        }, initialValue: null),
       );
 
   final _saveFileCommands =
@@ -56,4 +129,16 @@ class ChatDownloadManager extends SafeChangeNotifier {
     await _propertiesChangedSub?.cancel();
     super.dispose();
   }
+}
+
+class DownloadCapsule {
+  final Event event;
+  final File? file;
+  final MatrixFile? matrixFile;
+
+  const DownloadCapsule({
+    required this.event,
+    required this.file,
+    required this.matrixFile,
+  });
 }

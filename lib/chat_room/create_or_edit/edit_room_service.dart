@@ -420,17 +420,14 @@ class EditRoomService {
     }
   }
 
-  Future<Room?> knockOrJoinRoomChunk(PublishedRoomsChunk chunk) async {
-    final knock = chunk.joinRule == 'knock';
-
-    String? roomId;
+  Future<Room?> knockOrJoinRoomById({
+    required String roomId,
+    required bool knock,
+  }) async {
     try {
-      if (_client.getRoomById(chunk.roomId) != null) {
-        roomId = chunk.roomId;
-      }
       roomId = knock
-          ? await _client.knockRoom(chunk.roomId)
-          : await _client.joinRoom(chunk.roomId);
+          ? await _client.knockRoom(roomId)
+          : await _client.joinRoom(roomId);
 
       if (!knock && _client.getRoomById(roomId) == null) {
         await _client.waitForRoomInSync(roomId);

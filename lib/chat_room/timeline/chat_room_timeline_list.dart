@@ -9,6 +9,7 @@ import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
+import '../../events/chat_download_manager.dart';
 import '../../events/view/chat_event_tile.dart';
 import '../../extensions/date_time_x.dart';
 import '../../extensions/event_x.dart';
@@ -42,9 +43,15 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => di<TimelineManager>().postTimelineLoad(widget.timeline),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      di<TimelineManager>()
+          .postTimelineLoad(widget.timeline)
+          .then(
+            (_) => di<ChatDownloadManager>().fillRecentDownloadsCommand.run(
+              widget.timeline,
+            ),
+          );
+    });
   }
 
   @override
@@ -147,15 +154,17 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                         ),
                       ],
 
-                      if (i == 0 &&
-                          event.showAsBubble &&
-                          !widget.timeline.room.isSpace)
-                        ChatEventSeenByIndicator(
-                          key: ValueKey(
-                            '${event.eventId}${widget.timeline.events.length}',
-                          ),
-                          event: event,
-                        ),
+                      if (event.showAsBubble && !widget.timeline.room.isSpace)
+                        i == 0
+                            ? ChatEventSeenByIndicator(
+                                key: ValueKey(
+                                  '${event.eventId}${widget.timeline.events.length}',
+                                ),
+                                event: event,
+                              )
+                            : SimpleChatSeenByIndicator(
+                                seenByUsers: event.seenByUsers,
+                              ),
                     ],
                   ),
                 ),

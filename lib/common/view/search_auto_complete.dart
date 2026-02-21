@@ -40,7 +40,10 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
               ),
       onSelected: (option) {
         Navigator.of(context).pop();
-        di<EditRoomManager>().knockOrJoinCommand.run(option);
+        di<EditRoomManager>().knockOrJoinCommand.run((
+          roomId: option.roomId,
+          knock: option.joinRule == JoinRules.knock.text,
+        ));
       },
       displayStringForOption: (chunk) => chunk.name ?? chunk.roomId,
 
@@ -90,7 +93,10 @@ class ChatRoomsAndSpacesAutoComplete extends StatelessWidget with WatchItMixin {
                           ),
                           onTap: () {
                             Navigator.of(context).pop();
-                            di<EditRoomManager>().knockOrJoinCommand.run(chunk);
+                            di<EditRoomManager>().knockOrJoinCommand.run((
+                              roomId: chunk.roomId,
+                              knock: chunk.joinRule == JoinRules.knock.text,
+                            ));
                           },
                         ),
                       );

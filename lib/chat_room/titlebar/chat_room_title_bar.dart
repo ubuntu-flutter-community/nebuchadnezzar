@@ -13,6 +13,7 @@ import '../common/view/chat_room_page.dart';
 import 'chat_room_encryption_status_button.dart';
 import 'chat_room_notification_button.dart';
 import 'chat_room_pin_button.dart';
+import 'chat_total_file_downloads_indicator.dart';
 import 'side_bar_button.dart';
 
 class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
@@ -66,7 +67,7 @@ class ChatRoomTitleBar extends StatelessWidget implements PreferredSizeWidget {
             room: room,
           ),
         ],
-
+        const ChatTotalFileDownloadsIndicator(),
         IconButton(
           key: ValueKey('${room.id}_${room.isDirectChat}'),
           tooltip: context.l10n.chatDetails,

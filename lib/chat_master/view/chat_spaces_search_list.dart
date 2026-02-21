@@ -78,7 +78,10 @@ class ChatSpacesSearchList extends StatelessWidget with WatchItMixin {
               context: context,
               onConfirm: () async {
                 Navigator.of(context).pop();
-                di<EditRoomManager>().knockOrJoinCommand.run(chunk);
+                di<EditRoomManager>().knockOrJoinCommand.run((
+                  roomId: chunk.roomId,
+                  knock: chunk.joinRule == 'knock',
+                ));
               },
             ),
           ),
