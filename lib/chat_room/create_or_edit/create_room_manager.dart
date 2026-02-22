@@ -156,6 +156,9 @@ class CreateRoomManager {
     return maybeRoom;
   }
 
+  late final Command<String, Room?> createOrGetDirectChatCommand =
+      Command.createAsync(createOrGetDirectChat, initialValue: null);
+
   Future<Room?> createOrGetDirectChat(String userId) async {
     final alreadyExistedId = _client.getDirectChatFromUserId(userId);
     Room? maybeRoom;
@@ -181,13 +184,14 @@ class CreateRoomManager {
       if (alreadyExistedId == null && maybeRoom != null) {
         await _waitForEncryptionEvent(maybeRoom);
       }
+    } else {
+      await Future.delayed(const Duration(milliseconds: 100));
     }
 
     return maybeRoom;
   }
 
   Future<void> _waitForEncryptionEvent(Room newRoom) async {
-    await newRoom.client.oneShotSync();
     await newRoom.postLoad();
     if (!newRoom.encrypted) {
       await newRoom.client.onRoomState.stream

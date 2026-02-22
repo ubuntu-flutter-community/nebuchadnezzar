@@ -13,17 +13,13 @@ enum RoomsFilter {
   bool Function(Room) get filter => switch (this) {
     directChat => (r) => r.isDirectChat,
     unread => (r) => r.isUnreadOrInvited,
-
     publicRooms => (r) => !r.isDirectChat && !r.encrypted && !r.isSpace,
     spaces => (r) => r.isSpace,
   };
 
-  static List<RoomsFilter> get shownValues => values;
-
   IconData get iconData => switch (this) {
     directChat => YaruIcons.user,
     unread => YaruIcons.mail_unread,
-
     publicRooms => YaruIcons.users,
     spaces => YaruIcons.globe,
   };

@@ -60,11 +60,9 @@ class ChatManager extends SafeChangeNotifier {
           .whereNot((r) => r == null)
           .where((r) => r!.isArchived == archiveActive)
           .sorted(
-            (a, b) => a?.isFavourite == true && b?.isFavourite == false
-                ? -1
-                : a?.isFavourite == true && b?.isFavourite == true
-                ? 0
-                : 1,
+            (a, b) => (a?.isFavourite == true ? 0 : 1).compareTo(
+              b?.isFavourite == true ? 0 : 1,
+            ),
           ),
     ).toList();
   }
@@ -140,15 +138,8 @@ class ChatManager extends SafeChangeNotifier {
   RoomsFilter? _roomsFilter;
   RoomsFilter? get roomsFilter => _roomsFilter;
   void setRoomsFilter(RoomsFilter? value) {
-    if (_roomsFilter == value) {
-      _roomsFilter = null;
-      _selectedRoom = null;
-    } else {
-      _roomsFilter = value;
-    }
-    if (_roomsFilter != null) {
-      _activeSpace = null;
-    }
+    _roomsFilter = value;
+    _activeSpace = null;
     setSelectedRoom(null);
   }
 

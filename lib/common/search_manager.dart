@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
@@ -15,6 +16,14 @@ class SearchManager extends SafeChangeNotifier {
     _debounce?.cancel();
     super.dispose();
   }
+
+  late final Command<String, Profile?> lookupProfileCommand =
+      Command.createAsync<String, Profile?>(lookupProfile, initialValue: null);
+
+  late final Command<String, void> ignoreProfileCommand =
+      Command.createAsync<String, void>((userId) async {
+        await _client.ignoreUser(userId);
+      }, initialValue: null);
 
   Future<Profile> lookupProfile(String userId) async =>
       _client.getProfileFromUserId(userId);

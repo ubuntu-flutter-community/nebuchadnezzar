@@ -744,7 +744,9 @@ class AppLocalizationsSv extends AppLocalizations {
       'Du kan blockera användare som stör dig. Du kommer inte att kunna ta emot några meddelanden eller rumsinbjudningar från användarna på din personliga blockeringslista.';
 
   @override
-  String get blockUsername => 'Ignore användarnamn';
+  String blockUsername(String username) {
+    return 'Ignore användarnamn';
+  }
 
   @override
   String get iHaveClickedOnLink => 'Jag har klickat på länken';
@@ -760,13 +762,8 @@ class AppLocalizationsSv extends AppLocalizations {
   String get inviteContact => 'Bjud in kontakt';
 
   @override
-  String inviteContactToGroupQuestion(Object contact, Object groupName) {
+  String inviteContactToGroupQuestion(String contact, String groupName) {
     return 'Vill du bjuda in $contact till chatten \"$groupName\"?';
-  }
-
-  @override
-  String inviteContactToGroup(String groupName) {
-    return 'Bjud in kontakt till $groupName';
   }
 
   @override

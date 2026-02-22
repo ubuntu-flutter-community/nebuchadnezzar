@@ -748,7 +748,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du kannst Benutzer blockieren, die dich stören. Du wirst keine Nachrichten oder Raumeinladungen von den Benutzern auf deiner persönlichen Blockierliste erhalten.';
 
   @override
-  String get blockUsername => 'Benutzername ignorieren';
+  String blockUsername(String username) {
+    return '$username ignorieren';
+  }
 
   @override
   String get iHaveClickedOnLink => 'Ich habe auf den Link geklickt';
@@ -764,13 +766,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get inviteContact => 'Kontakt einladen';
 
   @override
-  String inviteContactToGroupQuestion(Object contact, Object groupName) {
+  String inviteContactToGroupQuestion(String contact, String groupName) {
     return 'Möchtest du $contact in den Chat \"$groupName\" einladen?';
-  }
-
-  @override
-  String inviteContactToGroup(String groupName) {
-    return 'Kontakt zu $groupName einladen';
   }
 
   @override

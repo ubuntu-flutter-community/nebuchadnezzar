@@ -25,7 +25,7 @@ class ChatMasterListFilterBar extends StatelessWidget with WatchItMixin {
         clearOnSelect: false,
         selectedFirst: false,
         style: YaruChoiceChipBarStyle.stack,
-        labels: RoomsFilter.shownValues
+        labels: RoomsFilter.values
             .map(
               (e) => Tooltip(
                 message: e.localize(context.l10n),
@@ -36,11 +36,10 @@ class ChatMasterListFilterBar extends StatelessWidget with WatchItMixin {
               ),
             )
             .toList(),
-        isSelected: RoomsFilter.shownValues
-            .map((e) => e == roomsFilter)
-            .toList(),
-        onSelected: (i) =>
-            di<ChatManager>().setRoomsFilter(RoomsFilter.shownValues[i]),
+        isSelected: RoomsFilter.values.map((e) => e == roomsFilter).toList(),
+        onSelected: (i) => di<ChatManager>().setRoomsFilter(
+          roomsFilter == RoomsFilter.values[i] ? null : RoomsFilter.values[i],
+        ),
       ),
     );
   }

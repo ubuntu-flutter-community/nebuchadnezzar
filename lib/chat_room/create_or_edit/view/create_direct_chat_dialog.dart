@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
@@ -32,44 +31,51 @@ class _CreateDirectChatDialogState extends State<CreateDirectChatDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return ConfirmationDialog(
-      scrollable: true,
-      onConfirm: () =>
-          showFutureLoadingDialog(
-            context: context,
-            future: () => di<CreateRoomManager>().createOrGetDirectChat(
+    return ValueListenableBuilder(
+      valueListenable: _searchController,
+      builder: (context, value, child) {
+        return ConfirmationDialog(
+          scrollable: true,
+          onConfirm: () {
+            di<ChatManager>().setSelectedRoom(null);
+            di<CreateRoomManager>().createOrGetDirectChatCommand.run(
               _searchController.text,
-            ),
-          ).then((result) {
-            if (result.asValue?.value != null) {
-              di<ChatManager>().setSelectedRoom(result.asValue!.value!);
-            }
-          }),
-      confirmLabel: l10n.startConversation,
-      title: Text(l10n.directChat),
-      content: Column(
-        spacing: kBigPadding,
-        children: [
-          TextField(
-            autofocus: true,
-            controller: _searchController,
-            decoration: InputDecoration(
-              label: Text(
-                '@${l10n.username.toLowerCase()}:${l10n.homeserver.toLowerCase()}',
+            );
+          },
+          confirmEnabled:
+              _searchController.text.isNotEmpty &&
+              _searchController.text.contains(':') &&
+              _searchController.text.contains('@'),
+          confirmLabel: l10n.startConversation,
+          title: Text(l10n.directChat),
+          content: Column(
+            spacing: kBigPadding,
+            children: [
+              ChatUserSearchAutoComplete(
+                labelText:
+                    '${l10n.search} ${di<AuthenticationService>().homeServerId}',
+                suffix: const Icon(YaruIcons.search),
+                onProfileSelected: (p) => _searchController.text = p.userId,
               ),
-              suffixIcon: const Icon(YaruIcons.user),
-            ),
+              TextField(
+                autofocus: true,
+                controller: _searchController,
+                decoration: InputDecoration(
+                  label: Text(
+                    '@${l10n.username.toLowerCase()}:${l10n.homeserver.toLowerCase()}',
+                  ),
+                  suffixIcon: const Icon(YaruIcons.user),
+                ),
+              ),
+              if (_error?.isNotEmpty ?? false)
+                Text(
+                  _error!,
+                  style: TextStyle(color: context.colorScheme.error),
+                ),
+            ],
           ),
-          ChatUserSearchAutoComplete(
-            labelText:
-                '${l10n.search} ${di<AuthenticationService>().homeServerId}',
-            suffix: const Icon(YaruIcons.search),
-            onProfileSelected: (p) => _searchController.text = p.userId,
-          ),
-          if (_error?.isNotEmpty ?? false)
-            Text(_error!, style: TextStyle(color: context.colorScheme.error)),
-        ],
-      ),
+        );
+      },
     );
   }
 }

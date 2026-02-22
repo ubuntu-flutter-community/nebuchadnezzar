@@ -6,18 +6,16 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:super_drag_and_drop/super_drag_and_drop.dart';
-import 'package:yaru/widgets.dart';
 
 import '../../../app/view/error_page.dart';
 import '../../../app/view/mouse_and_keyboard_command_wrapper.dart';
-import '../../../chat_master/view/chat_space_discover_button.dart';
-import '../../../chat_master/view/chat_spaces_search_list.dart';
 import '../../../common/chat_manager.dart';
 import '../../../common/view/common_widgets.dart';
 import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../create_or_edit/create_room_manager.dart';
 import '../../create_or_edit/edit_room_manager.dart';
 import '../../info_drawer/chat_room_info_drawer.dart';
 import '../../input/draft_manager.dart';
@@ -25,6 +23,7 @@ import '../../input/view/chat_input.dart';
 import '../../timeline/chat_room_timeline_list.dart';
 import '../../timeline/timeline_manager.dart';
 import '../../titlebar/chat_room_title_bar.dart';
+import 'chat_join_mixin.dart';
 
 final GlobalKey<ScaffoldState> chatRoomScaffoldKey = GlobalKey();
 
@@ -37,7 +36,7 @@ class ChatRoomPage extends StatefulWidget with WatchItStatefulWidgetMixin {
   State<ChatRoomPage> createState() => _ChatRoomPageState();
 }
 
-class _ChatRoomPageState extends State<ChatRoomPage> {
+class _ChatRoomPageState extends State<ChatRoomPage> with ChatJoinMixin {
   late final Future<Timeline> _timelineFuture;
   final GlobalKey<AnimatedListState> _roomListKey =
       GlobalKey<AnimatedListState>();
@@ -67,29 +66,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    registerHandler(
-      select: (EditRoomManager m) => m.knockOrJoinCommand,
-      handler: (context, room, cancel) {
-        if (room != null) {
-          di<ChatManager>().setSelectedRoom(room);
-          if (room.isSpace) {
-            di<ChatManager>().setActiveSpace(room);
-          }
-        }
-      },
-    );
-
-    registerHandler(
-      select: (EditRoomManager m) => m.joinRoomCommand,
-      handler: (context, room, cancel) {
-        if (room != null) {
-          di<ChatManager>().setSelectedRoom(room);
-          if (room.isSpace) {
-            di<ChatManager>().setActiveSpace(room);
-          }
-        }
-      },
-    );
+    registerJoinHandlers(context);
 
     final knockIngOrJoining = watchValue(
       (EditRoomManager m) => m.knockOrJoinCommand.isRunning,
@@ -99,7 +76,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       (EditRoomManager m) => m.joinRoomCommand.isRunning,
     );
 
-    if (knockIngOrJoining || joining) {
+    final joiningDirectChat = watchValue(
+      (CreateRoomManager m) => m.createOrGetDirectChatCommand.isRunning,
+    );
+
+    if (knockIngOrJoining || joining || joiningDirectChat) {
       return Scaffold(
         body: Center(
           child: Column(
@@ -107,34 +88,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
             children: [
               const Progress(),
               const SizedBox(height: kMediumPadding),
-              Text(context.l10n.loadingPleaseWait),
+              Text(context.l10n.joiningRoomPleaseWait),
             ],
-          ),
-        ),
-      );
-    }
-    if (widget.room.isSpace) {
-      return Scaffold(
-        key: chatRoomScaffoldKey,
-        endDrawer: const ChatRoomInfoDrawer(),
-        appBar: ChatRoomTitleBar(room: widget.room),
-        body: const Center(
-          child: Padding(
-            padding: EdgeInsets.all(kBigPadding),
-            child: SizedBox(
-              width: 500,
-              height: 1000,
-              child: YaruBorderContainer(
-                child: Column(
-                  spacing: kMediumPadding,
-                  children: [
-                    SizedBox(height: kBigPadding),
-                    ChatSpaceDiscoverButton(),
-                    Flexible(child: ChatSpacesSearchList()),
-                  ],
-                ),
-              ),
-            ),
           ),
         ),
       );

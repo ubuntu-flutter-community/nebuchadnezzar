@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix_api_lite/generated/model.dart';
 
 import '../../app/view/error_page.dart';
-import '../../chat_room/create_or_edit/edit_room_service.dart';
+import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../common/chat_manager.dart';
 import '../../common/search_manager.dart';
 import '../../common/view/chat_avatar.dart';
@@ -65,20 +64,13 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
 
                   if (joinedRoom != null) {
                     di<ChatManager>().setSelectedRoom(joinedRoom);
-                    return Future.value();
+                    return;
                   }
-
-                  return showFutureLoadingDialog(
-                    context: context,
-                    future: () => di<EditRoomService>().knockOrJoinRoomById(
-                      roomId: roomChunk.roomId,
-                      knock: roomChunk.joinRule == 'knock',
-                    ),
-                  ).then((result) {
-                    if (result.asValue?.value != null) {
-                      di<ChatManager>().setSelectedRoom(result.asValue!.value!);
-                    }
-                  });
+                  di<ChatManager>().setSelectedRoom(null);
+                  di<EditRoomManager>().knockOrJoinCommand.run((
+                    knock: roomChunk.joinRule == 'knock',
+                    roomId: roomChunk.roomId,
+                  ));
                 }
               : null,
           title: Text(snapshot.hasData ? l10n.joinRoom : l10n.search),
@@ -102,7 +94,7 @@ class _ChatRoomSearchDialogState extends State<ChatRoomSearchDialog> {
                     ),
                   ],
                 )
-              : const Center(child: Progress()),
+              : const Progress(),
         );
       },
     );

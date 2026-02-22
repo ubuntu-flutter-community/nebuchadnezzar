@@ -1091,8 +1091,15 @@
   "@blockedUsers": {},
   "blockListDescription": "You can block users who are disturbing you. You won't be able to receive any messages or room invites from the users on your personal block list.",
   "@blockListDescription": {},
-  "blockUsername": "Ignore username",
-  "@blockUsername": {},
+  "blockUsername": "Ignore {username}",
+  "@blockUsername": {
+    "type": "text",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
   "iHaveClickedOnLink": "I have clicked on the link",
   "@iHaveClickedOnLink": {
     "type": "text",
@@ -1114,11 +1121,12 @@
     "placeholders": {}
   },
   "inviteContactToGroupQuestion": "Do you want to invite {contact} to the chat \"{groupName}\"?",
-  "@inviteContactToGroupQuestion": {},
-  "inviteContactToGroup": "Invite contact to {groupName}",
-  "@inviteContactToGroup": {
+  "@inviteContactToGroupQuestion": {
     "type": "text",
     "placeholders": {
+      "contact": {
+        "type": "String"
+      },
       "groupName": {
         "type": "String"
       }
