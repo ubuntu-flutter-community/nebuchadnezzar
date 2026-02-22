@@ -127,8 +127,7 @@ class ChatImage extends StatelessWidget with WatchItMixin {
                 if (timeline != null)
                   Positioned(
                     bottom: kSmallPadding,
-                    right: event.isUserEvent ? null : kSmallPadding,
-                    left: event.isUserEvent ? kSmallPadding : null,
+                    left: kSmallPadding,
                     child: ChatMessageReactions(
                       event: event,
                       timeline: timeline!,

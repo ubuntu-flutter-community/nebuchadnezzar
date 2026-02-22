@@ -8,51 +8,32 @@ import 'package:yaru/yaru.dart';
 
 import '../../../common/chat_manager.dart';
 import '../../../common/view/build_context_x.dart';
+import '../../../common/view/common_widgets.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
+import '../../create_or_edit/create_room_manager.dart';
 import '../../create_or_edit/edit_room_manager.dart';
 import '../../titlebar/side_bar_button.dart';
+import 'chat_join_mixin.dart';
 
-class ChatNoSelectedRoomPage extends StatelessWidget with WatchItMixin {
+class ChatNoSelectedRoomPage extends StatelessWidget
+    with WatchItMixin, ChatJoinMixin {
   const ChatNoSelectedRoomPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    registerHandler(
-      select: (EditRoomManager m) => m.knockOrJoinCommand,
-      handler: (context, room, cancel) {
-        if (room != null) {
-          di<ChatManager>().setSelectedRoom(room);
-          if (room.isSpace) {
-            di<ChatManager>().setActiveSpace(room);
-          }
-        }
-      },
+    registerJoinHandlers(context);
+
+    final joiningDirectChat = watchValue(
+      (CreateRoomManager m) => m.createOrGetDirectChatCommand.isRunning,
     );
 
-    // register handler for knockOrJoinCommand to set the selected room when a room is joined or knocked
-    registerHandler(
-      select: (EditRoomManager m) => m.knockOrJoinCommand,
-      handler: (context, room, cancel) {
-        if (room != null) {
-          di<ChatManager>().setSelectedRoom(room);
-          if (room.isSpace) {
-            di<ChatManager>().setActiveSpace(room);
-          }
-        }
-      },
+    final knockIngOrJoining = watchValue(
+      (EditRoomManager m) => m.knockOrJoinCommand.isRunning,
     );
 
-    registerHandler(
-      select: (EditRoomManager m) => m.joinRoomCommand,
-      handler: (context, room, cancel) {
-        if (room != null) {
-          di<ChatManager>().setSelectedRoom(room);
-          if (room.isSpace) {
-            di<ChatManager>().setActiveSpace(room);
-          }
-        }
-      },
+    final joining = watchValue(
+      (EditRoomManager m) => m.joinRoomCommand.isRunning,
     );
 
     final loadingArchive = watchValue(
@@ -97,59 +78,65 @@ class ChatNoSelectedRoomPage extends StatelessWidget with WatchItMixin {
         padding: const EdgeInsets.only(bottom: kYaruTitleBarHeight),
         child: Center(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: .min,
             spacing: kBigPadding,
-            children: [
-              loadingArchive
-                  ? LiquidCustomProgressIndicator(
-                      backgroundColor:
-                          context.theme.colorScheme.surfaceContainerHighest,
-                      direction: Axis.vertical,
-                      value: 0.5,
-                      shapePath: _buildArchiveIconPath(),
-                    )
-                  : clearingArchive
-                  ? LiquidCustomProgressIndicator(
-                      backgroundColor:
-                          context.theme.colorScheme.surfaceContainerHighest,
-                      direction: Axis.vertical,
-                      value: progress,
-                      shapePath: _buildBoatPath(),
-                    )
-                  : isArchiveActive
-                  ? CustomPaint(
-                      size: const Size(90, 90),
-                      painter: _PathPainter(
-                        path: _buildArchiveIconPath(),
-                        color: context.theme.colorScheme.primary,
-                      ),
-                    )
-                  : Image.asset(
-                      'assets/nebuchadnezzar.png',
-                      width: 90,
-                      height: 90,
-                    ),
-              SizedBox(
-                width: 300,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kMediumPadding,
-                  ),
-                  child: Text(
+            children: joiningDirectChat || knockIngOrJoining || joining
+                ? [const Progress(), Text(context.l10n.joiningRoomPleaseWait)]
+                : [
                     loadingArchive
-                        ? context.l10n.loadingArchivePleaseWait
+                        ? LiquidCustomProgressIndicator(
+                            backgroundColor: context
+                                .theme
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            direction: Axis.vertical,
+                            value: 0.5,
+                            shapePath: _buildArchiveIconPath(),
+                          )
                         : clearingArchive
-                        ? context.l10n.clearingArchivePleaseWait
+                        ? LiquidCustomProgressIndicator(
+                            backgroundColor: context
+                                .theme
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            direction: Axis.vertical,
+                            value: progress,
+                            shapePath: _buildBoatPath(),
+                          )
                         : isArchiveActive
-                        ? isArchiveEmpty
-                              ? context.l10n.archiveIsEmpty
-                              : context.l10n.pleaseSelectAChatRoom
-                        : context.l10n.pleaseSelectAChatRoom,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ],
+                        ? CustomPaint(
+                            size: const Size(90, 90),
+                            painter: _PathPainter(
+                              path: _buildArchiveIconPath(),
+                              color: context.theme.colorScheme.primary,
+                            ),
+                          )
+                        : Image.asset(
+                            'assets/nebuchadnezzar.png',
+                            width: 90,
+                            height: 90,
+                          ),
+                    SizedBox(
+                      width: 300,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kMediumPadding,
+                        ),
+                        child: Text(
+                          loadingArchive
+                              ? context.l10n.loadingArchivePleaseWait
+                              : clearingArchive
+                              ? context.l10n.clearingArchivePleaseWait
+                              : isArchiveActive
+                              ? isArchiveEmpty
+                                    ? context.l10n.archiveIsEmpty
+                                    : context.l10n.pleaseSelectAChatRoom
+                              : context.l10n.pleaseSelectAChatRoom,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
           ),
         ),
       ),

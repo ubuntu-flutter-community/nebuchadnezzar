@@ -1091,8 +1091,15 @@
   "@blockedUsers": {},
   "blockListDescription": "Du kannst Benutzer blockieren, die dich stören. Du wirst keine Nachrichten oder Raumeinladungen von den Benutzern auf deiner persönlichen Blockierliste erhalten.",
   "@blockListDescription": {},
-  "blockUsername": "Benutzername ignorieren",
-  "@blockUsername": {},
+  "blockUsername": "{username} ignorieren",
+  "@blockUsername": {
+    "type": "text",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
   "iHaveClickedOnLink": "Ich habe auf den Link geklickt",
   "@iHaveClickedOnLink": {
     "type": "text",
@@ -1114,12 +1121,13 @@
     "placeholders": {}
   },
   "inviteContactToGroupQuestion": "Möchtest du {contact} in den Chat \"{groupName}\" einladen?",
-  "@inviteContactToGroupQuestion": {},
-  "inviteContactToGroup": "Kontakt zu {groupName} einladen",
-  "@inviteContactToGroup": {
+  "@inviteContactToGroupQuestion": {
     "type": "text",
     "placeholders": {
       "groupName": {
+        "type": "String"
+      },
+      "contact": {
         "type": "String"
       }
     }

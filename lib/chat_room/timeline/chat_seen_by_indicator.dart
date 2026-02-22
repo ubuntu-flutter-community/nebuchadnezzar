@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../common/chat_manager.dart';
-import '../../common/search_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/chat_avatar.dart';
 import '../../common/view/chat_profile_dialog.dart';
@@ -23,6 +22,8 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
         watchStream(
           (ChatManager m) => m.getRoomsReceiptsStream(event),
           initialValue: event.seenByUsers,
+          allowStreamChange: true,
+          preserveState: false,
         ).data ??
         <User>[];
 
@@ -96,15 +97,10 @@ class ChatEventSeenByAvatar extends StatelessWidget {
     message: user.displayName ?? user.id,
     child: InkWell(
       borderRadius: BorderRadius.circular(15),
-      onTap: () async {
-        final profile = await di<SearchManager>().lookupProfile(user.id);
-        if (context.mounted) {
-          await showDialog(
-            context: context,
-            builder: (context) => ChatProfileDialog(userId: profile.userId),
-          );
-        }
-      },
+      onTap: () => showDialog(
+        context: context,
+        builder: (context) => ChatProfileDialog(userId: user.id),
+      ),
       child: ChatAvatar(
         avatarUri: user.avatarUrl,
         fallBackIconSize: 15,

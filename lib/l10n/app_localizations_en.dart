@@ -738,7 +738,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You can block users who are disturbing you. You won\'t be able to receive any messages or room invites from the users on your personal block list.';
 
   @override
-  String get blockUsername => 'Ignore username';
+  String blockUsername(String username) {
+    return 'Ignore $username';
+  }
 
   @override
   String get iHaveClickedOnLink => 'I have clicked on the link';
@@ -753,13 +755,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inviteContact => 'Invite contact';
 
   @override
-  String inviteContactToGroupQuestion(Object contact, Object groupName) {
+  String inviteContactToGroupQuestion(String contact, String groupName) {
     return 'Do you want to invite $contact to the chat \"$groupName\"?';
-  }
-
-  @override
-  String inviteContactToGroup(String groupName) {
-    return 'Invite contact to $groupName';
   }
 
   @override

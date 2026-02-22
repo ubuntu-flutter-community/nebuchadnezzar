@@ -60,11 +60,9 @@ class ChatManager extends SafeChangeNotifier {
           .whereNot((r) => r == null)
           .where((r) => r!.isArchived == archiveActive)
           .sorted(
-            (a, b) => a?.isFavourite == true && b?.isFavourite == false
-                ? -1
-                : a?.isFavourite == true && b?.isFavourite == true
-                ? 0
-                : 1,
+            (a, b) => (a?.isFavourite == true ? 0 : 1).compareTo(
+              b?.isFavourite == true ? 0 : 1,
+            ),
           ),
     ).toList();
   }
@@ -140,15 +138,8 @@ class ChatManager extends SafeChangeNotifier {
   RoomsFilter? _roomsFilter;
   RoomsFilter? get roomsFilter => _roomsFilter;
   void setRoomsFilter(RoomsFilter? value) {
-    if (_roomsFilter == value) {
-      _roomsFilter = null;
-      _selectedRoom = null;
-    } else {
-      _roomsFilter = value;
-    }
-    if (_roomsFilter != null) {
-      _activeSpace = null;
-    }
+    _roomsFilter = value;
+    _activeSpace = null;
     setSelectedRoom(null);
   }
 
@@ -198,36 +189,18 @@ class ChatManager extends SafeChangeNotifier {
       .onRoomState
       .stream
       .where(
-        (e) => e.roomId == room.id && e.state.type == EventTypes.RoomMember,
+        (update) =>
+            update.roomId == room.id &&
+            update.state.type == EventTypes.RoomMember,
       )
-      .map((e) => room.isUnacceptedDirectChat);
+      .asyncMap((e) async {
+        try {
+          await room.requestParticipants([Membership.invite]);
+          await room.postLoad();
+        } on Exception catch (e, st) {
+          printMessageInDebugMode(e, st);
+        }
 
-  Stream<bool> otherUserHasLeftRoom(Room room) => _client.onRoomState.stream
-      .where(
-        (e) =>
-            e.roomId == room.id &&
-            e.state.type == EventTypes.RoomMember &&
-            e.state.content['membership'] == 'leave' &&
-            e.state.senderId != _client.userID,
-      )
-      .map((_) => true);
-
-  Future<void> awaitEncryptionEvent(Room room) async {
-    if (room.encrypted) return;
-    try {
-      await room.client.oneShotSync();
-      await room.postLoad();
-      if (!room.encrypted) {
-        await room.client.onRoomState.stream
-            .where(
-              (e) =>
-                  e.roomId == room.id && e.state.type == EventTypes.Encryption,
-            )
-            .first
-            .timeout(const Duration(seconds: 20));
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
+        return room.isUnacceptedDirectChat;
+      });
 }

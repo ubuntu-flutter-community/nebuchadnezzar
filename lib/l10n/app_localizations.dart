@@ -1357,8 +1357,8 @@ abstract class AppLocalizations {
   /// No description provided for @blockUsername.
   ///
   /// In en, this message translates to:
-  /// **'Ignore username'**
-  String get blockUsername;
+  /// **'Ignore {username}'**
+  String blockUsername(String username);
 
   /// No description provided for @iHaveClickedOnLink.
   ///
@@ -1388,13 +1388,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Do you want to invite {contact} to the chat \"{groupName}\"?'**
-  String inviteContactToGroupQuestion(Object contact, Object groupName);
-
-  /// No description provided for @inviteContactToGroup.
-  ///
-  /// In en, this message translates to:
-  /// **'Invite contact to {groupName}'**
-  String inviteContactToGroup(String groupName);
+  String inviteContactToGroupQuestion(String contact, String groupName);
 
   /// No description provided for @noChatDescriptionYet.
   ///
