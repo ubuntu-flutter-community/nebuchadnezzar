@@ -22,6 +22,8 @@ class ChatEventSeenByIndicator extends StatelessWidget with WatchItMixin {
         watchStream(
           (ChatManager m) => m.getRoomsReceiptsStream(event),
           initialValue: event.seenByUsers,
+          allowStreamChange: true,
+          preserveState: false,
         ).data ??
         <User>[];
 

@@ -53,7 +53,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
           preserveState: false,
           allowStreamChange: true,
         ).data ??
-        false;
+        room.isUnacceptedDirectChat;
 
     final disabled =
         isPastingFromClipboard ||

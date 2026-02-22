@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 
 import '../../../common/chat_manager.dart';
 import '../../../common/logging.dart';
-import '../../../l10n/l10n.dart';
 import '../../create_or_edit/create_room_manager.dart';
 import '../../create_or_edit/edit_room_manager.dart';
 
@@ -18,7 +17,7 @@ mixin ChatJoinMixin {
           );
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(context.l10n.nothingFound)));
+          ).showSnackBar(SnackBar(content: Text(newValue.error.toString())));
           return;
         }
 

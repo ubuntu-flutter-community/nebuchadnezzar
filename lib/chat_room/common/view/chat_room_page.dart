@@ -45,23 +45,14 @@ class _ChatRoomPageState extends State<ChatRoomPage> with ChatJoinMixin {
   void initState() {
     super.initState();
     di<DraftManager>().resetThreadIds();
-    _timelineFuture = di<TimelineManager>()
-        .loadTimeline(
-          widget.room,
-          onNewEvent: () => _roomListKey.currentState?.setState(() {}),
-          onChange: (i) => _roomListKey.currentState?.setState(() {}),
-          onInsert: (i) => _roomListKey.currentState?.insertItem(i),
-          onRemove: (i) => _roomListKey.currentState?.removeItem(
-            i,
-            (_, _) => const ListTile(),
-          ),
-        )
-        .then((timeline) async {
-          if (widget.room.isDirectChat) {
-            await di<ChatManager>().awaitEncryptionEvent(widget.room);
-          }
-          return timeline;
-        });
+    _timelineFuture = di<TimelineManager>().loadTimeline(
+      widget.room,
+      onNewEvent: () => _roomListKey.currentState?.setState(() {}),
+      onChange: (i) => _roomListKey.currentState?.setState(() {}),
+      onInsert: (i) => _roomListKey.currentState?.insertItem(i),
+      onRemove: (i) =>
+          _roomListKey.currentState?.removeItem(i, (_, _) => const ListTile()),
+    );
   }
 
   @override

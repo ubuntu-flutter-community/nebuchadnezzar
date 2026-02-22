@@ -189,36 +189,18 @@ class ChatManager extends SafeChangeNotifier {
       .onRoomState
       .stream
       .where(
-        (e) => e.roomId == room.id && e.state.type == EventTypes.RoomMember,
+        (update) =>
+            update.roomId == room.id &&
+            update.state.type == EventTypes.RoomMember,
       )
-      .map((e) => room.isUnacceptedDirectChat);
+      .asyncMap((e) async {
+        try {
+          await room.requestParticipants([Membership.invite]);
+          await room.postLoad();
+        } on Exception catch (e, st) {
+          printMessageInDebugMode(e, st);
+        }
 
-  Stream<bool> otherUserHasLeftRoom(Room room) => _client.onRoomState.stream
-      .where(
-        (e) =>
-            e.roomId == room.id &&
-            e.state.type == EventTypes.RoomMember &&
-            e.state.content['membership'] == 'leave' &&
-            e.state.senderId != _client.userID,
-      )
-      .map((_) => true);
-
-  Future<void> awaitEncryptionEvent(Room room) async {
-    if (room.encrypted) return;
-    try {
-      await room.client.oneShotSync();
-      await room.postLoad();
-      if (!room.encrypted) {
-        await room.client.onRoomState.stream
-            .where(
-              (e) =>
-                  e.roomId == room.id && e.state.type == EventTypes.Encryption,
-            )
-            .first
-            .timeout(const Duration(seconds: 20));
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
+        return room.isUnacceptedDirectChat;
+      });
 }
