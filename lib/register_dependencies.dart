@@ -10,6 +10,7 @@ import 'package:local_notifier/local_notifier.dart';
 import 'package:matrix/matrix.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:record/record.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -20,6 +21,7 @@ import 'chat_room/create_or_edit/create_room_manager.dart';
 import 'chat_room/create_or_edit/edit_room_manager.dart';
 import 'chat_room/create_or_edit/edit_room_service.dart';
 import 'chat_room/input/draft_manager.dart';
+import 'chat_room/input/record_service.dart';
 import 'chat_room/timeline/timeline_manager.dart';
 import 'common/chat_manager.dart';
 import 'common/local_image_manager.dart';
@@ -123,10 +125,16 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [SettingsService],
     )
+    ..registerLazySingleton<AudioRecorder>(() => AudioRecorder())
+    ..registerLazySingleton<RecordService>(
+      () => RecordService(audioRecorder: di<AudioRecorder>()),
+      dispose: (s) => s.dispose(),
+    )
     ..registerSingletonWithDependencies<DraftManager>(
       () => DraftManager(
         client: di<Client>(),
         localImageService: di<LocalImageService>(),
+        recordService: di<RecordService>(),
       ),
       dispose: (s) => s.dispose(),
       dependsOn: [Client],

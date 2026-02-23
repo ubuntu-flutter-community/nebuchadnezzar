@@ -20,6 +20,10 @@
 sudo apt install libcrypto++-dev libsecret-1-dev libjsoncpp-dev libnotify-dev  libjsoncpp1 libsecret-1-0 librhash0 libwebkit2gtk-4.0-dev libssl-dev libpciaccess-dev
 ```
 
+```
+sudo apt install pulseaudio-utils ffmpeg
+```
+
 #### Run
 
 `flutter run`
@@ -51,4 +55,3 @@ Thank you for your awesome dart sdk!
 ## Why this name?
 
 The name is inspired by the traveling vehicle from the movie Matrix, which uses the name of https://en.wikipedia.org/wiki/Nebuchadnezzar_II the second king of Babylon!
-

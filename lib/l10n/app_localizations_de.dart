@@ -2505,7 +2505,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String appendMediaToQueueDescription(String title) {
-    return '$title is already inside the queue. Do you want to append it to the end of the queue?';
+    return '$title ist schon in der Warteschlange. Möchtest du es wirklich erneut hinzufügen?';
   }
 
   @override
@@ -2739,4 +2739,15 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get archiveIsEmpty =>
       'Es gibt noch keine archivierten Chats. Wenn Sie einen Chat verlassen, finden Sie ihn hier.';
+
+  @override
+  String audioMessageSendFromUser(String user) {
+    return 'Audio-Nachricht von $user';
+  }
+
+  @override
+  String get startRecordingVoiceMessage => 'Sprachnachricht aufnehmen';
+
+  @override
+  String get endRecordingVoiceMessage => 'Sprachaufnahme beenden';
 }

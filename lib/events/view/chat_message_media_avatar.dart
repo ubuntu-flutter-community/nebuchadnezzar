@@ -8,6 +8,8 @@ import '../../common/view/confirm.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
+import '../../player/data/local_media.dart';
+import '../../player/player_manager.dart';
 import '../../player/view/player_control_mixin.dart';
 import '../chat_download_manager.dart';
 
@@ -26,6 +28,27 @@ class ChatMessageMediaAvatar extends StatelessWidget
     final progress = watchValue(
       (ChatDownloadManager m) => m.getDownloadCommand(event).progress,
     );
+
+    final media = watchStream(
+      (PlayerManager p) => p.currentMediaStream,
+      initialValue: di<PlayerManager>().currentMedia,
+      preserveState: false,
+      allowStreamChange: true,
+    ).data;
+
+    final cap = watchValue(
+      (ChatDownloadManager m) => m.getDownloadCommand(event),
+    );
+
+    final isAudioSelected = media is LocalMedia && media.uri == cap?.file?.path;
+
+    final isPlayerPlaying =
+        watchStream(
+          (PlayerManager p) => p.isPlayingStream,
+          initialValue: di<PlayerManager>().isPlaying,
+          preserveState: true,
+        ).data ??
+        false;
 
     final l10n = context.l10n;
     return Material(
@@ -53,7 +76,9 @@ class ChatMessageMediaAvatar extends StatelessWidget
                       MessageTypes.Audio || MessageTypes.Video =>
                         event.attachmentMxcUrl == null
                             ? null
-                            : () => playMatrixMedia(context, event: event),
+                            : () => !isAudioSelected
+                                  ? playMatrixMedia(context, event: event)
+                                  : di<PlayerManager>().playOrPause(),
                       _ => () => showDialog(
                         context: context,
                         builder: (context) => ConfirmationDialog(
@@ -88,7 +113,10 @@ class ChatMessageMediaAvatar extends StatelessWidget
                   backgroundColor: avatarFallbackColor(context.colorScheme),
                   radius: kAvatarDefaultSize / 2,
                   child: switch (event.messageType) {
-                    MessageTypes.Audio => const Icon(YaruIcons.media_play),
+                    MessageTypes.Audio =>
+                      isAudioSelected && isPlayerPlaying
+                          ? const Icon(YaruIcons.media_pause)
+                          : const Icon(YaruIcons.media_play),
                     MessageTypes.Video => const Icon(YaruIcons.video_filled),
                     MessageTypes.File => const Icon(YaruIcons.document_filled),
                     _ => const Icon(YaruIcons.document_filled),

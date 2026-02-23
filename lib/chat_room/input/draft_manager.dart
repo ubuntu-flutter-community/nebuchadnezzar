@@ -16,15 +16,19 @@ import 'package:video_compress/video_compress.dart';
 import '../../common/local_image_service.dart';
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
+import 'record_service.dart';
 
 class DraftManager extends SafeChangeNotifier {
   DraftManager({
     required Client client,
     required LocalImageService localImageService,
+    required RecordService recordService,
   }) : _client = client,
-       _localImageService = localImageService;
+       _localImageService = localImageService,
+       _recordService = recordService;
   final Client _client;
   final LocalImageService _localImageService;
+  final RecordService _recordService;
 
   bool _threadMode = false;
   bool get threadMode => _threadMode;
@@ -99,7 +103,6 @@ class DraftManager extends SafeChangeNotifier {
     final matrixFiles = List<MatrixFile>.from(getFilesDraft(room.id));
     if (matrixFiles.isNotEmpty) {
       for (var matrixFile in matrixFiles) {
-        removeFileFromDraft(roomId: room.id, file: matrixFile);
         final xFile = _matrixFilesToXFile[matrixFile];
         String? eventId;
         MatrixFile? compressedFile;
@@ -127,17 +130,31 @@ class DraftManager extends SafeChangeNotifier {
             thumbnail = null;
           }
 
+          final recording = stopRecordCommand.value;
           eventId = await room.sendFileEvent(
             compressedFile ?? matrixFile,
             inReplyTo: replyEvent,
             editEventId: _editEvents[room.id]?.eventId,
             thumbnail: thumbnail,
-            extraContent: textDraft.isNotEmpty && textDraft != 'null'
-                ? {'body': textDraft}
-                : null,
+            extraContent: {
+              if (textDraft.isNotEmpty && textDraft != 'null')
+                'body': textDraft,
+              if (matrixFile is MatrixAudioFile &&
+                  recording?.path == xFile?.path) ...{
+                'info': {
+                  ...matrixFile.info,
+                  'duration': recording?.duration.inMilliseconds,
+                },
+                'org.matrix.msc3245.voice': {},
+                'org.matrix.msc1767.audio': {
+                  'duration': recording?.duration.inMilliseconds,
+                  'waveform': recording?.waveform,
+                },
+              },
+            },
           );
           if (eventId != null) {
-            _matrixFilesToXFile.remove(matrixFile);
+            removeFileFromDraft(roomId: room.id, file: matrixFile);
             removeCompress(roomId: room.id, file: matrixFile);
           }
         } on Exception catch (e, s) {
@@ -223,16 +240,33 @@ class DraftManager extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  void removeFileFromDraft({required String roomId, required MatrixFile file}) {
+  void removeFileFromDraft({
+    required String roomId,
+    required MatrixFile file,
+    bool cancelRecord = true,
+  }) {
     final files = _filesDrafts[roomId] ?? [];
     if (files.contains(file)) {
       files.remove(file);
       _filesDrafts.update(roomId, (value) => files);
+      final xFile = _matrixFilesToXFile[file];
+      if (cancelRecord &&
+          xFile != null &&
+          xFile.path == stopRecordCommand.value?.path) {
+        cancelRecordCommand.run(roomId);
+      }
       _matrixFilesToXFile.remove(file);
       notifyListeners();
     }
     if (getFilesDraft(roomId).isEmpty) {
       setAttaching(false);
+    }
+  }
+
+  void removeAllFilesFromDraft(String roomId) {
+    final files = _filesDrafts[roomId] ?? [];
+    for (var file in List.from(files, growable: false)) {
+      removeFileFromDraft(roomId: roomId, file: file, cancelRecord: false);
     }
   }
 
@@ -340,6 +374,7 @@ class DraftManager extends SafeChangeNotifier {
         name: fileName,
         mimeType: mime,
       );
+      _matrixFilesToXFile[matrixFile] = xFile;
     }
     return matrixFile;
   }
@@ -502,6 +537,71 @@ class DraftManager extends SafeChangeNotifier {
       });
     }
   }
+
+  bool _isRecording = false;
+  bool get isRecording => _isRecording;
+  void setIsRecording(bool value) {
+    _isRecording = value;
+    notifyListeners();
+  }
+
+  void toggleRecording(String roomId) {
+    if (_isRecording) {
+      stopRecordCommand.run(roomId);
+    } else {
+      startRecordCommand.run(roomId);
+    }
+  }
+
+  late final Command<void, bool?> checkPermissionForRecordingCommand =
+      Command.createAsyncNoParam(() async {
+        try {
+          await _recordService.hasPermission();
+          return true;
+        } on Exception catch (e) {
+          printMessageInDebugMode(e);
+          return false;
+        }
+      }, initialValue: null);
+
+  late final Command<String, void> startRecordCommand =
+      Command.createAsyncNoResult((roomId) async {
+        try {
+          removeAllFilesFromDraft(roomId);
+          await _recordService.startRecording();
+          setIsRecording(true);
+        } on Exception catch (e) {
+          setIsRecording(false);
+          return Future.error(e);
+        }
+      });
+
+  late final Command<String, AudioRecording?> stopRecordCommand =
+      Command.createAsync((roomId) async {
+        final recording = await _recordService.stopRecording();
+        final path = recording?.path;
+        setIsRecording(false);
+        if (path != null) {
+          await addAttachment(
+            roomId,
+            existingFiles: [
+              XFile(
+                path,
+                name: p.basename(path),
+                mimeType: lookupMimeType(path),
+              ),
+            ],
+          );
+        }
+        return recording;
+      }, initialValue: null);
+
+  late final Command<String, void> cancelRecordCommand =
+      Command.createAsyncNoResult((roomId) async {
+        await _recordService.cancelRecording();
+        await stopRecordCommand.runAsync(roomId);
+        setIsRecording(false);
+      });
 }
 
 Set<SimpleFileFormat> get binaryFormats => {

@@ -2718,4 +2718,15 @@ class AppLocalizationsSv extends AppLocalizations {
   @override
   String get archiveIsEmpty =>
       'There are no archived chats yet. When you leave a chat, you can find it here.';
+
+  @override
+  String audioMessageSendFromUser(String user) {
+    return 'Audio message from $user';
+  }
+
+  @override
+  String get startRecordingVoiceMessage => 'Start recording voice message';
+
+  @override
+  String get endRecordingVoiceMessage => 'End recording voice message';
 }

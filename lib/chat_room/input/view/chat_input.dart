@@ -101,6 +101,7 @@ class _ChatInputState extends State<ChatInput> {
 
   @override
   Widget build(BuildContext context) {
+    final isRecording = watchPropertyValue((DraftManager m) => m.isRecording);
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -153,7 +154,7 @@ class _ChatInputState extends State<ChatInput> {
                           room: widget.room,
                           sendController: controller,
                           sendNode: focusNode,
-                          send: send,
+                          send: isRecording ? null : send,
                         ),
               ),
             ],

@@ -8,12 +8,14 @@ import 'package:yaru/yaru.dart';
 
 import '../../../common/chat_manager.dart';
 import '../../../common/view/common_widgets.dart';
+import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../extensions/room_x.dart';
 import '../../../l10n/l10n.dart';
 import '../../create_or_edit/edit_room_service.dart';
 import '../draft_manager.dart';
 import 'chat_input_emoji_picker.dart';
+import 'chat_input_record_voice_message_button.dart';
 
 class ChatInputTextField extends StatelessWidget with WatchItMixin {
   const ChatInputTextField({
@@ -27,7 +29,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
   final Room room;
   final TextEditingController sendController;
   final FocusNode sendNode;
-  final VoidCallback send;
+  final VoidCallback? send;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,24 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
     final isSending = watchValue((DraftManager m) => m.sendCommand.isRunning);
 
     final sendingFile = draftFiles.isNotEmpty && isSending;
+
+    registerHandler(
+      select: (DraftManager m) => m.stopRecordCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasError) {
+          showErrorSnackBar(context, newValue.error.toString());
+        }
+      },
+    );
+
+    registerHandler(
+      select: (DraftManager m) => m.startRecordCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasError) {
+          showErrorSnackBar(context, newValue.error.toString());
+        }
+      },
+    );
 
     final unAcceptedDirectChat =
         watchStream(
@@ -132,6 +152,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              ChatInputRecordVoiceMessageButton(room: room),
               IconButton(
                 tooltip: l10n.send,
                 padding: EdgeInsets.zero,
@@ -142,8 +163,9 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
                     child: Icon(YaruIcons.send_filled),
                   ),
                 ),
-                onPressed: disabled ? null : () => send(),
+                onPressed: send,
               ),
+              const SizedBox(width: kSmallPadding),
             ],
           ),
         ),

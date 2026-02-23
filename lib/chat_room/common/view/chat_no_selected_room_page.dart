@@ -8,10 +8,8 @@ import 'package:yaru/yaru.dart';
 
 import '../../../common/chat_manager.dart';
 import '../../../common/view/build_context_x.dart';
-import '../../../common/view/common_widgets.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../create_or_edit/create_room_manager.dart';
 import '../../create_or_edit/edit_room_manager.dart';
 import '../../titlebar/side_bar_button.dart';
 import 'chat_join_mixin.dart';
@@ -23,18 +21,6 @@ class ChatNoSelectedRoomPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     registerJoinHandlers(context);
-
-    final joiningDirectChat = watchValue(
-      (CreateRoomManager m) => m.createOrGetDirectChatCommand.isRunning,
-    );
-
-    final knockIngOrJoining = watchValue(
-      (EditRoomManager m) => m.knockOrJoinCommand.isRunning,
-    );
-
-    final joining = watchValue(
-      (EditRoomManager m) => m.joinRoomCommand.isRunning,
-    );
 
     final loadingArchive = watchValue(
       (ChatManager m) => m.toggleArchiveCommand.isRunning,
@@ -80,63 +66,57 @@ class ChatNoSelectedRoomPage extends StatelessWidget
           child: Column(
             mainAxisSize: .min,
             spacing: kBigPadding,
-            children: joiningDirectChat || knockIngOrJoining || joining
-                ? [const Progress(), Text(context.l10n.joiningRoomPleaseWait)]
-                : [
-                    loadingArchive
-                        ? LiquidCustomProgressIndicator(
-                            backgroundColor: context
-                                .theme
-                                .colorScheme
-                                .surfaceContainerHighest,
-                            direction: Axis.vertical,
-                            value: 0.5,
-                            shapePath: _buildArchiveIconPath(),
-                          )
-                        : clearingArchive
-                        ? LiquidCustomProgressIndicator(
-                            backgroundColor: context
-                                .theme
-                                .colorScheme
-                                .surfaceContainerHighest,
-                            direction: Axis.vertical,
-                            value: progress,
-                            shapePath: _buildBoatPath(),
-                          )
-                        : isArchiveActive
-                        ? CustomPaint(
-                            size: const Size(90, 90),
-                            painter: _PathPainter(
-                              path: _buildArchiveIconPath(),
-                              color: context.theme.colorScheme.primary,
-                            ),
-                          )
-                        : Image.asset(
-                            'assets/nebuchadnezzar.png',
-                            width: 90,
-                            height: 90,
-                          ),
-                    SizedBox(
-                      width: 300,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: kMediumPadding,
-                        ),
-                        child: Text(
-                          loadingArchive
-                              ? context.l10n.loadingArchivePleaseWait
-                              : clearingArchive
-                              ? context.l10n.clearingArchivePleaseWait
-                              : isArchiveActive
-                              ? isArchiveEmpty
-                                    ? context.l10n.archiveIsEmpty
-                                    : context.l10n.pleaseSelectAChatRoom
-                              : context.l10n.pleaseSelectAChatRoom,
-                          textAlign: TextAlign.center,
-                        ),
+            children: [
+              loadingArchive
+                  ? LiquidCustomProgressIndicator(
+                      backgroundColor:
+                          context.theme.colorScheme.surfaceContainerHighest,
+                      direction: Axis.vertical,
+                      value: 0.5,
+                      shapePath: _buildArchiveIconPath(),
+                    )
+                  : clearingArchive
+                  ? LiquidCustomProgressIndicator(
+                      backgroundColor:
+                          context.theme.colorScheme.surfaceContainerHighest,
+                      direction: Axis.vertical,
+                      value: progress,
+                      shapePath: _buildBoatPath(),
+                    )
+                  : isArchiveActive
+                  ? CustomPaint(
+                      size: const Size(90, 90),
+                      painter: _PathPainter(
+                        path: _buildArchiveIconPath(),
+                        color: context.theme.colorScheme.primary,
                       ),
+                    )
+                  : Image.asset(
+                      'assets/nebuchadnezzar.png',
+                      width: 90,
+                      height: 90,
                     ),
-                  ],
+              SizedBox(
+                width: 300,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kMediumPadding,
+                  ),
+                  child: Text(
+                    loadingArchive
+                        ? context.l10n.loadingArchivePleaseWait
+                        : clearingArchive
+                        ? context.l10n.clearingArchivePleaseWait
+                        : isArchiveActive
+                        ? isArchiveEmpty
+                              ? context.l10n.archiveIsEmpty
+                              : context.l10n.pleaseSelectAChatRoom
+                        : context.l10n.pleaseSelectAChatRoom,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -24,6 +24,7 @@ import 'chat_message_media_avatar.dart';
 import 'chat_message_menu.dart';
 import 'chat_message_reactions.dart';
 import 'chat_message_reply_header.dart';
+import 'chat_message_voice_recording_visualizer.dart';
 import 'chat_text_message.dart';
 import 'localized_display_event_text.dart';
 
@@ -199,53 +200,44 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                         event.messageType,
                                         event.hasThumbnail,
                                       )) {
-                                        // (MessageTypes.Image, _) => ChatImage(
-                                        //   borderRadius: borderRadius,
-                                        //   timeline: timeline,
-                                        //   showLabel: true,
-                                        //   event: event,
-                                        //   onTap: event.isSvgImage
-                                        //       ? null
-                                        //       : () => showDialog(
-                                        //           context: context,
-                                        //           builder: (context) =>
-                                        //               ChatMessageImageFullScreenDialog(
-                                        //                 event: event,
-                                        //               ),
-                                        //         ),
-                                        // ),
-                                        (_, true) => ChatImage(
-                                          showLabel: true,
-                                          timeline: timeline,
-                                          event: event,
-                                          onTap: event.isSvgImage
-                                              ? null
-                                              : () {
-                                                  if (event.isVideo) {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          const PlayerFullView(),
-                                                    );
-                                                    di<PlayerManager>()
-                                                        .updateState(
-                                                          fullMode: true,
-                                                        );
-                                                    playMatrixMedia(
-                                                      context,
-                                                      event: event,
-                                                    );
-                                                  } else {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          ChatMessageImageFullScreenDialog(
-                                                            event: event,
-                                                          ),
-                                                    );
-                                                  }
-                                                },
-                                        ),
+                                        (
+                                          MessageTypes.Image ||
+                                              MessageTypes.Video,
+                                          true,
+                                        ) =>
+                                          ChatImage(
+                                            showLabel: true,
+                                            borderRadius: borderRadius,
+                                            timeline: timeline,
+                                            event: event,
+                                            onTap: event.isSvgImage
+                                                ? null
+                                                : () {
+                                                    if (event.isVideo) {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            const PlayerFullView(),
+                                                      );
+                                                      di<PlayerManager>()
+                                                          .updateState(
+                                                            fullMode: true,
+                                                          );
+                                                      playMatrixMedia(
+                                                        context,
+                                                        event: event,
+                                                      );
+                                                    } else {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            ChatMessageImageFullScreenDialog(
+                                                              event: event,
+                                                            ),
+                                                      );
+                                                    }
+                                                  },
+                                          ),
                                         (MessageTypes.Location, _) => ChatMap(
                                           event: event,
                                           eventPosition: eventPosition,
@@ -273,14 +265,25 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                   event: event,
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    event.fileName ??
-                                                        event
-                                                            .attachmentMimetype,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 3,
-                                                  ),
+                                                  child:
+                                                      event.messageType ==
+                                                              MessageTypes
+                                                                  .Audio &&
+                                                          event.content.tryGet(
+                                                                'org.matrix.msc3245.voice',
+                                                              ) !=
+                                                              null
+                                                      ? ChatMessageVoiceRecordingVisualizer(
+                                                          event: event,
+                                                        )
+                                                      : Text(
+                                                          event.fileName ??
+                                                              event
+                                                                  .attachmentMimetype,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 3,
+                                                        ),
                                                 ),
                                                 IconButton(
                                                   tooltip: l10n.downloadFile,

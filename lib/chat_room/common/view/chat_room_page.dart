@@ -15,8 +15,6 @@ import '../../../common/view/confirm.dart';
 import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../l10n/l10n.dart';
-import '../../create_or_edit/create_room_manager.dart';
-import '../../create_or_edit/edit_room_manager.dart';
 import '../../info_drawer/chat_room_info_drawer.dart';
 import '../../input/draft_manager.dart';
 import '../../input/view/chat_input.dart';
@@ -58,33 +56,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> with ChatJoinMixin {
   @override
   Widget build(BuildContext context) {
     registerJoinHandlers(context);
-
-    final knockIngOrJoining = watchValue(
-      (EditRoomManager m) => m.knockOrJoinCommand.isRunning,
-    );
-
-    final joining = watchValue(
-      (EditRoomManager m) => m.joinRoomCommand.isRunning,
-    );
-
-    final joiningDirectChat = watchValue(
-      (CreateRoomManager m) => m.createOrGetDirectChatCommand.isRunning,
-    );
-
-    if (knockIngOrJoining || joining || joiningDirectChat) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Progress(),
-              const SizedBox(height: kMediumPadding),
-              Text(context.l10n.joiningRoomPleaseWait),
-            ],
-          ),
-        ),
-      );
-    }
 
     final l10n = context.l10n;
 

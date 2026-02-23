@@ -28,10 +28,18 @@ Future<void> chatNotificationHandler(
             ],
           )
           ..onClick = () {
-            di<ChatManager>().setSelectedRoom(event.room);
+            if (event.room.membership == Membership.join) {
+              di<ChatManager>().setSelectedRoom(event.room);
+            } else {
+              di<ChatManager>().setSelectedRoom(null);
+            }
           }
           ..onClickAction = (i) {
-            di<ChatManager>().setSelectedRoom(event.room);
+            if (event.room.membership == Membership.join) {
+              di<ChatManager>().setSelectedRoom(event.room);
+            } else {
+              di<ChatManager>().setSelectedRoom(null);
+            }
             di<WindowManager>().focus();
           };
     await notification.show();
