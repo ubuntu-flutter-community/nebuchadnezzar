@@ -160,6 +160,8 @@ parts:
       - ocl-icd-libopencl1
       - libplacebo338
       - libxv1
+      - libsndio7.0
+      - libdecor-0-0
       - pulseaudio-utils
       - ffmpeg
       - on amd64:
@@ -191,7 +193,14 @@ parts:
       - usr/lib/*/libvidst*.so*
       - usr/lib/*/libzimg*.so*
       - usr/lib/*/libzix*.so*
+      - usr/lib/*/libXv.so.*
+      - usr/lib/*/libSDL2*.so.*
+      - usr/lib/*/libcdio*.so*
+      - usr/lib/*/libjack*.so.*
+      - usr/lib/*/libopenal.so.*
+      - usr/lib/*/libdecor*.so.*
+      - usr/lib/*/libsndio.so.*
       - usr/bin/ffmpeg
       - usr/bin/ffprobe
       - usr/bin/parecord
-
+      - usr/bin/pacat
