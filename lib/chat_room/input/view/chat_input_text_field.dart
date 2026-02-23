@@ -8,6 +8,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../../common/chat_manager.dart';
 import '../../../common/view/common_widgets.dart';
+import '../../../common/view/snackbars.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../extensions/room_x.dart';
 import '../../../l10n/l10n.dart';
@@ -45,6 +46,24 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
     final isSending = watchValue((DraftManager m) => m.sendCommand.isRunning);
 
     final sendingFile = draftFiles.isNotEmpty && isSending;
+
+    registerHandler(
+      select: (DraftManager m) => m.stopRecordCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasError) {
+          showErrorSnackBar(context, newValue.error.toString());
+        }
+      },
+    );
+
+    registerHandler(
+      select: (DraftManager m) => m.startRecordCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasError) {
+          showErrorSnackBar(context, newValue.error.toString());
+        }
+      },
+    );
 
     final unAcceptedDirectChat =
         watchStream(
@@ -132,6 +151,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              ChatInputRecordVoiceMessageButton(disabled: disabled, room: room),
               IconButton(
                 tooltip: l10n.send,
                 padding: EdgeInsets.zero,
@@ -148,6 +168,57 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ChatInputRecordVoiceMessageButton extends StatelessWidget
+    with WatchItMixin {
+  const ChatInputRecordVoiceMessageButton({
+    super.key,
+    required this.disabled,
+    required this.room,
+  });
+
+  final bool disabled;
+  final Room room;
+
+  @override
+  Widget build(BuildContext context) {
+    callOnceAfterThisBuild(
+      (context) => di<DraftManager>().checkPermissionForRecordingCommand.run(),
+    );
+
+    final hasPermission = watchValue(
+      (DraftManager m) => m.checkPermissionForRecordingCommand,
+    );
+
+    final isRecording = watchPropertyValue((DraftManager m) => m.isRecording);
+    return IconButton(
+      tooltip: hasPermission == false
+          ? context.l10n.noPermission
+          : isRecording
+          ? context.l10n.endRecordingVoiceMessage
+          : context.l10n.startRecordingVoiceMessage,
+      padding: EdgeInsets.zero,
+      icon: isRecording
+          ? const Stack(
+              alignment: Alignment.center,
+              children: [
+                Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.red,
+                    valueColor: AlwaysStoppedAnimation(Colors.red),
+                  ),
+                ),
+                Icon(YaruIcons.stop, color: Colors.red),
+              ],
+            )
+          : const Icon(YaruIcons.microphone),
+      onPressed: disabled || hasPermission != true
+          ? null
+          : () => di<DraftManager>().toggleRecording(room.id),
     );
   }
 }

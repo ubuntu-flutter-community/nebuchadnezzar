@@ -6,14 +6,11 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:safe_change_notifier/safe_change_notifier.dart';
-import 'package:xdg_directories/xdg_directories.dart';
 import 'package:path/path.dart' as p;
+import 'package:safe_change_notifier/safe_change_notifier.dart';
 
-import '../app/app_config.dart';
-import '../common/platforms.dart';
 import '../extensions/event_x.dart';
+import '../persistence_utils.dart';
 import 'chat_download_service.dart';
 
 class ChatDownloadManager extends SafeChangeNotifier {
@@ -25,19 +22,13 @@ class ChatDownloadManager extends SafeChangeNotifier {
 
   SetNotifier<Event> activeDownloads = SetNotifier();
   SetNotifier<DownloadCapsule> downloadedEventsInTemp = SetNotifier();
-  Directory? _tempDirectory;
 
   late final Command<Timeline, void> fillRecentDownloadsCommand =
       Command.createAsync((timeline) async {
         final events = timeline.events.where((e) => e.hasAttachment).toList();
-        _tempDirectory ??= (Platforms.isLinux
-            ? configHome
-            : await getTemporaryDirectory());
 
-        if (_tempDirectory == null) throw Exception('No temp dir!');
-        final baseDirPath = p.join(_tempDirectory!.path, AppConfig.appName);
-        for (final event in events) {
-          final filePath = p.join(baseDirPath, event.fileName);
+        for (final event in events.where((e) => e.fileName != null)) {
+          final filePath = await getTempFilePath(event.fileName!);
           if (File(filePath).existsSync() &&
               downloadedEventsInTemp.none(
                 (c) => c.event.fileName == event.fileName,
@@ -80,21 +71,14 @@ class ChatDownloadManager extends SafeChangeNotifier {
   ) => _downloadCommands.putIfAbsent(
     event,
     () => Command.createAsyncWithProgress((_, handle) async {
-      _tempDirectory ??= (Platforms.isLinux
-          ? configHome
-          : await getTemporaryDirectory());
-
-      if (_tempDirectory == null) throw Exception('No temp dir!');
-      final baseDirPath = p.join(_tempDirectory!.path, AppConfig.appName);
-
       File? file;
       MatrixFile? matrixFile;
 
-      if (!Directory(baseDirPath).existsSync()) {
-        Directory(baseDirPath).createSync();
+      if (event.fileName == null) {
+        return null;
       }
 
-      final path = p.join(baseDirPath, event.fileName);
+      final path = await getTempFilePath(event.fileName!);
       if (File(path).existsSync()) {
         file = File(path);
         matrixFile = MatrixFile.fromMimeType(

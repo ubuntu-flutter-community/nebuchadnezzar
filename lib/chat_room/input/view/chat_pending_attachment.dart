@@ -6,9 +6,11 @@ import 'package:yaru/yaru.dart';
 import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../extensions/matrix_file_x.dart';
+import '../../../player/view/player_control_mixin.dart';
 import '../draft_manager.dart';
 
-class ChatPendingAttachment extends StatelessWidget {
+class ChatPendingAttachment extends StatelessWidget
+    with WatchItMixin, PlayerControlMixin {
   const ChatPendingAttachment({
     super.key,
     this.onTap,
@@ -26,12 +28,16 @@ class ChatPendingAttachment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pendingRecording = watchValue(
+      (DraftManager m) => m.stopRecordCommand.select((r) => r?.path),
+    );
+    const borderRadius = BorderRadius.all(kBigBubbleRadius);
     return Padding(
       padding: const EdgeInsets.all(kSmallPadding),
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.all(kBigBubbleRadius),
+            borderRadius: borderRadius,
             child: file.isRegularImage
                 ? Image.memory(
                     file.bytes,
@@ -39,10 +45,19 @@ class ChatPendingAttachment extends StatelessWidget {
                     width: dimension,
                     fit: BoxFit.cover,
                   )
-                : ChatPendingFile(
-                    file: file,
-                    height: dimension,
-                    width: dimension,
+                : InkWell(
+                    hoverColor: context.colorScheme.primary,
+                    borderRadius: borderRadius,
+                    onTap:
+                        pendingRecording != null &&
+                            (file is MatrixAudioFile || file is MatrixVideoFile)
+                        ? () => playAudioRecording(pendingRecording)
+                        : null,
+                    child: ChatPendingFile(
+                      file: file,
+                      height: dimension,
+                      width: dimension,
+                    ),
                   ),
           ),
           if (onTap != null)
@@ -58,6 +73,7 @@ class ChatPendingAttachment extends StatelessWidget {
                 icon: const Icon(YaruIcons.window_close, color: Colors.white),
               ),
             ),
+
           if (file is MatrixImageFile)
             Positioned(
               bottom: kSmallPadding,
@@ -117,7 +133,7 @@ class ChatPendingFile extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     height: height,
     width: width,
-    color: context.colorScheme.outline,
+    color: context.colorScheme.outline.withValues(alpha: 0.9),
     child: Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

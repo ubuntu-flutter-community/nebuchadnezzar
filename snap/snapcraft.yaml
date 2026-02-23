@@ -34,6 +34,7 @@ apps:
       - network
       - network-status
       - audio-playback
+      - audio-record
     slots:
       - mpris
 
@@ -159,6 +160,8 @@ parts:
       - ocl-icd-libopencl1
       - libplacebo338
       - libxv1
+      - pulseaudio-utils
+      - ffmpeg
       - on amd64:
           - libmfx1
     prime:
@@ -188,3 +191,7 @@ parts:
       - usr/lib/*/libvidst*.so*
       - usr/lib/*/libzimg*.so*
       - usr/lib/*/libzix*.so*
+      - usr/bin/ffmpeg
+      - usr/bin/ffprobe
+      - usr/bin/parecord
+

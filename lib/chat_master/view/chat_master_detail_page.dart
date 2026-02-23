@@ -5,8 +5,7 @@ import 'package:matrix/matrix.dart';
 import '../../authentication/authentication_service.dart';
 import '../../authentication/view/chat_login_page.dart';
 import '../../authentication/view/uia_request_handler.dart';
-import '../../chat_room/common/view/chat_no_selected_room_page.dart';
-import '../../chat_room/common/view/chat_room_page.dart';
+import '../../chat_room/common/view/chat_room_loading_page.dart';
 import '../../chat_room/input/draft_manager.dart';
 import '../../common/chat_manager.dart';
 import '../../common/platforms.dart';
@@ -85,11 +84,6 @@ class ChatMasterDetailPage extends StatelessWidget
       handler: chatNotificationHandler,
     );
 
-    final selectedRoom = watchPropertyValue((ChatManager m) => m.selectedRoom);
-    final isArchivedRoom = watchPropertyValue(
-      (ChatManager m) => m.selectedRoom?.isArchived == true,
-    );
-
     return Scaffold(
       key: masterScaffoldKey,
       drawer: !Platforms.isMacOS
@@ -105,15 +99,7 @@ class ChatMasterDetailPage extends StatelessWidget
           ],
           if (context.showSideBar)
             const VerticalDivider(width: 0, thickness: 0),
-          if (selectedRoom == null)
-            const Expanded(child: ChatNoSelectedRoomPage())
-          else
-            Expanded(
-              child: ChatRoomPage(
-                key: ValueKey('${selectedRoom.id} $isArchivedRoom'),
-                room: selectedRoom,
-              ),
-            ),
+          const Expanded(child: ChatRoomLoadingPage()),
         ],
       ),
       bottomNavigationBar: const PlayerView(),

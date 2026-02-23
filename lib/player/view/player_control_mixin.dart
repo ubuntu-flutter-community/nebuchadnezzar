@@ -23,6 +23,11 @@ mixin PlayerControlMixin {
     }
   }
 
+  Future<void> playAudioRecording(String path) async {
+    final media = LocalMedia(path);
+    await di<PlayerManager>().setPlaylist([media]);
+  }
+
   Future<void> playMatrixMedia(
     BuildContext context, {
     required Event event,
@@ -45,7 +50,9 @@ mixin PlayerControlMixin {
             SnackBar(
               content: Text(
                 context.l10n.appendedToQueue(
-                  '${media.artist} - ${media.title}',
+                  media.artist == null
+                      ? media.title
+                      : '${media.artist} - ${media.title}',
                 ),
               ),
             ),
@@ -58,7 +65,9 @@ mixin PlayerControlMixin {
             title: Text(context.l10n.appendMediaToQueueTitle),
             content: Text(
               context.l10n.appendMediaToQueueDescription(
-                '${media.artist} - ${media.title}',
+                media.artist == null
+                    ? media.title
+                    : '${media.artist} - ${media.title}',
               ),
             ),
             onConfirm: () async {
@@ -68,7 +77,9 @@ mixin PlayerControlMixin {
                   SnackBar(
                     content: Text(
                       context.l10n.appendedToQueue(
-                        '${media.artist} - ${media.title}',
+                        media.artist == null
+                            ? media.title
+                            : '${media.artist} - ${media.title}',
                       ),
                     ),
                   ),

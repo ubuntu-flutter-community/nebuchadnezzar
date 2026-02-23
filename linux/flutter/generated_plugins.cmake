@@ -14,6 +14,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   local_notifier
   media_kit_libs_linux
   media_kit_video
+  record_linux
   screen_retriever_linux
   sqlcipher_flutter_libs
   super_native_extensions

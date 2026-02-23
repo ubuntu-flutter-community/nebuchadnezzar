@@ -4761,6 +4761,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There are no archived chats yet. When you leave a chat, you can find it here.'**
   String get archiveIsEmpty;
+
+  /// No description provided for @audioMessageSendFromUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio message from {user}'**
+  String audioMessageSendFromUser(String user);
+
+  /// No description provided for @startRecordingVoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Start recording voice message'**
+  String get startRecordingVoiceMessage;
+
+  /// No description provided for @endRecordingVoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'End recording voice message'**
+  String get endRecordingVoiceMessage;
 }
 
 class _AppLocalizationsDelegate

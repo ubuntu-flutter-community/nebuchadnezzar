@@ -105,6 +105,9 @@
     "loadingArchivePleaseWait",
     "clearingArchivePleaseWait",
     "pleaseSelectAChatRoom",
-    "archiveIsEmpty"
+    "archiveIsEmpty",
+    "audioMessageSendFromUser",
+    "startRecordingVoiceMessage",
+    "endRecordingVoiceMessage"
   ]
 }

@@ -137,15 +137,10 @@ class ChatDownloadsDialog extends StatelessWidget with WatchItMixin {
               selectedColor: context.colorScheme.primary,
               selected: currentMedia?.uri == capsule.file?.path,
               leading: ChatMessageMediaAvatar(event: capsule.event),
-              onTap:
-                  capsule.file != null &&
-                      (capsule.event.isAudio || capsule.event.isVideo)
-                  ? () => di<PlayerManager>().setPlaylist([
-                      LocalMedia(capsule.file!.path),
-                    ])
-                  : null,
-              subtitle: Text(capsule.file?.path ?? ''),
-              title: Text(capsule.event.fileName ?? ''),
+              title: YaruExpandable(
+                header: Text(capsule.event.fileName ?? ''),
+                child: Text(capsule.file?.path ?? ''),
+              ),
             ),
           ),
       ],
