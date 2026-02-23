@@ -24,6 +24,7 @@ import 'chat_message_media_avatar.dart';
 import 'chat_message_menu.dart';
 import 'chat_message_reactions.dart';
 import 'chat_message_reply_header.dart';
+import 'chat_message_voice_recording_visualizer.dart';
 import 'chat_text_message.dart';
 import 'localized_display_event_text.dart';
 
@@ -264,26 +265,25 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                   event: event,
                                                 ),
                                                 Expanded(
-                                                  child: Text(
-                                                    event.messageType ==
-                                                                MessageTypes
-                                                                    .Audio &&
-                                                            event.content.tryGet(
-                                                                  'org.matrix.msc3245.voice',
-                                                                ) !=
-                                                                null
-                                                        ? l10n.audioMessageSendFromUser(
-                                                            event
-                                                                .senderFromMemoryOrFallback
-                                                                .calcDisplayname(),
-                                                          )
-                                                        : event.fileName ??
+                                                  child:
+                                                      event.messageType ==
+                                                              MessageTypes
+                                                                  .Audio &&
+                                                          event.content.tryGet(
+                                                                'org.matrix.msc3245.voice',
+                                                              ) !=
+                                                              null
+                                                      ? ChatMessageVoiceRecordingVisualizer(
+                                                          event: event,
+                                                        )
+                                                      : Text(
+                                                          event.fileName ??
                                                               event
                                                                   .attachmentMimetype,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 3,
-                                                  ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 3,
+                                                        ),
                                                 ),
                                                 IconButton(
                                                   tooltip: l10n.downloadFile,

@@ -100,70 +100,73 @@ class _ChatInputState extends State<ChatInput> {
   }
 
   @override
-  Widget build(BuildContext context) => Stack(
-    clipBehavior: Clip.none,
-    children: [
-      Material(
-        color: Colors.transparent,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ChatAttachmentDraftPanel(roomId: widget.room.id),
-            ChatInputReplyBox(room: widget.room),
-            const Divider(height: 1),
-            Autocomplete<Map<String, String?>>(
-              optionsViewOpenDirection: OptionsViewOpenDirection.up,
-              optionsBuilder: _getSuggestions,
-              textEditingController: _sendController,
-              focusNode: focusNode,
-              displayStringForOption: _insertSuggestion,
-              optionsViewBuilder: (c, onSelected, s) {
-                final suggestions = s.toList();
+  Widget build(BuildContext context) {
+    final isRecording = watchPropertyValue((DraftManager m) => m.isRecording);
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ChatAttachmentDraftPanel(roomId: widget.room.id),
+              ChatInputReplyBox(room: widget.room),
+              const Divider(height: 1),
+              Autocomplete<Map<String, String?>>(
+                optionsViewOpenDirection: OptionsViewOpenDirection.up,
+                optionsBuilder: _getSuggestions,
+                textEditingController: _sendController,
+                focusNode: focusNode,
+                displayStringForOption: _insertSuggestion,
+                optionsViewBuilder: (c, onSelected, s) {
+                  final suggestions = s.toList();
 
-                return Padding(
-                  padding: const EdgeInsets.only(
-                    left: kMediumPadding,
-                    right: kMediumPadding,
-                  ),
-                  child: Material(
-                    elevation: 4,
-                    shadowColor: context.theme.appBarTheme.shadowColor,
-                    borderRadius: BorderRadius.circular(kYaruButtonRadius),
-                    clipBehavior: Clip.hardEdge,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: suggestions.length,
-                      itemBuilder: (context, i) => _suggestionTileBuilder(
-                        context: c,
-                        suggestion: suggestions[i],
-                        onSelected: onSelected,
-                        isHighlighted: i == suggestions.length - 1,
+                  return Padding(
+                    padding: const EdgeInsets.only(
+                      left: kMediumPadding,
+                      right: kMediumPadding,
+                    ),
+                    child: Material(
+                      elevation: 4,
+                      shadowColor: context.theme.appBarTheme.shadowColor,
+                      borderRadius: BorderRadius.circular(kYaruButtonRadius),
+                      clipBehavior: Clip.hardEdge,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: suggestions.length,
+                        itemBuilder: (context, i) => _suggestionTileBuilder(
+                          context: c,
+                          suggestion: suggestions[i],
+                          onSelected: onSelected,
+                          isHighlighted: i == suggestions.length - 1,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-              onSelected: (suggestion) {
-                _insertSuggestionIntoInput(suggestion);
-              },
-              fieldViewBuilder:
-                  (context, controller, focusNode, onFieldSubmitted) =>
-                      ChatInputTextField(
-                        room: widget.room,
-                        sendController: controller,
-                        sendNode: focusNode,
-                        send: send,
-                      ),
-            ),
-          ],
+                  );
+                },
+                onSelected: (suggestion) {
+                  _insertSuggestionIntoInput(suggestion);
+                },
+                fieldViewBuilder:
+                    (context, controller, focusNode, onFieldSubmitted) =>
+                        ChatInputTextField(
+                          room: widget.room,
+                          sendController: controller,
+                          sendNode: focusNode,
+                          send: isRecording ? null : send,
+                        ),
+              ),
+            ],
+          ),
         ),
-      ),
-      Positioned(
-        top: -kTypingAvatarSize - kSmallPadding,
-        child: ChatTypingIndicator(room: widget.room),
-      ),
-    ],
-  );
+        Positioned(
+          top: -kTypingAvatarSize - kSmallPadding,
+          child: ChatTypingIndicator(room: widget.room),
+        ),
+      ],
+    );
+  }
 
   void _insertSuggestionIntoInput(Map<String, String?> suggestion) {
     final newText = _insertSuggestion(suggestion);

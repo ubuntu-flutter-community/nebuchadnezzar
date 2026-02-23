@@ -9,8 +9,8 @@ class RecordService {
     : _audioRecorder = audioRecorder;
 
   final AudioRecorder _audioRecorder;
-  Stopwatch? _stopwatch;
 
+  Stopwatch? _stopwatch;
   List<double> _tempAmplitudeTimeline = [];
   List<int> _tempWaveform = [];
 
@@ -35,7 +35,7 @@ class RecordService {
         _tempAmplitudeTimeline.add(value);
       });
     } else {
-      throw Exception('Micro Permission denied');
+      throw Exception('Microphone permission denied');
     }
   }
 
@@ -46,7 +46,7 @@ class RecordService {
     if (path == null) {
       audioRecording = null;
     } else {
-      const waveCount = 40;
+      const waveCount = AudioRecording.waveCount;
       final step = _tempAmplitudeTimeline.length < waveCount
           ? 1
           : (_tempAmplitudeTimeline.length / waveCount).round();
@@ -79,7 +79,26 @@ class AudioRecording {
     required this.duration,
   });
 
-  final String path;
+  final String? path;
   final List<int> waveform;
   final Duration duration;
+
+  static const waveCount = 40;
+
+  List<int>? get normalizedWaveform {
+    final eventWaveForm = List<int>.from(waveform);
+
+    while (eventWaveForm.length < AudioRecording.waveCount) {
+      for (var i = 0; i < eventWaveForm.length; i = i + 2) {
+        eventWaveForm.insert(i, eventWaveForm[i]);
+      }
+    }
+    var i = 0;
+    final step = (eventWaveForm.length / AudioRecording.waveCount).round();
+    while (eventWaveForm.length > AudioRecording.waveCount) {
+      eventWaveForm.removeAt(i);
+      i = (i + step) % AudioRecording.waveCount;
+    }
+    return eventWaveForm.map((i) => i > 1024 ? 1024 : i).toList();
+  }
 }

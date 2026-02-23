@@ -240,13 +240,19 @@ class DraftManager extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  void removeFileFromDraft({required String roomId, required MatrixFile file}) {
+  void removeFileFromDraft({
+    required String roomId,
+    required MatrixFile file,
+    bool cancelRecord = true,
+  }) {
     final files = _filesDrafts[roomId] ?? [];
     if (files.contains(file)) {
       files.remove(file);
       _filesDrafts.update(roomId, (value) => files);
       final xFile = _matrixFilesToXFile[file];
-      if (xFile != null && xFile.path == stopRecordCommand.value?.path) {
+      if (cancelRecord &&
+          xFile != null &&
+          xFile.path == stopRecordCommand.value?.path) {
         cancelRecordCommand.run(roomId);
       }
       _matrixFilesToXFile.remove(file);
@@ -254,6 +260,13 @@ class DraftManager extends SafeChangeNotifier {
     }
     if (getFilesDraft(roomId).isEmpty) {
       setAttaching(false);
+    }
+  }
+
+  void removeAllFilesFromDraft(String roomId) {
+    final files = _filesDrafts[roomId] ?? [];
+    for (var file in List.from(files, growable: false)) {
+      removeFileFromDraft(roomId: roomId, file: file, cancelRecord: false);
     }
   }
 
@@ -536,7 +549,7 @@ class DraftManager extends SafeChangeNotifier {
     if (_isRecording) {
       stopRecordCommand.run(roomId);
     } else {
-      startRecordCommand.run();
+      startRecordCommand.run(roomId);
     }
   }
 
@@ -551,9 +564,10 @@ class DraftManager extends SafeChangeNotifier {
         }
       }, initialValue: null);
 
-  late final Command<void, void> startRecordCommand =
-      Command.createAsyncNoParamNoResult(() async {
+  late final Command<String, void> startRecordCommand =
+      Command.createAsyncNoResult((roomId) async {
         try {
+          removeAllFilesFromDraft(roomId);
           await _recordService.startRecording();
           setIsRecording(true);
         } on Exception catch (e) {

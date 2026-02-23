@@ -15,6 +15,7 @@ import '../../../l10n/l10n.dart';
 import '../../create_or_edit/edit_room_service.dart';
 import '../draft_manager.dart';
 import 'chat_input_emoji_picker.dart';
+import 'chat_input_record_voice_message_button.dart';
 
 class ChatInputTextField extends StatelessWidget with WatchItMixin {
   const ChatInputTextField({
@@ -28,7 +29,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
   final Room room;
   final TextEditingController sendController;
   final FocusNode sendNode;
-  final VoidCallback send;
+  final VoidCallback? send;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +152,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ChatInputRecordVoiceMessageButton(disabled: disabled, room: room),
+              ChatInputRecordVoiceMessageButton(room: room),
               IconButton(
                 tooltip: l10n.send,
                 padding: EdgeInsets.zero,
@@ -162,63 +163,13 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
                     child: Icon(YaruIcons.send_filled),
                   ),
                 ),
-                onPressed: disabled ? null : () => send(),
+                onPressed: send,
               ),
+              const SizedBox(width: kSmallPadding),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class ChatInputRecordVoiceMessageButton extends StatelessWidget
-    with WatchItMixin {
-  const ChatInputRecordVoiceMessageButton({
-    super.key,
-    required this.disabled,
-    required this.room,
-  });
-
-  final bool disabled;
-  final Room room;
-
-  @override
-  Widget build(BuildContext context) {
-    callOnceAfterThisBuild(
-      (context) => di<DraftManager>().checkPermissionForRecordingCommand.run(),
-    );
-
-    final hasPermission = watchValue(
-      (DraftManager m) => m.checkPermissionForRecordingCommand,
-    );
-
-    final isRecording = watchPropertyValue((DraftManager m) => m.isRecording);
-    return IconButton(
-      tooltip: hasPermission == false
-          ? context.l10n.noPermission
-          : isRecording
-          ? context.l10n.endRecordingVoiceMessage
-          : context.l10n.startRecordingVoiceMessage,
-      padding: EdgeInsets.zero,
-      icon: isRecording
-          ? const Stack(
-              alignment: Alignment.center,
-              children: [
-                Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.red,
-                    valueColor: AlwaysStoppedAnimation(Colors.red),
-                  ),
-                ),
-                Icon(YaruIcons.stop, color: Colors.red),
-              ],
-            )
-          : const Icon(YaruIcons.microphone),
-      onPressed: disabled || hasPermission != true
-          ? null
-          : () => di<DraftManager>().toggleRecording(room.id),
     );
   }
 }

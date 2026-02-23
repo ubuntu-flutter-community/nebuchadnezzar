@@ -7,6 +7,7 @@ import '../../../common/view/build_context_x.dart';
 import '../../../common/view/ui_constants.dart';
 import '../../../extensions/matrix_file_x.dart';
 import '../../../player/view/player_control_mixin.dart';
+import '../../common/view/audio_visualizer.dart';
 import '../draft_manager.dart';
 
 class ChatPendingAttachment extends StatelessWidget
@@ -46,7 +47,9 @@ class ChatPendingAttachment extends StatelessWidget
                     fit: BoxFit.cover,
                   )
                 : InkWell(
-                    hoverColor: context.colorScheme.primary,
+                    hoverColor: context.colorScheme.primary.withValues(
+                      alpha: 0.1,
+                    ),
                     borderRadius: borderRadius,
                     onTap:
                         pendingRecording != null &&
@@ -118,7 +121,7 @@ class ChatPendingAttachmentCompressButton extends StatelessWidget
   }
 }
 
-class ChatPendingFile extends StatelessWidget {
+class ChatPendingFile extends StatelessWidget with WatchItMixin {
   const ChatPendingFile({
     super.key,
     required this.file,
@@ -130,30 +133,45 @@ class ChatPendingFile extends StatelessWidget {
   final double? height, width;
 
   @override
-  Widget build(BuildContext context) => Container(
-    height: height,
-    width: width,
-    color: context.colorScheme.outline.withValues(alpha: 0.9),
-    child: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        spacing: kSmallPadding,
-        children: [
-          Icon(
-            file.isVideo
-                ? YaruIcons.video_filled
-                : file.isAudio
-                ? YaruIcons.media_play
-                : YaruIcons.document_filled,
-            color: Colors.white,
-            size: 100,
+  Widget build(BuildContext context) {
+    final recording = watchValue((DraftManager m) => m.stopRecordCommand);
+    final showAudioVisualizer =
+        recording != null &&
+        (file is MatrixAudioFile || file is MatrixVideoFile);
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        if (showAudioVisualizer)
+          AudioVisualizer(height: height ?? 32, recording: recording),
+        Container(
+          height: height,
+          width: width,
+          color: context.colorScheme.outline.withValues(
+            alpha: showAudioVisualizer ? 0.5 : 0.9,
           ),
-          Padding(
-            padding: const EdgeInsets.all(kMediumPadding),
-            child: Text(file.name),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: kSmallPadding,
+              children: [
+                Icon(
+                  file.isVideo
+                      ? YaruIcons.video_filled
+                      : file.isAudio
+                      ? YaruIcons.media_play
+                      : YaruIcons.document_filled,
+                  color: Colors.white,
+                  size: 100,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(kMediumPadding),
+                  child: Text(file.name),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      ],
+    );
+  }
 }
