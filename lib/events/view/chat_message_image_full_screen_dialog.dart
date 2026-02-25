@@ -41,7 +41,6 @@ class _ChatMessageImageFullScreenDialogState
     _controller = PhotoViewController();
     _future = di<LocalImageManager>().downloadImage(
       event: widget.event,
-      cache: false,
       shallBeThumbnail: false,
     );
   }
@@ -102,13 +101,13 @@ class _ChatMessageImageFullScreenDialogState
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
-            tooltip: l10n.downloadFile,
-            onPressed: () =>
-                di<ChatDownloadManager>().getSaveFileCommand(widget.event).run((
+            onPressed: () => di<ChatDownloadManager>()
+                .getExportFileCommand(widget.event)
+                .run((
                   confirmButtonText: l10n.saveFile,
                   dialogTitle: l10n.saveFile,
                 )),
-            icon: ChatMessageAttachmentIndicator(event: widget.event),
+            icon: ChatMessageExportIndicator(event: widget.event),
           ),
         ],
       ),

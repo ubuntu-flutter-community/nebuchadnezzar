@@ -32,62 +32,69 @@ class ChatPendingAttachment extends StatelessWidget
     final pendingRecording = watchValue(
       (DraftManager m) => m.stopRecordCommand.select((r) => r?.path),
     );
+
+    final sending = watchValue((DraftManager m) => m.sendCommand.isRunning);
+
     const borderRadius = BorderRadius.all(kBigBubbleRadius);
-    return Padding(
-      padding: const EdgeInsets.all(kSmallPadding),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: borderRadius,
-            child: file.isRegularImage
-                ? Image.memory(
-                    file.bytes,
-                    height: dimension,
-                    width: dimension,
-                    fit: BoxFit.cover,
-                  )
-                : InkWell(
-                    hoverColor: context.colorScheme.primary.withValues(
-                      alpha: 0.1,
-                    ),
-                    borderRadius: borderRadius,
-                    onTap:
-                        pendingRecording != null &&
-                            (file is MatrixAudioFile || file is MatrixVideoFile)
-                        ? () => playAudioRecording(pendingRecording)
-                        : null,
-                    child: ChatPendingFile(
-                      file: file,
+    return Opacity(
+      opacity: sending ? 0.5 : 1.0,
+      child: Padding(
+        padding: const EdgeInsets.all(kSmallPadding),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: borderRadius,
+              child: file.isRegularImage
+                  ? Image.memory(
+                      file.bytes,
                       height: dimension,
                       width: dimension,
+                      fit: BoxFit.cover,
+                    )
+                  : InkWell(
+                      hoverColor: context.colorScheme.primary.withValues(
+                        alpha: 0.1,
+                      ),
+                      borderRadius: borderRadius,
+                      onTap:
+                          pendingRecording != null &&
+                              (file is MatrixAudioFile ||
+                                  file is MatrixVideoFile)
+                          ? () => playAudioRecording(pendingRecording)
+                          : null,
+                      child: ChatPendingFile(
+                        file: file,
+                        height: dimension,
+                        width: dimension,
+                      ),
                     ),
+            ),
+            if (onTap != null && !sending)
+              Positioned(
+                right: kSmallPadding,
+                top: kSmallPadding,
+                child: IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.black.withValues(alpha: 0.8),
+                    shape: const CircleBorder(),
                   ),
-          ),
-          if (onTap != null)
-            Positioned(
-              right: kSmallPadding,
-              top: kSmallPadding,
-              child: IconButton(
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.black.withValues(alpha: 0.8),
-                  shape: const CircleBorder(),
+                  onPressed: onTap,
+                  icon: const Icon(YaruIcons.window_close, color: Colors.white),
                 ),
-                onPressed: onTap,
-                icon: const Icon(YaruIcons.window_close, color: Colors.white),
               ),
-            ),
 
-          if (file is MatrixImageFile)
-            Positioned(
-              bottom: kSmallPadding,
-              left: kSmallPadding,
-              child: ChatPendingAttachmentCompressButton(
-                onToggleCompress: onToggleCompress,
-                file: file,
-                roomId: roomId,
+            if (file is MatrixImageFile)
+              Positioned(
+                bottom: kSmallPadding,
+                left: kSmallPadding,
+                child: ChatPendingAttachmentCompressButton(
+                  onToggleCompress: sending ? null : onToggleCompress,
+                  file: file,
+                  roomId: roomId,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

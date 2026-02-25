@@ -3287,5 +3287,15 @@
     }
   },
   "startRecordingVoiceMessage": "Sprachnachricht aufnehmen",
-  "endRecordingVoiceMessage": "Sprachaufnahme beenden"
+  "endRecordingVoiceMessage": "Sprachaufnahme beenden",
+  "exportFileAs": "Datei exportieren als...",
+  "fileExported": "Datei exportiert nach {path}",
+  "@fileExported": {
+    "type": "text",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

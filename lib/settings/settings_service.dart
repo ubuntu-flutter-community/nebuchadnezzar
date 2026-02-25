@@ -6,6 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../common/platforms.dart';
+
 class SettingsService {
   SettingsService({
     required SharedPreferences sharedPreferences,
@@ -109,6 +111,13 @@ class SettingsService {
     await setFavoriteStations(stations);
   }
 
+  String? _downloadsDefaultDir;
+  String? get downloadsDir =>
+      getString(SettingKeys.downloadsDirPath) ?? _downloadsDefaultDir;
+
+  Future<void> init() async =>
+      _downloadsDefaultDir ??= await Platforms.getDownloadsDefaultDir();
+
   Future<void> dispose() async => _propertiesChangedController.close();
 }
 
@@ -119,4 +128,5 @@ class SettingKeys {
   static const String themeModeIndex = 'themeModeIndex';
   static const String shareKeysWith = 'shareKeysWith';
   static const String favoriteStations = 'favoriteStations';
+  static const String downloadsDirPath = 'downloadsDirPath';
 }

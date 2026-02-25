@@ -11,15 +11,12 @@ import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
-import '../../player/player_manager.dart';
 import '../../player/view/player_control_mixin.dart';
-import '../../player/view/player_full_view.dart';
 import '../chat_download_manager.dart';
 import 'chat_event_status_icon.dart';
 import 'chat_image.dart';
 import 'chat_map.dart';
 import 'chat_message_attachment_indicator.dart';
-import 'chat_message_image_full_screen_dialog.dart';
 import 'chat_message_media_avatar.dart';
 import 'chat_message_menu.dart';
 import 'chat_message_reactions.dart';
@@ -28,7 +25,7 @@ import 'chat_message_voice_recording_visualizer.dart';
 import 'chat_text_message.dart';
 import 'localized_display_event_text.dart';
 
-class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
+class ChatMessageBubbleContent extends StatelessWidget {
   const ChatMessageBubbleContent({
     super.key,
     required this.event,
@@ -199,56 +196,40 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                     : switch ((
                                         event.messageType,
                                         event.hasThumbnail,
+                                        event.isSvgImage,
                                       )) {
+                                        (MessageTypes.Image, false, false) =>
+                                          ChatImage(
+                                            showLabel: true,
+                                            borderRadius: borderRadius,
+                                            timeline: timeline,
+                                            event: event,
+                                          ),
                                         (
                                           MessageTypes.Image ||
                                               MessageTypes.Video,
                                           true,
+                                          false,
                                         ) =>
                                           ChatImage(
                                             showLabel: true,
                                             borderRadius: borderRadius,
                                             timeline: timeline,
                                             event: event,
-                                            onTap: event.isSvgImage
-                                                ? null
-                                                : () {
-                                                    if (event.isVideo) {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            const PlayerFullView(),
-                                                      );
-                                                      di<PlayerManager>()
-                                                          .updateState(
-                                                            fullMode: true,
-                                                          );
-                                                      playMatrixMedia(
-                                                        context,
-                                                        event: event,
-                                                      );
-                                                    } else {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            ChatMessageImageFullScreenDialog(
-                                                              event: event,
-                                                            ),
-                                                      );
-                                                    }
-                                                  },
                                           ),
-                                        (MessageTypes.Location, _) => ChatMap(
-                                          event: event,
-                                          eventPosition: eventPosition,
-                                          timeline: timeline,
-                                          onReplyOriginClick:
-                                              onReplyOriginClick,
-                                        ),
+                                        (MessageTypes.Location, _, _) =>
+                                          ChatMap(
+                                            event: event,
+                                            eventPosition: eventPosition,
+                                            timeline: timeline,
+                                            onReplyOriginClick:
+                                                onReplyOriginClick,
+                                          ),
                                         (
                                           MessageTypes.Audio ||
                                               MessageTypes.File ||
                                               MessageTypes.Video,
+                                          _,
                                           _,
                                         ) =>
                                           Padding(
@@ -265,14 +246,7 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                   event: event,
                                                 ),
                                                 Expanded(
-                                                  child:
-                                                      event.messageType ==
-                                                              MessageTypes
-                                                                  .Audio &&
-                                                          event.content.tryGet(
-                                                                'org.matrix.msc3245.voice',
-                                                              ) !=
-                                                              null
+                                                  child: event.isVoice
                                                       ? ChatMessageVoiceRecordingVisualizer(
                                                           event: event,
                                                         )
@@ -289,17 +263,12 @@ class ChatMessageBubbleContent extends StatelessWidget with PlayerControlMixin {
                                                   tooltip: l10n.downloadFile,
                                                   onPressed: () =>
                                                       di<ChatDownloadManager>()
-                                                          .getSaveFileCommand(
+                                                          .getDownloadCommand(
                                                             event,
                                                           )
-                                                          .run((
-                                                            confirmButtonText:
-                                                                l10n.saveFile,
-                                                            dialogTitle:
-                                                                l10n.saveFile,
-                                                          )),
+                                                          .run(),
                                                   icon:
-                                                      ChatMessageAttachmentIndicator(
+                                                      ChatMessageDownloadIndicator(
                                                         event: event,
                                                       ),
                                                 ),

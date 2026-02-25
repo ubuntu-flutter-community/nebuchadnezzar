@@ -3287,5 +3287,15 @@
     }
   },
   "startRecordingVoiceMessage": "Start recording voice message",
-  "endRecordingVoiceMessage": "End recording voice message"
+  "endRecordingVoiceMessage": "End recording voice message",
+  "exportFileAs": "Export file as...",
+  "fileExported": "File exported to {path}",
+  "@fileExported": {
+    "type": "text",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

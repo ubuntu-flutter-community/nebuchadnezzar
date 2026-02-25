@@ -169,8 +169,9 @@ class ChatRoomInfoMediaGrid extends StatelessWidget
                       ChatMessageImageFullScreenDialog(event: event),
                 ),
                 _ =>
-                  () =>
-                      di<ChatDownloadManager>().getSaveFileCommand(event).run((
+                  () => di<ChatDownloadManager>()
+                      .getExportFileCommand(event)
+                      .run((
                         confirmButtonText: l10n.saveFile,
                         dialogTitle: l10n.saveFile,
                       )),

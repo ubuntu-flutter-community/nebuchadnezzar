@@ -11,6 +11,8 @@ extension EventX on Event {
   bool get isFile => messageType == MessageTypes.File;
   bool get isVideo => messageType == MessageTypes.Video;
   bool get isAudio => messageType == MessageTypes.Audio;
+  bool get isVoice =>
+      isAudio && content.tryGet('org.matrix.msc3245.voice') != null;
   bool get isText => messageType == MessageTypes.Text;
   bool get isLocation => messageType == MessageTypes.Location;
   bool get isSticker => messageType == MessageTypes.Sticker;
@@ -37,6 +39,28 @@ extension EventX on Event {
     return null;
   }
 
+  String? get blurHash {
+    if (!{MessageTypes.Image, MessageTypes.Video}.contains(messageType)) {
+      return null;
+    }
+
+    return infoMap.tryGet<String>('xyz.amorgan.blurhash');
+  }
+
+  int? get width {
+    if (!{MessageTypes.Image, MessageTypes.Video}.contains(messageType)) {
+      return null;
+    }
+    return infoMap.tryGet<int>('w');
+  }
+
+  int? get height {
+    if (!{MessageTypes.Image, MessageTypes.Video}.contains(messageType)) {
+      return null;
+    }
+    return infoMap.tryGet<int>('h');
+  }
+
   int? get fileSize {
     if (!{
       MessageTypes.File,
@@ -46,7 +70,7 @@ extension EventX on Event {
     }.contains(messageType)) {
       return null;
     }
-    return content.tryGet<Map<String, dynamic>>('info')?.tryGet<int>('size');
+    return infoMap.tryGet<int>('size');
   }
 
   String? get fileName {

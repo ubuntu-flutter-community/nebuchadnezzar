@@ -1,18 +1,20 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:matrix/matrix.dart';
+import 'package:flutter_blurhash/flutter_blurhash.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/local_image_manager.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/event_x.dart';
+import '../../player/player_manager.dart';
+import '../../player/view/player_control_mixin.dart';
+import '../../player/view/player_full_view.dart';
+import 'chat_message_image_full_screen_dialog.dart';
 import 'chat_message_reactions.dart';
 
-class ChatImage extends StatelessWidget with WatchItMixin {
+class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
   const ChatImage({
     super.key,
     required this.event,
@@ -20,7 +22,6 @@ class ChatImage extends StatelessWidget with WatchItMixin {
     this.height,
     this.fit = BoxFit.cover,
     this.width = imageWidth,
-    this.onTap,
     this.showDescription = true,
     this.onlyImage = false,
     this.showLabel = false,
@@ -33,7 +34,6 @@ class ChatImage extends StatelessWidget with WatchItMixin {
   final double? height;
   final double width;
   final BoxFit fit;
-  final VoidCallback? onTap;
   final bool showDescription;
   final bool onlyImage;
   final bool showLabel;
@@ -45,47 +45,61 @@ class ChatImage extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
+    if (di<LocalImageManager>().getImageFromCache(event.eventId) == null) {
+      callOnceAfterThisBuild(
+        (context) => di<LocalImageManager>()
+            .getImageDownloadCommand(event)
+            .run(
+              DownloadImageCapsule(
+                event: event,
+                shallBeThumbnail: event.hasThumbnail,
+              ),
+            ),
+      );
+    }
+
     final bRadius = borderRadius ?? const BorderRadius.all(kBigBubbleRadius);
 
     final theHeight = dimension ?? height ?? imageHeight;
     final theWidth = dimension ?? width;
-    final maybeImage = watchPropertyValue(
-      (LocalImageManager m) => m.get(event.eventId),
+
+    final maybeImageResults = watchValue(
+      (LocalImageManager m) => m.getImageDownloadCommand(event).results,
     );
+
+    final maybeImage = maybeImageResults.data;
+
+    final hasError = maybeImageResults.hasError;
+
+    final isRunning = maybeImageResults.isRunning;
 
     if (event.status == EventStatus.error) {
       return const Center(child: Icon(YaruIcons.image_missing, size: 45));
-    } else if (event.status != EventStatus.synced) {
-      return SizedBox(
-        height: theHeight,
-        width: theWidth,
-        child: const Center(child: Progress()),
-      );
     }
 
     final image = SizedBox(
       height: theHeight,
       width: theWidth,
-      child: maybeImage != null
-          ? event.isSvgImage
-                ? SvgPicture.memory(
-                    maybeImage,
-                    fit: fit,
-                    height: theHeight,
-                    width: theWidth,
-                  )
-                : Image.memory(
-                    maybeImage,
-                    fit: fit,
-                    height: theHeight,
-                    width: theWidth,
-                  )
-          : ChatImageFuture(
-              event: event,
+      child: isRunning
+          ? _ChatImageLoadingIndicator(blurHash: event.blurHash, fit: fit)
+          : hasError || maybeImage == null
+          ? const Center(child: Icon(YaruIcons.image_missing, size: 45))
+          : Image.memory(
+              maybeImage,
+              fit: fit,
               width: theWidth,
               height: theHeight,
-              fit: fit,
-              getThumbnail: event.hasThumbnail,
+              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                if (wasSynchronouslyLoaded) {
+                  return child;
+                }
+                return AnimatedOpacity(
+                  opacity: frame == null ? 0 : 1,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeOut,
+                  child: child,
+                );
+              },
             ),
     );
 
@@ -97,7 +111,22 @@ class ChatImage extends StatelessWidget with WatchItMixin {
       borderRadius: bRadius,
       child: InkWell(
         borderRadius: bRadius,
-        onTap: onTap,
+        onTap: () {
+          if (event.isVideo) {
+            showDialog(
+              context: context,
+              builder: (context) => const PlayerFullView(),
+            );
+            di<PlayerManager>().updateState(fullMode: true);
+            playMatrixMedia(context, event: event);
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) =>
+                  ChatMessageImageFullScreenDialog(event: event),
+            );
+          }
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -155,68 +184,17 @@ class ChatImage extends StatelessWidget with WatchItMixin {
   }
 }
 
-class ChatImageFuture extends StatefulWidget {
-  const ChatImageFuture({
-    super.key,
-    required this.event,
-    this.height,
-    required this.width,
-    this.fit,
-    required this.getThumbnail,
-  });
+class _ChatImageLoadingIndicator extends StatelessWidget {
+  const _ChatImageLoadingIndicator({required this.blurHash, required this.fit});
 
-  final Event event;
-  final double? height;
-  final double width;
-  final BoxFit? fit;
-  final bool getThumbnail;
+  final String? blurHash;
+  final BoxFit fit;
 
   @override
-  State<ChatImageFuture> createState() => _ChatImageFutureState();
-}
-
-class _ChatImageFutureState extends State<ChatImageFuture> {
-  late final Future<Uint8List?> _future;
-
-  @override
-  void initState() {
-    super.initState();
-    final localImageManager = di<LocalImageManager>();
-    final image = localImageManager.get(widget.event.eventId);
-    _future = image != null
-        ? Future.value(image)
-        : localImageManager.downloadImage(
-            event: widget.event,
-            cache: widget.event.hasThumbnail && widget.getThumbnail,
-          );
+  Widget build(BuildContext context) {
+    if (blurHash == null) {
+      return const Center(child: Progress());
+    }
+    return BlurHash(hash: blurHash!, imageFit: fit);
   }
-
-  @override
-  Widget build(BuildContext context) => FutureBuilder(
-    future: _future,
-    builder: (context, snapshot) => snapshot.hasError
-        ? Icon(
-            YaruIcons.image_missing,
-            size: widget.height == null ? 45 : widget.height! / 2,
-          )
-        : snapshot.hasData
-        ? AnimatedOpacity(
-            opacity: snapshot.hasData ? 1 : 0,
-            duration: const Duration(milliseconds: 300),
-            child: (widget.event.isSvgImage)
-                ? SvgPicture.memory(
-                    snapshot.data!,
-                    fit: widget.fit ?? BoxFit.contain,
-                    height: widget.height,
-                    width: widget.width,
-                  )
-                : Image.memory(
-                    snapshot.data!,
-                    fit: widget.fit,
-                    height: widget.height,
-                    width: widget.width,
-                  ),
-          )
-        : const Center(child: Progress()),
-  );
 }

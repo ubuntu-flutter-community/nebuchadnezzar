@@ -2729,4 +2729,12 @@ class AppLocalizationsSv extends AppLocalizations {
 
   @override
   String get endRecordingVoiceMessage => 'End recording voice message';
+
+  @override
+  String get exportFileAs => 'Export file as...';
+
+  @override
+  String fileExported(String path) {
+    return 'File exported to $path';
+  }
 }

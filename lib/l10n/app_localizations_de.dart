@@ -2750,4 +2750,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get endRecordingVoiceMessage => 'Sprachaufnahme beenden';
+
+  @override
+  String get exportFileAs => 'Datei exportieren als...';
+
+  @override
+  String fileExported(String path) {
+    return 'Datei exportiert nach $path';
+  }
 }

@@ -24,6 +24,7 @@ import 'chat_room/input/draft_manager.dart';
 import 'chat_room/input/record_service.dart';
 import 'chat_room/timeline/timeline_manager.dart';
 import 'common/chat_manager.dart';
+import 'common/external_path_service.dart';
 import 'common/local_image_manager.dart';
 import 'common/local_image_service.dart';
 import 'common/platforms.dart';
@@ -32,7 +33,7 @@ import 'common/remote_image_service.dart';
 import 'common/search_manager.dart';
 import 'encryption/encryption_manager.dart';
 import 'events/chat_download_manager.dart';
-import 'events/chat_download_service.dart';
+import 'events/chat_export_service.dart';
 import 'extensions/client_x.dart';
 import 'online_art/online_art_service.dart';
 import 'player/player_manager.dart';
@@ -73,11 +74,15 @@ void registerDependencies() {
     ..registerLazySingleton<FlutterSecureStorage>(
       () => const FlutterSecureStorage(aOptions: AndroidOptions()),
     )
-    ..registerSingletonWithDependencies<SettingsService>(
-      () => SettingsService(
-        sharedPreferences: di<SharedPreferences>(),
-        secureStorage: di<FlutterSecureStorage>(),
-      ),
+    ..registerSingletonAsync<SettingsService>(
+      () async {
+        final settingsService = SettingsService(
+          sharedPreferences: di<SharedPreferences>(),
+          secureStorage: di<FlutterSecureStorage>(),
+        );
+        await settingsService.init();
+        return settingsService;
+      },
       dispose: (s) => s.dispose(),
       dependsOn: [SharedPreferences],
     )
@@ -109,7 +114,6 @@ void registerDependencies() {
     ..registerSingletonWithDependencies<LocalImageService>(
       () => LocalImageService(client: di<Client>()),
       dependsOn: [Client],
-      dispose: (s) => s.dispose(),
     )
     ..registerSingletonWithDependencies<ChatManager>(
       () => ChatManager(client: di<Client>()),
@@ -139,17 +143,25 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
-    ..registerSingletonWithDependencies<ChatDownloadService>(
-      () => ChatDownloadService(
+    ..registerSingletonWithDependencies<ChatExportService>(
+      () => ChatExportService(
         client: di<Client>(),
         preferences: di<SharedPreferences>(),
+        externalPathService: di<ExternalPathService>(),
       ),
       dependsOn: [Client, SharedPreferences],
     )
+    ..registerLazySingleton<ExternalPathService>(
+      () => const ExternalPathService(),
+    )
     ..registerSingletonWithDependencies<ChatDownloadManager>(
-      () => ChatDownloadManager(service: di<ChatDownloadService>()),
+      () => ChatDownloadManager(
+        service: di<ChatExportService>(),
+        externalPathService: di<ExternalPathService>(),
+        settingsService: di<SettingsService>(),
+      ),
       dispose: (s) => s.dispose(),
-      dependsOn: [ChatDownloadService],
+      dependsOn: [ChatExportService, SettingsService],
     )
     ..registerSingletonWithDependencies<LocalImageManager>(
       () => LocalImageManager(service: di<LocalImageService>()),

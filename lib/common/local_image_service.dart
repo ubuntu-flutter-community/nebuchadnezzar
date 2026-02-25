@@ -7,28 +7,19 @@ class LocalImageService {
   LocalImageService({required Client client}) : _client = client;
 
   final Client _client;
-
-  final _propertiesChangedController = StreamController<bool>.broadcast();
-  Stream<bool> get propertiesChanged => _propertiesChangedController.stream;
-
   final _store = <String, Uint8List?>{};
   int get storeLength => _store.length;
 
   Future<Uint8List?> downloadImage({
     required Event event,
-    required bool cache,
     required bool shallBeThumbnail,
   }) async {
     final bytes = (await event.downloadAndDecryptAttachment(
       getThumbnail: shallBeThumbnail && event.hasThumbnail,
     )).bytes;
 
-    final cover = (event.hasThumbnail && cache)
-        ? put(id: event.eventId, data: bytes)
-        : bytes;
-    if (cover != null) {
-      _propertiesChangedController.add(true);
-    }
+    final cover = put(id: event.eventId, data: bytes);
+
     return cover;
   }
 
@@ -41,7 +32,5 @@ class LocalImageService {
       ? _store.update(id, (value) => data)
       : _store.putIfAbsent(id, () => data);
 
-  Uint8List? get(String? id) => id == null ? null : _store[id];
-
-  Future<void> dispose() async => _propertiesChangedController.close();
+  Uint8List? getImageFromCache(String? id) => id == null ? null : _store[id];
 }
