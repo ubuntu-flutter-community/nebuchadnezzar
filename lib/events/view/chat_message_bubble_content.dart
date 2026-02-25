@@ -47,7 +47,6 @@ class ChatMessageBubbleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final textTheme = context.textTheme;
     final messageStyle = textTheme.bodyMedium;
     final displayEvent = event.getDisplayEvent(timeline);
@@ -259,18 +258,8 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                                           maxLines: 3,
                                                         ),
                                                 ),
-                                                IconButton(
-                                                  tooltip: l10n.downloadFile,
-                                                  onPressed: () =>
-                                                      di<ChatDownloadManager>()
-                                                          .getDownloadCommand(
-                                                            event,
-                                                          )
-                                                          .run(),
-                                                  icon:
-                                                      ChatMessageDownloadIndicator(
-                                                        event: event,
-                                                      ),
+                                                ChatMessageDownloadIndicator(
+                                                  event: event,
                                                 ),
                                                 if (event.messageType ==
                                                         MessageTypes.Audio ||

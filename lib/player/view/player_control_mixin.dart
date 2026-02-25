@@ -33,8 +33,9 @@ mixin PlayerControlMixin {
     required Event event,
     bool newPlaylist = true,
   }) async {
-    final result = await di<ChatDownloadManager>().globalDownloadCommand
-        .runAsync(event);
+    final result = await di<ChatDownloadManager>()
+        .getDownloadCommand(event)
+        .runAsync();
 
     final file = result?.file;
 

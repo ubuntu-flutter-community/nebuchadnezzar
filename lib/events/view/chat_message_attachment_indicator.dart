@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/view/build_context_x.dart';
@@ -49,20 +49,30 @@ class ChatMessageDownloadIndicator extends StatelessWidget with WatchItMixin {
 
   @override
   Widget build(BuildContext context) {
+    callOnceAfterThisBuild(
+      (_) => di<ChatDownloadManager>()
+          .getDownloadCommand(event, downloadIfNotExists: false)
+          .run(),
+    );
+
     final downloadCommand = watchValue(
       (ChatDownloadManager m) => m.getDownloadCommand(event),
     );
 
     final path = downloadCommand?.file?.path;
 
-    return path != null
-        ? Tooltip(
-            message: path,
-            child: Icon(
-              YaruIcons.download_filled,
-              color: context.colorScheme.primary,
-            ),
-          )
-        : Icon(YaruIcons.download, color: color);
+    return IconButton(
+      tooltip: path ?? context.l10n.downloadFile,
+      onPressed: () {
+        if (path == null) {
+          di<ChatDownloadManager>().getDownloadCommand(event).run();
+        } else {
+          di<ChatDownloadManager>().openParentDirectoryCommand.run(path);
+        }
+      },
+      icon: path != null
+          ? Icon(YaruIcons.download_filled, color: context.colorScheme.primary)
+          : Icon(YaruIcons.download, color: color),
+    );
   }
 }

@@ -1335,6 +1335,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  open_folder:
+    dependency: "direct main"
+    description:
+      name: open_folder
+      sha256: "87049cdee51dc20c3267a5eac113792b2c41a4d4713ce128cce6bac6ac6314a6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   opus_caf_converter_dart:
     dependency: "direct main"
     description:

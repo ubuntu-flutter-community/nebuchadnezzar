@@ -9,7 +9,6 @@ import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
-import '../../events/chat_download_manager.dart';
 import '../../events/view/chat_event_tile.dart';
 import '../../extensions/date_time_x.dart';
 import '../../extensions/event_x.dart';
@@ -44,13 +43,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      di<TimelineManager>()
-          .postTimelineLoad(widget.timeline)
-          .then(
-            (_) => di<ChatDownloadManager>().fillRecentDownloadsCommand.run(
-              widget.timeline,
-            ),
-          );
+      di<TimelineManager>().postTimelineLoad(widget.timeline);
     });
   }
 
