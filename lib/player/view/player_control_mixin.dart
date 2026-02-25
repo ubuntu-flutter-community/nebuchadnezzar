@@ -35,7 +35,7 @@ mixin PlayerControlMixin {
   }) async {
     final result = await di<ChatDownloadManager>()
         .getDownloadCommand(event)
-        .runAsync();
+        .runAsync(true);
 
     final file = result?.file;
 

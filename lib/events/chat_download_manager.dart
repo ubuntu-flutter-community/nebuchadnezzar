@@ -56,34 +56,32 @@ class ChatDownloadManager extends SafeChangeNotifier {
         return _settingsService.downloadsDir;
       }, initialValue: _settingsService.downloadsDir);
 
-  final _downloadCommands = <Event, Command<void, DownloadCapsule?>>{};
-  Command<void, DownloadCapsule?> getDownloadCommand(
-    Event event, {
-    bool downloadIfNotExists = true,
-  }) => _downloadCommands.putIfAbsent(
+  final _downloadCommands = <Event, Command<bool, DownloadCapsule?>>{};
+  Command<bool, DownloadCapsule?> getDownloadCommand(
+    Event event,
+  ) => _downloadCommands.putIfAbsent(
     event,
-    () => Command.createAsyncWithProgress((_, handle) async {
-      File? file;
-      MatrixFile? matrixFile;
-
+    () => Command.createAsyncWithProgress((doDownload, handle) async {
       if (event.fileName == null) {
         return null;
       }
-
-      activeDownloads.add(event);
 
       final path = await Platforms.getDownloadFilePath(
         event.fileName!,
         subDir: SubDir.fromEvent(event),
       );
-      if (File(path).existsSync()) {
-        file = File(path);
+
+      var file = File(path);
+      MatrixFile? matrixFile;
+
+      if (file.existsSync()) {
         matrixFile = MatrixFile.fromMimeType(
           name: p.basename(file.path),
-          bytes: file.readAsBytesSync(),
+          bytes: await file.readAsBytes(),
           mimeType: lookupMimeType(file.path),
         );
-      } else if (downloadIfNotExists) {
+      } else if (doDownload) {
+        activeDownloads.add(event);
         matrixFile = await event.downloadAndDecryptAttachment(
           onDownloadProgress: (v) {
             final progress = event.fileSize != null && event.fileSize! > 0
@@ -93,29 +91,28 @@ class ChatDownloadManager extends SafeChangeNotifier {
           },
         );
 
-        file = File(path)..writeAsBytesSync(matrixFile.bytes);
+        await file.writeAsBytes(matrixFile.bytes);
 
-        if (Platform.isIOS &&
-            matrixFile.mimeType.toLowerCase() == 'audio/ogg') {
-          Logs().v('Convert ogg audio file for iOS...');
-          final convertedFile = File('${file.path}.caf');
-          if (await convertedFile.exists() == false) {
-            OpusCaf().convertOpusToCaf(file.path, convertedFile.path);
-          }
-          file = convertedFile;
-        }
+        activeDownloads.remove(event);
       }
 
-      final downloadCapsule = DownloadCapsule(
-        event: event,
-        file: file,
-        matrixFile: matrixFile,
-      );
+      if (Platform.isIOS && matrixFile?.mimeType.toLowerCase() == 'audio/ogg') {
+        final convertedFile = File('${file.path}.caf');
+        if (await convertedFile.exists() == false) {
+          OpusCaf().convertOpusToCaf(file.path, convertedFile.path);
+        }
+        file = convertedFile;
+      }
 
-      recentDownloads[event] = downloadCapsule;
-      activeDownloads.remove(event);
+      if (file.existsSync()) {
+        return recentDownloads.putIfAbsent(
+          event,
+          () =>
+              DownloadCapsule(event: event, file: file, matrixFile: matrixFile),
+        );
+      }
 
-      return downloadCapsule;
+      return null;
     }, initialValue: null),
   );
 
