@@ -26,7 +26,6 @@ import 'chat_room/timeline/timeline_manager.dart';
 import 'common/chat_manager.dart';
 import 'common/external_path_service.dart';
 import 'common/local_image_manager.dart';
-import 'common/local_image_service.dart';
 import 'common/platforms.dart';
 import 'common/remote_image_manager.dart';
 import 'common/remote_image_service.dart';
@@ -111,10 +110,6 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
-    ..registerSingletonWithDependencies<LocalImageService>(
-      () => LocalImageService(client: di<Client>()),
-      dependsOn: [Client],
-    )
     ..registerSingletonWithDependencies<ChatManager>(
       () => ChatManager(client: di<Client>()),
       dispose: (s) => s.dispose(),
@@ -137,7 +132,6 @@ void registerDependencies() {
     ..registerSingletonWithDependencies<DraftManager>(
       () => DraftManager(
         client: di<Client>(),
-        localImageService: di<LocalImageService>(),
         recordService: di<RecordService>(),
       ),
       dispose: (s) => s.dispose(),
@@ -163,11 +157,7 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [ChatExportService, SettingsService],
     )
-    ..registerSingletonWithDependencies<LocalImageManager>(
-      () => LocalImageManager(service: di<LocalImageService>()),
-      dispose: (s) => s.dispose(),
-      dependsOn: [LocalImageService],
-    )
+    ..registerLazySingleton<LocalImageManager>(() => LocalImageManager())
     ..registerSingletonWithDependencies<RemoteImageService>(
       () => RemoteImageService(client: di<Client>()),
       dispose: (s) => s.dispose(),

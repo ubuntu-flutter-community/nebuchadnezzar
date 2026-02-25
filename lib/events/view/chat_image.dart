@@ -67,40 +67,37 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       (LocalImageManager m) => m.getImageDownloadCommand(event).results,
     );
 
-    final maybeImage = maybeImageResults.data;
-
-    final hasError = maybeImageResults.hasError;
-
-    final isRunning = maybeImageResults.isRunning;
-
     if (event.status == EventStatus.error) {
-      return const Center(child: Icon(YaruIcons.image_missing, size: 45));
+      return const _ErrorImage();
     }
 
     final image = SizedBox(
       height: theHeight,
       width: theWidth,
-      child: isRunning
-          ? _ChatImageLoadingIndicator(blurHash: event.blurHash, fit: fit)
-          : hasError || maybeImage == null
-          ? const Center(child: Icon(YaruIcons.image_missing, size: 45))
-          : Image.memory(
-              maybeImage,
-              fit: fit,
-              width: theWidth,
-              height: theHeight,
-              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                if (wasSynchronouslyLoaded) {
-                  return child;
-                }
-                return AnimatedOpacity(
-                  opacity: frame == null ? 0 : 1,
-                  duration: const Duration(seconds: 1),
-                  curve: Curves.easeOut,
-                  child: child,
-                );
-              },
-            ),
+      child: maybeImageResults.toWidget(
+        onError: (error, lastResult, param) => const _ErrorImage(),
+        whileRunning: (lastResult, param) =>
+            _ChatImageLoadingIndicator(blurHash: event.blurHash, fit: fit),
+        onData: (result, param) => result == null
+            ? const _ErrorImage()
+            : Image.memory(
+                result,
+                fit: fit,
+                width: theWidth,
+                height: theHeight,
+                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                  if (wasSynchronouslyLoaded) {
+                    return child;
+                  }
+                  return AnimatedOpacity(
+                    opacity: frame == null ? 0 : 1,
+                    duration: const Duration(seconds: 1),
+                    curve: Curves.easeOut,
+                    child: child,
+                  );
+                },
+              ),
+      ),
     );
 
     if (onlyImage) {
@@ -113,12 +110,12 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
         borderRadius: bRadius,
         onTap: () {
           if (event.isVideo) {
+            playMatrixMedia(context, event: event);
             showDialog(
               context: context,
               builder: (context) => const PlayerFullView(),
             );
             di<PlayerManager>().updateState(fullMode: true);
-            playMatrixMedia(context, event: event);
           } else {
             showDialog(
               context: context,
@@ -128,7 +125,7 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
           }
         },
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
@@ -136,7 +133,15 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
               children: [
                 image,
                 if (event.isVideo)
-                  const Icon(YaruIcons.video, size: 55, color: Colors.white70),
+                  const CircleAvatar(
+                    radius: 35,
+                    backgroundColor: Colors.black45,
+                    child: Icon(
+                      YaruIcons.media_play,
+                      size: 55,
+                      color: Colors.white70,
+                    ),
+                  ),
                 if (showLabel && !event.isUserEvent)
                   Positioned(
                     top: kSmallPadding,
@@ -184,6 +189,14 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
   }
 }
 
+class _ErrorImage extends StatelessWidget {
+  const _ErrorImage();
+
+  @override
+  Widget build(BuildContext context) =>
+      const Center(child: Icon(YaruIcons.image_missing, size: 45));
+}
+
 class _ChatImageLoadingIndicator extends StatelessWidget {
   const _ChatImageLoadingIndicator({required this.blurHash, required this.fit});
 
@@ -191,10 +204,15 @@ class _ChatImageLoadingIndicator extends StatelessWidget {
   final BoxFit fit;
 
   @override
-  Widget build(BuildContext context) {
-    if (blurHash == null) {
-      return const Center(child: Progress());
-    }
-    return BlurHash(hash: blurHash!, imageFit: fit);
-  }
+  Widget build(BuildContext context) => SizedBox(
+    height: ChatImage.imageHeight,
+    width: ChatImage.imageWidth,
+    child: blurHash != null
+        ? BlurHash(
+            hash: blurHash!,
+            imageFit: fit,
+            errorBuilder: (context, error, stackTrace) => const _ErrorImage(),
+          )
+        : const Center(child: Progress()),
+  );
 }

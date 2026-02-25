@@ -13,21 +13,15 @@ import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 import 'package:video_compress/video_compress.dart';
 
-import '../../common/local_image_service.dart';
 import '../../common/logging.dart';
 import '../../common/platforms.dart';
 import 'record_service.dart';
 
 class DraftManager extends SafeChangeNotifier {
-  DraftManager({
-    required Client client,
-    required LocalImageService localImageService,
-    required RecordService recordService,
-  }) : _client = client,
-       _localImageService = localImageService,
-       _recordService = recordService;
+  DraftManager({required Client client, required RecordService recordService})
+    : _client = client,
+      _recordService = recordService;
   final Client _client;
-  final LocalImageService _localImageService;
   final RecordService _recordService;
 
   bool _threadMode = false;
@@ -234,7 +228,6 @@ class DraftManager extends SafeChangeNotifier {
     final files = _filesDrafts[roomId] ?? [];
     if (!files.contains(file)) {
       files.add(file);
-      _localImageService.put(id: file.name, data: file.bytes);
       _filesDrafts.update(roomId, (value) => files, ifAbsent: () => files);
     }
     notifyListeners();
