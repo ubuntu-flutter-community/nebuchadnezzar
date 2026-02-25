@@ -144,7 +144,7 @@ class ChatProfile extends StatelessWidget with WatchItMixin {
                       );
                     },
                     label: Text(
-                      l10n.blockUsername(profile.displayName ?? profile.userId),
+                      l10n.block,
                       style: theme.textTheme.labelLarge?.copyWith(
                         color: theme.colorScheme.error,
                       ),

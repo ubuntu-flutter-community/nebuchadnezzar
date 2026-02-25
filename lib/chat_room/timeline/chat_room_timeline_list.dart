@@ -8,9 +8,7 @@ import 'package:yaru/yaru.dart';
 import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
-import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
-import '../../events/chat_download_manager.dart';
 import '../../events/view/chat_event_tile.dart';
 import '../../extensions/date_time_x.dart';
 import '../../extensions/event_x.dart';
@@ -45,13 +43,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      di<TimelineManager>()
-          .postTimelineLoad(widget.timeline)
-          .then(
-            (_) => di<ChatDownloadManager>().fillRecentDownloadsCommand.run(
-              widget.timeline,
-            ),
-          );
+      di<TimelineManager>().postTimelineLoad(widget.timeline);
     });
   }
 
@@ -86,6 +78,14 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
     );
 
     final canRequestHistory = widget.timeline.canRequestHistory;
+
+    final fabBgColor = theme.colorScheme.isDark
+        ? theme.colorScheme.scrim
+        : theme.colorScheme.surface;
+    final fapFgColor = contrastColor(fabBgColor);
+    final circleBorder = CircleBorder(
+      side: BorderSide(color: fapFgColor.withAlpha(50)),
+    );
 
     return Stack(
       children: [
@@ -181,13 +181,14 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               child: FloatingActionButton.small(
-                backgroundColor: getMonochromeBg(theme: theme, darkFactor: 5),
+                shape: circleBorder,
+                backgroundColor: fabBgColor,
                 onPressed: () => showDialog(
                   context: context,
                   builder: (context) =>
                       ChatRoomPinnedEventsDialog(timeline: widget.timeline),
                 ),
-                child: Icon(YaruIcons.pin, color: theme.colorScheme.onSurface),
+                child: Icon(YaruIcons.pin, color: fapFgColor),
               ),
             ),
           ),
@@ -198,7 +199,8 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             child: FloatingActionButton.small(
               heroTag: 'historyRequestButtonTag',
               tooltip: context.l10n.loadMore,
-              backgroundColor: theme.colorScheme.surface,
+              backgroundColor: fabBgColor,
+              shape: circleBorder,
               onPressed: isRequestingHistory
                   ? null
                   : () => di<TimelineManager>()
@@ -213,7 +215,7 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
                       dimension: 18,
                       child: Progress(strokeWidth: 2),
                     )
-                  : Icon(YaruIcons.history, color: theme.colorScheme.onSurface),
+                  : Icon(YaruIcons.history, color: fapFgColor),
             ),
           ),
         if (_showScrollButton)
@@ -221,11 +223,9 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             right: kBigPadding,
             bottom: kBigPadding,
             child: FloatingActionButton.small(
-              backgroundColor: getMonochromeBg(theme: theme, darkFactor: 5),
-              child: Icon(
-                YaruIcons.go_down,
-                color: theme.colorScheme.onSurface,
-              ),
+              backgroundColor: fabBgColor,
+              shape: circleBorder,
+              child: Icon(YaruIcons.go_down, color: fapFgColor),
               onPressed: () => _maybeScrollTo(
                 0,
                 duration: const Duration(milliseconds: 100),

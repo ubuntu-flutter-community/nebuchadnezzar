@@ -23,39 +23,12 @@ class ChatTotalFileDownloadsIndicator extends StatelessWidget
     );
 
     final recentDownloads = watchValue(
-      (ChatDownloadManager m) => m.downloadedEventsInTemp,
-    );
-
-    final fillingRecentDownloads = watchValue(
-      (ChatDownloadManager m) => m.fillRecentDownloadsCommand.isRunning,
-    );
-
-    if (fillingRecentDownloads) {
-      return const SizedBox(
-        width: 16,
-        height: 16,
-        child: Progress(strokeWidth: 2),
-      );
-    }
-
-    final totalActiveDownloadsIndicator = SizedBox(
-      width: 16,
-      height: 16,
-      child: Progress(
-        strokeWidth: 2,
-        value:
-            // calculate the progress from recent downloads and active downloads
-            activeDownloads.isEmpty
-            ? 1
-            : recentDownloads.length /
-                  (recentDownloads.length + activeDownloads.length),
-      ),
+      (ChatDownloadManager m) => m.recentDownloads,
     );
 
     const nothing = SizedBox.shrink();
 
     final recentDownloadsButton = IconButton(
-      key: const ValueKey('download_indicator_button'),
       onPressed: () => showDialog(
         context: context,
         builder: (context) => const ChatDownloadsDialog(),
@@ -66,12 +39,23 @@ class ChatTotalFileDownloadsIndicator extends StatelessWidget
       ),
     );
 
-    if (activeDownloads.isEmpty && recentDownloads.isEmpty) {
-      return nothing;
-    } else if (activeDownloads.isNotEmpty) {
-      return totalActiveDownloadsIndicator;
-    } else {
+    if (activeDownloads.isNotEmpty) {
+      return SizedBox(
+        width: 16,
+        height: 16,
+        child: Progress(
+          strokeWidth: 2,
+          value:
+              // if there are active downloads
+              // calculate the progress as the ratio of completed downloads to total downloads
+              (recentDownloads.length) /
+              (activeDownloads.length + recentDownloads.length),
+        ),
+      );
+    } else if (recentDownloads.isNotEmpty) {
       return recentDownloadsButton;
+    } else {
+      return nothing;
     }
   }
 }
@@ -84,9 +68,7 @@ class ChatDownloadsDialog extends StatelessWidget with WatchItMixin {
     final activeDownloads = watchValue(
       (ChatDownloadManager m) => m.activeDownloads,
     );
-    final downloads = watchValue(
-      (ChatDownloadManager m) => m.downloadedEventsInTemp,
-    );
+    final downloads = watchValue((ChatDownloadManager m) => m.recentDownloads);
 
     final currentMedia = watchStream(
       (PlayerManager p) => p.currentMediaStream,
@@ -109,13 +91,14 @@ class ChatDownloadsDialog extends StatelessWidget with WatchItMixin {
                   onPressed: () {
                     Navigator.of(context).pop();
                     di<PlayerManager>().setPlaylist(
-                      downloads
+                      downloads.entries
                           .where(
                             (c) =>
-                                c.file != null &&
-                                (c.event.isAudio || c.event.isVideo),
+                                c.value.file != null &&
+                                (c.value.event.isAudio ||
+                                    c.value.event.isVideo),
                           )
-                          .map((c) => LocalMedia(c.file!.path))
+                          .map((c) => LocalMedia(c.value.file!.path))
                           .toList(),
                     );
                   },
@@ -131,8 +114,9 @@ class ChatDownloadsDialog extends StatelessWidget with WatchItMixin {
             child: Text(context.l10n.downloadFile),
           )
         else
-          ...downloads.map(
-            (capsule) => ListTile(
+          ...downloads.entries.map((entry) {
+            final capsule = entry.value;
+            return ListTile(
               shape: const RoundedRectangleBorder(),
               selectedColor: context.colorScheme.primary,
               selected: currentMedia?.uri == capsule.file?.path,
@@ -141,8 +125,8 @@ class ChatDownloadsDialog extends StatelessWidget with WatchItMixin {
                 header: Text(capsule.event.fileName ?? ''),
                 child: Text(capsule.file?.path ?? ''),
               ),
-            ),
-          ),
+            );
+          }),
       ],
     );
   }

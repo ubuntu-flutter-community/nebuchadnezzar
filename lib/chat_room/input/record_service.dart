@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:record/record.dart';
 
-import '../../persistence_utils.dart';
+import '../../common/platforms.dart';
 
 class RecordService {
   RecordService({required AudioRecorder audioRecorder})
@@ -17,7 +17,7 @@ class RecordService {
   Future<bool> hasPermission() => _audioRecorder.hasPermission(request: false);
 
   Future<void> startRecording() async {
-    final path = await getTempFilePath(
+    final path = await Platforms.getTempFilePath(
       'recording_${DateTime.now().millisecondsSinceEpoch}.m4a',
     );
 

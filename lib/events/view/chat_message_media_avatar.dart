@@ -7,6 +7,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/confirm.dart';
 import '../../common/view/theme.dart';
 import '../../common/view/ui_constants.dart';
+import '../../extensions/event_x.dart';
 import '../../l10n/l10n.dart';
 import '../../player/data/local_media.dart';
 import '../../player/player_manager.dart';
@@ -36,11 +37,10 @@ class ChatMessageMediaAvatar extends StatelessWidget
       allowStreamChange: true,
     ).data;
 
-    final cap = watchValue(
-      (ChatDownloadManager m) => m.getDownloadCommand(event),
-    );
-
-    final isAudioSelected = media is LocalMedia && media.uri == cap?.file?.path;
+    final isAudioSelected = event.fileName?.toLowerCase() == null
+        ? false
+        : media is LocalMedia &&
+              media.uri.toLowerCase().contains(event.fileName!.toLowerCase());
 
     final isPlayerPlaying =
         watchStream(
@@ -87,18 +87,12 @@ class ChatMessageMediaAvatar extends StatelessWidget
                             MessageTypes.Video => Text(context.l10n.saveFile),
                             _ => const Text(''),
                           },
-                          onConfirm: switch (event.messageType) {
-                            MessageTypes.File ||
-                            MessageTypes.Audio ||
-                            MessageTypes.Video =>
-                              () => di<ChatDownloadManager>()
-                                  .getSaveFileCommand(event)
-                                  .run((
-                                    confirmButtonText: l10n.saveFile,
-                                    dialogTitle: l10n.saveFile,
-                                  )),
-                            _ => () async {},
-                          },
+                          onConfirm: () => di<ChatDownloadManager>()
+                              .getExportFileCommand(event)
+                              .run((
+                                confirmButtonText: l10n.saveFile,
+                                dialogTitle: l10n.saveFile,
+                              )),
                         ),
                       ),
                     },

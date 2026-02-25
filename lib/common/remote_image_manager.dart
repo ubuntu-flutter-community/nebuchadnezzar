@@ -7,24 +7,24 @@ import 'remote_image_service.dart';
 
 class RemoteImageManager extends SafeChangeNotifier {
   RemoteImageManager({required RemoteImageService service})
-    : _onlineArtService = service {
-    _propertiesChangedSub ??= _onlineArtService.propertiesChanged.listen(
+    : _remoteImageService = service {
+    _propertiesChangedSub ??= _remoteImageService.propertiesChanged.listen(
       (_) => notifyListeners(),
     );
   }
 
-  final RemoteImageService _onlineArtService;
-  Map<String, String> get httpHeaders => _onlineArtService.httpHeaders;
+  final RemoteImageService _remoteImageService;
+  Map<String, String> get httpHeaders => _remoteImageService.httpHeaders;
   StreamSubscription<bool>? _propertiesChangedSub;
-  Uri? getAvatarUri(Uri? key) => _onlineArtService.get(key);
-  Map<Uri, Uri?> get store => _onlineArtService.store;
+  Uri? getAvatarUri(Uri? key) => _remoteImageService.get(key);
+  Map<Uri, Uri?> get store => _remoteImageService.store;
   Future<Uri?> fetchAvatarUri({
     required Uri uri,
     num? width,
     num? height,
     ThumbnailMethod? method,
     bool? animated = false,
-  }) async => _onlineArtService.fetchAvatarUri(
+  }) async => _remoteImageService.fetchAvatarUri(
     uri: uri,
     animated: animated,
     height: height,

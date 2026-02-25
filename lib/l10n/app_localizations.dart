@@ -4779,6 +4779,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'End recording voice message'**
   String get endRecordingVoiceMessage;
+
+  /// No description provided for @exportFileAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Export file as...'**
+  String get exportFileAs;
+
+  /// No description provided for @fileExported.
+  ///
+  /// In en, this message translates to:
+  /// **'File exported to {path}'**
+  String fileExported(String path);
 }
 
 class _AppLocalizationsDelegate
