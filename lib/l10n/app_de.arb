@@ -3297,5 +3297,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "directoryDoesNotExist": "Das Verzeichnis existiert nicht mehr oder ist nicht zugänglich.",
+  "thread": "Teilunterhaltung"
 }

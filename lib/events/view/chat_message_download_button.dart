@@ -32,7 +32,10 @@ class ChatMessageDownloadButton extends StatelessWidget with WatchItMixin {
         if (path == null) {
           di<ChatDownloadManager>().getDownloadCommand(event).run(true);
         } else {
-          di<ChatDownloadManager>().openParentDirectoryCommand.run(path);
+          di<ChatDownloadManager>().openParentDirectoryCommand.run((
+            path: path,
+            fileDoesNotExistMessage: context.l10n.directoryDoesNotExist,
+          ));
         }
       },
       icon: path != null

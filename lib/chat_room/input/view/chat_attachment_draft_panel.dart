@@ -16,8 +16,6 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
       (DraftManager m) => m.getFilesDraft(roomId),
     );
 
-    if (draftFiles.isEmpty) return const SizedBox.shrink();
-
     final attaching = watchPropertyValue((DraftManager m) => m.attaching);
 
     final draftFilesL = watchPropertyValue(
@@ -28,44 +26,55 @@ class ChatAttachmentDraftPanel extends StatelessWidget with WatchItMixin {
 
     return Column(
       children: [
-        const Divider(height: 1),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
-          child: SizedBox(
-            height: ChatPendingAttachment.dimension,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: ChatPendingAttachment.dimension,
-                  mainAxisExtent: ChatPendingAttachment.dimension,
-                ),
-                reverse: true,
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(horizontal: kSmallPadding),
-                scrollDirection: Axis.horizontal,
-                itemCount: draftFilesL,
-                itemBuilder: (context, index) {
-                  final file = draftFiles.elementAt(index);
-                  return AnimatedContainer(
-                    duration: const Duration(seconds: 1),
-                    child: ChatPendingAttachment(
-                      roomId: roomId,
-                      onToggleCompress: () => di<DraftManager>().toggleCompress(
-                        roomId: roomId,
-                        file: file,
+        if (draftFiles.isEmpty)
+          const SizedBox.shrink()
+        else
+          const Divider(height: 1),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 600),
+          child: draftFiles.isEmpty
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: const EdgeInsets.symmetric(vertical: kSmallPadding),
+                  child: SizedBox(
+                    height: ChatPendingAttachment.dimension,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent:
+                                  ChatPendingAttachment.dimension,
+                              mainAxisExtent: ChatPendingAttachment.dimension,
+                            ),
+                        reverse: true,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kSmallPadding,
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: draftFilesL,
+                        itemBuilder: (context, index) {
+                          final file = draftFiles.elementAt(index);
+                          return AnimatedContainer(
+                            duration: const Duration(seconds: 1),
+                            child: ChatPendingAttachment(
+                              roomId: roomId,
+                              onToggleCompress: () => di<DraftManager>()
+                                  .toggleCompress(roomId: roomId, file: file),
+                              onTap: () =>
+                                  di<DraftManager>().removeFileFromDraft(
+                                    roomId: roomId,
+                                    file: file,
+                                  ),
+                              file: file,
+                            ),
+                          );
+                        },
                       ),
-                      onTap: () => di<DraftManager>().removeFileFromDraft(
-                        roomId: roomId,
-                        file: file,
-                      ),
-                      file: file,
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
+                  ),
+                ),
         ),
       ],
     );

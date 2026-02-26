@@ -4,12 +4,27 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:open_folder/open_folder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'platforms.dart';
 
-class ExternalPathService {
-  const ExternalPathService();
+class FileSystemService {
+  const FileSystemService();
+
+  Future<OpenResult?> openParentDirectory(
+    String path, {
+    required String fileDoesNotExistMessage,
+  }) async {
+    final file = File(path);
+    if (!(await file.exists())) {
+      return Future.value(
+        OpenResult(type: ResultType.error, message: fileDoesNotExistMessage),
+      );
+    }
+    final directory = file.parent;
+    return OpenFolder.openFolder(directory.path);
+  }
 
   Future<String?> pickLocationAndExportFile({
     required String confirmButtonText,

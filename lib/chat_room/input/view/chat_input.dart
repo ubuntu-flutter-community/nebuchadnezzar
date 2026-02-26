@@ -15,9 +15,14 @@ import 'chat_input_reply_box.dart';
 import 'chat_input_text_field.dart';
 
 class ChatInput extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const ChatInput({super.key, required this.room});
+  const ChatInput({
+    super.key,
+    required this.room,
+    required this.disabledByThreadMode,
+  });
 
   final Room room;
+  final bool disabledByThreadMode;
 
   @override
   State<ChatInput> createState() => _ChatInputState();
@@ -154,7 +159,9 @@ class _ChatInputState extends State<ChatInput> {
                           room: widget.room,
                           sendController: controller,
                           sendNode: focusNode,
-                          send: isRecording ? null : send,
+                          send: isRecording || widget.disabledByThreadMode
+                              ? null
+                              : send,
                         ),
               ),
             ],

@@ -2758,4 +2758,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String fileExported(String path) {
     return 'Datei exportiert nach $path';
   }
+
+  @override
+  String get directoryDoesNotExist =>
+      'Das Verzeichnis existiert nicht mehr oder ist nicht zugänglich.';
+
+  @override
+  String get thread => 'Teilunterhaltung';
 }

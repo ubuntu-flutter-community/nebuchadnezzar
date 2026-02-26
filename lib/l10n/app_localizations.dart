@@ -4791,6 +4791,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'File exported to {path}'**
   String fileExported(String path);
+
+  /// No description provided for @directoryDoesNotExist.
+  ///
+  /// In en, this message translates to:
+  /// **'Directory does not exist anymore or is not accessible.'**
+  String get directoryDoesNotExist;
+
+  /// No description provided for @thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread'**
+  String get thread;
 }
 
 class _AppLocalizationsDelegate

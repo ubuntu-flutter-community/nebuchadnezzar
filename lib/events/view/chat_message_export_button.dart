@@ -29,7 +29,10 @@ class ChatMessageExportButton extends StatelessWidget with WatchItMixin {
             dialogTitle: context.l10n.saveFile,
           ));
         } else {
-          di<ChatDownloadManager>().openParentDirectoryCommand.run(path);
+          di<ChatDownloadManager>().openParentDirectoryCommand.run((
+            path: path,
+            fileDoesNotExistMessage: context.l10n.directoryDoesNotExist,
+          ));
         }
       },
       icon: Icon(

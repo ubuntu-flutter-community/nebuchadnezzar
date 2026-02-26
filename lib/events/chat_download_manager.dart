@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_it/flutter_it.dart';
@@ -7,49 +6,44 @@ import 'package:mime/mime.dart';
 import 'package:open_folder/open_folder.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path/path.dart' as p;
-import 'package:safe_change_notifier/safe_change_notifier.dart';
 
-import '../common/external_path_service.dart';
+import '../common/file_system_service.dart';
 import '../common/platforms.dart';
 import '../extensions/event_x.dart';
 import '../settings/settings_service.dart';
 import 'chat_export_service.dart';
 
-class ChatDownloadManager extends SafeChangeNotifier {
+class ChatDownloadManager {
   ChatDownloadManager({
-    required ChatExportService service,
-    required ExternalPathService externalPathService,
+    required ChatExportService chatExportService,
+    required FileSystemService fileSystemService,
     required SettingsService settingsService,
-  }) : _chatDownloadService = service,
-       _externalPathService = externalPathService,
+  }) : _chatDownloadService = chatExportService,
+       _fileSystemService = fileSystemService,
        _settingsService = settingsService;
 
   final ChatExportService _chatDownloadService;
   final SettingsService _settingsService;
-  final ExternalPathService _externalPathService;
-  StreamSubscription<bool>? _propertiesChangedSub;
+  final FileSystemService _fileSystemService;
 
   SetNotifier<Event> activeDownloads = SetNotifier();
   MapNotifier<Event, DownloadCapsule> recentDownloads = MapNotifier();
 
-  late final Command<String, OpenResult?> openParentDirectoryCommand =
-      Command.createAsync((path) async {
-        final file = File(path);
-        if (!(await file.exists())) {
-          return Future.value(
-            const OpenResult(
-              type: ResultType.error,
-              message: 'File does not exist',
-            ),
-          );
-        }
-        final directory = file.parent;
-        return OpenFolder.openFolder(directory.path);
-      }, initialValue: null);
+  late final Command<
+    ({String path, String fileDoesNotExistMessage}),
+    OpenResult?
+  >
+  openParentDirectoryCommand = Command.createAsync(
+    (param) => _fileSystemService.openParentDirectory(
+      param.path,
+      fileDoesNotExistMessage: param.fileDoesNotExistMessage,
+    ),
+    initialValue: null,
+  );
 
   late final Command<void, String?> downloadsDirCommand =
       Command.createAsyncNoParam(() async {
-        final path = await _externalPathService.getPathOfDirectory();
+        final path = await _fileSystemService.getPathOfDirectory();
         if (path != null) {
           await _settingsService.setValue(SettingKeys.downloadsDirPath, path);
         }
@@ -63,7 +57,7 @@ class ChatDownloadManager extends SafeChangeNotifier {
     event,
     () => Command.createAsyncWithProgress((doDownload, handle) async {
       if (event.fileName == null) {
-        return null;
+        return Future.error('Event does not have an attachment');
       }
 
       final path = await Platforms.getDownloadFilePath(
@@ -130,15 +124,9 @@ class ChatDownloadManager extends SafeChangeNotifier {
         confirmButtonText: param.confirmButtonText,
         dialogTitle: param.dialogTitle,
       ),
-      initialValue: null,
+      initialValue: _chatDownloadService.isEventExported(event),
     ),
   );
-
-  @override
-  Future<void> dispose() async {
-    await _propertiesChangedSub?.cancel();
-    super.dispose();
-  }
 }
 
 class DownloadCapsule {

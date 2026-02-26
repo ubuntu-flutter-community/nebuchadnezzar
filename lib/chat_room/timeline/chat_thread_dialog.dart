@@ -7,6 +7,7 @@ import '../../common/chat_manager.dart';
 import '../../common/view/ui_constants.dart';
 import '../../events/view/chat_message_bubble.dart';
 import '../../extensions/event_x.dart';
+import '../../l10n/l10n.dart';
 import '../input/draft_manager.dart';
 import '../input/view/chat_input.dart';
 import 'timeline_manager.dart';
@@ -76,39 +77,57 @@ class _ChatThreadDialogState extends State<ChatThreadDialog> {
           .reversed,
       widget.event,
     };
-    return AlertDialog(
-      constraints: const BoxConstraints(maxWidth: 500, maxHeight: 800),
-      titlePadding: EdgeInsets.zero,
-      title: const YaruDialogTitleBar(title: Text('Thread')),
-      contentPadding: EdgeInsets.zero,
-      actionsPadding: const EdgeInsets.all(kSmallPadding),
-      content: SizedBox(
-        width: 500,
-        height: 600,
-        child: ListView.builder(
-          key: ValueKey(fromStream),
-          reverse: true,
-          padding: const EdgeInsets.all(kMediumPadding),
-          itemCount: events.length,
-          itemBuilder: (context, index) {
-            final threadChild = events.elementAtOrNull(index);
+    return Dialog.fullscreen(
+      child: Column(
+        children: [
+          YaruWindowTitleBar(
+            title: Text(
+              '${context.l10n.thread}: ${widget.event.senderFromMemoryOrFallback.calcDisplayname()}: ${widget.event.calcLocalizedBodyFallback(const MatrixDefaultLocalizations())}',
+            ),
+            isClosable: false,
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                ListView.builder(
+                  key: ValueKey(fromStream),
+                  reverse: true,
+                  padding: const EdgeInsets.all(kMediumPadding),
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    final threadChild = events.elementAtOrNull(index);
 
-            if (threadChild == null) return const SizedBox.shrink();
+                    if (threadChild == null) return const SizedBox.shrink();
 
-            return ChatMessageBubble(
-              showThreadButton: false,
-              event: threadChild,
-              timeline: widget.timeline,
-              onReplyOriginClick: widget.onReplyOriginClick,
-              eventPosition: EventPosition.single,
-              allowNormalReply: false,
-            );
-          },
-        ),
+                    return ChatMessageBubble(
+                      showThreadButton: false,
+                      event: threadChild,
+                      timeline: widget.timeline,
+                      onReplyOriginClick: widget.onReplyOriginClick,
+                      eventPosition: EventPosition.single,
+                      allowNormalReply: false,
+                    );
+                  },
+                ),
+                Positioned(
+                  right: kMediumPadding,
+                  top: kMediumPadding,
+                  child: FloatingActionButton.extended(
+                    tooltip: context.l10n.close,
+                    onPressed: () => Navigator.of(context).pop(),
+                    label: Text(context.l10n.close),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ChatInput(
+            key: ValueKey('THREAD_${widget.event.eventId}_INPUT'),
+            room: widget.timeline.room,
+            disabledByThreadMode: false,
+          ),
+        ],
       ),
-      actions: [
-        ChatInput(key: const ValueKey('THREAD'), room: widget.timeline.room),
-      ],
     );
   }
 }

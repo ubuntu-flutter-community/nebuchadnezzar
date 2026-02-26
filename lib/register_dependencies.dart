@@ -24,7 +24,7 @@ import 'chat_room/input/draft_manager.dart';
 import 'chat_room/input/record_service.dart';
 import 'chat_room/timeline/timeline_manager.dart';
 import 'common/chat_manager.dart';
-import 'common/external_path_service.dart';
+import 'common/file_system_service.dart';
 import 'common/local_image_manager.dart';
 import 'common/platforms.dart';
 import 'common/remote_image_manager.dart';
@@ -137,24 +137,20 @@ void registerDependencies() {
       dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
+    ..registerLazySingleton<FileSystemService>(() => const FileSystemService())
     ..registerSingletonWithDependencies<ChatExportService>(
       () => ChatExportService(
-        client: di<Client>(),
         preferences: di<SharedPreferences>(),
-        externalPathService: di<ExternalPathService>(),
+        fileSystemService: di<FileSystemService>(),
       ),
-      dependsOn: [Client, SharedPreferences],
-    )
-    ..registerLazySingleton<ExternalPathService>(
-      () => const ExternalPathService(),
+      dependsOn: [SharedPreferences],
     )
     ..registerSingletonWithDependencies<ChatDownloadManager>(
       () => ChatDownloadManager(
-        service: di<ChatExportService>(),
-        externalPathService: di<ExternalPathService>(),
+        chatExportService: di<ChatExportService>(),
+        fileSystemService: di<FileSystemService>(),
         settingsService: di<SettingsService>(),
       ),
-      dispose: (s) => s.dispose(),
       dependsOn: [ChatExportService, SettingsService],
     )
     ..registerLazySingleton<LocalImageManager>(() => LocalImageManager())
