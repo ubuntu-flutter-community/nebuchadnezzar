@@ -127,7 +127,6 @@ class _ChatRoomPageState extends State<ChatRoomPage> with ChatJoinMixin {
                 child: widget.room.isArchived || widget.room.isSpace
                     ? const SizedBox.shrink()
                     : ChatInput(
-                        key: ValueKey('${widget.room.id}_input_$threadeMode'),
                         disabledByThreadMode: threadeMode,
                         room: widget.room,
                       ),

@@ -88,7 +88,6 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
     sendController.text = textDraft ?? '';
 
     return Padding(
-      key: ValueKey('${room.id}_$unAcceptedDirectChat'),
       padding: const EdgeInsets.all(kMediumPadding),
       child: TextField(
         minLines: 1,
