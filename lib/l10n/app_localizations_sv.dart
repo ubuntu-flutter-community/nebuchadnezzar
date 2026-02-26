@@ -2737,4 +2737,11 @@ class AppLocalizationsSv extends AppLocalizations {
   String fileExported(String path) {
     return 'File exported to $path';
   }
+
+  @override
+  String get directoryDoesNotExist =>
+      'Directory does not exist anymore or is not accessible.';
+
+  @override
+  String get thread => 'Thread';
 }

@@ -5,7 +5,6 @@ import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../common/local_image_manager.dart';
-import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../extensions/event_x.dart';
 import '../../player/player_manager.dart';
@@ -67,6 +66,10 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       (LocalImageManager m) => m.getImageDownloadCommand(event).results,
     );
 
+    final progress = watchValue(
+      (LocalImageManager m) => m.getImageDownloadCommand(event).progress,
+    );
+
     if (event.status == EventStatus.error) {
       return const _ErrorImage();
     }
@@ -76,8 +79,11 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
       width: theWidth,
       child: maybeImageResults.toWidget(
         onError: (error, lastResult, param) => const _ErrorImage(),
-        whileRunning: (lastResult, param) =>
-            _ChatImageLoadingIndicator(blurHash: event.blurHash, fit: fit),
+        whileRunning: (lastResult, param) => _ChatImageLoadingIndicator(
+          blurHash: event.blurHash,
+          fit: fit,
+          progress: progress,
+        ),
         onData: (result, param) => result == null
             ? const _ErrorImage()
             : Image.memory(
@@ -85,6 +91,8 @@ class ChatImage extends StatelessWidget with WatchItMixin, PlayerControlMixin {
                 fit: fit,
                 width: theWidth,
                 height: theHeight,
+                errorBuilder: (context, error, stackTrace) =>
+                    const _ErrorImage(),
                 frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                   if (wasSynchronouslyLoaded) {
                     return child;
@@ -198,21 +206,26 @@ class _ErrorImage extends StatelessWidget {
 }
 
 class _ChatImageLoadingIndicator extends StatelessWidget {
-  const _ChatImageLoadingIndicator({required this.blurHash, required this.fit});
+  const _ChatImageLoadingIndicator({
+    required this.blurHash,
+    required this.fit,
+    required this.progress,
+  });
 
   final String? blurHash;
   final BoxFit fit;
+  final double progress;
 
   @override
   Widget build(BuildContext context) => SizedBox(
     height: ChatImage.imageHeight,
     width: ChatImage.imageWidth,
-    child: blurHash != null
-        ? BlurHash(
-            hash: blurHash!,
-            imageFit: fit,
-            errorBuilder: (context, error, stackTrace) => const _ErrorImage(),
-          )
-        : const Center(child: Progress()),
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        if (blurHash != null) BlurHash(hash: blurHash!, imageFit: fit),
+        CircularProgressIndicator(value: progress),
+      ],
+    ),
   );
 }

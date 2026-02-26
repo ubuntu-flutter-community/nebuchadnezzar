@@ -3297,5 +3297,7 @@
         "type": "String"
       }
     }
-  }
+  },
+  "directoryDoesNotExist": "Directory does not exist anymore or is not accessible.",
+  "thread": "Thread"
 }

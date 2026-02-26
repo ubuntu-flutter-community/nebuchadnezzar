@@ -124,11 +124,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> with ChatJoinMixin {
               appBar: ChatRoomTitleBar(room: widget.room),
               bottomNavigationBar: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 400),
-                child:
-                    widget.room.isArchived || widget.room.isSpace || threadeMode
+                child: widget.room.isArchived || widget.room.isSpace
                     ? const SizedBox.shrink()
                     : ChatInput(
-                        key: ValueKey('${widget.room.id}_input'),
+                        key: ValueKey('${widget.room.id}_input_$threadeMode'),
+                        disabledByThreadMode: threadeMode,
                         room: widget.room,
                       ),
               ),

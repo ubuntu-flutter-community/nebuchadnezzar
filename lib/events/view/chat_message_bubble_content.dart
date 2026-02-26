@@ -286,7 +286,9 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                         )
                                         .isNotEmpty)
                                   Padding(
-                                    padding: const EdgeInsets.all(kTinyPadding),
+                                    padding: const EdgeInsets.all(
+                                      kSmallPadding,
+                                    ),
                                     child: InkWell(
                                       onTap: () => showDialog(
                                         context: context,
@@ -297,8 +299,8 @@ class ChatMessageBubbleContent extends StatelessWidget {
                                               onReplyOriginClick,
                                         ),
                                       ),
-                                      child: const Badge(
-                                        label: Text('Thread >'),
+                                      child: Badge(
+                                        label: Text('${context.l10n.thread} >'),
                                       ),
                                     ),
                                   ),

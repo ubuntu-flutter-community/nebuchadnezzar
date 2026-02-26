@@ -88,6 +88,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
     sendController.text = textDraft ?? '';
 
     return Padding(
+      key: ValueKey('${room.id}_$unAcceptedDirectChat'),
       padding: const EdgeInsets.all(kMediumPadding),
       child: TextField(
         minLines: 1,
@@ -153,16 +154,27 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
             mainAxisSize: MainAxisSize.min,
             children: [
               ChatInputRecordVoiceMessageButton(room: room),
+
               IconButton(
                 tooltip: l10n.send,
                 padding: EdgeInsets.zero,
-                icon: Transform.rotate(
-                  angle: pi / 4,
-                  child: const Padding(
-                    padding: EdgeInsets.only(right: 2, top: 2),
-                    child: Icon(YaruIcons.send_filled),
-                  ),
-                ),
+                icon:
+                    sendingFile && isSending ||
+                        attaching ||
+                        isPastingFromClipboard
+                    ? const Center(
+                        child: SizedBox.square(
+                          dimension: 15,
+                          child: Progress(strokeWidth: 1),
+                        ),
+                      )
+                    : Transform.rotate(
+                        angle: pi / 4,
+                        child: const Padding(
+                          padding: EdgeInsets.only(right: 2, top: 2),
+                          child: Icon(YaruIcons.send_filled),
+                        ),
+                      ),
                 onPressed: send,
               ),
               const SizedBox(width: kSmallPadding),

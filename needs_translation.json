@@ -110,6 +110,8 @@
     "startRecordingVoiceMessage",
     "endRecordingVoiceMessage",
     "exportFileAs",
-    "fileExported"
+    "fileExported",
+    "directoryDoesNotExist",
+    "thread"
   ]
 }

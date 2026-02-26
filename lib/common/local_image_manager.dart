@@ -11,10 +11,11 @@ class LocalImageManager {
     Event event,
   ) => _downloadImageCapsules.putIfAbsent(
     event.eventId,
-    () => Command.createAsync(
-      (param) => downloadImage(
+    () => Command.createAsyncWithProgress(
+      (param, handle) => downloadImage(
         event: param.event,
         shallBeThumbnail: param.shallBeThumbnail,
+        onDownloadProgress: (progress) => handle.updateProgress(progress / 100),
       ),
       initialValue: getImageFromCache(event.eventId),
     ),
@@ -23,9 +24,11 @@ class LocalImageManager {
   Future<Uint8List> downloadImage({
     required Event event,
     bool shallBeThumbnail = true,
+    void Function(int)? onDownloadProgress,
   }) async {
     final bytes = (await event.downloadAndDecryptAttachment(
       getThumbnail: shallBeThumbnail && event.hasThumbnail,
+      onDownloadProgress: onDownloadProgress,
     )).bytes;
 
     return _updateOrPut(id: event.eventId, data: bytes) ?? bytes;

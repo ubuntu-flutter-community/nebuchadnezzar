@@ -101,7 +101,10 @@ class _ChatRoomTimelineListState extends State<ChatRoomTimelineList> {
             reverse: true,
             initialItemCount: widget.timeline.events.length,
             itemBuilder: (context, i, animation) {
-              final event = widget.timeline.events[i];
+              final event = widget.timeline.events.elementAtOrNull(i);
+              if (event == null) {
+                return const SizedBox();
+              }
 
               final previous = widget.timeline.events.elementAtOrNull(i + 1);
               final next = i == 0
