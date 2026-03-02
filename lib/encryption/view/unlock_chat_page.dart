@@ -3,8 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../authentication/authentication_service.dart';
-import '../../authentication/view/uia_request_handler.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
@@ -13,6 +11,7 @@ import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_manager.dart';
+import 'chat_global_handlers.dart';
 import 'init_crypto_identity_button.dart';
 import 'key_verification_dialog.dart';
 
@@ -23,7 +22,8 @@ class UnlockChatPage extends StatefulWidget with WatchItStatefulWidgetMixin {
   State<UnlockChatPage> createState() => _UnlockChatPageState();
 }
 
-class _UnlockChatPageState extends State<UnlockChatPage> {
+class _UnlockChatPageState extends State<UnlockChatPage>
+    with ChatGlobalHandlerMixin {
   final TextEditingController _recoveryKeyTextEditingController =
       TextEditingController();
 
@@ -39,18 +39,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
     final l10n = context.l10n;
     final encryptionManager = di<EncryptionManager>();
 
-    registerStreamHandler(
-      select: (AuthenticationService m) => m.onUiaRequestStream,
-      handler: (context, newValue, cancel) async {
-        if (newValue.hasData) {
-          await uiaRequestHandler(
-            uiaRequest: newValue.data!,
-            context: context,
-            rootNavigator: true,
-          );
-        }
-      },
-    );
+    registerGlobalChatHandlers();
 
     final recoveryKeyInputLoading = watchValue(
       (EncryptionManager m) =>
@@ -69,22 +58,9 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
         if (newValue.hasData) {
           final result = newValue.data!;
           if (result.connected && result.initialized) {
-            Navigator.of(context).pushReplacement(
+            Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const ChatMasterDetailPage()),
-            );
-          }
-        }
-      },
-    );
-
-    registerHandler(
-      select: (EncryptionManager m) => m.initCryptoIdentityCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.hasData) {
-          final key = newValue.data;
-          if (key != null) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const ChatMasterDetailPage()),
+              (route) => false,
             );
           }
         }
@@ -126,7 +102,9 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                     prefixIcon: const Icon(YaruIcons.key),
                     labelText: l10n.recoveryKey,
                     hintText: 'Es** **** **** ****',
-                    errorText: recoveryKeyInputError,
+                    errorText: recoveryKeyInputError != null
+                        ? l10n.wrongRecoveryKey
+                        : null,
                     errorMaxLines: 2,
                   ),
                 ),
@@ -179,6 +157,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                               if (req.error != null) return;
                               await KeyVerificationDialog(
                                 request: req.result!,
+                                verifyOther: false,
                               ).show(context);
                             }
                           }

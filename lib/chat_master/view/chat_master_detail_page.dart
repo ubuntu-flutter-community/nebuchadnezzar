@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:matrix/matrix.dart';
 
-import '../../authentication/authentication_service.dart';
-import '../../authentication/view/chat_login_page.dart';
-import '../../authentication/view/uia_request_handler.dart';
 import '../../chat_room/common/view/chat_room_loading_page.dart';
 import '../../chat_room/input/draft_manager.dart';
 import '../../common/chat_manager.dart';
@@ -13,6 +9,7 @@ import '../../common/view/build_context_x.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../encryption/encryption_manager.dart';
+import '../../encryption/view/chat_global_handlers.dart';
 import '../../encryption/view/key_verification_dialog.dart';
 import '../../notification/chat_notification_handler.dart';
 import '../../player/view/player_view.dart';
@@ -22,16 +19,14 @@ import 'chat_master_panel.dart';
 final GlobalKey<ScaffoldState> masterScaffoldKey = GlobalKey();
 
 class ChatMasterDetailPage extends StatelessWidget
-    with WatchItMixin, ChatEditRoomMixin {
+    with WatchItMixin, ChatEditRoomMixin, ChatGlobalHandlerMixin {
   const ChatMasterDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    registerGlobalLeaveCommand();
+    registerGlobalChatHandlers();
 
-    registerGlobalForgetRoomCommand();
-
-    registerForgetAllRoomsCommand();
+    registerGlobalLeaveForgetCommands();
 
     registerHandler(
       select: (DraftManager m) => m.sendCommand.errors,
@@ -50,31 +45,6 @@ class ChatMasterDetailPage extends StatelessWidget
             request: newValue.data!,
             verifyOther: true,
           ).show(context);
-        }
-      },
-    );
-
-    registerStreamHandler(
-      select: (AuthenticationService m) => m.onUiaRequestStream,
-      handler: (context, newValue, cancel) async {
-        if (newValue.hasData) {
-          await uiaRequestHandler(
-            uiaRequest: newValue.data!,
-            context: context,
-            rootNavigator: true,
-          );
-        }
-      },
-    );
-
-    registerStreamHandler(
-      select: (AuthenticationService m) => m.loginStateStream,
-      handler: (context, newValue, cancel) {
-        if (newValue.hasData && newValue.data != LoginState.loggedIn) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const ChatLoginPage()),
-            (route) => false,
-          );
         }
       },
     );

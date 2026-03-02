@@ -18,17 +18,35 @@ class CheckEncryptionSetupPage extends StatelessWidget with WatchItMixin {
           di<EncryptionManager>().checkIfEncryptionSetupIsNeededCommand.run(),
     );
 
-    return watchValue(
-      (EncryptionManager m) => m.checkIfEncryptionSetupIsNeededCommand.results,
-    ).toWidget(
-      onError: (error, _, _) => EncryptionSetupErrorPage(error: error),
-      whileRunning: (_, _) =>
-          SplashPage(title: Text(context.l10n.checkingEncryptionPleaseWait)),
-      onData: (result, param) => result == null
-          ? SplashPage(title: Text(context.l10n.checkingEncryptionPleaseWait))
-          : result.connected == false || result.initialized == false
-          ? const UnlockChatPage()
-          : const ChatMasterDetailPage(),
+    registerHandler(
+      select: (EncryptionManager m) =>
+          m.checkIfEncryptionSetupIsNeededCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.error != null) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (_) => EncryptionSetupErrorPage(error: newValue.error),
+            ),
+            (route) => false,
+          );
+        } else if (newValue.data != null) {
+          final cryptoIdentityState = newValue.data!;
+          if (cryptoIdentityState.connected &&
+              cryptoIdentityState.initialized) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const ChatMasterDetailPage()),
+              (route) => false,
+            );
+          } else {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const UnlockChatPage()),
+              (route) => false,
+            );
+          }
+        }
+      },
     );
+
+    return SplashPage(title: Text(context.l10n.checkingEncryptionPleaseWait));
   }
 }

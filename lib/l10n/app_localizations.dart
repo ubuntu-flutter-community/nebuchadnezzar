@@ -4174,6 +4174,12 @@ abstract class AppLocalizations {
   /// **'Checking encryption, please wait ...'**
   String get checkingEncryptionPleaseWait;
 
+  /// No description provided for @initializingCryptoIdentityPleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing new crypto identity, please wait ...'**
+  String get initializingCryptoIdentityPleaseWait;
+
   /// No description provided for @settingUpEncryptionPleaseWait.
   ///
   /// In en, this message translates to:

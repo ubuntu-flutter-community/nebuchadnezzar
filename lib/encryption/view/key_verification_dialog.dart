@@ -31,7 +31,7 @@ class KeyVerificationDialog extends StatefulWidget {
   const KeyVerificationDialog({
     super.key,
     required this.request,
-    this.verifyOther = false,
+    required this.verifyOther,
   });
 
   @override

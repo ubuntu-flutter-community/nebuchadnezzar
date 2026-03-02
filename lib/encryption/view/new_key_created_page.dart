@@ -2,41 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
-import '../../app/view/error_page.dart';
-import '../../app/view/splash_page.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_manager.dart';
-
-class CreateNewKeyPage extends StatelessWidget with WatchItMixin {
-  const CreateNewKeyPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    callOnceAfterThisBuild(
-      (context) => di<EncryptionManager>().initCryptoIdentityCommand.run(
-        NewCryptoIdentityCapsule(),
-      ),
-    );
-
-    return watchValue(
-      (EncryptionManager m) => m.initCryptoIdentityCommand.results,
-    ).toWidget(
-      onError: (error, _, _) => ErrorPage(error: error),
-      whileRunning: (_, _) =>
-          SplashPage(title: Text(context.l10n.settingUpEncryptionPleaseWait)),
-      onData: (key, _) => key == null
-          ? const ErrorPage(error: 'Failed to create new encryption keys!')
-          : NewKeyCreatedPage(encryptionKey: key),
-    );
-  }
-}
 
 class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
   const NewKeyCreatedPage({super.key, required this.encryptionKey});
@@ -55,6 +30,32 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
 
     final storeInSecureStorage = watchValue(
       (EncryptionManager m) => m.storeRecoveryKeyCommand,
+    );
+
+    registerHandler(
+      select: (EncryptionManager m) => m.copyRecoveryKeyCommand,
+      handler: (context, newKey, cancel) {
+        if (newKey != null) {
+          showSnackBar(
+            context,
+            content: Text('${context.l10n.copiedToClipboard}: $newKey'),
+          );
+        }
+      },
+    );
+
+    registerHandler(
+      select: (EncryptionManager m) => m.storeRecoveryKeyCommand,
+      handler: (context, newValue, cancel) {
+        if (newValue != null) {
+          showSnackBar(
+            context,
+            content: Text(
+              '${l10n.ok} ${getSecureStorageLocalizedName(context.l10n)}',
+            ),
+          );
+        }
+      },
     );
 
     return Scaffold(

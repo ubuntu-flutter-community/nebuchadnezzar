@@ -18,16 +18,15 @@ class EncryptionManager {
   Stream<KeyVerification> get onKeyVerificationRequest =>
       _client.onKeyVerificationRequest.stream;
 
-  late final Command<void, ({bool connected, bool initialized})?>
+  late final Command<void, CryptoIdentityState?>
   checkIfEncryptionSetupIsNeededCommand = Command.createAsyncNoParam(
     _checkIfEncryptionSetupIsNeeded,
     initialValue: null,
   );
 
-  Future<({bool connected, bool initialized})>
-  _checkIfEncryptionSetupIsNeeded() async {
+  Future<CryptoIdentityState> _checkIfEncryptionSetupIsNeeded() async {
     if (!_client.encryptionEnabled) {
-      return const (connected: false, initialized: false);
+      return const CryptoIdentityState(connected: false, initialized: false);
     }
 
     await _client.accountDataLoading;
@@ -35,38 +34,64 @@ class EncryptionManager {
     if (_client.prevBatch == null) {
       await _client.onSync.stream.first;
     }
-    return _client.getCryptoIdentityState();
+    final cryptoIdentityState = await _client.getCryptoIdentityState();
+
+    return CryptoIdentityState(
+      connected: cryptoIdentityState.connected,
+      initialized: cryptoIdentityState.initialized,
+    );
   }
 
   late final Command<
     ({String keyOrPassphrase, String? keyIdentifier, bool selfSign}),
-    ({bool connected, bool initialized})
+    CryptoIdentityState
   >
-  restoreCryptoIdentityCommand = Command.createAsync((params) async {
-    if (params.keyOrPassphrase.isEmpty) {
-      throw Exception('Recovery key or passphrase cannot be empty!');
-    }
-    await _client.restoreCryptoIdentity(
-      params.keyOrPassphrase,
-      keyIdentifier: params.keyIdentifier,
-      selfSign: params.selfSign,
-    );
-    return _client.getCryptoIdentityState();
-  }, initialValue: const (connected: false, initialized: false));
+  restoreCryptoIdentityCommand = Command.createAsync(
+    (params) async {
+      if (params.keyOrPassphrase.isEmpty) {
+        throw Exception('Recovery key or passphrase cannot be empty!');
+      }
+      await _client.restoreCryptoIdentity(
+        params.keyOrPassphrase,
+        keyIdentifier: params.keyIdentifier,
+        selfSign: params.selfSign,
+      );
+
+      final cryptoIdentityState = await _client.getCryptoIdentityState();
+      return CryptoIdentityState(
+        connected: cryptoIdentityState.connected,
+        initialized: cryptoIdentityState.initialized,
+      );
+    },
+
+    initialValue: const CryptoIdentityState(
+      connected: false,
+      initialized: false,
+    ),
+  );
 
   late final Command<NewCryptoIdentityCapsule, String?>
   initCryptoIdentityCommand = Command.createAsync(
-    (capsule) => _client.initCryptoIdentity(
-      passphrase: capsule.passphrase,
-      wipeSecureStorage: capsule.wipeSecureStorage,
-      wipeKeyBackup: capsule.wipeKeyBackup,
-      wipeCrossSigning: capsule.wipeCrossSigning,
-      setupMasterKey: capsule.setupMasterKey,
-      setupSelfSigningKey: capsule.setupSelfSigningKey,
-      setupUserSigningKey: capsule.setupUserSigningKey,
-      setupOnlineKeyBackup: capsule.setupOnlineKeyBackup,
-      keyName: capsule.keyName,
-    ),
+    (capsule) => _client
+        .initCryptoIdentity(
+          passphrase: capsule.passphrase,
+          wipeSecureStorage: capsule.wipeSecureStorage,
+          wipeKeyBackup: capsule.wipeKeyBackup,
+          wipeCrossSigning: capsule.wipeCrossSigning,
+          setupMasterKey: capsule.setupMasterKey,
+          setupSelfSigningKey: capsule.setupSelfSigningKey,
+          setupUserSigningKey: capsule.setupUserSigningKey,
+          setupOnlineKeyBackup: capsule.setupOnlineKeyBackup,
+          keyName: capsule.keyName,
+        )
+        .timeout(
+          const Duration(minutes: 1),
+          onTimeout: () {
+            throw Exception(
+              'Initializing crypto identity timed out. Please try again.',
+            );
+          },
+        ),
     initialValue: null,
   );
 
@@ -103,7 +128,7 @@ class EncryptionManager {
 }
 
 class NewCryptoIdentityCapsule {
-  NewCryptoIdentityCapsule({
+  const NewCryptoIdentityCapsule({
     this.passphrase,
     this.wipeSecureStorage = true,
     this.wipeKeyBackup = true,
@@ -124,4 +149,14 @@ class NewCryptoIdentityCapsule {
   final bool setupUserSigningKey;
   final bool setupOnlineKeyBackup;
   final String? keyName;
+}
+
+class CryptoIdentityState {
+  final bool connected;
+  final bool initialized;
+
+  const CryptoIdentityState({
+    required this.connected,
+    required this.initialized,
+  });
 }

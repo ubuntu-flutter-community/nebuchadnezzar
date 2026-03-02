@@ -2413,6 +2413,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Verschlüsselung wird geprüft, bitte warten...';
 
   @override
+  String get initializingCryptoIdentityPleaseWait =>
+      'Neue Krypto-Identität wird initialisiert, bitte warten ...';
+
+  @override
   String get settingUpEncryptionPleaseWait =>
       'Verschlüsselung wird eingerichtet, bitte warten...';
 
@@ -2780,7 +2784,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get setupUserSigningKey =>
-      'Schlsüssel für Benutzersignierung einrichten';
+      'Schlüssel für Benutzersignierung einrichten';
 
   @override
   String get setupSelfSigningKey => 'Schlüssel für Selbstsignierung einrichten';
@@ -2794,7 +2798,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get yourPassphraseDescription =>
-      'Der Wiederherstellungsschlüssel ist sehr lang und schwer zu merken. Sie können optional eine Passphrase einrichten, die leichter zu merken ist. Die Passphrase wird verwendet, um den Wiederherstellungsschlüssel zu verschlüsseln. Stellen Sie sicher, dass Sie eine starke Passphrase wählen und diese nicht vergessen, da Sie sonst den Zugriff auf Ihre verschlüsselten Nachrichten verlieren, wenn Sie sich abmelden oder das Gerät wechseln.';
+      'Der Wiederherstellungsschlüssel ist sehr lang und schwer zu merken. Du kannst optional eine Passphrase einrichten, die leichter zu merken ist. Die Passphrase wird verwendet, um den Wiederherstellungsschlüssel zu verschlüsseln. Stelle sicher, dass du eine starke Passphrase wählst und diese nicht vergisst, da du sonst den Zugriff auf deine verschlüsselten Nachrichten verlierst, wenn du dich abmeldest oder das Gerät wechselst.';
 
   @override
   String get showAddtionalNewCryptoSetupOptions =>
@@ -2802,7 +2806,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get showAddtionalNewCryptoSetupOptionsWarning =>
-      'Vorsicht! Diese Optionen sind für fortgeschrittene Benutzer gedacht. Wenn du nicht genau weißt, was sie tun, solltest du sie nicht verwenden.';
+      'Vorsicht! Diese Optionen sind für fortgeschrittene Benutzer gedacht. Wenn du nicht genau weißt, was du tust, solltest du sie nicht verwenden.';
 
   @override
   String get resetRecoveryKey => 'Wiederherstellungsschlüssel zurücksetzen';

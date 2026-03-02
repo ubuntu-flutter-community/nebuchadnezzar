@@ -2399,6 +2399,10 @@ class AppLocalizationsSv extends AppLocalizations {
       'Checking encryption, please wait ...';
 
   @override
+  String get initializingCryptoIdentityPleaseWait =>
+      'Initializing new crypto identity, please wait ...';
+
+  @override
   String get settingUpEncryptionPleaseWait =>
       'Setting up encryption, please wait ...';
 

@@ -8,6 +8,7 @@
     "loginInPleaseWait",
     "settingUpApplicationPleaseWait",
     "checkingEncryptionPleaseWait",
+    "initializingCryptoIdentityPleaseWait",
     "settingUpEncryptionPleaseWait",
     "canonicalAliasInvalidInput",
     "canonicalAliasHelperText",

@@ -3094,6 +3094,7 @@
   "loginInPleaseWait": "Logging in, please wait...",
   "settingUpApplicationPleaseWait": "Settings up application, please wait ...",
   "checkingEncryptionPleaseWait": "Checking encryption, please wait ...",
+  "initializingCryptoIdentityPleaseWait": "Initializing new crypto identity, please wait ...",
   "settingUpEncryptionPleaseWait": "Setting up encryption, please wait ...",
   "canonicalAliasInvalidInput": "Invalid input, must match #SOMETHING:{homeServer}",
   "@canonicalAliasInvalidInput": {
