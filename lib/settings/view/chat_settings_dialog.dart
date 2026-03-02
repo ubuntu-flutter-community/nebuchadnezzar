@@ -47,7 +47,7 @@ class _ChatSettingsDialogState extends State<ChatSettingsDialog>
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(YaruIcons.settings),
-                Text(context.l10n.settings),
+                Flexible(child: Text(context.l10n.settings)),
               ],
             ),
           ),
@@ -57,7 +57,7 @@ class _ChatSettingsDialogState extends State<ChatSettingsDialog>
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(YaruIcons.bell),
-                Text(context.l10n.notifications),
+                Flexible(child: Text(context.l10n.notifications)),
               ],
             ),
           ),

@@ -160,7 +160,7 @@ class _InitCryptoIdentityConfirmationDialogState
       ),
       confirmLabel: l10n.resetRecoveryKeyConfirmationLabel,
       onConfirm: () {
-        di<EncryptionManager>().initCryptoIdentityCommand.run(
+        di<EncryptionManager>().initCryptoIdentityCommandSync.run(
           NewCryptoIdentityCapsule(
             passphrase: _passPhraseController.text,
             wipeSecureStorage: _wipeSecureStorage,

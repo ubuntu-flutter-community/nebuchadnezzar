@@ -13,20 +13,28 @@ class InitCryptoIdentifyProgressPage extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     registerHandler(
-      select: (EncryptionManager m) => m.initCryptoIdentityCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.error != null) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => EncryptionSetupErrorPage(error: newValue.error),
-            ),
-            (route) => false,
-          );
-        } else if (newValue.data != null) {
+      select: (EncryptionManager m) => m.newSsssKeyNotifier,
+      handler: (context, newSsssKey, cancel) {
+        if (newSsssKey != null) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) =>
-                  NewKeyCreatedPage(encryptionKey: newValue.data!),
+                  NewKeyCreatedPage(encryptionKey: newSsssKey),
+            ),
+            (route) => false,
+          );
+        }
+      },
+    );
+
+    registerHandler(
+      select: (EncryptionManager m) => m.initCryptoIdentityCommandSync.results,
+      handler: (context, results, cancel) {
+        if (results.error != null) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) =>
+                  EncryptionSetupErrorPage(error: results.error!),
             ),
             (route) => false,
           );

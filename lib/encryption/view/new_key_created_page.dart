@@ -10,7 +10,6 @@ import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
-import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_manager.dart';
 
 class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
@@ -138,7 +137,6 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                         )
                       : null,
                 ),
-                const ChatSettingsLogoutButton(),
               ],
             ),
           ),

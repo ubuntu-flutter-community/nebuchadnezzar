@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:matrix/encryption/utils/crypto_setup_extension.dart';
-import 'package:matrix/encryption/utils/key_verification.dart';
+import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
+import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 class EncryptionManager {
   EncryptionManager({
@@ -44,56 +46,81 @@ class EncryptionManager {
 
   late final Command<
     ({String keyOrPassphrase, String? keyIdentifier, bool selfSign}),
-    CryptoIdentityState
+    CryptoIdentityState?
   >
-  restoreCryptoIdentityCommand = Command.createAsync(
-    (params) async {
-      if (params.keyOrPassphrase.isEmpty) {
-        throw Exception('Recovery key or passphrase cannot be empty!');
-      }
-      await _client.restoreCryptoIdentity(
-        params.keyOrPassphrase,
-        keyIdentifier: params.keyIdentifier,
-        selfSign: params.selfSign,
-      );
+  restoreCryptoIdentityCommand = Command.createAsync((params) async {
+    await _client.restoreCryptoIdentity(
+      params.keyOrPassphrase,
+      keyIdentifier: params.keyIdentifier,
+      selfSign: params.selfSign,
+    );
 
-      final cryptoIdentityState = await _client.getCryptoIdentityState();
-      return CryptoIdentityState(
-        connected: cryptoIdentityState.connected,
-        initialized: cryptoIdentityState.initialized,
-      );
-    },
+    return checkIfEncryptionSetupIsNeededCommand.runAsync();
+  }, initialValue: null);
 
-    initialValue: const CryptoIdentityState(
-      connected: false,
-      initialized: false,
-    ),
+  late final Command<NewCryptoIdentityCapsule, void>
+  initCryptoIdentityCommandSync = Command.createSyncNoResult(
+    (capsule) => _runThroughBootstrapToCreateNewKey(capsule),
   );
 
-  late final Command<NewCryptoIdentityCapsule, String?>
-  initCryptoIdentityCommand = Command.createAsync(
-    (capsule) => _client
-        .initCryptoIdentity(
-          passphrase: capsule.passphrase,
-          wipeSecureStorage: capsule.wipeSecureStorage,
-          wipeKeyBackup: capsule.wipeKeyBackup,
-          wipeCrossSigning: capsule.wipeCrossSigning,
-          setupMasterKey: capsule.setupMasterKey,
-          setupSelfSigningKey: capsule.setupSelfSigningKey,
-          setupUserSigningKey: capsule.setupUserSigningKey,
-          setupOnlineKeyBackup: capsule.setupOnlineKeyBackup,
-          keyName: capsule.keyName,
-        )
-        .timeout(
-          const Duration(minutes: 1),
-          onTimeout: () {
-            throw Exception(
-              'Initializing crypto identity timed out. Please try again.',
+  final newSsssKeyNotifier = SafeValueNotifier<String?>(null);
+  void _runThroughBootstrapToCreateNewKey(NewCryptoIdentityCapsule capsule) {
+    if (_client.encryption == null) {
+      throw Exception('End to end encryption not available!');
+    }
+
+    _client.encryption!.bootstrap(
+      onUpdate: (bootstrap) async {
+        newSsssKeyNotifier.value = bootstrap.newSsssKey?.recoveryKey;
+        switch (bootstrap.state) {
+          case BootstrapState.loading:
+            Logs().i('Bootstrap loading...');
+
+          case BootstrapState.askWipeSsss:
+            Logs().i('Bootstrap asking to wipe SSSS...');
+            bootstrap.wipeSsss(capsule.wipeSecureStorage);
+          case BootstrapState.askUseExistingSsss:
+            Logs().i('Bootstrap asking to use existing SSSS...');
+            bootstrap.useExistingSsss(false);
+          case BootstrapState.askUnlockSsss:
+            Logs().i('Bootstrap asking to unlock SSSS...');
+            bootstrap.unlockedSsss();
+          case BootstrapState.askBadSsss:
+            Logs().i('Bootstrap asking to ignore bad SSSS...');
+            bootstrap.ignoreBadSecrets(true);
+          case BootstrapState.askWipeCrossSigning:
+            Logs().i('Bootstrap asking to wipe cross signing...');
+            await bootstrap.wipeCrossSigning(capsule.wipeCrossSigning);
+          case BootstrapState.askWipeOnlineKeyBackup:
+            Logs().i('Bootstrap asking to wipe online key backup...');
+            bootstrap.wipeOnlineKeyBackup(capsule.wipeKeyBackup);
+          case BootstrapState.askSetupOnlineKeyBackup:
+            Logs().i('Bootstrap asking to setup online key backup...');
+            await bootstrap.askSetupOnlineKeyBackup(
+              capsule.setupOnlineKeyBackup,
             );
-          },
-        ),
-    initialValue: null,
-  );
+          case BootstrapState.askSetupCrossSigning:
+            Logs().i('Bootstrap asking to setup cross signing...');
+            await bootstrap.askSetupCrossSigning(
+              setupMasterKey: capsule.setupMasterKey,
+              setupSelfSigningKey: capsule.setupSelfSigningKey,
+              setupUserSigningKey: capsule.setupUserSigningKey,
+            );
+          case BootstrapState.askNewSsss:
+            Logs().i('Bootstrap asking to create new SSSS...');
+            await bootstrap.newSsss(capsule.passphrase, capsule.keyName);
+          case BootstrapState.openExistingSsss:
+            throw Exception(
+              'Bootstrap state ${bootstrap.state} should not happen!',
+            );
+          case BootstrapState.error:
+            throw Exception('Bootstrap error!');
+          case BootstrapState.done:
+            Logs().i('Bootstrap done!');
+        }
+      },
+    );
+  }
 
   late final Command<String, String?> copyRecoveryKeyCommand =
       Command.createAsync((recoveryKey) async {
