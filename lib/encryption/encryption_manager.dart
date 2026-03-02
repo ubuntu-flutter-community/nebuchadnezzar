@@ -1,10 +1,11 @@
+import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:matrix/encryption/utils/bootstrap.dart';
+import 'package:matrix/encryption/utils/crypto_setup_extension.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
-import 'package:safe_change_notifier/safe_change_notifier.dart';
 
-class EncryptionManager extends SafeChangeNotifier {
+class EncryptionManager {
   EncryptionManager({
     required Client client,
     required FlutterSecureStorage secureStorage,
@@ -17,134 +18,78 @@ class EncryptionManager extends SafeChangeNotifier {
   Stream<KeyVerification> get onKeyVerificationRequest =>
       _client.onKeyVerificationRequest.stream;
 
-  Future<bool> checkIfEncryptionSetupIsNeeded() async {
-    if (!_client.encryptionEnabled) return true;
+  late final Command<void, ({bool connected, bool initialized})?>
+  checkIfEncryptionSetupIsNeededCommand = Command.createAsyncNoParam(
+    _checkIfEncryptionSetupIsNeeded,
+    initialValue: null,
+  );
+
+  Future<({bool connected, bool initialized})>
+  _checkIfEncryptionSetupIsNeeded() async {
+    if (!_client.encryptionEnabled) {
+      return const (connected: false, initialized: false);
+    }
 
     await _client.accountDataLoading;
     await _client.userDeviceKeysLoading;
     if (_client.prevBatch == null) {
       await _client.onSync.stream.first;
     }
-    final crossSigning =
-        await _client.encryption?.crossSigning.isCached() ?? false;
-    final needsBootstrap =
-        await _client.encryption?.keyManager.isCached() == false ||
-        _client.encryption?.crossSigning.enabled == false ||
-        crossSigning == false;
-
-    return needsBootstrap || _client.isUnknownSession;
+    return _client.getCryptoIdentityState();
   }
+
+  late final Command<
+    ({String keyOrPassphrase, String? keyIdentifier, bool selfSign}),
+    ({bool connected, bool initialized})
+  >
+  restoreCryptoIdentityCommand = Command.createAsync((params) async {
+    if (params.keyOrPassphrase.isEmpty) {
+      throw Exception('Recovery key or passphrase cannot be empty!');
+    }
+    await _client.restoreCryptoIdentity(
+      params.keyOrPassphrase,
+      keyIdentifier: params.keyIdentifier,
+      selfSign: params.selfSign,
+    );
+    return _client.getCryptoIdentityState();
+  }, initialValue: const (connected: false, initialized: false));
+
+  late final Command<NewCryptoIdentityCapsule, String?>
+  initCryptoIdentityCommand = Command.createAsync(
+    (capsule) => _client.initCryptoIdentity(
+      passphrase: capsule.passphrase,
+      wipeSecureStorage: capsule.wipeSecureStorage,
+      wipeKeyBackup: capsule.wipeKeyBackup,
+      wipeCrossSigning: capsule.wipeCrossSigning,
+      setupMasterKey: capsule.setupMasterKey,
+      setupSelfSigningKey: capsule.setupSelfSigningKey,
+      setupUserSigningKey: capsule.setupUserSigningKey,
+      setupOnlineKeyBackup: capsule.setupOnlineKeyBackup,
+      keyName: capsule.keyName,
+    ),
+    initialValue: null,
+  );
+
+  late final Command<String, String?> copyRecoveryKeyCommand =
+      Command.createAsync((recoveryKey) async {
+        await Clipboard.setData(ClipboardData(text: recoveryKey));
+        return recoveryKey;
+      }, initialValue: null);
+
+  late final Command<String, String?> storeRecoveryKeyCommand =
+      Command.createAsync((recoveryKey) async {
+        await _secureStorage.write(key: secureStorageKey, value: recoveryKey);
+
+        return _secureStorage.read(key: secureStorageKey);
+      }, initialValue: null);
+
+  late final Command<void, String?> loadRecoveryKeyFromSecureStorageCommand =
+      Command.createAsyncNoParam(
+        () => _secureStorage.read(key: secureStorageKey),
+        initialValue: null,
+      );
 
   String get secureStorageKey => 'ssss_recovery_key_${_client.userID}';
-
-  bool _storeInSecureStorage = false;
-  bool get storeInSecureStorage => _storeInSecureStorage;
-  void setStoreInSecureStorage(bool value) {
-    if (_storeInSecureStorage == value) return;
-    _storeInSecureStorage = value;
-    notifyListeners();
-  }
-
-  String? _recoveryKeyInputError;
-  String? get recoveryKeyInputError => _recoveryKeyInputError;
-  void setRecoveryKeyInputError(String? value) {
-    if (_recoveryKeyInputError == value) return;
-    _recoveryKeyInputError = value;
-    notifyListeners();
-  }
-
-  bool _recoveryKeyInputLoading = false;
-  bool get recoveryKeyInputLoading => _recoveryKeyInputLoading;
-  void setRecoveryKeyInputLoading(bool value) {
-    if (_recoveryKeyInputLoading == value) return;
-    _recoveryKeyInputLoading = value;
-    notifyListeners();
-  }
-
-  bool _recoveryKeyStored = false;
-  bool get recoveryKeyStored => _recoveryKeyStored;
-  void _setRecoveryKeyStored(bool value) {
-    if (_recoveryKeyStored == value) return;
-    _recoveryKeyStored = value;
-    notifyListeners();
-  }
-
-  bool _recoveryKeyCopied = false;
-  bool get recoveryKeyCopied => _recoveryKeyCopied;
-  void setRecoveryKeyCopied(bool value) {
-    if (_recoveryKeyCopied == value) return;
-    _recoveryKeyCopied = value;
-    notifyListeners();
-  }
-
-  void storeRecoveryKey() {
-    if (storeInSecureStorage) {
-      _secureStorage.write(key: secureStorageKey, value: key).then((value) {
-        _setRecoveryKeyStored(true);
-      });
-    } else {
-      _setRecoveryKeyStored(true);
-    }
-  }
-
-  Future<String?> _loadKeyFromSecureStorage() async =>
-      _secureStorage.read(key: secureStorageKey);
-
-  String? _key;
-  String? get key => _key;
-  Bootstrap? _bootstrap;
-  Bootstrap? get bootstrap => _bootstrap;
-  void _setBootsTrap({required Bootstrap bootstrap, required bool wipe}) {
-    switch (bootstrap.state) {
-      case BootstrapState.loading ||
-          BootstrapState.done ||
-          BootstrapState.error:
-        return;
-      case BootstrapState.openExistingSsss:
-        _setRecoveryKeyStored(true);
-      case BootstrapState.askWipeSsss:
-        bootstrap.wipeSsss(wipe);
-      case BootstrapState.askBadSsss:
-        bootstrap.ignoreBadSecrets(true);
-      case BootstrapState.askUseExistingSsss:
-        bootstrap.useExistingSsss(!wipe);
-      case BootstrapState.askUnlockSsss:
-        bootstrap.unlockedSsss();
-      case BootstrapState.askNewSsss:
-        bootstrap.newSsss();
-      case BootstrapState.askWipeCrossSigning:
-        bootstrap.wipeCrossSigning(wipe);
-      case BootstrapState.askSetupCrossSigning:
-        bootstrap.askSetupCrossSigning(
-          setupMasterKey: true,
-          setupSelfSigningKey: true,
-          setupUserSigningKey: true,
-        );
-      case BootstrapState.askWipeOnlineKeyBackup:
-        bootstrap.wipeOnlineKeyBackup(wipe);
-
-      case BootstrapState.askSetupOnlineKeyBackup:
-        bootstrap.askSetupOnlineKeyBackup(true);
-    }
-
-    _bootstrap = bootstrap;
-    _key = bootstrap.newSsssKey?.recoveryKey;
-
-    notifyListeners();
-  }
-
-  Future<void> startBootstrap({required bool wipe}) async {
-    _recoveryKeyStored = false;
-    _bootstrap = _client.encryption?.bootstrap(
-      onUpdate: (v) => _setBootsTrap(bootstrap: v, wipe: wipe),
-    );
-    final theKey = await _loadKeyFromSecureStorage();
-    if (key != null) {
-      _key = theKey;
-    }
-
-    notifyListeners();
-  }
 
   Future<KeyVerification> startKeyVerification() async {
     if (_client.userID != null &&
@@ -155,4 +100,28 @@ class EncryptionManager extends SafeChangeNotifier {
       return Future<KeyVerification>.error('Unknown userID');
     }
   }
+}
+
+class NewCryptoIdentityCapsule {
+  NewCryptoIdentityCapsule({
+    this.passphrase,
+    this.wipeSecureStorage = true,
+    this.wipeKeyBackup = true,
+    this.wipeCrossSigning = true,
+    this.setupMasterKey = true,
+    this.setupSelfSigningKey = true,
+    this.setupUserSigningKey = true,
+    this.setupOnlineKeyBackup = true,
+    this.keyName,
+  });
+
+  final String? passphrase;
+  final bool wipeSecureStorage;
+  final bool wipeKeyBackup;
+  final bool wipeCrossSigning;
+  final bool setupMasterKey;
+  final bool setupSelfSigningKey;
+  final bool setupUserSigningKey;
+  final bool setupOnlineKeyBackup;
+  final String? keyName;
 }

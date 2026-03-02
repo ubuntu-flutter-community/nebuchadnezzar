@@ -36,7 +36,7 @@ class _WaitForRegistrationPageState extends State<WaitForRegistrationPage> {
   @override
   void initState() {
     super.initState();
-    _registrationReady = di.allReady();
+    _registrationReady = di.allReady(timeout: const Duration(seconds: 60));
   }
 
   @override

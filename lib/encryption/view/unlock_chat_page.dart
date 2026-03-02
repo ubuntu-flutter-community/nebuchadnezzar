@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
-import 'package:matrix/encryption.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../authentication/authentication_service.dart';
 import '../../authentication/view/uia_request_handler.dart';
+import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
-import '../../common/view/confirm.dart';
-import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_manager.dart';
+import 'init_crypto_identity_button.dart';
 import 'key_verification_dialog.dart';
 
 class UnlockChatPage extends StatefulWidget with WatchItStatefulWidgetMixin {
@@ -41,14 +39,6 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
     final l10n = context.l10n;
     final encryptionManager = di<EncryptionManager>();
 
-    final bootstrap = watchPropertyValue((EncryptionManager m) => m.bootstrap);
-    final recoveryKeyInputLoading = watchPropertyValue(
-      (EncryptionManager m) => m.recoveryKeyInputLoading,
-    );
-    final recoveryKeyInputError = watchPropertyValue(
-      (EncryptionManager m) => m.recoveryKeyInputError,
-    );
-
     registerStreamHandler(
       select: (AuthenticationService m) => m.onUiaRequestStream,
       handler: (context, newValue, cancel) async {
@@ -58,6 +48,45 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
             context: context,
             rootNavigator: true,
           );
+        }
+      },
+    );
+
+    final recoveryKeyInputLoading = watchValue(
+      (EncryptionManager m) =>
+          m.loadRecoveryKeyFromSecureStorageCommand.isRunning,
+    );
+
+    final recoveryKeyInputError = watchValue(
+      (EncryptionManager m) => m.restoreCryptoIdentityCommand.results.select(
+        (e) => e.error?.toString(),
+      ),
+    );
+
+    registerHandler(
+      select: (EncryptionManager m) => m.restoreCryptoIdentityCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasData) {
+          final result = newValue.data!;
+          if (result.connected && result.initialized) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const ChatMasterDetailPage()),
+            );
+          }
+        }
+      },
+    );
+
+    registerHandler(
+      select: (EncryptionManager m) => m.initCryptoIdentityCommand.results,
+      handler: (context, newValue, cancel) {
+        if (newValue.hasData) {
+          final key = newValue.data;
+          if (key != null) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const ChatMasterDetailPage()),
+            );
+          }
         }
       },
     );
@@ -113,67 +142,14 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                           recoveryKeyInputLoading ||
                               _recoveryKeyTextEditingController.text.isEmpty
                           ? null
-                          : () async {
-                              encryptionManager
-                                ..setRecoveryKeyInputError(null)
-                                ..setRecoveryKeyInputLoading(true);
-                              try {
-                                final newKey = _recoveryKeyTextEditingController
-                                    .text
-                                    .trim();
-                                if (newKey.isEmpty == true) return;
-                                await bootstrap?.newSsssKey?.unlock(
-                                  keyOrPassphrase: newKey,
-                                );
-                                await bootstrap?.openExistingSsss();
-                                Logs().d('SSSS unlocked');
-                                if (bootstrap
-                                        ?.encryption
-                                        .crossSigning
-                                        .enabled ==
-                                    true) {
-                                  Logs().v(
-                                    'Cross signing is already enabled. Try to self-sign',
-                                  );
-                                  try {
-                                    await bootstrap
-                                        ?.client
-                                        .encryption!
-                                        .crossSigning
-                                        .selfSign(recoveryKey: newKey);
-                                    Logs().d('Successful selfsigned');
-                                  } catch (e, s) {
-                                    Logs().e(
-                                      'Unable to self sign with recovery key after successfully open existing SSSS',
-                                      e,
-                                      s,
-                                    );
-                                  }
-                                }
-                              } on InvalidPassphraseException catch (e) {
-                                if (context.mounted) {
-                                  showSnackBar(
-                                    context,
-                                    content: Text(e.toString()),
-                                  );
-                                }
-                              } on FormatException catch (_) {
-                                encryptionManager.setRecoveryKeyInputError(
-                                  l10n.wrongRecoveryKey,
-                                );
-                              } catch (e, _) {
-                                if (context.mounted) {
-                                  showSnackBar(
-                                    context,
-                                    content: Text(e.toString()),
-                                  );
-                                }
-                              } finally {
-                                encryptionManager.setRecoveryKeyInputLoading(
-                                  false,
-                                );
-                              }
-                            },
+                          : () => encryptionManager.restoreCryptoIdentityCommand
+                                .run((
+                                  keyIdentifier: null,
+                                  keyOrPassphrase:
+                                      _recoveryKeyTextEditingController.text
+                                          .trim(),
+                                  selfSign: true,
+                                )),
                     );
                   },
                 ),
@@ -208,27 +184,7 @@ class _UnlockChatPageState extends State<UnlockChatPage> {
                           }
                         },
                 ),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.error,
-                    foregroundColor: theme.colorScheme.onError,
-                  ),
-                  icon: Icon(YaruIcons.trash, color: theme.colorScheme.onError),
-                  label: Text(l10n.recoveryKeyLost),
-                  onPressed: recoveryKeyInputLoading
-                      ? null
-                      : () async {
-                          await showDialog(
-                            context: context,
-                            builder: (context) => ConfirmationDialog(
-                              title: Text(l10n.recoveryKeyLost),
-                              content: Text(l10n.wipeChatBackup),
-                              onConfirm: () =>
-                                  encryptionManager.startBootstrap(wipe: true),
-                            ),
-                          );
-                        },
-                ),
+                InitCryptoIdentityButton(loading: recoveryKeyInputLoading),
                 const ChatSettingsLogoutButton(),
               ],
             ),

@@ -107,7 +107,6 @@ void registerDependencies() {
         client: di<Client>(),
         secureStorage: di<FlutterSecureStorage>(),
       ),
-      dispose: (s) => s.dispose(),
       dependsOn: [Client],
     )
     ..registerSingletonWithDependencies<ChatManager>(

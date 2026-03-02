@@ -1,18 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../app/view/error_page.dart';
+import '../../app/view/splash_page.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
 import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
-import '../../common/view/snackbars.dart';
 import '../../common/view/space.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../../settings/view/chat_settings_logout_button.dart';
 import '../encryption_manager.dart';
+
+class CreateNewKeyPage extends StatelessWidget with WatchItMixin {
+  const CreateNewKeyPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    callOnceAfterThisBuild(
+      (context) => di<EncryptionManager>().initCryptoIdentityCommand.run(
+        NewCryptoIdentityCapsule(),
+      ),
+    );
+
+    return watchValue(
+      (EncryptionManager m) => m.initCryptoIdentityCommand.results,
+    ).toWidget(
+      onError: (error, _, _) => ErrorPage(error: error),
+      whileRunning: (_, _) =>
+          SplashPage(title: Text(context.l10n.settingUpEncryptionPleaseWait)),
+      onData: (key, _) => key == null
+          ? const ErrorPage(error: 'Failed to create new encryption keys!')
+          : NewKeyCreatedPage(encryptionKey: key),
+    );
+  }
+}
 
 class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
   const NewKeyCreatedPage({super.key, required this.encryptionKey});
@@ -25,11 +49,12 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
     final theme = context.theme;
     final encryptionManager = di<EncryptionManager>();
 
-    final recoveryKeyCopied = watchPropertyValue(
-      (EncryptionManager m) => m.recoveryKeyCopied,
+    final recoveryKeyCopied = watchValue(
+      (EncryptionManager m) => m.copyRecoveryKeyCommand,
     );
-    final storeInSecureStorage = watchPropertyValue(
-      (EncryptionManager m) => m.storeInSecureStorage,
+
+    final storeInSecureStorage = watchValue(
+      (EncryptionManager m) => m.storeRecoveryKeyCommand,
     );
 
     return Scaffold(
@@ -74,22 +99,26 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                 ],
                 YaruCheckboxListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  value: storeInSecureStorage,
-                  onChanged: (v) =>
-                      encryptionManager.setStoreInSecureStorage(v ?? false),
+                  value: storeInSecureStorage != null,
+                  onChanged: (v) {
+                    if (v == true) {
+                      encryptionManager.storeRecoveryKeyCommand.run(
+                        encryptionKey,
+                      );
+                    }
+                  },
                   title: Text(getSecureStorageLocalizedName(context.l10n)),
                   subtitle: Text(l10n.storeInSecureStorageDescription),
                 ),
                 YaruCheckboxListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  value: recoveryKeyCopied,
+                  value: recoveryKeyCopied != null,
                   onChanged: (b) {
-                    Clipboard.setData(ClipboardData(text: encryptionKey));
-                    showSnackBar(
-                      context,
-                      content: Text(l10n.copiedToClipboard),
-                    );
-                    encryptionManager.setRecoveryKeyCopied(true);
+                    if (b == true) {
+                      encryptionManager.copyRecoveryKeyCommand.run(
+                        encryptionKey,
+                      );
+                    }
                   },
                   title: Text(l10n.copyToClipboard),
                   subtitle: Text(l10n.saveKeyManuallyDescription),
@@ -97,17 +126,15 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                 ElevatedButton.icon(
                   icon: const Icon(YaruIcons.checkmark),
                   label: Text(l10n.next),
-                  onPressed: (recoveryKeyCopied || storeInSecureStorage)
-                      ? () {
-                          encryptionManager.storeRecoveryKey();
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const ChatMasterDetailPage(),
-                            ),
-                            (route) => false,
-                          );
-                        }
+                  onPressed:
+                      (recoveryKeyCopied != null ||
+                          storeInSecureStorage != null)
+                      ? () => Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => const ChatMasterDetailPage(),
+                          ),
+                          (route) => false,
+                        )
                       : null,
                 ),
                 const ChatSettingsLogoutButton(),

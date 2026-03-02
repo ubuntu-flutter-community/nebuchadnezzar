@@ -3299,5 +3299,20 @@
     }
   },
   "directoryDoesNotExist": "Das Verzeichnis existiert nicht mehr oder ist nicht zugänglich.",
-  "thread": "Teilunterhaltung"
+  "thread": "Teilunterhaltung",
+  "wipeSecureStorage": "Sicheren Speicher löschen",
+  "wipeKeyBackup": "Schlüssel-Backup löschen",
+  "wipeCrossSigning": "Cross-Signing löschen",
+  "setupMasterKey": "Master-Schlüssel einrichten",
+  "setupSelfSigningKey": "Schlüssel für Selbstsignierung einrichten",
+  "setupUserSigningKey": "Schlsüssel für Benutzersignierung einrichten",
+  "setupOnlineKeyBackup": "Online-Schlüssel-Backup einrichten",
+  "yourPassphrase": "Optionale Passphrase als Ersatz für die Wiederherstellungsschlüssel",
+  "yourPassphraseDescription": "Der Wiederherstellungsschlüssel ist sehr lang und schwer zu merken. Sie können optional eine Passphrase einrichten, die leichter zu merken ist. Die Passphrase wird verwendet, um den Wiederherstellungsschlüssel zu verschlüsseln. Stellen Sie sicher, dass Sie eine starke Passphrase wählen und diese nicht vergessen, da Sie sonst den Zugriff auf Ihre verschlüsselten Nachrichten verlieren, wenn Sie sich abmelden oder das Gerät wechseln.",
+  "showAddtionalNewCryptoSetupOptions": "Erweiterte Einstellungen anzeigen",
+  "showAddtionalNewCryptoSetupOptionsWarning": "Vorsicht! Diese Optionen sind für fortgeschrittene Benutzer gedacht. Wenn du nicht genau weißt, was sie tun, solltest du sie nicht verwenden.",
+  "resetRecoveryKey": "Wiederherstellungsschlüssel zurücksetzen",
+  "resetRecoveryKeyTitle": "Wiederherstellungsschlüssel zurücksetzen und Schlüssel-Backup löschen",
+  "resetRecoveryKeyDescription": "Lösche dein Schlüssel-Backup, setze deinen Wiederherstellungsschlüssel zurück und erstelle einen neuen. Du wirst die Schlüssel verlieren, um die zuvor verschlüsselten Nachrichten zu entschlüsseln. Bist du sicher, dass du deinen Wiederherstellungsschlüssel zurücksetzen möchtest?",
+  "resetRecoveryKeyConfirmationLabel": "Ja, Wiederherstellungsschlüssel zurücksetzen"
 }

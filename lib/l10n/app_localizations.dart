@@ -4803,6 +4803,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thread'**
   String get thread;
+
+  /// No description provided for @wipeSecureStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Wipe secure storage'**
+  String get wipeSecureStorage;
+
+  /// No description provided for @wipeKeyBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Wipe key backup'**
+  String get wipeKeyBackup;
+
+  /// No description provided for @wipeCrossSigning.
+  ///
+  /// In en, this message translates to:
+  /// **'Wipe cross-signing'**
+  String get wipeCrossSigning;
+
+  /// No description provided for @setupMasterKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup master key'**
+  String get setupMasterKey;
+
+  /// No description provided for @setupUserSigningKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup user-signing key'**
+  String get setupUserSigningKey;
+
+  /// No description provided for @setupSelfSigningKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup self-signing key'**
+  String get setupSelfSigningKey;
+
+  /// No description provided for @setupOnlineKeyBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup online key backup'**
+  String get setupOnlineKeyBackup;
+
+  /// No description provided for @yourPassphrase.
+  ///
+  /// In en, this message translates to:
+  /// **'(Optional) Your passphrase'**
+  String get yourPassphrase;
+
+  /// No description provided for @yourPassphraseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The recovery key is very long and hard to remember. You can optionally set up a passphrase that is easier to remember. The passphrase will be used to encrypt the recovery key. Make sure to choose a strong passphrase and do not forget it, otherwise you will lose access to your encrypted messages when you log out or switch devices.'**
+  String get yourPassphraseDescription;
+
+  /// No description provided for @showAddtionalNewCryptoSetupOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Show additional new crypto setup options'**
+  String get showAddtionalNewCryptoSetupOptions;
+
+  /// No description provided for @showAddtionalNewCryptoSetupOptionsWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning! These options are only recommended for advanced users. If you are not sure what these options do, it is better to stick with the default setup.'**
+  String get showAddtionalNewCryptoSetupOptionsWarning;
+
+  /// No description provided for @resetRecoveryKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset recovery key'**
+  String get resetRecoveryKey;
+
+  /// No description provided for @resetRecoveryKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset recovery key and wipe key backup'**
+  String get resetRecoveryKeyTitle;
+
+  /// No description provided for @resetRecoveryKeyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Wipe your key backup, reset your recovery key and generate a new one. You will lose the keys to decrypt the messages that were previously encrypted. Are you sure that you want to reset your recovery key?'**
+  String get resetRecoveryKeyDescription;
+
+  /// No description provided for @resetRecoveryKeyConfirmationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Reset recovery key'**
+  String get resetRecoveryKeyConfirmationLabel;
 }
 
 class _AppLocalizationsDelegate
