@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_sv.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -98,6 +99,13 @@ abstract class AppLocalizations {
     Locale('de'),
     Locale('en'),
     Locale('sv'),
+    Locale('zh'),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
+    Locale.fromSubtags(
+      languageCode: 'zh',
+      countryCode: 'TW',
+      scriptCode: 'Hant',
+    ),
   ];
 
   /// Set to true to always display time of day in 24 hour format.
@@ -4816,13 +4824,31 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['de', 'en', 'sv'].contains(locale.languageCode);
+      <String>['de', 'en', 'sv', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+  // Lookup logic when language+script+country codes are specified.
+  switch (locale.toString()) {
+    case 'zh_Hant_TW':
+      return AppLocalizationsZhHantTw();
+  }
+
+  // Lookup logic when language+script codes are specified.
+  switch (locale.languageCode) {
+    case 'zh':
+      {
+        switch (locale.scriptCode) {
+          case 'Hans':
+            return AppLocalizationsZhHans();
+        }
+        break;
+      }
+  }
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
     case 'de':
@@ -4831,6 +4857,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'sv':
       return AppLocalizationsSv();
+    case 'zh':
+      return AppLocalizationsZh();
   }
 
   throw FlutterError(
