@@ -3,7 +3,7 @@ import 'package:matrix/matrix.dart';
 extension RoomX on Room {
   bool get canChangeAnyRoomSetting =>
       canSendDefaultMessages &&
-      (ownPowerLevel == 100 ||
+      (ownPowerLevel.level == 100 ||
           canKick ||
           canBan ||
           canChangeGuestAccess ||
