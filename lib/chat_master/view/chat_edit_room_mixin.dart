@@ -7,6 +7,14 @@ import '../../l10n/l10n.dart';
 import 'chat_clear_archive_progress_bar.dart';
 
 mixin ChatEditRoomMixin {
+  void registerGlobalLeaveForgetCommands() {
+    registerGlobalLeaveCommand();
+
+    registerGlobalForgetRoomCommand();
+
+    registerForgetAllRoomsCommand();
+  }
+
   void registerGlobalLeaveCommand() {
     registerHandler(
       select: (EditRoomManager m) => m.globalLeaveRoomCommand.results,

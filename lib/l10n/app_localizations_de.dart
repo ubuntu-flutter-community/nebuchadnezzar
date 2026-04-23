@@ -2413,6 +2413,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Verschlüsselung wird geprüft, bitte warten...';
 
   @override
+  String get initializingCryptoIdentityPleaseWait =>
+      'Neue Krypto-Identität wird initialisiert, bitte warten ...';
+
+  @override
   String get settingUpEncryptionPleaseWait =>
       'Verschlüsselung wird eingerichtet, bitte warten...';
 
@@ -2765,4 +2769,57 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get thread => 'Teilunterhaltung';
+
+  @override
+  String get wipeSecureStorage => 'Sicheren Speicher löschen';
+
+  @override
+  String get wipeKeyBackup => 'Schlüssel-Backup löschen';
+
+  @override
+  String get wipeCrossSigning => 'Cross-Signing löschen';
+
+  @override
+  String get setupMasterKey => 'Master-Schlüssel einrichten';
+
+  @override
+  String get setupUserSigningKey =>
+      'Schlüssel für Benutzersignierung einrichten';
+
+  @override
+  String get setupSelfSigningKey => 'Schlüssel für Selbstsignierung einrichten';
+
+  @override
+  String get setupOnlineKeyBackup => 'Online-Schlüssel-Backup einrichten';
+
+  @override
+  String get yourPassphrase =>
+      'Optionale Passphrase als Ersatz für die Wiederherstellungsschlüssel';
+
+  @override
+  String get yourPassphraseDescription =>
+      'Der Wiederherstellungsschlüssel ist sehr lang und schwer zu merken. Du kannst optional eine Passphrase einrichten, die leichter zu merken ist. Die Passphrase wird verwendet, um den Wiederherstellungsschlüssel zu verschlüsseln. Stelle sicher, dass du eine starke Passphrase wählst und diese nicht vergisst, da du sonst den Zugriff auf deine verschlüsselten Nachrichten verlierst, wenn du dich abmeldest oder das Gerät wechselst.';
+
+  @override
+  String get showAddtionalNewCryptoSetupOptions =>
+      'Erweiterte Einstellungen anzeigen';
+
+  @override
+  String get showAddtionalNewCryptoSetupOptionsWarning =>
+      'Vorsicht! Diese Optionen sind für fortgeschrittene Benutzer gedacht. Wenn du nicht genau weißt, was du tust, solltest du sie nicht verwenden.';
+
+  @override
+  String get resetRecoveryKey => 'Wiederherstellungsschlüssel zurücksetzen';
+
+  @override
+  String get resetRecoveryKeyTitle =>
+      'Wiederherstellungsschlüssel zurücksetzen und Schlüssel-Backup löschen';
+
+  @override
+  String get resetRecoveryKeyDescription =>
+      'Lösche dein Schlüssel-Backup, setze deinen Wiederherstellungsschlüssel zurück und erstelle einen neuen. Du wirst die Schlüssel verlieren, um die zuvor verschlüsselten Nachrichten zu entschlüsseln. Bist du sicher, dass du deinen Wiederherstellungsschlüssel zurücksetzen möchtest?';
+
+  @override
+  String get resetRecoveryKeyConfirmationLabel =>
+      'Ja, Wiederherstellungsschlüssel zurücksetzen';
 }

@@ -2305,6 +2305,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get checkingEncryptionPleaseWait => '检查加密，请稍后...';
 
   @override
+  String get initializingCryptoIdentityPleaseWait =>
+      'Initializing new crypto identity, please wait ...';
+
+  @override
   String get settingUpEncryptionPleaseWait => '设置加密，请稍后...';
 
   @override
@@ -2638,6 +2642,55 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get thread => '线程';
+
+  @override
+  String get wipeSecureStorage => 'Wipe secure storage';
+
+  @override
+  String get wipeKeyBackup => 'Wipe key backup';
+
+  @override
+  String get wipeCrossSigning => 'Wipe cross-signing';
+
+  @override
+  String get setupMasterKey => 'Setup master key';
+
+  @override
+  String get setupUserSigningKey => 'Setup user-signing key';
+
+  @override
+  String get setupSelfSigningKey => 'Setup self-signing key';
+
+  @override
+  String get setupOnlineKeyBackup => 'Setup online key backup';
+
+  @override
+  String get yourPassphrase => '(Optional) Your passphrase';
+
+  @override
+  String get yourPassphraseDescription =>
+      'The recovery key is very long and hard to remember. You can optionally set up a passphrase that is easier to remember. The passphrase will be used to encrypt the recovery key. Make sure to choose a strong passphrase and do not forget it, otherwise you will lose access to your encrypted messages when you log out or switch devices.';
+
+  @override
+  String get showAddtionalNewCryptoSetupOptions =>
+      'Show additional new crypto setup options';
+
+  @override
+  String get showAddtionalNewCryptoSetupOptionsWarning =>
+      'Warning! These options are only recommended for advanced users. If you are not sure what these options do, it is better to stick with the default setup.';
+
+  @override
+  String get resetRecoveryKey => 'Reset recovery key';
+
+  @override
+  String get resetRecoveryKeyTitle => 'Reset recovery key and wipe key backup';
+
+  @override
+  String get resetRecoveryKeyDescription =>
+      'Wipe your key backup, reset your recovery key and generate a new one. You will lose the keys to decrypt the messages that were previously encrypted. Are you sure that you want to reset your recovery key?';
+
+  @override
+  String get resetRecoveryKeyConfirmationLabel => 'Yes, Reset recovery key';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).

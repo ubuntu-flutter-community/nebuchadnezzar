@@ -40,7 +40,7 @@ class ChatRoomUsersList extends StatelessWidget with WatchItMixin {
       ),
       initialValue: room.getParticipants(membershipFilter),
       preserveState: false,
-    ).data?.sorted((a, b) => b.powerLevel.compareTo(a.powerLevel));
+    ).data?.sorted((a, b) => b.powerLevel.level.compareTo(a.powerLevel.level));
 
     if (users == null || users.isEmpty) {
       if (!sliver) {

@@ -5,6 +5,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../authentication/authentication_service.dart';
 import '../../common/view/ui_constants.dart';
+import '../../encryption/view/init_crypto_identity_button.dart';
 import '../../l10n/l10n.dart';
 import '../account_manager.dart';
 import 'chat_settings_avatar.dart';
@@ -49,6 +50,7 @@ class _ChatSettingsAccountSectionState
               profile: asyncSnapshot.hasError ? null : asyncSnapshot.data,
             ),
           ),
+
           YaruTile(
             title: TextField(
               enabled: false,
@@ -57,6 +59,15 @@ class _ChatSettingsAccountSectionState
               ),
             ),
             trailing: const ChatSettingsLogoutButton(),
+          ),
+          YaruTile(
+            title: SizedBox(
+              width: double.infinity,
+              child: InitCryptoIdentityButton(
+                loading: false,
+                label: context.l10n.resetRecoveryKey,
+              ),
+            ),
           ),
         ],
       ),

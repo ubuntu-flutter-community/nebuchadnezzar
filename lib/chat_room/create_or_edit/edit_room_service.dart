@@ -193,7 +193,7 @@ class EditRoomService {
       final currentPowerLevel = user.powerLevel;
       await room.setPower(user.id, powerLevel);
       printMessageInDebugMode(
-        'User ${currentPowerLevel < powerLevel ? 'promoted' : 'demoted'} to ${powerLevel == adminPowerLevel
+        'User ${currentPowerLevel.level < powerLevel ? 'promoted' : 'demoted'} to ${powerLevel == adminPowerLevel
             ? 'admin'
             : powerLevel == moderatorPowerLevel
             ? 'moderator'

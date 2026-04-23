@@ -30,16 +30,16 @@ class ChatRoomUserListTilePowerLevelButton extends StatelessWidget
         : watchStream(
                 (EditRoomService m) => m
                     .getJoinedRoomUpdate(room.id)
-                    .map((r) => myUser.powerLevel),
-                initialValue: myUser.powerLevel,
+                    .map((r) => myUser.powerLevel.level),
+                initialValue: myUser.powerLevel.level,
               ).data ??
-              myUser.powerLevel;
+              myUser.powerLevel.level;
 
     final userPowerLevel =
         watchStream(
           (EditRoomService m) =>
-              m.getJoinedRoomUpdate(room.id).map((r) => user.powerLevel),
-          initialValue: user.powerLevel,
+              m.getJoinedRoomUpdate(room.id).map((r) => user.powerLevel.level),
+          initialValue: user.powerLevel.level,
         ).data ??
         0;
 
