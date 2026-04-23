@@ -129,5 +129,62 @@
     "resetRecoveryKeyTitle",
     "resetRecoveryKeyDescription",
     "resetRecoveryKeyConfirmationLabel"
+  ],
+
+  "zh": [
+    "initializingCryptoIdentityPleaseWait",
+    "wipeSecureStorage",
+    "wipeKeyBackup",
+    "wipeCrossSigning",
+    "setupMasterKey",
+    "setupUserSigningKey",
+    "setupSelfSigningKey",
+    "setupOnlineKeyBackup",
+    "yourPassphrase",
+    "yourPassphraseDescription",
+    "showAddtionalNewCryptoSetupOptions",
+    "showAddtionalNewCryptoSetupOptionsWarning",
+    "resetRecoveryKey",
+    "resetRecoveryKeyTitle",
+    "resetRecoveryKeyDescription",
+    "resetRecoveryKeyConfirmationLabel"
+  ],
+
+  "zh_Hans": [
+    "initializingCryptoIdentityPleaseWait",
+    "wipeSecureStorage",
+    "wipeKeyBackup",
+    "wipeCrossSigning",
+    "setupMasterKey",
+    "setupUserSigningKey",
+    "setupSelfSigningKey",
+    "setupOnlineKeyBackup",
+    "yourPassphrase",
+    "yourPassphraseDescription",
+    "showAddtionalNewCryptoSetupOptions",
+    "showAddtionalNewCryptoSetupOptionsWarning",
+    "resetRecoveryKey",
+    "resetRecoveryKeyTitle",
+    "resetRecoveryKeyDescription",
+    "resetRecoveryKeyConfirmationLabel"
+  ],
+
+  "zh_Hant_TW": [
+    "initializingCryptoIdentityPleaseWait",
+    "wipeSecureStorage",
+    "wipeKeyBackup",
+    "wipeCrossSigning",
+    "setupMasterKey",
+    "setupUserSigningKey",
+    "setupSelfSigningKey",
+    "setupOnlineKeyBackup",
+    "yourPassphrase",
+    "yourPassphraseDescription",
+    "showAddtionalNewCryptoSetupOptions",
+    "showAddtionalNewCryptoSetupOptionsWarning",
+    "resetRecoveryKey",
+    "resetRecoveryKeyTitle",
+    "resetRecoveryKeyDescription",
+    "resetRecoveryKeyConfirmationLabel"
   ]
 }
