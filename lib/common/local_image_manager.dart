@@ -15,7 +15,11 @@ class LocalImageManager {
       (param, handle) => downloadImage(
         event: param.event,
         shallBeThumbnail: param.shallBeThumbnail,
-        onDownloadProgress: (progress) => handle.updateProgress(progress / 100),
+        onDownloadProgress: (progress) {
+          if (progress / 100 <= 1) {
+            handle.updateProgress(progress / 100);
+          }
+        },
       ),
       initialValue: getImageFromCache(event.eventId),
     ),
