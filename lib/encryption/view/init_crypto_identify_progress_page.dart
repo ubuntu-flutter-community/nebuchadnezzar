@@ -15,20 +15,6 @@ class InitCryptoIdentifyProgressPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     registerGlobalChatHandlers();
-    registerHandler(
-      select: (EncryptionManager m) => m.initCryptoIdentityCommand,
-      handler: (context, newSsssKey, cancel) {
-        if (newSsssKey != null) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) =>
-                  NewKeyCreatedPage(encryptionKey: newSsssKey),
-            ),
-            (route) => false,
-          );
-        }
-      },
-    );
 
     registerHandler(
       select: (EncryptionManager m) => m.initCryptoIdentityCommand.results,
@@ -38,6 +24,15 @@ class InitCryptoIdentifyProgressPage extends StatelessWidget
             MaterialPageRoute(
               builder: (context) =>
                   EncryptionSetupErrorPage(error: results.error!),
+            ),
+            (route) => false,
+          );
+        } else if (results.data != null) {
+          final newSsssKey = results.data!;
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) =>
+                  NewKeyCreatedPage(encryptionKey: newSsssKey),
             ),
             (route) => false,
           );
