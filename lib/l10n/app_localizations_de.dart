@@ -2809,6 +2809,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Vorsicht! Diese Optionen sind für fortgeschrittene Benutzer gedacht. Wenn du nicht genau weißt, was du tust, solltest du sie nicht verwenden.';
 
   @override
+  String get createRecoveryKey => 'Erstelle Wiederherstellungsschlüssel';
+
+  @override
   String get resetRecoveryKey => 'Wiederherstellungsschlüssel zurücksetzen';
 
   @override

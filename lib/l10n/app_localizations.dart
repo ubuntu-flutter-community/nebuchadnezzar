@@ -4884,6 +4884,12 @@ abstract class AppLocalizations {
   /// **'Warning! These options are only recommended for advanced users. If you are not sure what these options do, it is better to stick with the default setup.'**
   String get showAddtionalNewCryptoSetupOptionsWarning;
 
+  /// No description provided for @createRecoveryKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Create recovery key'**
+  String get createRecoveryKey;
+
   /// No description provided for @resetRecoveryKey.
   ///
   /// In en, this message translates to:

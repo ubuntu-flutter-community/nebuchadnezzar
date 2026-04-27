@@ -7,12 +7,17 @@ import '../../common/view/confirm.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../encryption_manager.dart';
-import 'init_crypto_identify_progress_page.dart';
+import 'init_crypto_identity_progress_page.dart';
 
 class InitCryptoIdentityConfirmationDialog extends StatefulWidget {
-  const InitCryptoIdentityConfirmationDialog({super.key, required this.title});
+  const InitCryptoIdentityConfirmationDialog({
+    super.key,
+    required this.title,
+    this.confirmLabel,
+  });
 
   final String title;
+  final String? confirmLabel;
 
   @override
   State<InitCryptoIdentityConfirmationDialog> createState() =>
@@ -158,7 +163,8 @@ class _InitCryptoIdentityConfirmationDialogState
           ),
         ],
       ),
-      confirmLabel: l10n.resetRecoveryKeyConfirmationLabel,
+      confirmLabel:
+          widget.confirmLabel ?? l10n.resetRecoveryKeyConfirmationLabel,
       onConfirm: () {
         di<EncryptionManager>().initCryptoIdentityCommand.run(
           NewCryptoIdentityCapsule(
@@ -175,12 +181,7 @@ class _InitCryptoIdentityConfirmationDialogState
 
         Navigator.of(context).pop();
 
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => const InitCryptoIdentifyProgressPage(),
-          ),
-          (route) => false,
-        );
+        context.teleport((_) => const InitCryptoIdentityProgressPage());
       },
     );
   }

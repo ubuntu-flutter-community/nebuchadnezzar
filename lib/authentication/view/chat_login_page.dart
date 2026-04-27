@@ -42,10 +42,7 @@ class _ChatLoginPageState extends State<ChatLoginPage> {
       select: (AuthenticationManager m) => m.loginCommand,
       handler: (context, userId, cancel) {
         if (userId != null && context.mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const CheckEncryptionSetupPage()),
-            (route) => false,
-          );
+          context.teleport((_) => const CheckEncryptionSetupPage());
         }
       },
     );

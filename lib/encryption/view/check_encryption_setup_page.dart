@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 
 import '../../app/view/splash_page.dart';
 import '../../chat_master/view/chat_master_detail_page.dart';
+import '../../common/view/build_context_x.dart';
 import '../../l10n/l10n.dart';
 import '../encryption_manager.dart';
 import 'encryption_setup_error_page.dart';
@@ -23,25 +24,16 @@ class CheckEncryptionSetupPage extends StatelessWidget with WatchItMixin {
           m.checkIfEncryptionSetupIsNeededCommand.results,
       handler: (context, newValue, cancel) {
         if (newValue.error != null) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (_) => EncryptionSetupErrorPage(error: newValue.error),
-            ),
-            (route) => false,
+          context.teleport(
+            (_) => EncryptionSetupErrorPage(error: newValue.error),
           );
         } else if (newValue.data != null) {
           final cryptoIdentityState = newValue.data!;
           if (cryptoIdentityState.connected &&
               cryptoIdentityState.initialized) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const ChatMasterDetailPage()),
-              (route) => false,
-            );
+            context.teleport((_) => const ChatMasterDetailPage());
           } else {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const UnlockChatPage()),
-              (route) => false,
-            );
+            context.teleport((_) => const UnlockChatPage());
           }
         }
       },
