@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
@@ -48,6 +49,20 @@ class AccountManager {
       return null;
     }
   }
+
+  late final Command<List<Device>?, List<Device>?> devicesCommand =
+      Command.createAsync((param) {
+        if (param != null) {
+          return Future.value(param);
+        }
+        return getDevices();
+      }, initialValue: null);
+
+  late final Command<void, void> devicesRefreshCommand =
+      Command.createAsyncNoParamNoResult(() async {
+        await devicesCommand.runAsync();
+        deviceStream.listen((devices) => devicesCommand.run(devices));
+      });
 
   Map<String, DeviceKeysList> get userDeviceKeys => _client.userDeviceKeys;
   DeviceKeys? getDeviceKeys(Device device) =>

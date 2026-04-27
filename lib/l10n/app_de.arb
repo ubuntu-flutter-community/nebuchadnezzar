@@ -3312,6 +3312,7 @@
   "yourPassphraseDescription": "Der Wiederherstellungsschlüssel ist sehr lang und schwer zu merken. Du kannst optional eine Passphrase einrichten, die leichter zu merken ist. Die Passphrase wird verwendet, um den Wiederherstellungsschlüssel zu verschlüsseln. Stelle sicher, dass du eine starke Passphrase wählst und diese nicht vergisst, da du sonst den Zugriff auf deine verschlüsselten Nachrichten verlierst, wenn du dich abmeldest oder das Gerät wechselst.",
   "showAddtionalNewCryptoSetupOptions": "Erweiterte Einstellungen anzeigen",
   "showAddtionalNewCryptoSetupOptionsWarning": "Vorsicht! Diese Optionen sind für fortgeschrittene Benutzer gedacht. Wenn du nicht genau weißt, was du tust, solltest du sie nicht verwenden.",
+  "createRecoveryKey": "Erstelle Wiederherstellungsschlüssel",
   "resetRecoveryKey": "Wiederherstellungsschlüssel zurücksetzen",
   "resetRecoveryKeyTitle": "Wiederherstellungsschlüssel zurücksetzen und Schlüssel-Backup löschen",
   "resetRecoveryKeyDescription": "Lösche dein Schlüssel-Backup, setze deinen Wiederherstellungsschlüssel zurück und erstelle einen neuen. Du wirst die Schlüssel verlieren, um die zuvor verschlüsselten Nachrichten zu entschlüsseln. Bist du sicher, dass du deinen Wiederherstellungsschlüssel zurücksetzen möchtest?",

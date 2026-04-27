@@ -35,14 +35,8 @@ class EncryptionSetupErrorPage extends StatelessWidget {
               ),
             ElevatedButton.icon(
               icon: const Icon(YaruIcons.refresh),
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => const CheckEncryptionSetupPage(),
-                  ),
-                  (route) => false,
-                );
-              },
+              onPressed: () =>
+                  context.teleport((_) => const CheckEncryptionSetupPage()),
               label: Text(l10n.tryAgain),
             ),
             const ChatSettingsLogoutButton(),

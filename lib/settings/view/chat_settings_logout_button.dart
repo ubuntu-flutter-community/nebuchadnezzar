@@ -5,6 +5,7 @@ import 'package:yaru/widgets.dart';
 import '../../authentication/authentication_manager.dart';
 import '../../authentication/view/chat_login_page.dart';
 import '../../common/chat_manager.dart';
+import '../../common/view/build_context_x.dart';
 import '../../common/view/common_widgets.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
@@ -32,10 +33,7 @@ class LogoutDialog extends StatelessWidget with WatchItMixin {
       handler: (context, _, cancel) {
         di<ChatManager>().setSelectedRoom(null);
         if (context.mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const ChatLoginPage()),
-            (route) => false,
-          );
+          context.teleport((_) => const ChatLoginPage());
         }
       },
     );

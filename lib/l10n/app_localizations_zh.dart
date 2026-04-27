@@ -2680,6 +2680,9 @@ class AppLocalizationsZh extends AppLocalizations {
       'Warning! These options are only recommended for advanced users. If you are not sure what these options do, it is better to stick with the default setup.';
 
   @override
+  String get createRecoveryKey => 'Create recovery key';
+
+  @override
   String get resetRecoveryKey => 'Reset recovery key';
 
   @override

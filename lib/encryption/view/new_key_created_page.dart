@@ -129,11 +129,8 @@ class NewKeyCreatedPage extends StatelessWidget with WatchItMixin {
                   onPressed:
                       (recoveryKeyCopied != null ||
                           storeInSecureStorage != null)
-                      ? () => Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const ChatMasterDetailPage(),
-                          ),
-                          (route) => false,
+                      ? () => context.teleport(
+                          (context) => const ChatMasterDetailPage(),
                         )
                       : null,
                 ),

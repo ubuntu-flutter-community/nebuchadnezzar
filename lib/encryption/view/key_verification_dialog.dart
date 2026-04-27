@@ -306,12 +306,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
               if (context.mounted) {
                 Navigator.of(context, rootNavigator: false).pop();
                 if (!widget.verifyOther) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => const ChatMasterDetailPage(),
-                    ),
-                    (route) => false,
-                  );
+                  context.teleport((_) => const ChatMasterDetailPage());
                 }
               }
             },
@@ -334,14 +329,9 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
           TextButton(
             child: Text(l10n.close),
             onPressed: () {
-              Navigator.of(context, rootNavigator: false).pop();
+              context.pop();
               if (!widget.verifyOther) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (_) => const CheckEncryptionSetupPage(),
-                  ),
-                  (route) => false,
-                );
+                context.teleport((_) => const CheckEncryptionSetupPage());
               }
             },
           ),

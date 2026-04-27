@@ -11,7 +11,9 @@ class EncryptionManager {
     required Client client,
     required FlutterSecureStorage secureStorage,
   }) : _client = client,
-       _secureStorage = secureStorage;
+       _secureStorage = secureStorage {
+    loadRecoveryKeyFromSecureStorageCommand.run();
+  }
 
   final Client _client;
   final FlutterSecureStorage _secureStorage;
@@ -94,6 +96,11 @@ class EncryptionManager {
       Command.createAsyncNoParam(
         () => _secureStorage.read(key: secureStorageKey),
         initialValue: null,
+      );
+
+  late final Command<void, void> deleteRecoveryKeyFromSecureStorageCommand =
+      Command.createAsyncNoParamNoResult(
+        () => _secureStorage.delete(key: secureStorageKey),
       );
 
   String get secureStorageKey => 'ssss_recovery_key_${_client.userID}';

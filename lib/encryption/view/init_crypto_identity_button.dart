@@ -35,6 +35,7 @@ class InitCryptoIdentityButton extends StatelessWidget {
                 context: context,
                 builder: (context) => InitCryptoIdentityConfirmationDialog(
                   title: dialogTitle ?? l10n.resetRecoveryKeyTitle,
+                  confirmLabel: dialogTitle,
                 ),
               );
             },

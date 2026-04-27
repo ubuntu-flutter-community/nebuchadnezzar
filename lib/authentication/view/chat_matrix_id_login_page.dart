@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:matrix/matrix.dart';
 import 'package:yaru/yaru.dart';
 
 import '../../app/app_config.dart';
 import '../../common/constants.dart';
+import '../../common/view/build_context_x.dart';
 import '../../common/view/theme.dart';
 import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/l10n.dart';
@@ -57,10 +58,7 @@ class _ChatMatrixIdLoginPageState extends State<ChatMatrixIdLoginPage> {
       select: (AuthenticationManager m) => m.loginCommand,
       handler: (context, userId, cancel) {
         if (userId != null && context.mounted) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const CheckEncryptionSetupPage()),
-            (route) => false,
-          );
+          context.teleport((_) => const CheckEncryptionSetupPage());
         }
       },
     );
