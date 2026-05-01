@@ -48,6 +48,20 @@ class _UnlockChatPageState extends State<UnlockChatPage>
       },
     );
 
+    registerHandler(
+      select: (EncryptionManager m) =>
+          m.loadRecoveryKeyFromSecureStorageCommand,
+      handler: (context, loadedKey, cancel) {
+        if (loadedKey != null) {
+          _recoveryKeyTextEditingController.text = loadedKey;
+        }
+      },
+    );
+
+    callOnceAfterThisBuild((context) {
+      di<EncryptionManager>().loadRecoveryKeyFromSecureStorageCommand.run();
+    });
+
     final l10n = context.l10n;
 
     final cryptoIdentityInitialized = watchValue(

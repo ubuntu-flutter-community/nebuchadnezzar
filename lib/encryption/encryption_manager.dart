@@ -11,9 +11,7 @@ class EncryptionManager {
     required Client client,
     required FlutterSecureStorage secureStorage,
   }) : _client = client,
-       _secureStorage = secureStorage {
-    loadRecoveryKeyFromSecureStorageCommand.run();
-  }
+       _secureStorage = secureStorage;
 
   final Client _client;
   final FlutterSecureStorage _secureStorage;
