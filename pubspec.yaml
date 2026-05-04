@@ -12,7 +12,7 @@ dependencies:
   adaptive_dialog: ^2.6.0
   animated_emoji: ^3.2.1
   async: ^2.13.0
-  audio_metadata_reader: ^1.4.2
+  audio_metadata_reader: ^1.6.0
   audio_service: ^0.18.18
   audio_service_mpris:
     git:
