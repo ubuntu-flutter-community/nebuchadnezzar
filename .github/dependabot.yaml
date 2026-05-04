@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: pub
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "10:25"
+      timezone: Europe/Berlin
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
+    versioning-strategy: increase
