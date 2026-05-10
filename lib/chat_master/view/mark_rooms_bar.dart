@@ -38,29 +38,34 @@ class MarkRoomsBar extends StatelessWidget with WatchItMixin {
               style: archiveActive
                   ? TextButton.styleFrom(foregroundColor: cs.error)
                   : null,
-              onPressed: () {
-                final editRoomManager = di<EditRoomManager>();
-                final chatManager = di<ChatManager>();
-                final markedRooms = editRoomManager.markedRooms;
-                ConfirmationDialog.show(
-                  context: context,
-                  isDestructive: archiveActive,
-                  title: Text(
-                    chatManager.archiveActive
-                        ? context.l10n.forgetSelectedXRooms(markedRooms.length)
-                        : context.l10n.leaveSelectedXRooms(markedRooms.length),
-                  ),
-                  onConfirm: () {
-                    chatManager.setSelectedRoom(null);
-                    editRoomManager.globalLeaveOrForgetRoomsCommand.run((
-                      rooms: markedRooms.toList(),
-                      action: chatManager.archiveActive
-                          ? LeaveOrForget.forget
-                          : LeaveOrForget.leave,
-                    ));
-                  },
-                );
-              },
+              onPressed: markedRooms.isEmpty
+                  ? null
+                  : () {
+                      final editRoomManager = di<EditRoomManager>();
+                      final chatManager = di<ChatManager>();
+                      ConfirmationDialog.show(
+                        context: context,
+                        isDestructive: archiveActive,
+                        title: Text(
+                          chatManager.archiveActive
+                              ? context.l10n.forgetSelectedXRooms(
+                                  markedRooms.length,
+                                )
+                              : context.l10n.leaveSelectedXRooms(
+                                  markedRooms.length,
+                                ),
+                        ),
+                        onConfirm: () {
+                          chatManager.setSelectedRoom(null);
+                          editRoomManager.globalLeaveOrForgetRoomsCommand.run((
+                            rooms: markedRooms.toList(),
+                            action: chatManager.archiveActive
+                                ? LeaveOrForget.forget
+                                : LeaveOrForget.leave,
+                          ));
+                        },
+                      );
+                    },
 
               child: Text(
                 archiveActive
