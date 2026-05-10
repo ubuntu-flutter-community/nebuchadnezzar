@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../common/chat_manager.dart';
 import '../../common/rooms_filter.dart';
 import '../../common/search_manager.dart';
@@ -18,6 +19,7 @@ import 'chat_master_title_bar.dart';
 import 'chat_rooms_list.dart';
 import 'chat_rooms_search_field.dart';
 import 'chat_space_filter.dart';
+import 'mark_rooms_bar.dart';
 import 'start_sync_button.dart';
 
 class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
@@ -49,6 +51,8 @@ class ChatMasterSidePanel extends StatelessWidget with WatchItMixin {
               ],
             ),
           ),
+          if (watchValue((EditRoomManager m) => m.showRoomMarkers))
+            const MarkRoomsBar(),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: kMediumPadding),
             child: Stack(

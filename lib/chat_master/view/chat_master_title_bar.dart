@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:yaru/yaru.dart';
 
+import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../common/chat_manager.dart';
 import '../../common/search_manager.dart';
 import '../../common/view/build_context_x.dart';
@@ -56,13 +57,16 @@ class ChatMasterTitleBar extends StatelessWidget with WatchItMixin {
             tooltip: context.l10n.archive,
             selectedIcon: const Icon(YaruIcons.trash_filled),
             isSelected: watchPropertyValue((ChatManager m) => m.archiveActive),
-            onPressed: loadingArchive
-                ? () {
-                    di<ChatManager>()
-                      ..toggleArchiveCommand.cancel()
-                      ..toggleArchiveCommand.run();
-                  }
-                : () => di<ChatManager>().toggleArchiveCommand.run(),
+            onPressed: () {
+              di<EditRoomManager>()
+                ..clearMarkedRooms()
+                ..toggleOrSetShowMarkRooms(show: false);
+              if (loadingArchive) {
+                di<ChatManager>().toggleArchiveCommand.cancel();
+              }
+
+              di<ChatManager>().toggleArchiveCommand.run();
+            },
             icon: const Icon(YaruIcons.trash),
           ),
         ],

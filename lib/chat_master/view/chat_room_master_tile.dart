@@ -15,6 +15,7 @@ import '../../l10n/l10n.dart';
 import 'chat_master_detail_page.dart';
 import 'chat_master_tile_menu.dart';
 import 'chat_room_master_tile_avatar.dart';
+import 'chat_room_master_tile_mark_room_check_box.dart';
 import 'chat_room_master_tile_subtitle.dart';
 
 class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
@@ -70,7 +71,7 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                         ),
                       )
                     : showRoomMarkers
-                    ? NewWidget(room: room)
+                    ? ChatRoomMasterTileMarkRoomCheckBox(room: room)
                     : ChatRoomMasterTileAvatar(room: room),
                 title: Text(
                   room.membership == Membership.invite
@@ -83,6 +84,10 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                     : ChatRoomMasterTileSubTitle(room: room),
                 onTap: isProcessing
                     ? null
+                    : showRoomMarkers
+                    ? () {
+                        di<EditRoomManager>().toggleMarkedRoom(room);
+                      }
                     : () async {
                         di<DraftManager>().setAttaching(false);
                         masterScaffoldKey.currentState?.hideDrawer();
@@ -116,29 +121,6 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
               ],
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class NewWidget extends StatelessWidget with WatchItMixin {
-  const NewWidget({super.key, required this.room});
-
-  final Room room;
-
-  @override
-  Widget build(BuildContext context) {
-    final isMarked = watchValue(
-      (EditRoomManager m) => m.markedRooms.select((r) => r.contains(room)),
-    );
-
-    return SizedBox.square(
-      dimension: kAvatarDefaultSize,
-      child: Center(
-        child: CommonCheckBox(
-          value: isMarked,
-          onChanged: (_) => di<EditRoomManager>().toggleMarkedRoom(room),
         ),
       ),
     );

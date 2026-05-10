@@ -4956,6 +4956,18 @@ abstract class AppLocalizations {
   /// **'Leave room?'**
   String get leaveRoomDialogTitle;
 
+  /// No description provided for @leaveXRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave {count} room(s)'**
+  String leaveXRooms(int count);
+
+  /// No description provided for @forgetXRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget {count} room(s)'**
+  String forgetXRooms(int count);
+
   /// No description provided for @leaveRoomDialogDescription.
   ///
   /// In en, this message translates to:
@@ -4983,7 +4995,7 @@ abstract class AppLocalizations {
   /// No description provided for @leaveSelectedXRooms.
   ///
   /// In en, this message translates to:
-  /// **'Leave selected {count} rooms?'**
+  /// **'Leave selected {count} rooms'**
   String leaveSelectedXRooms(int count);
 
   /// No description provided for @forgetSelectedRooms.

@@ -12,6 +12,7 @@ mixin ChatEditRoomMixin {
       select: (EditRoomManager m) => m.globalLeaveOrForgetRoomsCommand.results,
       handler: (context, results, cancel) {
         if (results.isRunning) {
+          di<EditRoomManager>().toggleOrSetShowMarkRooms(show: false);
           context.toast(
             const _LeaveOrForgetRoomsProgress(),
             duration: const Duration(seconds: 3000),

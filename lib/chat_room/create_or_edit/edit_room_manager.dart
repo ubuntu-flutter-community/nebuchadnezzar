@@ -96,7 +96,8 @@ class EditRoomManager {
       );
 
   final showRoomMarkers = SafeValueNotifier<bool>(false);
-  void toggleShowMarkRooms() => showRoomMarkers.value = !showRoomMarkers.value;
+  void toggleOrSetShowMarkRooms({bool? show}) =>
+      showRoomMarkers.value = show ?? !showRoomMarkers.value;
   final markedRooms = SetNotifier<Room>();
   void addMarkRooms(List<Room> rooms) {
     markedRooms.addAll(rooms);

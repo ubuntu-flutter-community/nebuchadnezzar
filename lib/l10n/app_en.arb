@@ -3330,6 +3330,24 @@
   "selectRoom": "Select room",
   "unselectRoom": "Unselect room",
   "leaveRoomDialogTitle": "Leave room?",
+  "leaveXRooms": "Leave {count} room(s)",
+  "@leaveXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forgetXRooms": "Forget {count} room(s)",
+  "@forgetXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "leaveRoomDialogDescription": "Are you sure that you want to leave the room {roomName}?",
   "@leaveRoomDialogDescription": {
     "type": "text",
@@ -3350,7 +3368,7 @@
     }
   },
   "leaveSelectedRooms": "Leave selected rooms",
-  "leaveSelectedXRooms": "Leave selected {count} rooms?",
+  "leaveSelectedXRooms": "Leave selected {count} rooms",
   "@leaveSelectedXRooms": {
     "type": "text",
     "placeholders": {

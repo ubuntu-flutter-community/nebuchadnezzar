@@ -3330,6 +3330,24 @@
   "selectRoom": "Raum auswählen",
   "unselectRoom": "Raum abwählen",
   "leaveRoomDialogTitle": "Raum verlassen?",
+  "leaveXRooms": "{count} Räume verlassen",
+  "@leaveXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forgetXRooms": "{count} Räume vergessen",
+  "@forgetXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "leaveRoomDialogDescription": "Bist du sicher, dass du den Raum {roomName} verlassen möchtest?",
   "@leaveRoomDialogDescription": {
     "type": "text",

@@ -26,6 +26,7 @@ class ConfirmationDialog<T> extends StatefulWidget {
     this.contentPadding,
     this.titlePadding,
     this.loading = false,
+    this.isDestructive = false,
   });
   final dynamic Function()? onConfirm;
   final dynamic Function()? onCancel;
@@ -41,6 +42,7 @@ class ConfirmationDialog<T> extends StatefulWidget {
   final bool confirmEnabled;
   final EdgeInsetsGeometry? titlePadding;
   final bool loading;
+  final bool isDestructive;
   static Future<T?> show<T>({
     required BuildContext context,
     required dynamic Function() onConfirm,
@@ -56,6 +58,7 @@ class ConfirmationDialog<T> extends StatefulWidget {
     dynamic Function()? onCancel,
     bool showCancel = true,
     bool loading = false,
+    bool isDestructive = false,
   }) => showDialog<T>(
     context: context,
     barrierDismissible: barrierDismissible,
@@ -73,6 +76,7 @@ class ConfirmationDialog<T> extends StatefulWidget {
       onCancel: onCancel,
       showCancel: showCancel,
       loading: loading,
+      isDestructive: isDestructive,
     ),
   );
 
@@ -184,6 +188,11 @@ class _ConfirmationDialogState<T> extends State<ConfirmationDialog<T>> {
                       ),
                     ...?widget.additionalActions,
                     ElevatedButton(
+                      style: widget.isDestructive
+                          ? ElevatedButton.styleFrom(
+                              backgroundColor: context.colorScheme.error,
+                            )
+                          : null,
                       onPressed: _loading
                           ? null
                           : widget.confirmEnabled

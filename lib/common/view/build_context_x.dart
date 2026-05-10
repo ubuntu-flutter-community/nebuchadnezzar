@@ -21,6 +21,7 @@ extension BuildContextX on BuildContext {
     SnackBarAction? action,
     bool clear = true,
     bool showCloseIcon = false,
+    double? actionOverflowThreshold,
   }) {
     final messenger = ScaffoldMessenger.of(this);
     if (clear) {
@@ -32,6 +33,7 @@ extension BuildContextX on BuildContext {
         duration: duration,
         action: action,
         showCloseIcon: showCloseIcon,
+        actionOverflowThreshold: actionOverflowThreshold ?? 0.65,
       ),
     );
   }

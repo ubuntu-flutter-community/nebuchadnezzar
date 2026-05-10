@@ -2850,6 +2850,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get leaveRoomDialogTitle => 'Raum verlassen?';
 
   @override
+  String leaveXRooms(int count) {
+    return '$count Räume verlassen';
+  }
+
+  @override
+  String forgetXRooms(int count) {
+    return '$count Räume vergessen';
+  }
+
+  @override
   String leaveRoomDialogDescription(String roomName) {
     return 'Bist du sicher, dass du den Raum $roomName verlassen möchtest?';
   }
