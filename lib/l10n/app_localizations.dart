@@ -4919,6 +4919,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, Reset recovery key'**
   String get resetRecoveryKeyConfirmationLabel;
+
+  /// No description provided for @selectRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Select rooms'**
+  String get selectRooms;
+
+  /// No description provided for @selectAllRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all rooms'**
+  String get selectAllRooms;
+
+  /// No description provided for @deselectAllRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Deselect all rooms'**
+  String get deselectAllRooms;
+
+  /// No description provided for @selectRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Select room'**
+  String get selectRoom;
+
+  /// No description provided for @unselectRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Unselect room'**
+  String get unselectRoom;
+
+  /// No description provided for @leaveRoomDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave room?'**
+  String get leaveRoomDialogTitle;
+
+  /// No description provided for @leaveRoomDialogDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure that you want to leave the room {roomName}?'**
+  String leaveRoomDialogDescription(String roomName);
+
+  /// No description provided for @forgetRoomDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget room?'**
+  String get forgetRoomDialogTitle;
+
+  /// No description provided for @forgetRoomDialogDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure that you want to forget the room {roomName}? This will remove the room from your list and delete all messages of this room on this device. You will lose access to the room history and will need to rejoin the room to get access to the messages again.'**
+  String forgetRoomDialogDescription(String roomName);
+
+  /// No description provided for @leaveSelectedRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave selected rooms'**
+  String get leaveSelectedRooms;
+
+  /// No description provided for @leaveSelectedXRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave selected {count} rooms?'**
+  String leaveSelectedXRooms(int count);
+
+  /// No description provided for @forgetSelectedRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget selected rooms'**
+  String get forgetSelectedRooms;
+
+  /// No description provided for @forgetSelectedXRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget selected {count} rooms'**
+  String forgetSelectedXRooms(int count);
+
+  /// No description provided for @leavingXofYRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaving {count} of {total} rooms'**
+  String leavingXofYRooms(int count, int total);
+
+  /// No description provided for @forgettingXofYRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgetting {count} of {total} rooms'**
+  String forgettingXofYRooms(int count, int total);
+
+  /// No description provided for @successfullyLeftXRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully left {count} rooms'**
+  String successfullyLeftXRooms(int count);
+
+  /// No description provided for @successfullyLeftXButFailedYRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully left {count} rooms, but failed to leave {failedCount} rooms'**
+  String successfullyLeftXButFailedYRooms(int count, int failedCount);
+
+  /// No description provided for @successfullyForgotXRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully forgot {count} rooms'**
+  String successfullyForgotXRooms(int count);
+
+  /// No description provided for @successfullyForgotXButFailedYRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully forgot {count} rooms, but failed to forget {failedCount} rooms'**
+  String successfullyForgotXButFailedYRooms(int count, int failedCount);
+
+  /// No description provided for @markedXRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked {count} rooms'**
+  String markedXRooms(int count);
 }
 
 class _AppLocalizationsDelegate

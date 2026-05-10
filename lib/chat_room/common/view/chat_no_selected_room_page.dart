@@ -27,11 +27,11 @@ class ChatNoSelectedRoomPage extends StatelessWidget
     );
 
     final clearingArchive = watchValue(
-      (EditRoomManager m) => m.forgetAllRoomsCommand.isRunning,
+      (EditRoomManager m) => m.globalLeaveOrForgetRoomsCommand.isRunning,
     );
 
     final progress = watchValue(
-      (EditRoomManager m) => m.forgetAllRoomsCommand.progress,
+      (EditRoomManager m) => m.globalLeaveOrForgetRoomsCommand.progress,
     );
 
     final isArchiveActive = watchPropertyValue(

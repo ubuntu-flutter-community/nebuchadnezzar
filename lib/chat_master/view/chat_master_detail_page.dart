@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 import '../../chat_room/common/view/chat_room_loading_page.dart';
+import '../../chat_room/create_or_edit/edit_room_manager.dart';
 import '../../chat_room/input/draft_manager.dart';
 import '../../common/chat_manager.dart';
 import '../../common/platforms.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/confirm.dart';
 import '../../common/view/snackbars.dart';
 import '../../common/view/ui_constants.dart';
 import '../../encryption/encryption_manager.dart';
 import '../../encryption/view/chat_global_handlers.dart';
 import '../../encryption/view/key_verification_dialog.dart';
+import '../../l10n/l10n.dart';
 import '../../notification/chat_notification_handler.dart';
 import '../../player/view/player_view.dart';
 import 'chat_edit_room_mixin.dart';
@@ -26,7 +29,7 @@ class ChatMasterDetailPage extends StatelessWidget
   Widget build(BuildContext context) {
     registerGlobalChatHandlers();
 
-    registerGlobalLeaveForgetCommands();
+    registerGlobalLeaveOrForgetCommand();
 
     registerHandler(
       select: (DraftManager m) => m.sendCommand.errors,
@@ -54,6 +57,42 @@ class ChatMasterDetailPage extends StatelessWidget
       handler: chatNotificationHandler,
     );
 
+    registerHandler(
+      select: (EditRoomManager m) => m.markedRooms,
+      handler: (context, markedRooms, cancel) {
+        if (markedRooms.isEmpty) {
+          context.clearToasts();
+        } else {
+          context.toast(
+            const MarkRoomsSnackBarContent(),
+            showCloseIcon: true,
+            action: SnackBarAction(
+              label: di<ChatManager>().archiveActive
+                  ? context.l10n.forgetSelectedRooms
+                  : context.l10n.leaveSelectedRooms,
+              onPressed: () => ConfirmationDialog.show(
+                context: context,
+                title: Text(
+                  di<ChatManager>().archiveActive
+                      ? context.l10n.forgetSelectedXRooms(markedRooms.length)
+                      : context.l10n.leaveSelectedXRooms(markedRooms.length),
+                ),
+                onConfirm: () {
+                  di<ChatManager>().setSelectedRoom(null);
+                  di<EditRoomManager>().globalLeaveOrForgetRoomsCommand.run((
+                    rooms: markedRooms.toList(),
+                    action: di<ChatManager>().archiveActive
+                        ? LeaveOrForget.forget
+                        : LeaveOrForget.leave,
+                  ));
+                },
+              ),
+            ),
+          );
+        }
+      },
+    );
+
     return Scaffold(
       key: masterScaffoldKey,
       drawer: !Platforms.isMacOS
@@ -75,4 +114,15 @@ class ChatMasterDetailPage extends StatelessWidget
       bottomNavigationBar: const PlayerView(),
     );
   }
+}
+
+class MarkRoomsSnackBarContent extends StatelessWidget with WatchItMixin {
+  const MarkRoomsSnackBarContent({super.key});
+
+  @override
+  Widget build(BuildContext context) => Text(
+    context.l10n.markedXRooms(
+      watchValue((EditRoomManager m) => m.markedRooms).length,
+    ),
+  );
 }

@@ -3323,5 +3323,125 @@
   "resetRecoveryKey": "Reset recovery key",
   "resetRecoveryKeyTitle": "Reset recovery key and wipe key backup",
   "resetRecoveryKeyDescription": "Wipe your key backup, reset your recovery key and generate a new one. You will lose the keys to decrypt the messages that were previously encrypted. Are you sure that you want to reset your recovery key?",
-  "resetRecoveryKeyConfirmationLabel": "Yes, Reset recovery key"
+  "resetRecoveryKeyConfirmationLabel": "Yes, Reset recovery key",
+  "selectRooms": "Select rooms",
+  "selectAllRooms": "Select all rooms",
+  "deselectAllRooms": "Deselect all rooms",
+  "selectRoom": "Select room",
+  "unselectRoom": "Unselect room",
+  "leaveRoomDialogTitle": "Leave room?",
+  "leaveRoomDialogDescription": "Are you sure that you want to leave the room {roomName}?",
+  "@leaveRoomDialogDescription": {
+    "type": "text",
+    "placeholders": {
+      "roomName": {
+        "type": "String"
+      }
+    }
+  },
+  "forgetRoomDialogTitle": "Forget room?",
+  "forgetRoomDialogDescription": "Are you sure that you want to forget the room {roomName}? This will remove the room from your list and delete all messages of this room on this device. You will lose access to the room history and will need to rejoin the room to get access to the messages again.",
+  "@forgetRoomDialogDescription": {
+    "type": "text",
+    "placeholders": {
+      "roomName": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveSelectedRooms": "Leave selected rooms",
+  "leaveSelectedXRooms": "Leave selected {count} rooms?",
+  "@leaveSelectedXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forgetSelectedRooms": "Forget selected rooms",
+  "forgetSelectedXRooms": "Forget selected {count} rooms",
+  "@forgetSelectedXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "leavingXofYRooms": "Leaving {count} of {total} rooms",
+  "@leavingXofYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "forgettingXofYRooms": "Forgetting {count} of {total} rooms",
+  "@forgettingXofYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyLeftXRooms": "Successfully left {count} rooms",
+  "@successfullyLeftXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyLeftXButFailedYRooms": "Successfully left {count} rooms, but failed to leave {failedCount} rooms",
+  "@successfullyLeftXButFailedYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyForgotXRooms": "Successfully forgot {count} rooms",
+  "@successfullyForgotXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyForgotXButFailedYRooms": "Successfully forgot {count} rooms, but failed to forget {failedCount} rooms",
+  "@successfullyForgotXButFailedYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "markedXRooms": "Marked {count} rooms",
+  "@markedXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

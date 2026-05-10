@@ -2830,4 +2830,86 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get resetRecoveryKeyConfirmationLabel =>
       'Ja, Wiederherstellungsschlüssel zurücksetzen';
+
+  @override
+  String get selectRooms => 'Räume auswählen';
+
+  @override
+  String get selectAllRooms => 'Alle Räume auswählen';
+
+  @override
+  String get deselectAllRooms => 'Alle Räume abwählen';
+
+  @override
+  String get selectRoom => 'Raum auswählen';
+
+  @override
+  String get unselectRoom => 'Raum abwählen';
+
+  @override
+  String get leaveRoomDialogTitle => 'Raum verlassen?';
+
+  @override
+  String leaveRoomDialogDescription(String roomName) {
+    return 'Bist du sicher, dass du den Raum $roomName verlassen möchtest?';
+  }
+
+  @override
+  String get forgetRoomDialogTitle => 'Raum vergessen?';
+
+  @override
+  String forgetRoomDialogDescription(String roomName) {
+    return 'Bist du sicher, dass du den Raum $roomName vergessen möchtest? Dies wird den Raum aus deiner Liste entfernen und alle Nachrichten dieses Raums auf diesem Gerät löschen. Du wirst den Zugriff auf die Raumhistorie verlieren und musst dem Raum erneut beitreten, um wieder Zugriff auf die Nachrichten zu erhalten.';
+  }
+
+  @override
+  String get leaveSelectedRooms => 'Verlasse ausgewählte Räume';
+
+  @override
+  String leaveSelectedXRooms(int count) {
+    return 'Verlasse ausgewählte $count Räume';
+  }
+
+  @override
+  String get forgetSelectedRooms => 'Vergesse ausgewählte Räume';
+
+  @override
+  String forgetSelectedXRooms(int count) {
+    return 'Vergesse ausgewählte $count Räume';
+  }
+
+  @override
+  String leavingXofYRooms(int count, int total) {
+    return 'Verlasse $count von $total Räumen';
+  }
+
+  @override
+  String forgettingXofYRooms(int count, int total) {
+    return 'Vergesse $count von $total Räumen';
+  }
+
+  @override
+  String successfullyLeftXRooms(int count) {
+    return 'Erfolgreich $count Räume verlassen';
+  }
+
+  @override
+  String successfullyLeftXButFailedYRooms(int count, int failedCount) {
+    return 'Erfolgreich $count Räume verlassen, aber $failedCount Räume konnten nicht verlassen werden';
+  }
+
+  @override
+  String successfullyForgotXRooms(int count) {
+    return 'Erfolgreich $count Räume vergessen';
+  }
+
+  @override
+  String successfullyForgotXButFailedYRooms(int count, int failedCount) {
+    return 'Erfolgreich $count Räume vergessen, aber $failedCount Räume konnten nicht vergessen werden';
+  }
+
+  @override
+  String markedXRooms(int count) {
+    return '$count Räume markiert';
+  }
 }

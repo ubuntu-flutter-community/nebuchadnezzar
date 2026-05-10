@@ -5,6 +5,7 @@ import 'package:yaru/yaru.dart';
 
 import '../../common/chat_manager.dart';
 import '../../common/view/build_context_x.dart';
+import '../../common/view/confirm.dart';
 import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
 import '../create_or_edit/edit_room_manager.dart';
@@ -36,11 +37,19 @@ class ChatRoomInfoDrawerForgetButton extends StatelessWidget {
                     : null,
               )
             : null,
-        onPressed: () {
-          di<ChatManager>().setSelectedRoom(null);
-          di<EditRoomManager>().globalForgetRoomCommand.run(room);
-          di<TimelineManager>().removeTimeline(room.id);
-        },
+        onPressed: () => ConfirmationDialog.show(
+          title: Text(l10n.forgetRoomDialogTitle),
+          content: Text(l10n.forgetRoomDialogDescription(room.name)),
+          context: context,
+          onConfirm: () {
+            di<ChatManager>().setSelectedRoom(null);
+            di<EditRoomManager>().globalLeaveOrForgetRoomsCommand.run((
+              rooms: [room],
+              action: LeaveOrForget.forget,
+            ));
+            di<TimelineManager>().removeTimeline(room.id);
+          },
+        ),
         icon: Icon(
           YaruIcons.trash,
           color: room.isArchived ? theme.colorScheme.error : null,

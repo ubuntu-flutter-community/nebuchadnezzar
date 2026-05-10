@@ -22,7 +22,10 @@ class ChatMasterClearArchiveButton extends StatelessWidget with WatchItMixin {
           ? null
           : () {
               di<ChatManager>().setSelectedRoom(null);
-              di<EditRoomManager>().forgetAllRoomsCommand.run();
+              di<EditRoomManager>().globalLeaveOrForgetRoomsCommand.run((
+                rooms: result.data!.archivedRooms,
+                action: LeaveOrForget.forget,
+              ));
             },
       icon: const Icon(YaruIcons.edit_clear_all),
     );

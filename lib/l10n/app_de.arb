@@ -3323,5 +3323,125 @@
   "resetRecoveryKey": "Wiederherstellungsschlüssel zurücksetzen",
   "resetRecoveryKeyTitle": "Wiederherstellungsschlüssel zurücksetzen und Schlüssel-Backup löschen",
   "resetRecoveryKeyDescription": "Lösche dein Schlüssel-Backup, setze deinen Wiederherstellungsschlüssel zurück und erstelle einen neuen. Du wirst die Schlüssel verlieren, um die zuvor verschlüsselten Nachrichten zu entschlüsseln. Bist du sicher, dass du deinen Wiederherstellungsschlüssel zurücksetzen möchtest?",
-  "resetRecoveryKeyConfirmationLabel": "Ja, Wiederherstellungsschlüssel zurücksetzen"
+  "resetRecoveryKeyConfirmationLabel": "Ja, Wiederherstellungsschlüssel zurücksetzen",
+  "selectRooms": "Räume auswählen",
+  "selectAllRooms": "Alle Räume auswählen",
+  "deselectAllRooms": "Alle Räume abwählen",
+  "selectRoom": "Raum auswählen",
+  "unselectRoom": "Raum abwählen",
+  "leaveRoomDialogTitle": "Raum verlassen?",
+  "leaveRoomDialogDescription": "Bist du sicher, dass du den Raum {roomName} verlassen möchtest?",
+  "@leaveRoomDialogDescription": {
+    "type": "text",
+    "placeholders": {
+      "roomName": {
+        "type": "String"
+      }
+    }
+  },
+  "forgetRoomDialogTitle": "Raum vergessen?",
+  "forgetRoomDialogDescription": "Bist du sicher, dass du den Raum {roomName} vergessen möchtest? Dies wird den Raum aus deiner Liste entfernen und alle Nachrichten dieses Raums auf diesem Gerät löschen. Du wirst den Zugriff auf die Raumhistorie verlieren und musst dem Raum erneut beitreten, um wieder Zugriff auf die Nachrichten zu erhalten.",
+  "@forgetRoomDialogDescription": {
+    "type": "text",
+    "placeholders": {
+      "roomName": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveSelectedRooms": "Verlasse ausgewählte Räume",
+  "leaveSelectedXRooms": "Verlasse ausgewählte {count} Räume",
+  "@leaveSelectedXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forgetSelectedRooms": "Vergesse ausgewählte Räume",
+  "forgetSelectedXRooms": "Vergesse ausgewählte {count} Räume",
+  "@forgetSelectedXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "leavingXofYRooms": "Verlasse {count} von {total} Räumen",
+  "@leavingXofYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "forgettingXofYRooms": "Vergesse {count} von {total} Räumen",
+  "@forgettingXofYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyLeftXRooms": "Erfolgreich {count} Räume verlassen",
+  "@successfullyLeftXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyLeftXButFailedYRooms": "Erfolgreich {count} Räume verlassen, aber {failedCount} Räume konnten nicht verlassen werden",
+  "@successfullyLeftXButFailedYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyForgotXRooms": "Erfolgreich {count} Räume vergessen",
+  "@successfullyForgotXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "successfullyForgotXButFailedYRooms": "Erfolgreich {count} Räume vergessen, aber {failedCount} Räume konnten nicht vergessen werden",
+  "@successfullyForgotXButFailedYRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "failedCount": {
+        "type": "int"
+      }
+    }
+  },
+  "markedXRooms": "{count} Räume markiert",
+  "@markedXRooms": {
+    "type": "text",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

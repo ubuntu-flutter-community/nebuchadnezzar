@@ -2,152 +2,100 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 import '../../chat_room/create_or_edit/edit_room_manager.dart';
-import '../../chat_room/timeline/timeline_manager.dart';
+import '../../common/view/build_context_x.dart';
+import '../../common/view/ui_constants.dart';
 import '../../l10n/l10n.dart';
-import 'chat_clear_archive_progress_bar.dart';
 
 mixin ChatEditRoomMixin {
-  void registerGlobalLeaveForgetCommands() {
-    registerGlobalLeaveCommand();
-
-    registerGlobalForgetRoomCommand();
-
-    registerForgetAllRoomsCommand();
-  }
-
-  void registerGlobalLeaveCommand() {
+  void registerGlobalLeaveOrForgetCommand() {
     registerHandler(
-      select: (EditRoomManager m) => m.globalLeaveRoomCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.isRunning) {
-          _showIndeterminateSpinnerSnackbar(
-            context,
-            '${context.l10n.leave} ${newValue.paramData?.getLocalizedDisplayname() ?? ''}',
+      select: (EditRoomManager m) => m.globalLeaveOrForgetRoomsCommand.results,
+      handler: (context, results, cancel) {
+        if (results.isRunning) {
+          context.toast(
+            const _LeaveOrForgetRoomsProgress(),
+            duration: const Duration(seconds: 3000),
           );
-        } else if (newValue.hasError) {
-          _showErrorSnackbar(
-            context,
-            '${context.l10n.oopsSomethingWentWrong} ${newValue.paramData?.getLocalizedDisplayname() ?? ''}: ${newValue.error}',
-          );
-        } else if (newValue.hasData && newValue.data != null) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                showCloseIcon: true,
-                duration: const Duration(seconds: 3),
-                content: Text(
-                  'Left: ${newValue.data?.getLocalizedDisplayname() ?? ''}',
-                ),
-                action: SnackBarAction(
-                  label: context.l10n.delete,
-                  onPressed: () {
-                    di<EditRoomManager>().globalForgetRoomCommand.run(
-                      newValue.data,
-                    );
-                    di<TimelineManager>().removeTimeline(newValue.data!.id);
-                  },
-                ),
-              ),
-            );
+        } else if (results.hasError) {
+        } else if (results.hasData && results.data != null) {
+          context.toast(const LeaveOrForgetDoneSnackBarContent());
         }
       },
     );
   }
+}
 
-  void registerGlobalForgetRoomCommand() {
-    registerHandler(
-      select: (EditRoomManager m) => m.globalForgetRoomCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.isRunning) {
-          _showIndeterminateSpinnerSnackbar(
-            context,
-            'Deleting room ${newValue.paramData?.getLocalizedDisplayname() ?? ''}',
-          );
-        } else if (newValue.hasError) {
-          _showErrorSnackbar(
-            context,
-            '${context.l10n.oopsSomethingWentWrong} ${newValue.paramData?.getLocalizedDisplayname() ?? ''}: ${newValue.error}',
-          );
-        } else if (newValue.hasData && newValue.data != null) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 3),
-                content: Text(
-                  'Deleted: ${newValue.data?.getLocalizedDisplayname() ?? ''}',
-                ),
-              ),
-            );
-        }
-      },
+class LeaveOrForgetDoneSnackBarContent extends StatelessWidget
+    with WatchItMixin {
+  const LeaveOrForgetDoneSnackBarContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final results = watchValue(
+      (EditRoomManager m) => m.globalLeaveOrForgetRoomsCommand.results,
     );
+    final paramData = results.paramData;
+    final successful = results.data?.successful ?? [];
+    final failed = results.data?.failed ?? [];
+    final action = paramData?.action ?? LeaveOrForget.leave;
+    final rooms = paramData?.rooms ?? [];
+    final l10n = context.l10n;
+
+    String text;
+    if (failed.isEmpty) {
+      text = action == LeaveOrForget.leave
+          ? l10n.successfullyLeftXRooms(rooms.length)
+          : l10n.successfullyForgotXRooms(rooms.length);
+    } else {
+      text = action == LeaveOrForget.leave
+          ? l10n.successfullyLeftXButFailedYRooms(
+              successful.length,
+              rooms.length,
+            )
+          : l10n.successfullyForgotXButFailedYRooms(
+              successful.length,
+              rooms.length,
+            );
+    }
+
+    return Text(text);
   }
+}
 
-  void registerForgetAllRoomsCommand() {
-    registerHandler(
-      select: (EditRoomManager m) => m.forgetAllRoomsCommand.results,
-      handler: (context, newValue, cancel) {
-        if (newValue.isRunning) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              const SnackBar(
-                duration: Duration(seconds: 3000),
-                content: ChatClearArchiveProgressBar(),
-              ),
-            );
-        } else if (newValue.hasError) {
-          _showErrorSnackbar(
-            context,
-            '${context.l10n.oopsSomethingWentWrong}: ${newValue.error}',
-          );
-        }
-      },
+class _LeaveOrForgetRoomsProgress extends StatelessWidget with WatchItMixin {
+  const _LeaveOrForgetRoomsProgress();
+
+  @override
+  Widget build(BuildContext context) {
+    final results = watchValue(
+      (EditRoomManager m) => m.globalLeaveOrForgetRoomsCommand.results,
     );
-
-    registerHandler(
-      select: (EditRoomManager m) => m.forgetAllRoomsCommand.progress,
-      handler: (context, newValue, cancel) {
-        if (newValue == 1) {
-          ScaffoldMessenger.of(context)
-            ..clearSnackBars()
-            ..showSnackBar(
-              const SnackBar(
-                duration: Duration(seconds: 3),
-                content: Text('Clearing archive is complete'),
-              ),
-            );
-        }
-      },
+    final paramData = results.paramData;
+    final rooms = paramData?.rooms ?? [];
+    final action = paramData?.action ?? LeaveOrForget.leave;
+    final progress = watchValue(
+      (EditRoomManager m) => m.globalLeaveOrForgetRoomsCommand.progress,
     );
-  }
-
-  void _showIndeterminateSpinnerSnackbar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(
-        SnackBar(
-          duration: const Duration(seconds: 100),
-          content: Row(
-            children: [
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-              const SizedBox(width: 16),
-              Text(text),
-            ],
-          ),
+    return Row(
+      spacing: kMediumPadding,
+      children: [
+        SizedBox(
+          width: 20,
+          height: 20,
+          child: CircularProgressIndicator(strokeWidth: 2, value: progress),
         ),
-      );
-  }
-
-  void _showErrorSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-      ..clearSnackBars()
-      ..showSnackBar(SnackBar(content: Text(message)));
+        Text(
+          action == LeaveOrForget.leave
+              ? context.l10n.leavingXofYRooms(
+                  (progress * rooms.length).toInt(),
+                  rooms.length,
+                )
+              : context.l10n.forgettingXofYRooms(
+                  (progress * rooms.length).toInt(),
+                  rooms.length,
+                ),
+        ),
+      ],
+    );
   }
 }

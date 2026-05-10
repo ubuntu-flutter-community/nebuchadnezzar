@@ -30,7 +30,10 @@ class ChatRoomInfoDrawerLeaveButton extends StatelessWidget {
           title: Text('${l10n.leave} ${room.getLocalizedDisplayname()}'),
           onConfirm: () {
             di<ChatManager>().setSelectedRoom(null);
-            di<EditRoomManager>().globalLeaveRoomCommand.run(room);
+            di<EditRoomManager>().globalLeaveOrForgetRoomsCommand.run((
+              rooms: [room],
+              action: LeaveOrForget.leave,
+            ));
           },
         ),
         icon: room.isArchived

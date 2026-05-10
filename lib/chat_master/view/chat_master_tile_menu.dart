@@ -77,8 +77,8 @@ class _ChatMasterTileMenuState extends State<ChatMasterTileMenu> {
                     ),
                     onConfirm: () {
                       di<ChatManager>().setSelectedRoom(null);
-                      di<EditRoomManager>().globalLeaveRoomCommand.run(
-                        widget.room,
+                      di<EditRoomManager>().globalLeaveOrForgetRoomsCommand.run(
+                        (rooms: [widget.room], action: LeaveOrForget.leave),
                       );
                     },
                   ),

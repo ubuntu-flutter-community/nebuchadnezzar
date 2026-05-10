@@ -29,7 +29,10 @@ class ChatRoomUpgradeDialog extends StatelessWidget {
       confirmLabel: context.l10n.joinRoom,
       onConfirm: () {
         di<ChatManager>().setSelectedRoom(null);
-        di<EditRoomManager>().globalLeaveRoomCommand.run(room);
+        di<EditRoomManager>().globalLeaveOrForgetRoomsCommand.run((
+          rooms: [room],
+          action: LeaveOrForget.leave,
+        ));
 
         di<EditRoomManager>().knockOrJoinCommand.run((
           roomId: room
