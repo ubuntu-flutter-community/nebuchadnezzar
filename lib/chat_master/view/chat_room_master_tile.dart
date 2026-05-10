@@ -40,6 +40,10 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
       (EditRoomManager m) => m.oneShotSyncCommand.isRunning,
     );
 
+    final showRoomMarkers = watchValue(
+      (EditRoomManager m) => m.showRoomMarkers,
+    );
+
     final isProcessing = isLeaving || isForgetting || syncing;
 
     return ChatMasterTileMenu(
@@ -65,6 +69,8 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
                           ),
                         ),
                       )
+                    : showRoomMarkers
+                    ? NewWidget(room: room)
                     : ChatRoomMasterTileAvatar(room: room),
                 title: Text(
                   room.membership == Membership.invite
@@ -110,6 +116,29 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
               ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class NewWidget extends StatelessWidget with WatchItMixin {
+  const NewWidget({super.key, required this.room});
+
+  final Room room;
+
+  @override
+  Widget build(BuildContext context) {
+    final isMarked = watchValue(
+      (EditRoomManager m) => m.markedRooms.select((r) => r.contains(room)),
+    );
+
+    return SizedBox.square(
+      dimension: kAvatarDefaultSize,
+      child: Center(
+        child: CommonCheckBox(
+          value: isMarked,
+          onChanged: (_) => di<EditRoomManager>().toggleMarkedRoom(room),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
+import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../events/chat_message_reaction_capsule.dart';
 import 'edit_room_service.dart';
@@ -92,6 +93,23 @@ class EditRoomManager {
           _forgetRoomCommands.remove(room.id);
         }, initialValue: null),
       );
+
+  final showRoomMarkers = SafeValueNotifier<bool>(false);
+  void toggleShowMarkRooms() => showRoomMarkers.value = !showRoomMarkers.value;
+  final markedRooms = SetNotifier<Room>();
+  void addMarkRooms(List<Room> rooms) {
+    markedRooms.addAll(rooms);
+  }
+
+  void clearMarkedRooms() => markedRooms.clear();
+
+  void toggleMarkedRoom(Room room) {
+    if (markedRooms.contains(room)) {
+      markedRooms.remove(room);
+    } else {
+      markedRooms.add(room);
+    }
+  }
 
   final Map<String, Command<ChatMessageReactionCapsule, String?>>
   sendReactionsCommands = {};
