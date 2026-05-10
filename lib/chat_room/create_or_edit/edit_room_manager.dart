@@ -39,7 +39,7 @@ class EditRoomManager {
     }
     final failedRooms = <Room>{};
     final successful = <Room>{};
-    for (final room in param.rooms) {
+    for (final (index, room) in param.rooms.indexed) {
       try {
         if (param.action == LeaveOrForget.leave) {
           await getLeaveRoomCommand(room).runAsync();
@@ -52,7 +52,7 @@ class EditRoomManager {
         failedRooms.add(room);
         printMessageInDebugMode(e, s);
       }
-      handle.updateProgress(successful.length / param.rooms.length);
+      handle.updateProgress((index + 1) / param.rooms.length);
     }
 
     if (param.action == LeaveOrForget.forget) {
