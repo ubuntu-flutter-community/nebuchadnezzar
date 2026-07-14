@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:basic_utils/basic_utils.dart';
+import 'package:injectable/injectable.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:synchronized/synchronized.dart';
 
@@ -12,6 +13,7 @@ import '../player/data/mpv_metadata.dart';
 import '../player/observe_property.dart';
 import '../player/player_manager.dart';
 
+@lazySingleton
 class RadioService {
   RadioService({
     required PlayerManager playerManager,

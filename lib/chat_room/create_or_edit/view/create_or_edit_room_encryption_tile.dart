@@ -39,6 +39,7 @@ class CreateOrEditRoomEncryptionTile extends StatelessWidget with WatchItMixin {
               ).data ??
               false;
 
+    // ignore: deprecated_member_use
     return YaruTile(
       leading: encrypted
           ? const Icon(YaruIcons.shield_filled)

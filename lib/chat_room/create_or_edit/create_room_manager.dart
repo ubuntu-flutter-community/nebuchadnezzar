@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 // import 'package:mime/mime.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
@@ -11,6 +12,7 @@ import '../../common/platforms.dart';
 import '../../extensions/xtypegroup_x.dart';
 import 'create_room_draft.dart';
 
+@lazySingleton
 class CreateRoomManager {
   CreateRoomManager({required Client client}) : _client = client;
 
@@ -74,9 +76,7 @@ class CreateRoomManager {
           ],
         );
       } else {
-        final result = await FilePicker.platform.pickFiles(
-          type: FileType.image,
-        );
+        final result = await FilePicker.pickFiles(type: FileType.image);
         xFile = result?.files.firstOrNull?.xFile;
       }
 

@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'logging.dart';
 
+@lazySingleton
 class SearchManager extends SafeChangeNotifier {
   SearchManager({required Client client}) : _client = client;
 
@@ -114,7 +116,7 @@ class SearchManager extends SafeChangeNotifier {
         includeAllNetworks: true,
       );
 
-      if (searchQuery.isValidMatrixId &&
+      if (searchQuery.isValidMatrixIdStrict() &&
           searchQuery.sigil == '#' &&
           roomSearchResult.chunk.any(
                 (room) => room.canonicalAlias == searchQuery,

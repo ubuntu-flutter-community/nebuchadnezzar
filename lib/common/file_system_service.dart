@@ -4,11 +4,13 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:injectable/injectable.dart';
 import 'package:open_folder/open_folder.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'platforms.dart';
 
+@Injectable(cache: true)
 class FileSystemService {
   const FileSystemService();
 
@@ -35,7 +37,7 @@ class FileSystemService {
   }) async {
     String? path;
     if (Platforms.isMobile) {
-      path = await FilePicker.platform.saveFile(fileName: name, bytes: bytes);
+      path = await FilePicker.saveFile(fileName: name, bytes: bytes);
     } else {
       String? directoryPath;
       if (Platforms.isLinux) {
@@ -43,7 +45,7 @@ class FileSystemService {
           confirmButtonText: confirmButtonText,
         );
       } else {
-        directoryPath = await FilePicker.platform.getDirectoryPath(
+        directoryPath = await FilePicker.getDirectoryPath(
           dialogTitle: dialogTitle,
         );
       }
@@ -59,7 +61,7 @@ class FileSystemService {
 
   Future<String?> getPathOfDirectory() async {
     if (Platforms.isMobile && await _androidPermissionsGranted()) {
-      return FilePicker.platform.getDirectoryPath();
+      return FilePicker.getDirectoryPath();
     }
 
     if (Platforms.isMacOS || Platforms.isLinux || Platforms.isWindows) {
@@ -70,7 +72,7 @@ class FileSystemService {
 
   Future<String?> getPathOfFile() async {
     if (Platforms.isMobile && await _androidPermissionsGranted()) {
-      return (await FilePicker.platform.pickFiles(
+      return (await FilePicker.pickFiles(
         allowMultiple: false,
       ))?.files.firstOrNull?.path;
     }
@@ -83,9 +85,7 @@ class FileSystemService {
 
   Future<List<String>> getPathsOfFiles() async {
     if (Platforms.isMobile && await _androidPermissionsGranted()) {
-      final filePickerResult = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-      );
+      final filePickerResult = await FilePicker.pickFiles(allowMultiple: true);
 
       if (filePickerResult == null) {
         return [];

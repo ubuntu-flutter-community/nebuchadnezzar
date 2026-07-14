@@ -35,6 +35,7 @@ class ChatRoomJoinRulesDropDown extends StatelessWidget with WatchItMixin {
         ).data ??
         JoinRules.private;
 
+    // ignore: deprecated_member_use
     return YaruTile(
       leading: const Icon(YaruIcons.private_mask),
       padding: const EdgeInsets.symmetric(horizontal: kMediumPadding),

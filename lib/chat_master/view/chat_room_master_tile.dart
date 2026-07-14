@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:matrix/matrix.dart';
-import 'package:yaru/yaru.dart';
 
 import '../../chat_room/common/view/chat_join_room_dialog.dart';
 import '../../chat_room/create_or_edit/edit_room_manager.dart';
@@ -52,11 +51,15 @@ class ChatRoomMasterTile extends StatelessWidget with WatchItMixin {
       child: Opacity(
         opacity: isProcessing ? 0.5 : 1.0,
         child: Padding(
-          padding: const EdgeInsets.only(bottom: kSmallPadding),
+          padding: const EdgeInsets.only(
+            bottom: kSmallPadding,
+            right: kMediumPadding,
+            left: kMediumPadding,
+          ),
           child: Stack(
             alignment: Alignment.center,
             children: [
-              YaruMasterTile(
+              ListTile(
                 key: ValueKey('${room.id}_master_tile'),
                 selected:
                     selectedRoom?.id != null && selectedRoom?.id == room.id,

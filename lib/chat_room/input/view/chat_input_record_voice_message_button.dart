@@ -8,9 +8,14 @@ import '../draft_manager.dart';
 
 class ChatInputRecordVoiceMessageButton extends StatelessWidget
     with WatchItMixin {
-  const ChatInputRecordVoiceMessageButton({super.key, required this.room});
+  const ChatInputRecordVoiceMessageButton({
+    super.key,
+    required this.room,
+    this.disabled = false,
+  });
 
   final Room room;
+  final bool disabled;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +50,7 @@ class ChatInputRecordVoiceMessageButton extends StatelessWidget
               ],
             )
           : const Icon(YaruIcons.microphone),
-      onPressed: hasPermission != true
+      onPressed: hasPermission != true || disabled
           ? null
           : () => di<DraftManager>().toggleRecording(room.id),
     );

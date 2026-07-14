@@ -4,7 +4,6 @@ import 'package:yaru/yaru.dart';
 
 import 'app/view/nebuchadnezzar.dart';
 import 'common/platforms.dart';
-import 'register_dependencies.dart';
 
 void main() async {
   await YaruWindowTitleBar.ensureInitialized();
@@ -12,8 +11,6 @@ void main() async {
   if (!Platforms.isLinux) {
     await SystemTheme.accentColor.load();
   }
-
-  registerDependencies();
 
   runApp(const Nebuchadnezzar());
 }

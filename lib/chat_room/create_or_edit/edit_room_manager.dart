@@ -1,4 +1,5 @@
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
@@ -6,6 +7,7 @@ import '../../common/logging.dart';
 import '../../events/chat_message_reaction_capsule.dart';
 import 'edit_room_service.dart';
 
+@lazySingleton
 class EditRoomManager {
   EditRoomManager({required EditRoomService editRoomService})
     : _editRoomService = editRoomService;

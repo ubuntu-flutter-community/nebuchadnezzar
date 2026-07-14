@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 import 'package:path/path.dart' as p;
@@ -17,6 +18,7 @@ import '../../common/logging.dart';
 import '../../common/platforms.dart';
 import 'record_service.dart';
 
+@lazySingleton
 class DraftManager extends SafeChangeNotifier {
   DraftManager({required Client client, required RecordService recordService})
     : _client = client,
@@ -313,7 +315,7 @@ class DraftManager extends SafeChangeNotifier {
       if (Platforms.isLinux) {
         xFiles = await openFiles();
       } else {
-        final result = await FilePicker.platform.pickFiles(
+        final result = await FilePicker.pickFiles(
           allowMultiple: true,
           type: FileType.any,
         );

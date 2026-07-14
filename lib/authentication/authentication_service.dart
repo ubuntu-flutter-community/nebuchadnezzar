@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -10,6 +11,7 @@ import '../common/constants.dart';
 import '../common/logging.dart';
 import '../common/platforms.dart';
 
+@lazySingleton
 class AuthenticationService {
   AuthenticationService({required Client client}) : _client = client;
 

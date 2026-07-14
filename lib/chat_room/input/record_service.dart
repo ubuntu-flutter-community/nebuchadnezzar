@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:injectable/injectable.dart';
 import 'package:record/record.dart';
 
 import '../../common/platforms.dart';
 
+@lazySingleton
 class RecordService {
   RecordService({required AudioRecorder audioRecorder})
     : _audioRecorder = audioRecorder;

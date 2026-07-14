@@ -153,8 +153,7 @@ class ChatInputTextField extends StatelessWidget with WatchItMixin {
           suffixIcon: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ChatInputRecordVoiceMessageButton(room: room),
-
+              ChatInputRecordVoiceMessageButton(room: room, disabled: disabled),
               IconButton(
                 tooltip: l10n.send,
                 padding: EdgeInsets.zero,

@@ -64,7 +64,7 @@ class _PlayerQueueState extends State<PlayerQueue> {
                         borderRadius: BorderRadius.circular(6),
                         child: child,
                       ),
-                      onReorder: (oldIndex, newIndex) {
+                      onReorderItem: (oldIndex, newIndex) {
                         if (newIndex > oldIndex) {
                           newIndex -= 1;
                         }

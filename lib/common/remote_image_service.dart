@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 
 import 'logging.dart';
 
+@lazySingleton
 class RemoteImageService {
   RemoteImageService({required Client client}) : _client = client;
   final Client _client;

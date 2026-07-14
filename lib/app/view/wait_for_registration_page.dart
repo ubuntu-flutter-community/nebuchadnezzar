@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-import '../../authentication/authentication_service.dart';
-import '../../authentication/view/chat_login_page.dart';
-import '../../encryption/view/check_encryption_setup_page.dart';
+import '../../dependencies.dart';
 import '../app_config.dart';
 import 'app.dart';
 import 'error_page.dart';
@@ -36,7 +33,7 @@ class _WaitForRegistrationPageState extends State<WaitForRegistrationPage> {
   @override
   void initState() {
     super.initState();
-    _registrationReady = di.allReady(timeout: const Duration(seconds: 60));
+    _registrationReady = configureDependencies();
   }
 
   @override
@@ -65,9 +62,6 @@ class _WaitForRegistrationPageState extends State<WaitForRegistrationPage> {
                 darkTheme: widget.darkTheme,
                 highContrastDarkTheme: widget.highContrastDarkTheme,
                 highContrastTheme: widget.highContrastTheme,
-                child: (!di<AuthenticationService>().isLogged)
-                    ? const ChatLoginPage()
-                    : const CheckEncryptionSetupPage(),
               )
             : App(
                 themeMode: ThemeMode.system,

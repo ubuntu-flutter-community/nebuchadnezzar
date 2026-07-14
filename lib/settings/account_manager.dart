@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
@@ -14,6 +15,7 @@ import '../common/platforms.dart';
 import '../encryption/view/key_verification_dialog.dart';
 import '../extensions/xtypegroup_x.dart';
 
+@lazySingleton
 class AccountManager {
   AccountManager({required Client client}) : _client = client;
 
@@ -140,7 +142,7 @@ class AccountManager {
           ],
         );
       } else {
-        final result = await FilePicker.platform.pickFiles(
+        final result = await FilePicker.pickFiles(
           allowMultiple: false,
           type: FileType.image,
         );

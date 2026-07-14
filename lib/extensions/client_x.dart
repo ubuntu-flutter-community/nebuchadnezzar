@@ -127,7 +127,7 @@ extension ClientX on Client {
       return MatrixSdkDatabase.init(clientName);
     }
 
-    final cipher = await getDatabaseCipher();
+    final cipher = await getDatabaseCipher(secureStorage);
 
     Directory? fileStorageLocation;
     try {
@@ -180,13 +180,14 @@ extension ClientX on Client {
     );
   }
 
-  static Future<String?> getDatabaseCipher() async {
+  static Future<String?> getDatabaseCipher(
+    FlutterSecureStorage secureStorage,
+  ) async {
     const passwordStorageKey = 'database_password';
 
     String? password;
 
     try {
-      const secureStorage = FlutterSecureStorage();
       final containsEncryptionKey =
           await secureStorage.read(key: passwordStorageKey) != null;
       if (!containsEncryptionKey) {
@@ -200,14 +201,10 @@ extension ClientX on Client {
       password = await secureStorage.read(key: passwordStorageKey);
       if (password == null) throw MissingPluginException();
     } on MissingPluginException catch (e) {
-      await const FlutterSecureStorage()
-          .delete(key: passwordStorageKey)
-          .catchError((_) {});
+      await secureStorage.delete(key: passwordStorageKey).catchError((_) {});
       Logs().w('Database encryption is not supported on this platform', e);
     } catch (e, s) {
-      await const FlutterSecureStorage()
-          .delete(key: passwordStorageKey)
-          .catchError((_) {});
+      await secureStorage.delete(key: passwordStorageKey).catchError((_) {});
       Logs().w('Unable to init database encryption', e, s);
     }
 

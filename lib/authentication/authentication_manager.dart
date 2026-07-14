@@ -1,9 +1,11 @@
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'authentication_capsule.dart';
 import 'authentication_service.dart';
 
+@lazySingleton
 class AuthenticationManager {
   AuthenticationManager({required AuthenticationService authenticationService})
     : _authenticationService = authenticationService {

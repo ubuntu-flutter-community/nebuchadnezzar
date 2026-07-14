@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 
+import '../../authentication/authentication_service.dart';
+import '../../authentication/view/chat_login_page.dart';
+import '../../encryption/view/check_encryption_setup_page.dart';
 import '../../l10n/app_localizations.dart';
 import '../../settings/settings_manager.dart';
 import '../app_config.dart';
@@ -14,7 +17,7 @@ class App extends StatelessWidget with WatchItMixin {
     this.darkTheme,
     this.highContrastTheme,
     this.highContrastDarkTheme,
-    required this.child,
+    this.child,
     this.themeMode,
   });
 
@@ -23,7 +26,7 @@ class App extends StatelessWidget with WatchItMixin {
       highContrastTheme,
       highContrastDarkTheme;
 
-  final Widget child;
+  final Widget? child;
   final ThemeMode? themeMode;
 
   @override
@@ -50,7 +53,11 @@ class App extends StatelessWidget with WatchItMixin {
         PointerDeviceKind.trackpad,
       },
     ),
-    home: child,
+    home:
+        child ??
+        ((!di<AuthenticationService>().isLogged)
+            ? const ChatLoginPage()
+            : const CheckEncryptionSetupPage()),
   );
 }
 

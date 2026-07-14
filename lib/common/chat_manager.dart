@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
@@ -10,6 +11,7 @@ import '../extensions/room_x.dart';
 import 'logging.dart';
 import 'rooms_filter.dart';
 
+@lazySingleton
 class ChatManager extends SafeChangeNotifier {
   ChatManager({required Client client}) : _client = client {
     startSyncingCommand = Command.createAsyncNoParamNoResult(startSyncing);
