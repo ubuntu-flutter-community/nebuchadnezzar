@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common/file_system_service.dart';
 
+@lazySingleton
 class ChatExportService {
   ChatExportService({
     required SharedPreferences preferences,

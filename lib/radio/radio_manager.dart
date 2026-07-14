@@ -1,9 +1,11 @@
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 
 import '../player/data/station_media.dart';
 import '../settings/settings_service.dart';
 import 'radio_service.dart';
 
+@lazySingleton
 class RadioManager {
   RadioManager({
     required SettingsService settingsService,

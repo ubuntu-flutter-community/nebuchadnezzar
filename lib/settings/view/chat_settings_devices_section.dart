@@ -82,6 +82,7 @@ class _DeviceTile extends StatelessWidget {
     final isDehydratedDevice =
         device.displayname == di<AccountManager>().dehydratedDeviceDisplayName;
 
+    // ignore: deprecated_member_use
     return YaruTile(
       leading: IconButton.outlined(
         onPressed: () => di<AccountManager>().verifyDeviceAction(

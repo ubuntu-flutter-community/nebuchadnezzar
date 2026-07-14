@@ -11,4 +11,6 @@ class AppConfig {
   static const String repoUrl = '$scheme://$host/$owner/$repo';
   static const String repoReportIssueUrl =
       '$scheme://$host/$owner/$repo/issues/new';
+
+  static const bool windowManagerImplemented = true;
 }

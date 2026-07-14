@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../common/constants.dart';
@@ -11,6 +12,7 @@ import '../../events/chat_message_reaction_capsule.dart';
 import '../../extensions/room_x.dart';
 import '../../extensions/xtypegroup_x.dart';
 
+@lazySingleton
 class EditRoomService {
   EditRoomService({required Client client}) : _client = client;
 
@@ -328,9 +330,7 @@ class EditRoomService {
           ],
         );
       } else {
-        final result = await FilePicker.platform.pickFiles(
-          type: FileType.image,
-        );
+        final result = await FilePicker.pickFiles(type: FileType.image);
         xFile = result?.files.firstOrNull?.xFile;
       }
 

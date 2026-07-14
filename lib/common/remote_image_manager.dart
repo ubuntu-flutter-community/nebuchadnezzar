@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import 'remote_image_service.dart';
 
+@lazySingleton
 class RemoteImageManager extends SafeChangeNotifier {
   RemoteImageManager({required RemoteImageService service})
     : _remoteImageService = service {

@@ -2,15 +2,19 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:yaru/yaru.dart';
 
+import '../app/app_config.dart';
 import '../common/logging.dart';
+import '../common/platforms.dart';
 import 'data/unique_media.dart';
 import 'view/player_view_state.dart';
 
+@lazySingleton
 class PlayerManager extends BaseAudioHandler with SeekHandler {
   PlayerManager({required VideoController controller})
     : _controller = controller {
@@ -39,6 +43,20 @@ class PlayerManager extends BaseAudioHandler with SeekHandler {
     );
     _bufferedSubscription = controller.player.stream.buffer.listen(_setBuffer);
   }
+
+  @PostConstruct(preResolve: true)
+  Future<PlayerManager> create() async => AudioService.init(
+    config: AudioServiceConfig(
+      androidNotificationOngoing: false,
+      androidStopForegroundOnPause: false,
+      androidNotificationChannelName: AppConfig.appName,
+      androidNotificationChannelId: Platforms.isAndroid || Platforms.isWindows
+          ? AppConfig.appId
+          : null,
+      androidNotificationChannelDescription: 'MusicPod Media Controls',
+    ),
+    builder: () => PlayerManager(controller: _controller),
+  );
 
   final VideoController _controller;
   VideoController get videoController => _controller;

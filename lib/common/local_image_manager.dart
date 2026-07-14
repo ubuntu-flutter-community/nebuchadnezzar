@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 
+@lazySingleton
 class LocalImageManager {
   final Map<String, Command<DownloadImageCapsule, Uint8List?>>
   _downloadImageCapsules = {};

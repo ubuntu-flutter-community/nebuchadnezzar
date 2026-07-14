@@ -1,10 +1,12 @@
 import 'package:flutter_it/flutter_it.dart';
+import 'package:injectable/injectable.dart';
 import 'package:matrix/matrix.dart';
 import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 import '../../common/logging.dart';
 import '../../extensions/event_x.dart';
 
+@lazySingleton
 class TimelineManager extends SafeChangeNotifier {
   Future<Timeline> loadTimeline(
     Room room, {
